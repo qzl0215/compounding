@@ -1,0 +1,7 @@
+[Unit]
+Description=Foreman Quant Review
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/project
+ExecStart=/usr/bin/env bash scripts/run_foreman_quant_review.sh

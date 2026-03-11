@@ -1,0 +1,9 @@
+project_name: Compounding AI Operating System
+project_one_liner: 用轻内核和专业前台，让小白用户也能高性价比地用好 agent。
+success_definition: 小白用户不需要理解复杂规范，也能用这个系统快速初始化项目、发起任务并安全审批关键改动。
+current_priority: 完成 V2 的轻 brief、任务工作台和摘要审批体验。
+must_protect:
+  - Git 文件即真相
+  - 关键改动先 review 再写入
+  - 不引入平行规则体系
+runtime_boundary: server-only

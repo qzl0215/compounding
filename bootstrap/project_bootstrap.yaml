@@ -1,0 +1,162 @@
+project_name: Compounding AI Operating System
+project_slug: compounding-ai-os
+project_one_liner: 在任意新项目中快速初始化一套以虚拟公司治理为核心的 AI Operating System，持续产生复利并抑制熵增。
+default_language: zh-CN
+repo_kind: software-multi-agent
+scm_flow: github-pr-rebase
+runtime_boundary: server-only
+primary_goals:
+  - 建立可跨项目复用的初始化框架
+  - 提供高科技感且高信息密度的配置与知识阅读界面
+  - 以 Git 文件作为规范与版本真相源
+primary_chains:
+  - bootstrap schema -> scaffold -> audit -> proposal -> apply
+  - docs knowledge base -> studio visibility -> anti-entropy iteration
+allowed_scopes:
+  - apps/studio/**
+  - bootstrap/**
+  - docs/**
+  - scripts/**
+  - tests/**
+  - .github/workflows/**
+frozen_items:
+  - 不引入数据库
+  - 不做多租户
+  - 不做真实 agent runtime orchestration
+high_risk_actions:
+  - 未经确认直接重写规范库
+  - 引入平行规则体系
+  - 跳过 evidence boundary 做结论
+lanes:
+  studio: apps/studio/**
+  governance: docs/**
+  bootstrap: bootstrap/**
+  automation: scripts/**
+hot_files:
+  - AGENTS.md
+  - bootstrap/project_bootstrap.yaml
+  - docs/00_SYSTEM/COMPOUNDING_SYSTEM.md
+  - docs/00_SYSTEM/PROJECT_RULES.md
+validation_modes:
+  - prod-live
+  - local-code-prod-data
+  - full-local
+enabled_modules:
+  ui_system: true
+  server_truth_ledger: true
+  quant_review: true
+  evidence_boundary: true
+  anti_entropy: true
+  tech_debt: true
+template_profile: software-multi-agent-server
+company_mission: 用一套可计算、可继承、可审计的虚拟公司治理操作系统，让 AI 项目从第一天起具备长期复利能力。
+company_vision: 让任何新项目都能在统一治理与知识底座之上，以最小熵增持续进化。
+company_values:
+  - 单一真相入口
+  - 先证据后判断
+  - 先收敛后扩张
+  - 复杂度净减少
+  - 可回滚与可审计
+operating_principles:
+  - 所有规则都必须有唯一归宿
+  - 默认采用 proposal-preview-confirm-apply
+  - 新增结构必须解释如何创造复利
+  - 所有报告默认区分本地证据与服务器证据
+org_structure:
+  - department: Executive Office
+    role: Foreman
+    responsibilities:
+      - 维护系统级优先级与初始化策略
+      - 裁决规范冲突与范围边界
+      - 选择下一条最值得硬化的事项
+    reports_to: Board
+    scope:
+      - strategy
+      - governance
+      - bootstrap
+  - department: Architecture
+    role: Architect
+    responsibilities:
+      - 维护结构边界与项目地图
+      - 避免新建平行体系
+      - 设计可复用抽象与模板归宿
+    reports_to: Foreman
+    scope:
+      - architecture
+      - templates
+  - department: Delivery
+    role: Builder
+    responsibilities:
+      - 实现生成器、UI 和自动化骨架
+      - 通过小步可验证变更交付功能
+      - 保持输出契约稳定
+    reports_to: Architect
+    scope:
+      - implementation
+      - tooling
+  - department: Quality
+    role: Auditor
+    responsibilities:
+      - 审核 evidence boundary、规则冲突和技术债
+      - 维护 audit 与 quant review 输出
+      - 追踪反熵增执行质量
+    reports_to: Foreman
+    scope:
+      - review
+      - audit
+      - anti-entropy
+decision_policy:
+  tiers:
+    - name: Strategic
+      proposer: Foreman
+      approver: Board
+      examples:
+        - 变更规则优先级
+        - 引入新的一级知识域
+    - name: Structural
+      proposer: Architect
+      approver: Foreman
+      examples:
+        - 新增模板体系
+        - 重构知识库结构
+    - name: Operational
+      proposer: Builder
+      approver: Architect
+      examples:
+        - 调整脚本实现
+        - 优化 studio 交互
+reporting_contract:
+  default_sections:
+    - 已完成清单
+    - 超预期完成的优化清单
+    - 计划下阶段待办清单方案要点与支撑点
+    - 待决策清单
+  required_fields:
+    - 本地离线证据
+    - 服务器真实证据
+    - 当前结论适用边界
+    - 复杂度收支附录
+knowledge_domains:
+  - 00_SYSTEM
+  - 10_CHARTER
+  - 20_ORG
+  - 30_STRATEGY
+  - 40_EXECUTION
+  - 50_SOP
+  - 60_TEMPLATES
+  - 70_MEMORY
+  - 80_AUTOMATION
+  - 90_GLOSSARY
+north_star_metric: 新项目在首轮初始化后，任意 agent 只读 COMPOUNDING_SYSTEM 即能在不增加平行体系的情况下安全迭代。
+short_term_priorities:
+  - 完成 bootstrap schema、CLI 与模板资产
+  - 完成 command-center studio 与 proposal diff 流程
+  - 建立 audit、quant review 和 CI merge guard 骨架
+long_term_compounding_axes:
+  - 跨项目复用率
+  - 规则冲突减少率
+  - 知识库可发现性与可执行性
+  - 技术债可量化收敛
+rewrite_policy: proposal-preview-confirm-apply
+version_policy: git-files-source-of-truth
+ui_preferences: dark-command-center

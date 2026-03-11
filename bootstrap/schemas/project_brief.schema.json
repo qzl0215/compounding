@@ -1,0 +1,61 @@
+{
+  "title": "AI OS Project Brief",
+  "type": "object",
+  "required": [
+    "project_name",
+    "project_one_liner",
+    "success_definition",
+    "current_priority",
+    "must_protect",
+    "runtime_boundary"
+  ],
+  "properties": {
+    "project_name": {
+      "type": "string",
+      "title": "Project Name",
+      "description": "项目叫什么。",
+      "x-group": "Core",
+      "x-step": 1
+    },
+    "project_one_liner": {
+      "type": "string",
+      "title": "Project One-Liner",
+      "description": "这个项目为什么存在。",
+      "x-group": "Core",
+      "x-step": 2,
+      "x-widget": "textarea"
+    },
+    "success_definition": {
+      "type": "string",
+      "title": "Success Definition",
+      "description": "什么结果代表初始化成功。",
+      "x-group": "Core",
+      "x-step": 3,
+      "x-widget": "textarea"
+    },
+    "current_priority": {
+      "type": "string",
+      "title": "Current Priority",
+      "description": "接下来最值得先做的一件事。",
+      "x-group": "Core",
+      "x-step": 4,
+      "x-widget": "textarea"
+    },
+    "must_protect": {
+      "type": "array",
+      "title": "Must Protect",
+      "description": "必须保护的边界，每行一项。",
+      "items": { "type": "string" },
+      "x-group": "Core",
+      "x-step": 5
+    },
+    "runtime_boundary": {
+      "type": "string",
+      "title": "Runtime Boundary",
+      "description": "真实运行边界。",
+      "enum": ["server-only", "local-only", "hybrid"],
+      "x-group": "Core",
+      "x-step": 5
+    }
+  }
+}

@@ -1,0 +1,238 @@
+{
+  "title": "AI Operating System Bootstrap Config",
+  "type": "object",
+  "required": [
+    "project_name",
+    "project_slug",
+    "project_one_liner",
+    "runtime_boundary",
+    "primary_goals",
+    "primary_chains",
+    "allowed_scopes",
+    "frozen_items",
+    "enabled_modules",
+    "company_mission",
+    "company_vision",
+    "company_values",
+    "operating_principles",
+    "org_structure",
+    "decision_policy",
+    "reporting_contract",
+    "north_star_metric",
+    "short_term_priorities",
+    "long_term_compounding_axes",
+    "rewrite_policy",
+    "version_policy",
+    "ui_preferences"
+  ],
+  "properties": {
+    "project_name": {
+      "type": "string",
+      "title": "Project Name",
+      "description": "对外展示的项目全名。",
+      "x-group": "Project Core"
+    },
+    "project_slug": {
+      "type": "string",
+      "title": "Project Slug",
+      "description": "稳定且可跨工具复用的项目标识。",
+      "x-group": "Project Core"
+    },
+    "project_one_liner": {
+      "type": "string",
+      "title": "Project One-Liner",
+      "description": "一句话定义当前项目为何存在。",
+      "x-group": "Project Core",
+      "x-widget": "textarea"
+    },
+    "default_language": {
+      "type": "string",
+      "title": "Default Language",
+      "description": "默认文档与交互语言。",
+      "x-group": "Project Core"
+    },
+    "repo_kind": {
+      "type": "string",
+      "title": "Repo Kind",
+      "description": "项目仓库形态。",
+      "x-group": "Project Core"
+    },
+    "scm_flow": {
+      "type": "string",
+      "title": "SCM Flow",
+      "description": "源代码管理流程。",
+      "x-group": "Project Core"
+    },
+    "runtime_boundary": {
+      "type": "string",
+      "title": "Runtime Boundary",
+      "description": "真实运行边界。",
+      "enum": ["server-only", "local-only", "hybrid"],
+      "x-group": "Project Core"
+    },
+    "template_profile": {
+      "type": "string",
+      "title": "Template Profile",
+      "description": "模板分发画像。",
+      "x-group": "Project Core"
+    },
+    "ui_preferences": {
+      "type": "string",
+      "title": "UI Preferences",
+      "description": "Studio 默认视觉策略。",
+      "x-group": "Experience"
+    },
+    "primary_goals": {
+      "type": "array",
+      "title": "Primary Goals",
+      "description": "当前阶段最重要的目标，每行一项。",
+      "items": { "type": "string" },
+      "x-group": "Strategy"
+    },
+    "primary_chains": {
+      "type": "array",
+      "title": "Primary Chains",
+      "description": "关键复利链路，每行一项。",
+      "items": { "type": "string" },
+      "x-group": "Strategy"
+    },
+    "north_star_metric": {
+      "type": "string",
+      "title": "North Star Metric",
+      "description": "长期北极星指标。",
+      "x-group": "Strategy",
+      "x-widget": "textarea"
+    },
+    "short_term_priorities": {
+      "type": "array",
+      "title": "Short Term Priorities",
+      "description": "短期优先事项，每行一项。",
+      "items": { "type": "string" },
+      "x-group": "Strategy"
+    },
+    "long_term_compounding_axes": {
+      "type": "array",
+      "title": "Long Term Compounding Axes",
+      "description": "长期复利维度，每行一项。",
+      "items": { "type": "string" },
+      "x-group": "Strategy"
+    },
+    "knowledge_domains": {
+      "type": "array",
+      "title": "Knowledge Domains",
+      "description": "启用的一级知识域，每行一项。",
+      "items": { "type": "string" },
+      "x-group": "Strategy"
+    },
+    "company_mission": {
+      "type": "string",
+      "title": "Mission",
+      "description": "使命陈述。",
+      "x-group": "Governance",
+      "x-widget": "textarea"
+    },
+    "company_vision": {
+      "type": "string",
+      "title": "Vision",
+      "description": "愿景陈述。",
+      "x-group": "Governance",
+      "x-widget": "textarea"
+    },
+    "company_values": {
+      "type": "array",
+      "title": "Values",
+      "description": "核心价值观，每行一项。",
+      "items": { "type": "string" },
+      "x-group": "Governance"
+    },
+    "operating_principles": {
+      "type": "array",
+      "title": "Operating Principles",
+      "description": "治理原则，每行一项。",
+      "items": { "type": "string" },
+      "x-group": "Governance"
+    },
+    "org_structure": {
+      "type": "array",
+      "title": "Org Structure",
+      "description": "组织结构角色列表。",
+      "items": { "type": "object" },
+      "x-group": "Governance"
+    },
+    "decision_policy": {
+      "type": "object",
+      "title": "Decision Policy",
+      "description": "决策分层 JSON 对象。",
+      "x-group": "Governance",
+      "x-widget": "textarea"
+    },
+    "rewrite_policy": {
+      "type": "string",
+      "title": "Rewrite Policy",
+      "description": "改写治理策略。",
+      "x-group": "Governance"
+    },
+    "version_policy": {
+      "type": "string",
+      "title": "Version Policy",
+      "description": "版本真相策略。",
+      "x-group": "Governance"
+    },
+    "allowed_scopes": {
+      "type": "array",
+      "title": "Allowed Scopes",
+      "description": "允许改动范围，每行一项。",
+      "items": { "type": "string" },
+      "x-group": "Operations"
+    },
+    "frozen_items": {
+      "type": "array",
+      "title": "Frozen Items",
+      "description": "冻结项，每行一项。",
+      "items": { "type": "string" },
+      "x-group": "Operations"
+    },
+    "high_risk_actions": {
+      "type": "array",
+      "title": "High Risk Actions",
+      "description": "高风险动作，每行一项。",
+      "items": { "type": "string" },
+      "x-group": "Operations"
+    },
+    "lanes": {
+      "type": "object",
+      "title": "Lanes",
+      "description": "路径归属映射 JSON 对象。",
+      "x-group": "Operations",
+      "x-widget": "textarea"
+    },
+    "hot_files": {
+      "type": "array",
+      "title": "Hot Files",
+      "description": "高敏感文件，每行一项。",
+      "items": { "type": "string" },
+      "x-group": "Operations"
+    },
+    "validation_modes": {
+      "type": "array",
+      "title": "Validation Modes",
+      "description": "验证模式，每行一项。",
+      "items": { "type": "string" },
+      "x-group": "Operations"
+    },
+    "reporting_contract": {
+      "type": "object",
+      "title": "Reporting Contract",
+      "description": "汇报契约 JSON 对象。",
+      "x-group": "Operations",
+      "x-widget": "textarea"
+    },
+    "enabled_modules": {
+      "type": "object",
+      "title": "Enabled Modules",
+      "description": "模块开关 JSON 对象。",
+      "x-group": "Experience",
+      "x-widget": "textarea"
+    }
+  }
+}
