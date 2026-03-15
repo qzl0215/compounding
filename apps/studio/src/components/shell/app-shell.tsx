@@ -3,15 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { BookOpen, Compass, LayoutDashboard, Sparkles, Target } from "lucide-react";
+import { BookOpen, LayoutDashboard } from "lucide-react";
 import type { PropsWithChildren } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/classnames";
 
 const navigation = [
-  { href: "/", label: "Home", icon: LayoutDashboard },
-  { href: "/initialize", label: "Initialize", icon: Sparkles },
-  { href: "/tasks", label: "Tasks", icon: Target },
-  { href: "/reviews", label: "Reviews", icon: Compass }
+  { href: "/", label: "首页", icon: LayoutDashboard },
+  { href: "/knowledge-base", label: "文档", icon: BookOpen }
 ];
 
 export function AppShell({ children }: PropsWithChildren) {
@@ -25,11 +23,11 @@ export function AppShell({ children }: PropsWithChildren) {
         <aside className="w-full rounded-[2rem] border border-line/70 bg-shell/85 p-4 shadow-glow backdrop-blur lg:sticky lg:top-6 lg:h-[calc(100vh-3rem)] lg:w-[290px]">
           <div className="mb-8 flex items-start justify-between">
             <div>
-              <p className="text-xs uppercase tracking-[0.32em] text-accent">AI Operating System</p>
-              <h1 className="mt-3 font-mono text-2xl font-semibold text-white">Command Center</h1>
-              <p className="mt-2 text-sm text-white/65">轻内核 Virtual Company Manager</p>
+              <p className="text-xs uppercase tracking-[0.32em] text-accent">AI-Native Repo</p>
+              <h1 className="mt-3 font-mono text-2xl font-semibold text-white">指挥中枢</h1>
+              <p className="mt-2 text-sm text-white/65">以 AGENTS 入口合约驱动的只读仓库门户</p>
             </div>
-            <Badge tone="accent">V2</Badge>
+            <Badge tone="accent">V4</Badge>
           </div>
           <nav className="space-y-2">
             {navigation.map(({ href, label, icon: Icon }) => {
@@ -59,16 +57,18 @@ export function AppShell({ children }: PropsWithChildren) {
             })}
           </nav>
           <div className="mt-8 rounded-3xl border border-white/8 bg-white/[0.04] p-4">
-            <p className="text-xs uppercase tracking-[0.28em] text-white/45">Default Law</p>
+            <p className="text-xs uppercase tracking-[0.28em] text-white/45">默认法则</p>
             <ul className="mt-3 space-y-2 text-sm text-white/72">
-              <li>Single source of truth</li>
-              <li>Proposal before mutation</li>
-              <li>Small input, strong auto-derivation</li>
-              <li>No over-optimization by default</li>
+              <li>AGENTS.md 是薄入口合约</li>
+              <li>docs / memory / tasks / code_index 四层协作</li>
+              <li>先任务，后改动</li>
+              <li>先记忆，后升格</li>
+              <li>改动前先做 preflight</li>
+              <li>archive 负责隔离旧体系</li>
             </ul>
             <Link className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-accent" href="/knowledge-base">
               <BookOpen className="size-3.5" />
-              Advanced
+              打开主文档入口
             </Link>
           </div>
         </aside>

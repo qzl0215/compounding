@@ -1,0 +1,82 @@
+---
+title: ARCHITECTURE
+doc_role: reference
+update_mode: promote_only
+owner_role: Architect
+status: active
+last_reviewed_at: 2026-03-15
+source_of_truth: AGENTS.md
+related_docs:
+  - AGENTS.md
+  - code_index/module-index.md
+  - memory/architecture/system-overview.md
+---
+<!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
+# ARCHITECTURE
+
+## Repository Shape
+
+- `apps/studio/`: 只读文档门户
+- `scripts/compounding_bootstrap/`: scaffold / audit / proposal 引擎
+- `docs/`: 规则层、架构层、流程层、AI operating model、重构计划
+- `memory/`: 架构记忆、项目状态、经验、ADR
+- `code_index/`: 模块索引、依赖图、函数索引
+- `tasks/`: 模板、队列、归档
+
+## Primary Module Domains
+
+### Studio Modules
+
+- `apps/studio/src/modules/docs`
+- `apps/studio/src/modules/git-health`
+- `apps/studio/src/modules/portal`
+
+### Bootstrap Engine Modules
+
+- `scripts/compounding_bootstrap/audit.py`
+- `scripts/compounding_bootstrap/catalog.py`
+- `scripts/compounding_bootstrap/config_resolution.py`
+- `scripts/compounding_bootstrap/defaults.py`
+- `scripts/compounding_bootstrap/document_renderers.py`
+- `scripts/compounding_bootstrap/engine.py`
+- `scripts/compounding_bootstrap/managed_blocks.py`
+- `scripts/compounding_bootstrap/proposal_engine.py`
+- `scripts/compounding_bootstrap/proposal_generation.py`
+- `scripts/compounding_bootstrap/proposal_support.py`
+- `scripts/compounding_bootstrap/renderers_base_docs.py`
+- `scripts/compounding_bootstrap/renderers_docs.py`
+- `scripts/compounding_bootstrap/renderers_index.py`
+- `scripts/compounding_bootstrap/renderers_memory.py`
+- `scripts/compounding_bootstrap/renderers_system_docs.py`
+- `scripts/compounding_bootstrap/repo_scan.py`
+- `scripts/compounding_bootstrap/scaffold.py`
+- `scripts/compounding_bootstrap/scaffold_assets.py`
+- `scripts/compounding_bootstrap/yaml_io.py`
+
+## Dependency Direction
+
+1. `AGENTS.md` 提供高频入口
+2. `docs/*` 提供长期规则、架构和流程
+3. `tasks/*` 给出当前变更边界
+4. `code_index/*` 提供上下文导航
+5. 代码模块只依赖必要的邻近模块和共享基础层
+
+## First Refactor Batch
+
+- 删除旧 workflow 前台和对应 API
+- 把 Studio 收口为 `portal / docs / git-health`
+- 把 bootstrap 引擎拆成可维护的 Python 微模块
+- 补齐 `memory / tasks / code_index / scripts/ai` 骨架
+
+## Forbidden Call Patterns
+
+- 禁止从 UI 组件跨层读取任意文件系统状态而不经过模块仓储层
+- 禁止在 bootstrap 引擎里继续堆单一巨型 `engine.py`
+- 禁止把临时上下文直接塞回 `AGENTS.md`
+
+## Evidence Boundary
+
+- 本地离线证据：
+- 服务器真实证据：
+- 当前结论适用边界：
+<!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

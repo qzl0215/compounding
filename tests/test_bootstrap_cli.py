@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 
 from scripts.compounding_bootstrap.engine import (
+    AGENTS_PATH,
     apply_proposal,
     audit,
     baseline_commit_suggestion,
@@ -38,12 +39,17 @@ class BootstrapCliTests(unittest.TestCase):
         result = audit(self.brief_path, self.target)
 
         self.assertTrue(result.passed, msg=result.errors)
-        self.assertTrue((self.target / "docs/PROJECT_CARD.md").exists())
-        self.assertTrue((self.target / "output/bootstrap/project_bootstrap.resolved.yaml").exists())
+        self.assertTrue((self.target / AGENTS_PATH).exists())
+        self.assertTrue((self.target / "docs" / "PROJECT_RULES.md").exists())
+        self.assertTrue((self.target / "memory" / "project" / "current-state.md").exists())
+        self.assertTrue((self.target / "code_index" / "module-index.md").exists())
+        self.assertTrue((self.target / "tasks" / "queue" / "task-001-repo-refactor.md").exists())
+        self.assertTrue((self.target / "scripts" / "ai" / "scan-code-health.ts").exists())
+        self.assertTrue((self.target / "output" / "bootstrap" / "project_bootstrap.resolved.yaml").exists())
 
     def test_scaffold_preserves_manual_notes(self) -> None:
         scaffold(self.brief_path, self.target)
-        doc_path = self.target / "docs/PROJECT_CARD.md"
+        doc_path = self.target / AGENTS_PATH
         original = doc_path.read_text(encoding="utf8")
         updated = original + "\n人工追加笔记：不要覆盖我。\n"
         doc_path.write_text(updated, encoding="utf8")
@@ -71,6 +77,38 @@ class BootstrapCliTests(unittest.TestCase):
 
         self.assertEqual(snapshot, after)
 
+    def test_audit_rejects_agents_roadmap_priority_drift(self) -> None:
+        scaffold(self.brief_path, self.target)
+        agents_path = self.target / AGENTS_PATH
+        agents_text = agents_path.read_text(encoding="utf8")
+        current_priority_line = next(line for line in agents_text.splitlines() if line.startswith("- 当前优先级："))
+        agents_path.write_text(
+            agents_text.replace(current_priority_line, "- 当前优先级：已经偏离 roadmap 的错误值。"),
+            encoding="utf8",
+        )
+
+        result = audit(self.brief_path, self.target)
+
+        self.assertFalse(result.passed)
+        self.assertTrue(any("AGENTS current priority must mirror roadmap current priority." in item for item in result.errors))
+
+    def test_audit_rejects_legacy_live_docs_and_missing_experience_section(self) -> None:
+        scaffold(self.brief_path, self.target)
+        legacy_reference = self.target / "docs" / "reference"
+        legacy_reference.mkdir(parents=True, exist_ok=True)
+        (legacy_reference / "stale.md").write_text("stale", encoding="utf8")
+        experience_path = self.target / "memory" / "experience" / "README.md"
+        experience_path.write_text(
+            experience_path.read_text(encoding="utf8").replace("## Promotion Candidates", "## Candidates"),
+            encoding="utf8",
+        )
+
+        result = audit(self.brief_path, self.target)
+
+        self.assertFalse(result.passed)
+        self.assertTrue(any("Legacy live docs path still exists: docs/reference" in item for item in result.errors))
+        self.assertTrue(any("memory/experience/README.md missing section: ## Promotion Candidates" in item for item in result.errors))
+
     def test_validate_config_file_passes(self) -> None:
         result = validate_config_file(self.brief_path, self.target)
         self.assertTrue(result["ok"], msg=result)
@@ -97,7 +135,7 @@ class BootstrapCliTests(unittest.TestCase):
     def test_propose_and_apply(self) -> None:
         scaffold(self.brief_path, self.target)
         prompt_file = self.target / "prompt.md"
-        prompt_file.write_text("把项目作战卡里的成功定义写得更清楚，并强化 review 规则。", encoding="utf8")
+        prompt_file.write_text("把 AGENTS 里的成功定义写得更清楚，并强化 review 规则。", encoding="utf8")
 
         proposal_id = create_proposal(self.brief_path, self.target, prompt_file)
         proposal_root = self.target / "output" / "proposals" / proposal_id
@@ -108,6 +146,9 @@ class BootstrapCliTests(unittest.TestCase):
         self.assertEqual(metadata["action_type"], "canonical_update")
         self.assertGreater(len(metadata["target_blocks"]), 0)
         self.assertTrue((proposal_root / "diff.patch").exists())
+        self.assertIn("generation_provider", metadata)
+        self.assertIn("generation_model", metadata)
+        self.assertIn("generation_providers", metadata["validation_summary"])
 
         with self.assertRaisesRegex(ValueError, "Baseline commit required"):
             apply_proposal(self.target, proposal_id)
@@ -148,11 +189,28 @@ class BootstrapCliTests(unittest.TestCase):
         prompt_file.write_text("补一条更适合小白的 review 说明。", encoding="utf8")
         proposal_id = create_proposal(self.brief_path, self.target, prompt_file)
 
-        doc_path = self.target / "docs/PROJECT_CARD.md"
+        doc_path = self.target / AGENTS_PATH
         doc_path.write_text(doc_path.read_text(encoding="utf8") + "\nmanual dirty change\n", encoding="utf8")
 
         with self.assertRaisesRegex(ValueError, "worktree is dirty"):
             apply_proposal(self.target, proposal_id)
+
+    def test_pre_mutation_check_outputs_json(self) -> None:
+        scaffold(self.brief_path, self.target)
+        subprocess.run(["git", "init"], cwd=self.target, check=True)
+        completed = subprocess.run(
+            ["python3", str(ROOT / "scripts" / "pre_mutation_check.py")],
+            cwd=self.target,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        payload = json.loads(completed.stdout)
+
+        self.assertIn("branch", payload)
+        self.assertIn("head_sha", payload)
+        self.assertIn("sync_status", payload)
+        self.assertIn("next_action", payload)
 
 
 if __name__ == "__main__":

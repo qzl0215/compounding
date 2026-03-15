@@ -1,14 +1,6 @@
-import Link from "next/link";
 import { Card } from "@/components/ui/card";
-import { readDoc } from "@/lib/docs";
-
-const coreDocs = [
-  "PROJECT_CARD.md",
-  "OPERATING_RULES.md",
-  "ORG_MODEL.md",
-  "PLAYBOOK.md",
-  "MEMORY_LEDGER.md"
-];
+import { DocTree, DocViewer, getDocTree, readDoc } from "@/modules/docs";
+import { DEFAULT_DOC_PATH } from "@/modules/portal";
 
 export default async function KnowledgeBasePage({
   searchParams
@@ -16,36 +8,22 @@ export default async function KnowledgeBasePage({
   searchParams: Promise<{ path?: string }>;
 }) {
   const params = await searchParams;
-  const selectedPath = coreDocs.includes(params.path ?? "") ? params.path ?? coreDocs[0] : coreDocs[0];
-  const doc = await readDoc(selectedPath);
+  const selectedPath = params.path?.trim() || DEFAULT_DOC_PATH;
+  const [tree, doc] = await Promise.all([getDocTree(), readDoc(selectedPath)]);
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[0.28fr_0.72fr]">
+    <div className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
       <Card className="h-fit">
-        <p className="text-xs uppercase tracking-[0.28em] text-accent">Advanced</p>
-        <h2 className="mt-2 text-xl font-semibold">核心知识内核</h2>
-        <p className="mt-3 text-sm text-white/62">默认模式不需要阅读这些文档。只有你想看系统底层规则时，再打开这里。</p>
-        <div className="mt-5 space-y-3">
-          {coreDocs.map((path) => {
-            const active = selectedPath === path;
-            return (
-              <Link
-                key={path}
-                className={`block rounded-2xl border px-4 py-3 text-sm transition ${
-                  active ? "border-accent/45 bg-accent/12 text-white" : "border-white/8 bg-white/[0.03] text-white/72 hover:border-white/14"
-                }`}
-                href={`/knowledge-base?path=${encodeURIComponent(path)}`}
-              >
-                {path}
-              </Link>
-            );
-          })}
+        <p className="text-xs uppercase tracking-[0.28em] text-accent">文档</p>
+        <h2 className="mt-2 text-xl font-semibold">Live 文档门户</h2>
+        <p className="mt-3 text-sm text-white/62">
+          默认先读 <code>AGENTS.md</code>。当前树按 docs / memory / code_index / tasks 分层，archive 默认折叠。
+        </p>
+        <div className="mt-5">
+          <DocTree nodes={tree} selectedPath={selectedPath} />
         </div>
       </Card>
-      <Card>
-        <p className="text-xs uppercase tracking-[0.28em] text-accent">{selectedPath}</p>
-        <pre className="mt-4 overflow-x-auto whitespace-pre-wrap text-sm leading-7 text-white/78">{doc.content}</pre>
-      </Card>
+      <DocViewer absolutePath={doc.absolutePath} content={doc.content} meta={doc.meta} title={selectedPath} />
     </div>
   );
 }

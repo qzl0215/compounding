@@ -1,8 +1,9 @@
 project_name: Compounding AI Operating System
-project_one_liner: 用轻内核和专业前台，让小白用户也能高性价比地用好 agent。
-success_definition: 小白用户不需要理解复杂规范，也能用这个系统快速初始化项目、发起任务并安全审批关键改动。
-current_priority: 完成 V2 的轻 brief、任务工作台和摘要审批体验。
+project_one_liner: 把当前仓库升级成适合 AI 长期协作、任务驱动、可持续重构与自进化的 AI-Native Repo。
+success_definition: 任何新线程先读 AGENTS.md 即可进入统一执行协议，并沿 docs、memory、tasks、code_index 和 module.md 在最小上下文内完成可信改动。
+current_priority: 完成 AI-Native Repo 第一轮结构收敛，并继续压缩剩余软上限文件与命名技术债。
 must_protect:
+  - AGENTS.md 是唯一主源
   - Git 文件即真相
   - 关键改动先 review 再写入
   - 不引入平行规则体系

@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/classnames";
 
 type CardProps = PropsWithChildren<{
   className?: string;

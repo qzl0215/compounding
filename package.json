@@ -9,6 +9,12 @@
     "test": "pnpm --filter studio test && python3 -m unittest discover -s tests -p 'test_*.py'",
     "bootstrap:scaffold": "python3 scripts/init_project_compounding.py scaffold --config bootstrap/project_brief.yaml --target .",
     "bootstrap:audit": "python3 scripts/init_project_compounding.py audit --config bootstrap/project_brief.yaml --target .",
-    "bootstrap:propose": "python3 scripts/init_project_compounding.py propose --config bootstrap/project_brief.yaml --target . --prompt-file output/manual_prompt.md"
+    "bootstrap:propose": "python3 scripts/init_project_compounding.py propose --config bootstrap/project_brief.yaml --target . --prompt-file output/manual_prompt.md",
+    "preflight": "python3 scripts/pre_mutation_check.py",
+    "ai:scan-health": "node --experimental-strip-types scripts/ai/scan-code-health.ts",
+    "ai:scan-health:strict": "node --experimental-strip-types scripts/ai/scan-code-health.ts --strict",
+    "ai:generate-index": "node --experimental-strip-types scripts/ai/generate-module-index.ts",
+    "ai:build-context": "node --experimental-strip-types scripts/ai/build-context.ts tasks/queue/task-001-repo-refactor.md",
+    "ai:create-task": "node --experimental-strip-types scripts/ai/create-task.ts"
   }
 }

@@ -1,29 +1,19 @@
-# AI Operating System Bootstrap Kit V1
+# Compounding AI Operating System
 
-用于在任意新项目中快速冷启动一套轻内核、专业前台、对小白友好的 AI Operating System。
+这是一个面向 AI 长期协作的 AI-Native Repo。默认先读 `AGENTS.md`，再按需进入 `docs/*`、`memory/*`、`code_index/*` 和 `tasks/*`。
 
-## 包含内容
+## Quick Start
 
-- `apps/studio`：Next.js 指挥舱 UI
-- `bootstrap`：轻量 brief、schema、模板和托管区块
-- `scripts`：Python 生成器、审计器、proposal/apply 流程
-- `docs`：规范知识库输出目录
-- `tests`：CLI 与 UI 基础测试
+1. 先读 `AGENTS.md`
+2. 运行 `python3 scripts/pre_mutation_check.py`
+3. 打开当前任务：`tasks/queue/task-001-repo-refactor.md`
+4. 需要更深上下文时，读 `docs/PROJECT_RULES.md`、`docs/ARCHITECTURE.md`、`docs/DEV_WORKFLOW.md`、`docs/AI_OPERATING_MODEL.md`
 
-## 常用命令
+## Repo Shape
 
-```bash
-pnpm install
-pnpm bootstrap:scaffold
-pnpm bootstrap:audit
-pnpm dev
-pnpm test
-```
-
-## 设计原则
-
-- Git 文件即真相
-- 提案先行，确认后写入
-- 小白只回答少量高层问题，系统自动补齐治理细节
-- 默认看摘要，不默认看专家级结构
-- 最佳实践保留在内核里自动执行
+- `apps/studio/`: 只读文档门户
+- `scripts/compounding_bootstrap/`: bootstrap / scaffold / audit / proposal 引擎
+- `docs/`: 规则、架构、工作流、AI operating model、重构计划
+- `memory/`: 架构记忆、项目状态、经验、ADR
+- `code_index/`: 模块索引、依赖图、函数索引
+- `tasks/`: 任务模板、任务队列、归档
