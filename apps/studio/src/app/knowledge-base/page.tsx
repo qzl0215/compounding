@@ -17,13 +17,12 @@ export default async function KnowledgeBasePage({
       <div className="space-y-6">
         <Card className="h-fit">
           <p className="text-xs uppercase tracking-[0.28em] text-accent">语义入口</p>
-          <h2 className="mt-2 text-xl font-semibold">先按意图进入，不必先翻文件树</h2>
+          <h2 className="mt-2 text-xl font-semibold">按分组直接进入</h2>
           <div className="mt-5 space-y-5">
             {semanticGroups.map((group) => (
               <section key={group.title}>
-                <p className="text-sm font-medium text-white">{group.title}</p>
-                <p className="mt-1 text-sm text-white/52">{group.description}</p>
-                <div className="mt-3 space-y-2">
+                <p className="text-sm font-medium tracking-[0.12em] text-white">{group.title}</p>
+                <div className="mt-3 grid gap-2">
                   {group.items.map((item) => (
                     <Link
                       key={item.path}
@@ -31,7 +30,6 @@ export default async function KnowledgeBasePage({
                       className="block rounded-2xl border border-white/8 bg-white/[0.03] px-3 py-3 transition hover:border-accent/30 hover:bg-white/[0.05]"
                     >
                       <p className="text-sm font-medium text-white">{item.label}</p>
-                      <p className="mt-1 text-xs leading-5 text-white/52">{item.description}</p>
                     </Link>
                   ))}
                 </div>
@@ -42,9 +40,6 @@ export default async function KnowledgeBasePage({
         <Card className="h-fit">
           <p className="text-xs uppercase tracking-[0.28em] text-accent">文档</p>
           <h2 className="mt-2 text-xl font-semibold">Live 文档门户</h2>
-          <p className="mt-3 text-sm text-white/62">
-            默认先读 <code>AGENTS.md</code>。当前树按 docs / memory / code_index / tasks 分层，archive 默认折叠。
-          </p>
           <div className="mt-5">
             <DocTree nodes={tree} selectedPath={selectedPath} />
           </div>

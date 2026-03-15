@@ -7,12 +7,10 @@ export type HomeEntryLink = {
 export type SemanticEntry = {
   label: string;
   path: string;
-  description: string;
 };
 
 export type SemanticEntryGroup = {
   title: string;
-  description: string;
   items: SemanticEntry[];
 };
 
