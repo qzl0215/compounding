@@ -1,4 +1,4 @@
-# 任务 task-001-repo-refactor
+# task-001-repo-refactor
 
 ## 目标
 
@@ -56,11 +56,11 @@
 
 ## 状态
 
-done
+in_progress
 
 ## 更新痕迹
 
-- 记忆：`memory/project/current-state.md`, `memory/project/tech-debt.md`, `memory/decisions/ADR-001-ai-native-repo-skeleton.md`
-- 索引：`code_index/module-index.md`, `code_index/dependency-map.md`, `code_index/function-index.json`
+- 记忆：`no change: 初始骨架任务由后续具体任务回写`
+- 索引：`no change: 初始骨架任务由后续具体任务回写`
 - 路线图：`memory/project/roadmap.md`
-- 文档：`AGENTS.md`, `docs/PROJECT_RULES.md`, `docs/ARCHITECTURE.md`, `docs/DEV_WORKFLOW.md`, `docs/AI_OPERATING_MODEL.md`, `docs/REFACTOR_PLAN.md`
+- 文档：`docs/REFACTOR_PLAN.md`

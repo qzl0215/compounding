@@ -39,7 +39,7 @@
   "primary_module_domains": ["Primary Module Domains", "核心模块域"],
   "dependency_direction": ["Dependency Direction", "依赖方向", "允许的依赖方向"],
   "production_release_runtime": ["Production Release Runtime", "生产发布运行时"],
-  "operating_roles": ["Operating Roles", "角色职责"],
+  "operating_roles": ["Operating Roles", "角色职责", "组织职责映射"],
   "first_refactor_batch": ["First Refactor Batch", "第一批重构"],
   "forbidden_call_patterns": ["Forbidden Call Patterns", "禁止调用方式"],
   "main_release_rule": ["Main Release Rule", "主发布规则"],
@@ -61,5 +61,8 @@
   "module_responsibilities": ["模块职责"],
   "forbidden_calls": ["禁止的调用方式"],
   "studio_modules_index": ["apps/studio/src/modules", "Studio 模块"],
-  "bootstrap_modules_index": ["scripts/compounding_bootstrap", "Bootstrap 引擎模块"]
+  "bootstrap_modules_index": ["scripts/compounding_bootstrap", "Bootstrap 引擎模块"],
+  "read_this_before_editing": ["Read This Before Editing", "修改前先读"],
+  "allowed_direction": ["Allowed Direction", "允许的依赖方向"],
+  "forbidden_direction": ["Forbidden Direction", "禁止的依赖方向"]
 }

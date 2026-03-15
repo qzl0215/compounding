@@ -16,6 +16,7 @@ describe("docs repository", () => {
     const docsNode = tree.find((node) => node.path === "docs");
     const memoryNode = tree.find((node) => node.path === "memory");
     expect(docsNode?.children?.some((node) => node.path === "docs/PROJECT_RULES.md")).toBe(true);
+    expect(docsNode?.children?.some((node) => node.path === "docs/ORG_MODEL.md")).toBe(true);
     expect(memoryNode?.children?.some((node) => node.path === "memory/project")).toBe(true);
   });
 
@@ -42,9 +43,12 @@ describe("docs repository", () => {
   it("builds semantic entry groups and queue filters from the live docs tree", async () => {
     const [groups, queueDocs] = await Promise.all([getSemanticEntryGroups(), listDocsUnder("tasks/queue")]);
 
-    expect(groups.some((group) => group.title === "项目介绍与规则")).toBe(true);
-    expect(groups.some((group) => group.title === "任务清单")).toBe(true);
-    expect(groups.some((group) => group.title === "模块索引")).toBe(true);
+    expect(groups.some((group) => group.title === "公司介绍")).toBe(true);
+    expect(groups.some((group) => group.title === "今日作战")).toBe(true);
+    expect(groups.some((group) => group.title === "组织架构")).toBe(true);
+    expect(groups.some((group) => group.title === "核心系统")).toBe(true);
+    expect(groups.some((group) => group.title === "新人入职")).toBe(true);
+    expect(groups.some((group) => group.title === "风险与发布")).toBe(true);
     expect(queueDocs).toContain("tasks/queue/task-001-repo-refactor.md");
   });
 });

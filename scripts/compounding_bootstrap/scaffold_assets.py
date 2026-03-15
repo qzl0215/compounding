@@ -114,6 +114,7 @@ def render_manifest(target: Path) -> None:
             AGENTS_PATH,
             "docs/PROJECT_RULES.md",
             "docs/ARCHITECTURE.md",
+            "docs/ORG_MODEL.md",
             "docs/DEV_WORKFLOW.md",
             "docs/AI_OPERATING_MODEL.md",
             "docs/REFACTOR_PLAN.md",

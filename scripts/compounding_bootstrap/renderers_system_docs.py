@@ -57,12 +57,13 @@ def render_architecture(resolved: dict[str, Any]) -> str:
 - 新版本先在 `releases/<release-id>` 完成构建与 smoke check，再原子切换 `current`
 - 本机或内网管理页通过 `apps/studio/src/modules/releases` 读取 registry，并触发 deploy / rollback
 
-## 角色职责
+## 组织职责映射
 
-- `Foreman`: 负责当前主线、任务边界、优先级裁决与规则同步
-- `Architect`: 负责模块边界、依赖方向、长期结构收敛
-- `Builder`: 负责最小可验证实现、收敛旧逻辑与删除兼容层
-- `Auditor`: 负责证据边界、技术债、规则漂移与回归检查
+- 组织角色的唯一真相源在 `docs/ORG_MODEL.md`
+- `总经办 / Foreman Office` 负责主线、优先级、发布裁决和组织设计
+- `PMO / 产品 / 设计` 负责需求边界、交付节奏、方案与体验质量
+- `架构 / 工程` 负责模块边界、实现、重构和发布准备
+- `质量与度量` 负责验收、回归、量化评估和 ROI 判断
 
 ## 当前重构批次
 
@@ -79,7 +80,6 @@ def render_architecture(resolved: dict[str, Any]) -> str:
 
 {evidence_boundary_block()}
 """
-
 
 def render_dev_workflow() -> str:
     return f"""# 开发工作流
@@ -117,6 +117,7 @@ def render_dev_workflow() -> str:
 ## 任务规则
 
 - 每个结构性改动必须绑定 `tasks/queue/*`
+- 默认先更新 task，再改代码；改完后补齐更新痕迹和必要回写
 - 任务至少包含 目标 / 为什么 / 范围 / 范围外 / 约束 / 关联模块 / 验收标准 / 风险 / 状态 / 更新痕迹
 - 修改结束后要同步更新任务状态和验收结果
 - `更新痕迹` 必须明确写出：
@@ -157,6 +158,7 @@ def render_ai_operating_model() -> str:
 - AI 默认围绕 `tasks/queue/*` 工作
 - 若任务不存在，先用 `scripts/ai/create-task.ts` 生成
 - 任务是 scope 和验收边界，不是可有可无的备注
+- 任务的目标是让团队高效协作，而不是制造更多流程负担
 
 ## 上下文系统
 
@@ -171,6 +173,7 @@ def render_ai_operating_model() -> str:
 - 已裁决事项进入 `memory/decisions/ADR-*.md`
 - 当前项目状态和 roadmap 在 `memory/project/*`
 - 经验重复验证后才允许升格到 `docs/*` 或 `AGENTS.md`
+- 角色职责以 `docs/ORG_MODEL.md` 为准，避免在多个文档里平行复制组织设计
 
 ## 自进化闭环
 

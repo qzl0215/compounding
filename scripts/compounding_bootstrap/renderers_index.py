@@ -18,25 +18,25 @@ def render_module_index(scan: dict[str, Any]) -> str:
         "proposal_engine",
         "engine",
     ]
-    lines = ["# Module Index", "", "## apps/studio/src/modules", ""]
+    lines = ["# 模块索引", "", "## Studio 模块", ""]
     lines.extend(f"- `{name}`: Studio 一等模块" for name in studio_modules)
-    lines.extend(["", "## scripts/compounding_bootstrap", ""])
+    lines.extend(["", "## Bootstrap 引擎模块", ""])
     lines.extend(f"- `{name}`: bootstrap 引擎模块" for name in bootstrap_modules)
-    lines.extend(["", "## Read This Before Editing", "", "- 先读对应 `module.md`", "- 再读相关 task / docs / memory / code_index", ""])
+    lines.extend(["", "## 修改前先读", "", "- 先读对应 `module.md`", "- 再读相关 task / docs / memory / code_index", ""])
     return "\n".join(lines)
 
 
 def render_dependency_map() -> str:
-    return """# Dependency Map
+    return """# 依赖图
 
-## Allowed Direction
+## 允许的依赖方向
 
 - `AGENTS.md` -> `docs/*` -> `tasks/*` -> `code_index/*` -> code
 - `apps/studio/src/app/*` -> `apps/studio/src/modules/*` -> `components/ui/*` / `lib/workspace.ts`
 - `scripts/init_project_compounding.py` -> `scripts/compounding_bootstrap/engine.py` -> split modules
 - `scripts/ai/*` -> filesystem / JSON / markdown outputs
 
-## Forbidden Direction
+## 禁止的依赖方向
 
 - app 层直接读取任意仓库文件而绕过模块仓储层
 - 模块之间跨层访问私有实现

@@ -1,5 +1,5 @@
 ---
-title: 依赖图
+title: DEPENDENCY_MAP
 doc_role: reference
 update_mode: generated
 owner_role: Builder
@@ -15,9 +15,10 @@ related_docs:
 
 ## 允许的依赖方向
 
-- `apps/studio/src/app/*` -> `apps/studio/src/modules/*`
+- `AGENTS.md` -> `docs/*` -> `tasks/*` -> `code_index/*` -> code
+- `apps/studio/src/app/*` -> `apps/studio/src/modules/*` -> `components/ui/*` / `lib/workspace.ts`
 - `scripts/init_project_compounding.py` -> `scripts/compounding_bootstrap/engine.py` -> split modules
-- `scripts/ai/*` -> docs / memory / code_index / tasks
+- `scripts/ai/*` -> filesystem / JSON / markdown outputs
 
 ## 禁止的依赖方向
 

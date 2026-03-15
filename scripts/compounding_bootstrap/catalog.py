@@ -5,6 +5,7 @@ AGENTS_SOURCE = "AGENTS.md"
 CANONICAL_DOCS = [
     "docs/PROJECT_RULES.md",
     "docs/ARCHITECTURE.md",
+    "docs/ORG_MODEL.md",
     "docs/DEV_WORKFLOW.md",
     "docs/AI_OPERATING_MODEL.md",
     "docs/REFACTOR_PLAN.md",
@@ -90,6 +91,14 @@ DOC_META = {
         "owner_role": "Architect",
         "source_of_truth": AGENTS_SOURCE,
         "related_docs": [AGENTS_SOURCE, "code_index/module-index.md", "memory/architecture/system-overview.md"],
+    },
+    "docs/ORG_MODEL.md": {
+        "title": "ORG_MODEL",
+        "doc_role": "reference",
+        "update_mode": "promote_only",
+        "owner_role": "Foreman",
+        "source_of_truth": AGENTS_SOURCE,
+        "related_docs": [AGENTS_SOURCE, "docs/ARCHITECTURE.md", "memory/project/roadmap.md"],
     },
     "docs/DEV_WORKFLOW.md": {
         "title": "DEV_WORKFLOW",

@@ -31,6 +31,7 @@ related_docs:
 - AI 默认围绕 `tasks/queue/*` 工作
 - 若任务不存在，先用 `scripts/ai/create-task.ts` 生成
 - 任务是 scope 和验收边界，不是可有可无的备注
+- 任务的目标是让团队高效协作，而不是制造更多流程负担
 
 ## 上下文系统
 
@@ -45,6 +46,7 @@ related_docs:
 - 已裁决事项进入 `memory/decisions/ADR-*.md`
 - 当前项目状态和 roadmap 在 `memory/project/*`
 - 经验重复验证后才允许升格到 `docs/*` 或 `AGENTS.md`
+- 角色职责以 `docs/ORG_MODEL.md` 为准，避免在多个文档里平行复制组织设计
 
 ## 自进化闭环
 

@@ -59,7 +59,7 @@ def render_current_state(resolved: dict[str, Any]) -> str:
 ## 项目概览
 
 - 项目名称：{resolved["project_name"]}
-- 当前阶段：中文友好文档、轻量任务清单与粘性导航收口
+- 当前阶段：公司介绍式首页与组织架构收口
 - 当前优先级：{resolved["current_priority"]}
 - 成功定义：{resolved["success_definition"]}
 - 必须保护：{must_protect}
@@ -67,10 +67,10 @@ def render_current_state(resolved: dict[str, Any]) -> str:
 
 ## 当前焦点
 
-- live 文档主标题改成中文友好写法
-- 首页、任务页、文档页、发布页统一右侧粘性导航
-- task 升级成轻量项目管理清单，并补上更新痕迹
-- 让 task / memory / code_index / roadmap 形成最小闭环
+- 首页收口成“公司介绍 + 今日作战板”，让新人看一眼就知道项目是谁、现在打什么仗、谁负责什么
+- 新增 `docs/ORG_MODEL.md`，把 7 个角色卡片和组织原则固定成唯一真相源
+- 首页和文档页的语义入口改成组织语言，而不是目录语言
+- 保持 task / memory / code_index / roadmap 的回写闭环，不引入新的平行体系
 
 ## 下一检查点
 
@@ -105,11 +105,11 @@ def render_tech_debt() -> str:
 
 
 def render_roadmap(resolved: dict[str, Any]) -> str:
-    return f"""# roadmap
+    return f"""# 路线图
 
 ## 当前阶段
 
-中文友好文档、轻量任务清单与全站粘性导航收口
+公司介绍式首页与组织架构收口
 
 ## 当前优先级
 
@@ -117,20 +117,19 @@ def render_roadmap(resolved: dict[str, Any]) -> str:
 
 ## 验收阶梯
 
-1. live 文档主标题中文友好
-2. `/`、`/tasks`、`/knowledge-base`、`/releases` 都有粘性右侧导航
-3. task 模板带更新痕迹，且 `/tasks` 可按状态查看
-4. task / memory / code_index / roadmap 的更新闭环可校验
-5. 不引入更重的 lane/PR/worktree 制度
+1. 首页能像公司介绍一样，一屏说明项目是谁、现在打什么仗、谁负责什么、下一步先看什么
+2. `docs/ORG_MODEL.md` 成为 7 个角色卡片的唯一真相源
+3. 首页和文档页的语义入口切到组织语言
+4. task / memory / code_index / roadmap 的既有闭环不被破坏
+5. 不引入更重的 lane/PR/worktree 制度，也不新增平行 read model
 
 ## 当前执行待办
 
-- [x] 把所有 live 文档的主标题和一级/二级段落标题改成中文友好写法
-- [x] 首页、任务页、文档页、发布页统一使用右侧粘性导航
-- [x] 新增 `/tasks` 页面，按 `todo / doing / blocked / done` 管理任务
-- [x] task 模板补齐“更新痕迹”
-- [x] 接入 `validate-change-trace` 自动校验
-- [x] 吸收参考项目中的轻量任务闭环，但不搬重型并行制度
+- [x] 将当前主线切换到“公司介绍式首页与组织架构收口”
+- [x] 新增 `docs/ORG_MODEL.md` 并定义 7 个核心角色
+- [x] 首页改为“我们是谁 / 今天在打什么仗 / 组织一览 / 核心系统 / 新人入职路径 / 当前风险”
+- [x] 文档页语义入口改成组织语言
+- [x] 吸收轻量任务闭环与经验写法，但不搬重型并行制度
 
 {evidence_boundary_block()}
 """

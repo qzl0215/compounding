@@ -3,6 +3,7 @@ from .renderers_docs import (
     render_ai_operating_model,
     render_architecture,
     render_dev_workflow,
+    render_org_model,
     render_project_rules,
     render_readme,
 )
@@ -23,6 +24,7 @@ __all__ = [
     "render_agents",
     "render_ai_operating_model",
     "render_architecture",
+    "render_org_model",
     "render_current_state",
     "render_dependency_map",
     "render_dev_workflow",

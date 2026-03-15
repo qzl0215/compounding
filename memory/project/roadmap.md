@@ -12,32 +12,31 @@ related_docs:
   - tasks/queue/task-001-repo-refactor.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
-# roadmap
+# 路线图
 
 ## 当前阶段
 
-中文友好文档、轻量任务清单与全站粘性导航收口
+公司介绍式首页与组织架构收口
 
 ## 当前优先级
 
-收口中文友好文档、轻量任务清单与全站粘性导航，确保每次改动都能沿 task / memory / code_index / roadmap 被追踪。
+把首页升级成创业团队 operating system，总结组织架构、今日作战、核心系统、新人入职路径与当前风险，并让这些摘要全部稳定映射到 Markdown 真相源。
 
 ## 验收阶梯
 
-1. live 文档主标题中文友好
-2. `/`、`/tasks`、`/knowledge-base`、`/releases` 都有粘性右侧导航
-3. task 模板带更新痕迹，且 `/tasks` 可按状态查看
-4. task / memory / code_index / roadmap 的更新闭环可校验
-5. 不引入更重的 lane/PR/worktree 制度
+1. 首页能像公司介绍一样，一屏说明项目是谁、现在打什么仗、谁负责什么、下一步先看什么
+2. `docs/ORG_MODEL.md` 成为 7 个角色卡片的唯一真相源
+3. 首页和文档页的语义入口切到组织语言
+4. task / memory / code_index / roadmap 的既有闭环不被破坏
+5. 不引入更重的 lane/PR/worktree 制度，也不新增平行 read model
 
 ## 当前执行待办
 
-- [x] 把所有 live 文档的主标题和一级/二级段落标题改成中文友好写法
-- [x] 首页、任务页、文档页、发布页统一使用右侧粘性导航
-- [x] 新增 `/tasks` 页面，按 `todo / doing / blocked / done` 管理任务
-- [x] task 模板补齐“更新痕迹”
-- [x] 接入 `validate-change-trace` 自动校验
-- [x] 吸收参考项目中的轻量任务闭环，但不搬重型并行制度
+- [x] 将当前主线切换到“公司介绍式首页与组织架构收口”
+- [x] 新增 `docs/ORG_MODEL.md` 并定义 7 个核心角色
+- [x] 首页改为“我们是谁 / 今天在打什么仗 / 组织一览 / 核心系统 / 新人入职路径 / 当前风险”
+- [x] 文档页语义入口改成组织语言
+- [x] 吸收轻量任务闭环与经验写法，但不搬重型并行制度
 
 ## 证据边界
 

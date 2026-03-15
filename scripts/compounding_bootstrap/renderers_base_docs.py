@@ -27,6 +27,7 @@ def render_readme(resolved: dict[str, object]) -> str:
 2. 运行 `python3 scripts/pre_mutation_check.py`
 3. 打开当前任务：`tasks/queue/*.md`
 4. 需要更深上下文时，读 `docs/PROJECT_RULES.md`、`docs/ARCHITECTURE.md`、`docs/DEV_WORKFLOW.md`、`docs/AI_OPERATING_MODEL.md`
+5. 需要理解组织分工和角色职责时，读 `docs/ORG_MODEL.md`
 
 ## 仓库结构
 
@@ -52,6 +53,7 @@ def render_agents(resolved: dict[str, object]) -> str:
 - 任务是边界，不是官僚表单；roadmap 只记录主线变化，不追踪碎片执行。
 - 规范是为了避免熵增，不是为了制造新的熵增；若规则本身拖慢主线，可直接简化规则。
 - 生产发布只认 `main`；回滚通过 release 切换完成，不通过 `git reset` 改写线上状态。
+- 组织角色只是稳定职责镜头，不是官僚部门；组织设计并入总经办，不单列 HR。
 
 ## 当前状态
 
@@ -84,6 +86,7 @@ def render_agents(resolved: dict[str, object]) -> str:
 
 - `docs/PROJECT_RULES.md`
 - `docs/ARCHITECTURE.md`
+- `docs/ORG_MODEL.md`
 - `docs/DEV_WORKFLOW.md`
 - `docs/AI_OPERATING_MODEL.md`
 - 当前任务文件
@@ -104,6 +107,7 @@ def render_agents(resolved: dict[str, object]) -> str:
 - 系统结构、模块边界、依赖方向：`docs/ARCHITECTURE.md`
 - worktree / task / PR / reporting：`docs/DEV_WORKFLOW.md`
 - AI 标准工作流、上下文和记忆回写：`docs/AI_OPERATING_MODEL.md`
+- 组织架构、角色职责、组织设计：`docs/ORG_MODEL.md`
 - 系统状态、roadmap、技术债：`memory/project/*`
 - 经验和 ADR：`memory/experience/*`、`memory/decisions/*`
 - 模块和函数导航：`code_index/*`
@@ -157,6 +161,7 @@ def render_project_rules() -> str:
 - task 是项目管理清单，不是审批流
 - roadmap 只反映主线、优先级和阶段变化
 - 记忆只沉淀可复用经验或明确裁决，不写流水账
+- 组织结构服务于高效协作，不服务于部门扩张和流程表演
 
 ## 兼容层规则
 

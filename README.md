@@ -8,6 +8,7 @@
 2. 运行 `python3 scripts/pre_mutation_check.py`
 3. 打开当前任务：`tasks/queue/*.md`
 4. 需要更深上下文时，读 `docs/PROJECT_RULES.md`、`docs/ARCHITECTURE.md`、`docs/DEV_WORKFLOW.md`、`docs/AI_OPERATING_MODEL.md`
+5. 需要理解组织分工和角色职责时，读 `docs/ORG_MODEL.md`
 
 ## 仓库结构
 
