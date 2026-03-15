@@ -2,7 +2,7 @@
 
 ## 模块目标
 
-负责只读文档门户的文档树构建、Markdown 读取、frontmatter 规范化和文档展示组件。
+负责只读文档门户的文档树构建、Markdown 读取、frontmatter 规范化、语义化 Markdown 渲染和文档展示组件。
 
 ## 输入
 
@@ -17,12 +17,15 @@
 
 - 文档树
 - 文档内容与元信息
+- 语义入口分组
 - 文档阅读组件
 
 ## 关键职责
 
 - 构建 live docs tree
 - 读取 Markdown
+- 统一 Markdown 富文本渲染
+- 从标题结构中提取页内导航和区块摘要
 - 清理 managed block 标记
 - 规范化 frontmatter
 

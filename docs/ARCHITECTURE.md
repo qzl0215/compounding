@@ -61,6 +61,13 @@ related_docs:
 4. `code_index/*` 提供上下文导航
 5. 代码模块只依赖必要的邻近模块和共享基础层
 
+## Operating Roles
+
+- `Foreman`: 负责当前主线、任务边界、优先级裁决与规则同步
+- `Architect`: 负责模块边界、依赖方向、长期结构收敛
+- `Builder`: 负责最小可验证实现、收敛旧逻辑与删除兼容层
+- `Auditor`: 负责证据边界、技术债、规则漂移与回归检查
+
 ## First Refactor Batch
 
 - 删除旧 workflow 前台和对应 API

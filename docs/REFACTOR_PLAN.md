@@ -58,12 +58,12 @@ repo/
 - `apps/studio/.next/cache/webpack/server-production/7.pack`: 714078 LOC
 - `apps/studio/.next/cache/webpack/server-production/9.pack`: 520925 LOC
 - `apps/studio/.next/cache/webpack/client-production/9.pack`: 450115 LOC
+- `apps/studio/.next/cache/webpack/client-production/2.pack`: 449381 LOC
 - `apps/studio/.next/cache/webpack/server-production/4.pack`: 429117 LOC
 - `apps/studio/.next/cache/webpack/client-production/0.pack`: 376639 LOC
-- `apps/studio/.next/cache/webpack/client-development/1.pack.gz`: 344116 LOC
+- `apps/studio/.next/cache/webpack/client-development/8.pack.gz`: 340303 LOC
 - `apps/studio/.next/cache/webpack/server-production/0.pack`: 279182 LOC
 - `apps/studio/.next/cache/webpack/server-production/5.pack`: 228625 LOC
-- `apps/studio/.next/cache/webpack/server-development/7.pack.gz`: 198472 LOC
 
 ## First Module Split Candidates
 

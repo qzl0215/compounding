@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { getDocTree, readDoc } from "../repository";
-import { DEFAULT_DOC_PATH, HOME_ENTRY_LINKS } from "@/modules/portal";
+import { getDocTree, listDocsUnder, readDoc } from "../repository";
+import { DEFAULT_DOC_PATH, HOME_ENTRY_LINKS, getSemanticEntryGroups } from "@/modules/portal";
 
 describe("docs repository", () => {
   it("keeps the live reading tree centered on AGENTS, docs, memory, code_index, and tasks", async () => {
@@ -30,9 +30,20 @@ describe("docs repository", () => {
   it("normalizes frontmatter values and strips managed block markers when reading docs", async () => {
     const rules = await readDoc("docs/PROJECT_RULES.md");
     const currentState = await readDoc("memory/project/current-state.md");
+    const functionIndex = await readDoc("code_index/function-index.json");
 
     expect(typeof rules.meta.last_reviewed_at).toBe("string");
     expect(rules.content).not.toContain("BEGIN MANAGED BLOCK");
     expect(currentState.absolutePath.endsWith("memory/project/current-state.md")).toBe(true);
+    expect(functionIndex.content).toContain("```json");
+  });
+
+  it("builds semantic entry groups and queue filters from the live docs tree", async () => {
+    const [groups, queueDocs] = await Promise.all([getSemanticEntryGroups(), listDocsUnder("tasks/queue")]);
+
+    expect(groups.some((group) => group.title === "项目介绍")).toBe(true);
+    expect(groups.some((group) => group.title === "待办任务")).toBe(true);
+    expect(groups.some((group) => group.title === "模块索引")).toBe(true);
+    expect(queueDocs).toContain("tasks/queue/task-001-repo-refactor.md");
   });
 });

@@ -1,18 +1,11 @@
 import Link from "next/link";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { Card } from "@/components/ui/card";
-import { readDoc } from "@/modules/docs";
+import { MarkdownContent } from "@/modules/docs";
 import { getGitHead, getGitStatus, getLatestPreMutationCheck } from "@/modules/git-health";
-import { extractSection, formatSyncStatus, formatWorktreeStatus, HOME_ENTRY_LINKS } from "@/modules/portal";
+import { formatSyncStatus, formatWorktreeStatus, getPortalOverview, HOME_ENTRY_LINKS } from "@/modules/portal";
 
 export default async function HomePage() {
-  const [agents, currentState, roadmap, currentTask] = await Promise.all([
-    readDoc("AGENTS.md"),
-    readDoc("memory/project/current-state.md"),
-    readDoc("memory/project/roadmap.md"),
-    readDoc("tasks/queue/task-001-repo-refactor.md")
-  ]);
+  const overview = await getPortalOverview();
   const gitHead = getGitHead();
   const gitStatus = getGitStatus();
   const latestCheck = getLatestPreMutationCheck();
@@ -35,17 +28,18 @@ export default async function HomePage() {
           </div>
         </Card>
         <Card className="space-y-4">
-          <p className="text-xs uppercase tracking-[0.28em] text-accent">当前状态</p>
-          <h3 className="text-2xl font-semibold">项目状态镜像</h3>
-          <SectionMarkdown content={currentState.content} empty="当前状态区块暂未生成。" />
+          <p className="text-xs uppercase tracking-[0.28em] text-accent">项目介绍</p>
+          <h3 className="text-2xl font-semibold">主源压缩镜像</h3>
+          <SectionContent content={overview.projectIntro} empty="项目介绍区块暂未生成。" />
         </Card>
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[0.62fr_0.38fr]">
         <Card>
-          <p className="text-xs uppercase tracking-[0.28em] text-accent">执行协议</p>
-          <h3 className="mt-2 text-2xl font-semibold">硬约束</h3>
-          <SectionMarkdown content={extractSection(agents.content, "Hard Rules")} empty="硬约束区块暂未生成。" />
+          <p className="text-xs uppercase tracking-[0.28em] text-accent">当前主线</p>
+          <h3 className="mt-2 text-2xl font-semibold">路线图与当前焦点</h3>
+          <SectionContent content={overview.currentFocus} empty="当前焦点区块暂未生成。" />
+          <SectionContent className="mt-6" content={overview.roadmap} empty="roadmap 当前主线暂未生成。" />
         </Card>
         <Card>
           <p className="text-xs uppercase tracking-[0.28em] text-accent">改动前检查</p>
@@ -67,23 +61,52 @@ export default async function HomePage() {
 
       <section className="grid gap-6 xl:grid-cols-[0.56fr_0.44fr]">
         <Card>
-          <p className="text-xs uppercase tracking-[0.28em] text-accent">路线图</p>
-          <SectionMarkdown content={roadmap.content} empty="roadmap 当前主线暂未生成。" />
+          <p className="text-xs uppercase tracking-[0.28em] text-accent">当前待办</p>
+          <div className="mt-4 grid gap-4">
+            {overview.tasks.length > 0 ? (
+              overview.tasks.map((task) => (
+                <Link
+                  key={task.path}
+                  href={`/knowledge-base?path=${encodeURIComponent(task.path)}`}
+                  className="rounded-3xl border border-white/8 bg-white/[0.03] p-4 transition hover:border-accent/30 hover:bg-white/[0.05]"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.24em] text-accent">{task.status}</p>
+                      <h3 className="mt-2 text-lg font-semibold text-white">{task.title}</h3>
+                    </div>
+                    <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-xs text-white/62">任务</span>
+                  </div>
+                  <p className="mt-3 text-sm leading-6 text-white/72">{task.goal}</p>
+                </Link>
+              ))
+            ) : (
+              <p className="text-sm text-white/60">当前没有可视化任务。</p>
+            )}
+          </div>
         </Card>
         <Card>
-          <p className="text-xs uppercase tracking-[0.28em] text-accent">当前任务</p>
-          <SectionMarkdown content={currentTask.content} empty="任务队列暂未生成。" />
+          <p className="text-xs uppercase tracking-[0.28em] text-accent">记忆与决策</p>
+          <div className="mt-4 space-y-4">
+            {overview.memory.map((entry) => (
+              <PreviewCard key={entry.path} entry={entry} />
+            ))}
+          </div>
         </Card>
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[0.56fr_0.44fr]">
         <Card>
-          <p className="text-xs uppercase tracking-[0.28em] text-accent">必读清单</p>
-          <SectionMarkdown content={extractSection(agents.content, "Required Reads")} empty="必读清单区块暂未生成。" />
+          <p className="text-xs uppercase tracking-[0.28em] text-accent">项目索引</p>
+          <div className="mt-4 space-y-4">
+            {overview.index.map((entry) => (
+              <PreviewCard key={entry.path} entry={entry} />
+            ))}
+          </div>
         </Card>
         <Card>
-          <p className="text-xs uppercase tracking-[0.28em] text-accent">默认工作顺序</p>
-          <SectionMarkdown content={extractSection(agents.content, "Working Order")} empty="工作顺序区块暂未生成。" />
+          <p className="text-xs uppercase tracking-[0.28em] text-accent">代理职责</p>
+          <SectionContent content={overview.roleOverview} empty="职责区块暂未生成。" />
         </Card>
       </section>
     </div>
@@ -101,12 +124,25 @@ function Pill({ href, label }: { href: string; label: string }) {
   );
 }
 
-function SectionMarkdown({ content, empty }: { content: string | null; empty: string }) {
+function SectionContent({ content, empty, className }: { content: string | null; empty: string; className?: string }) {
   return content ? (
-    <div className="prose prose-invert mt-4 max-w-none prose-p:text-white/78 prose-li:text-white/78 prose-strong:text-white prose-code:text-accent">
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
-    </div>
+    <MarkdownContent className={className ?? "mt-4"} compact content={content} />
   ) : (
-    <p className="mt-4 text-sm text-white/60">{empty}</p>
+    <p className={className ? `${className} text-sm text-white/60` : "mt-4 text-sm text-white/60"}>{empty}</p>
+  );
+}
+
+function PreviewCard({ entry }: { entry: { label: string; path: string; content: string } }) {
+  return (
+    <div className="rounded-3xl border border-white/8 bg-white/[0.03] p-4">
+      <p className="text-xs uppercase tracking-[0.24em] text-accent">{entry.label}</p>
+      <Link
+        href={`/knowledge-base?path=${encodeURIComponent(entry.path)}`}
+        className="mt-2 inline-flex items-center gap-2 font-mono text-[11px] text-white/38 transition hover:text-accent"
+      >
+        {entry.path}
+      </Link>
+      <MarkdownContent className="mt-4" compact content={entry.content} />
+    </div>
   );
 }

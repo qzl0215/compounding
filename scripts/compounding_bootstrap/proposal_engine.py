@@ -41,6 +41,7 @@ def create_proposal(config_path: Path, target: Path, prompt_file: Path) -> str:
             current_block=before,
             prompt=prompt,
             fallback=synthesize_block,
+            repo_root=target,
         )
         after = generation.content
         if before.strip() == after.strip():
@@ -217,4 +218,3 @@ def update_dev_workflow_lines(lines: list[str], prompt: str) -> list[str]:
             except ValueError:
                 updated.append(addition)
     return updated
-

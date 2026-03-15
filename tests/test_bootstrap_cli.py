@@ -1,8 +1,10 @@
 import json
+import os
 import shutil
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 from scripts.compounding_bootstrap.engine import (
@@ -16,6 +18,7 @@ from scripts.compounding_bootstrap.engine import (
     scaffold,
     validate_config_file,
 )
+from scripts.compounding_bootstrap.proposal_generation import resolve_provider_config
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -211,6 +214,21 @@ class BootstrapCliTests(unittest.TestCase):
         self.assertIn("head_sha", payload)
         self.assertIn("sync_status", payload)
         self.assertIn("next_action", payload)
+
+    def test_resolve_provider_config_supports_volcano_aliases(self) -> None:
+        file_env = {
+            "VOLCANO_API_KEY": "ark-key",
+            "MODEL_NAME": "ark-model",
+            "VOLCANO_BASE_URL": "https://volcano.example/v1",
+        }
+
+        with patch.dict(os.environ, {}, clear=True):
+            payload = resolve_provider_config(file_env)
+
+        self.assertEqual(payload["provider"], "ark-openai-compatible")
+        self.assertEqual(payload["api_key"], "ark-key")
+        self.assertEqual(payload["model"], "ark-model")
+        self.assertEqual(payload["base_url"], "https://volcano.example/v1")
 
 
 if __name__ == "__main__":

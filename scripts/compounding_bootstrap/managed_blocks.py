@@ -86,6 +86,7 @@ def build_document_text(
     suffix = suffix_after_managed_block(existing_body, block_id) if existing_body else ""
     if not suffix.strip():
         suffix = default_suffix.strip()
+    suffix = normalize_suffix(suffix, default_suffix)
 
     base_body = body_without_suffix(existing_body, block_id)
     rendered_body = replace_managed_block(base_body, block_content, block_id)
@@ -94,6 +95,18 @@ def build_document_text(
     else:
         rendered_body = f"{rendered_body.rstrip()}\n"
     return frontmatter_text(merged_meta) + rendered_body
+
+
+def normalize_suffix(suffix: str, default_suffix: str) -> str:
+    normalized = suffix.strip()
+    default = default_suffix.strip()
+    if not default or not normalized:
+        return normalized
+    lines = [line for line in normalized.splitlines() if line.strip()]
+    default_lines = [line for line in default.splitlines() if line.strip()]
+    if default_lines and len(lines) % len(default_lines) == 0 and lines == default_lines * (len(lines) // len(default_lines)):
+        return default
+    return normalized
 
 
 def write_managed_document(

@@ -13,16 +13,7 @@ related_docs:
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # Dependency Map
 
-## Allowed Direction
-
-- `AGENTS.md` -> `docs/*` -> `tasks/*` -> `code_index/*` -> code
-- `apps/studio/src/app/*` -> `apps/studio/src/modules/*` -> `components/ui/*` / `lib/workspace.ts`
+- `apps/studio/src/app/*` -> `apps/studio/src/modules/*`
 - `scripts/init_project_compounding.py` -> `scripts/compounding_bootstrap/engine.py` -> split modules
-- `scripts/ai/*` -> filesystem / JSON / markdown outputs
-
-## Forbidden Direction
-
-- app 层直接读取任意仓库文件而绕过模块仓储层
-- 模块之间跨层访问私有实现
-- 任务、记忆、索引互相覆盖职责
+- `scripts/ai/*` -> docs / memory / code_index / tasks
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

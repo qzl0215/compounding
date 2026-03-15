@@ -35,3 +35,142 @@ body {
   border-radius: 9999px;
   background: rgba(57, 208, 255, 0.24);
 }
+
+@layer components {
+  .markdown-shell {
+    @apply max-w-none text-[15px] leading-7 text-white/78;
+  }
+
+  .markdown-shell > :first-child {
+    @apply mt-0;
+  }
+
+  .markdown-shell > * + * {
+    @apply mt-5;
+  }
+
+  .markdown-shell h1,
+  .markdown-shell h2,
+  .markdown-shell h3 {
+    @apply mt-8 text-white;
+  }
+
+  .markdown-shell h1 {
+    @apply text-3xl font-semibold tracking-tight;
+  }
+
+  .markdown-shell h2,
+  .markdown-shell h3 {
+    @apply rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 font-semibold shadow-[0_16px_60px_rgba(0,0,0,0.16)];
+  }
+
+  .markdown-shell h2 {
+    @apply text-2xl;
+  }
+
+  .markdown-shell h3 {
+    @apply text-xl;
+  }
+
+  .markdown-shell h2[data-tone="priority"],
+  .markdown-shell h3[data-tone="priority"] {
+    @apply border-accent/30 bg-accent/10;
+  }
+
+  .markdown-shell h2[data-tone="risk"],
+  .markdown-shell h3[data-tone="risk"] {
+    @apply border-amber-300/25 bg-amber-300/8;
+  }
+
+  .markdown-shell h2[data-tone="highlight"],
+  .markdown-shell h3[data-tone="highlight"] {
+    @apply border-white/12 bg-white/[0.05];
+  }
+
+  .markdown-shell .heading-anchor {
+    @apply inline-flex w-full items-center justify-between gap-4 no-underline;
+  }
+
+  .markdown-shell .anchor-mark {
+    @apply text-sm font-mono text-accent/0 transition group-hover:text-accent/85;
+  }
+
+  .markdown-shell p,
+  .markdown-shell li {
+    @apply text-white/78;
+  }
+
+  .markdown-shell strong {
+    @apply font-semibold text-white;
+  }
+
+  .markdown-shell ul,
+  .markdown-shell ol {
+    @apply space-y-2 pl-5;
+  }
+
+  .markdown-shell li::marker {
+    color: rgba(57, 208, 255, 0.85);
+  }
+
+  .markdown-shell a.markdown-link {
+    @apply rounded-md text-accent underline decoration-accent/40 underline-offset-4 transition hover:text-white hover:decoration-accent;
+  }
+
+  .markdown-shell .markdown-callout {
+    @apply rounded-3xl border border-white/10 bg-white/[0.04] px-5 py-4 text-white/80 shadow-[0_18px_60px_rgba(0,0,0,0.18)];
+  }
+
+  .markdown-shell .markdown-pre {
+    @apply overflow-x-auto rounded-3xl border border-white/10 bg-[#02050b] p-4 shadow-[0_20px_80px_rgba(0,0,0,0.22)];
+  }
+
+  .markdown-shell .markdown-inline-code {
+    @apply rounded-lg border border-accent/20 bg-accent/10 px-1.5 py-0.5 font-mono text-[0.92em] text-accent;
+  }
+
+  .markdown-shell .markdown-code-block {
+    @apply font-mono text-[13px] leading-6 text-white/86;
+  }
+
+  .markdown-shell .markdown-table-shell {
+    @apply overflow-x-auto rounded-3xl border border-white/10 bg-white/[0.03];
+  }
+
+  .markdown-shell .markdown-table {
+    @apply min-w-full border-collapse text-sm;
+  }
+
+  .markdown-shell .markdown-th {
+    @apply border-b border-white/10 bg-white/[0.04] px-4 py-3 text-left font-medium text-white;
+  }
+
+  .markdown-shell .markdown-td {
+    @apply border-t border-white/8 px-4 py-3 align-top text-white/76;
+  }
+
+  .markdown-shell .markdown-hr {
+    @apply my-8 border-white/10;
+  }
+
+  .markdown-compact {
+    @apply text-sm leading-6;
+  }
+
+  .markdown-compact h1 {
+    @apply text-2xl;
+  }
+
+  .markdown-compact h2 {
+    @apply text-xl;
+  }
+
+  .markdown-compact h3 {
+    @apply text-lg;
+  }
+
+  .markdown-compact h2,
+  .markdown-compact h3 {
+    @apply px-3 py-2;
+  }
+}

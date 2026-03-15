@@ -1,9 +1,7 @@
-import type { ReactNode } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import type { DocMeta } from "../types";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { extractHeadings, MarkdownContent } from "./markdown-content";
 
 type Props = {
   title: string;
@@ -36,18 +34,7 @@ export function DocViewer({ title, meta, content, absolutePath }: Props) {
           <Meta title="真相来源" value={meta.source_of_truth ?? "self"} />
           <Meta title="状态" value={formatStatus(meta.status ?? "active")} />
         </div>
-        <div className="prose prose-invert max-w-none prose-headings:font-semibold prose-hr:border-white/10 prose-p:text-white/78 prose-strong:text-white prose-code:text-accent prose-pre:border prose-pre:border-white/8 prose-pre:bg-black/35 prose-table:block prose-table:w-full prose-table:overflow-x-auto prose-th:border prose-th:border-white/12 prose-th:bg-white/[0.04] prose-th:px-3 prose-th:py-2 prose-td:border prose-td:border-white/10 prose-td:px-3 prose-td:py-2">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            components={{
-              h1: ({ children }) => renderHeading("h1", children),
-              h2: ({ children }) => renderHeading("h2", children),
-              h3: ({ children }) => renderHeading("h3", children)
-            }}
-          >
-            {content}
-          </ReactMarkdown>
-        </div>
+        <MarkdownContent content={content} />
         <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-4">
           <p className="text-sm font-medium text-white">相关文档</p>
           <div className="mt-3 flex flex-wrap gap-2">
@@ -86,48 +73,6 @@ function Meta({ title, value }: { title: string; value: string }) {
       <p className="mt-2 text-sm text-white/78">{value}</p>
     </div>
   );
-}
-
-function renderHeading(tag: "h1" | "h2" | "h3", children: ReactNode) {
-  const text = flattenText(children);
-  const id = slugify(text);
-  const Heading = tag;
-  return (
-    <Heading id={id} className="scroll-mt-24">
-      {children}
-    </Heading>
-  );
-}
-
-function flattenText(node: ReactNode): string {
-  if (typeof node === "string" || typeof node === "number") {
-    return String(node);
-  }
-  if (Array.isArray(node)) {
-    return node.map(flattenText).join("");
-  }
-  if (node && typeof node === "object" && "props" in node) {
-    return flattenText((node as { props?: { children?: ReactNode } }).props?.children ?? "");
-  }
-  return "";
-}
-
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
-    .replace(/\s+/g, "-");
-}
-
-function extractHeadings(content: string) {
-  return content
-    .split("\n")
-    .filter((line) => /^#{1,3}\s+/.test(line))
-    .map((line) => {
-      const label = line.replace(/^#{1,3}\s+/, "").trim();
-      return { label, id: slugify(label) };
-    });
 }
 
 function formatDocRole(value: string) {

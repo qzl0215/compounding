@@ -47,13 +47,19 @@ export async function listMarkdownDocs() {
   return flat;
 }
 
+export async function listDocsUnder(prefix: string) {
+  const normalized = prefix.replace(/^\/+/, "").replace(/\/+$/, "");
+  return (await listMarkdownDocs()).filter((item) => item === normalized || item.startsWith(`${normalized}/`));
+}
+
 export async function readDoc(relativePath: string) {
   const normalized = relativePath.replace(/^\/+/, "");
   const absolute = resolveDocPath(normalized);
   const raw = await fs.readFile(absolute, "utf8");
   const { content, data } = matter(raw);
+  const renderedContent = absolute.endsWith(".json") ? renderJsonAsMarkdown(raw) : sanitizeManagedBlocks(content);
   return {
-    content: sanitizeManagedBlocks(content),
+    content: renderedContent,
     meta: normalizeFrontmatter(data) as DocMeta,
     absolutePath: absolute
   };
@@ -102,6 +108,14 @@ function sanitizeManagedBlocks(content: string) {
     .replace(/<!-- BEGIN MANAGED BLOCK: [A-Z_]+ -->\n?/g, "")
     .replace(/\n?<!-- END MANAGED BLOCK: [A-Z_]+ -->/g, "")
     .trim();
+}
+
+function renderJsonAsMarkdown(raw: string) {
+  try {
+    return `\`\`\`json\n${JSON.stringify(JSON.parse(raw), null, 2)}\n\`\`\``;
+  } catch {
+    return `\`\`\`json\n${raw.trim()}\n\`\`\``;
+  }
 }
 
 function normalizeFrontmatter(value: unknown): unknown {
