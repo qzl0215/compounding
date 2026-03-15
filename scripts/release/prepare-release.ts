@@ -9,6 +9,7 @@ const {
   releaseIdFor,
   resolveCommit,
   upsertRelease,
+  withReleaseLock,
 } = require("./lib.ts");
 
 function parseArg(name, fallback = null) {
@@ -26,63 +27,65 @@ function main() {
   let record;
 
   try {
-    const commitSha = resolveCommit(ref);
-    const releaseId = releaseIdFor(commitSha);
-    const releasePath = path.join(layout.releasesDir, releaseId);
-    const current = currentActiveRelease();
-    const summary = changeSummary(current?.commit_sha || null, commitSha);
-    const notes = [];
+    record = withReleaseLock(() => {
+      const commitSha = resolveCommit(ref);
+      const releaseId = releaseIdFor(commitSha);
+      const releasePath = path.join(layout.releasesDir, releaseId);
+      const current = currentActiveRelease();
+      const summary = changeSummary(current?.commit_sha || null, commitSha);
+      const notes = [];
 
-    git(["worktree", "add", "--detach", releasePath, commitSha]);
-    try {
-      git(["clean", "-fdx"], releasePath);
-      require("node:child_process").execFileSync("pnpm", ["install", "--frozen-lockfile=false"], {
-        cwd: releasePath,
-        stdio: ["ignore", "pipe", "pipe"],
-      });
-      require("node:child_process").execFileSync("pnpm", ["build"], {
-        cwd: releasePath,
-        stdio: ["ignore", "pipe", "pipe"],
-      });
+      git(["worktree", "add", "--detach", releasePath, commitSha]);
+      try {
+        git(["clean", "-fdx"], releasePath);
+        require("node:child_process").execFileSync("pnpm", ["install", "--frozen-lockfile=false"], {
+          cwd: releasePath,
+          stdio: ["ignore", "pipe", "pipe"],
+        });
+        require("node:child_process").execFileSync("pnpm", ["build"], {
+          cwd: releasePath,
+          stdio: ["ignore", "pipe", "pipe"],
+        });
 
-      const buildIdPath = path.join(releasePath, "apps", "studio", ".next", "BUILD_ID");
-      const smokePassed = fs.existsSync(buildIdPath);
-      if (!smokePassed) {
-        notes.push("BUILD_ID missing after build.");
+        const buildIdPath = path.join(releasePath, "apps", "studio", ".next", "BUILD_ID");
+        const smokePassed = fs.existsSync(buildIdPath);
+        if (!smokePassed) {
+          notes.push("BUILD_ID missing after build.");
+        }
+
+        return {
+          release_id: releaseId,
+          commit_sha: commitSha,
+          tag: null,
+          source_ref: ref,
+          created_at: new Date().toISOString(),
+          status: "prepared",
+          build_result: "passed",
+          smoke_result: smokePassed ? "passed" : "failed",
+          cutover_at: null,
+          rollback_from: null,
+          release_path: releasePath,
+          change_summary: summary,
+          notes,
+        };
+      } catch (error) {
+        return {
+          release_id: releaseId,
+          commit_sha,
+          tag: null,
+          source_ref: ref,
+          created_at: new Date().toISOString(),
+          status: "failed",
+          build_result: "failed",
+          smoke_result: "failed",
+          cutover_at: null,
+          rollback_from: null,
+          release_path: releasePath,
+          change_summary: summary,
+          notes: [error instanceof Error ? error.message : "release build failed"],
+        };
       }
-
-      record = {
-        release_id: releaseId,
-        commit_sha: commitSha,
-        tag: null,
-        source_ref: ref,
-        created_at: new Date().toISOString(),
-        status: "prepared",
-        build_result: "passed",
-        smoke_result: smokePassed ? "passed" : "failed",
-        cutover_at: null,
-        rollback_from: null,
-        release_path: releasePath,
-        change_summary: summary,
-        notes,
-      };
-    } catch (error) {
-      record = {
-        release_id: releaseId,
-        commit_sha,
-        tag: null,
-        source_ref: ref,
-        created_at: new Date().toISOString(),
-        status: "failed",
-        build_result: "failed",
-        smoke_result: "failed",
-        cutover_at: null,
-        rollback_from: null,
-        release_path: releasePath,
-        change_summary: summary,
-        notes: [error instanceof Error ? error.message : "release build failed"],
-      };
-    }
+    });
   } catch (error) {
     record = {
       release_id: "unresolved",

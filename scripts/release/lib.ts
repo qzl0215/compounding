@@ -19,6 +19,7 @@ function layoutPaths() {
     currentLink: path.join(root, "current"),
     registryPath: path.join(root, "registry.json"),
     sharedEnvPath: path.join(root, "shared", "portal.env"),
+    lockPath: path.join(root, "release.lock"),
   };
 }
 
@@ -44,11 +45,7 @@ function bootstrapSharedEnv(sharedEnvPath) {
 }
 
 function emptyRegistry() {
-  return {
-    active_release_id: null,
-    updated_at: null,
-    releases: [],
-  };
+  return { active_release_id: null, updated_at: null, releases: [] };
 }
 
 function readRegistry() {
@@ -189,7 +186,7 @@ function markActive(releaseId, rollbackFrom = null) {
       };
     }
     if (item.status === "active") {
-      return { ...item, status: rollbackFrom ? "rolled_back" : "superseded" };
+      return { ...item, status: rollbackFrom ? "rolled_back" : "superseded", rollback_from: null };
     }
     return item;
   });
@@ -201,7 +198,28 @@ function markActive(releaseId, rollbackFrom = null) {
 function currentActiveRelease(registry = readRegistry()) {
   return registry.releases.find((item) => item.release_id === registry.active_release_id) || null;
 }
+function withReleaseLock(callback) {
+  const { lockPath } = ensureLayout();
+  let descriptor;
+  try {
+    descriptor = fs.openSync(lockPath, "wx");
+  } catch (error) {
+    if (error && error.code === "EEXIST") {
+      throw new Error("Another release operation is already running.");
+    }
+    throw error;
+  }
 
+  try {
+    fs.writeFileSync(descriptor, JSON.stringify({ pid: process.pid, created_at: new Date().toISOString() }));
+    return callback();
+  } finally {
+    if (descriptor !== undefined) {
+      fs.closeSync(descriptor);
+    }
+    fs.rmSync(lockPath, { force: true });
+  }
+}
 module.exports = {
   changeSummary,
   currentActiveRelease,
@@ -221,6 +239,7 @@ module.exports = {
   runtimeRoot,
   updateCurrentSymlink,
   upsertRelease,
+  withReleaseLock,
   writeManifest,
   writeRegistry,
 };

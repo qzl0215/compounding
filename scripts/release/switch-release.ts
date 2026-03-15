@@ -1,4 +1,4 @@
-const { ensureReleaseTag, markActive, readManifest, readRegistry, releaseReload, updateCurrentSymlink } = require("./lib.ts");
+const { ensureReleaseTag, markActive, readManifest, readRegistry, releaseReload, updateCurrentSymlink, upsertRelease, withReleaseLock } = require("./lib.ts");
 
 function parseArg(name) {
   const index = process.argv.indexOf(name);
@@ -16,25 +16,28 @@ if (!releaseId) {
 }
 
 try {
-  const record = readManifest(releaseId);
-  if (record.build_result !== "passed" || record.smoke_result !== "passed") {
-    throw new Error(`Release ${releaseId} is not healthy enough for cutover.`);
-  }
+  const result = withReleaseLock(() => {
+    const record = readManifest(releaseId);
+    if (record.build_result !== "passed" || record.smoke_result !== "passed") {
+      throw new Error(`Release ${releaseId} is not healthy enough for cutover.`);
+    }
 
-  const tag = ensureReleaseTag(`release-${releaseId}`, record.commit_sha);
-  updateCurrentSymlink(releaseId);
-  const reloadNote = releaseReload();
-  const registry = markActive(releaseId);
-  const updated = readRegistry().releases.find((item) => item.release_id === releaseId) || { ...record, tag };
-  updated.tag = tag;
-  require("./lib.ts").upsertRelease({ ...updated, tag, notes: [...updated.notes, reloadNote] });
+    const tag = ensureReleaseTag(`release-${releaseId}`, record.commit_sha);
+    updateCurrentSymlink(releaseId);
+    const reloadNote = releaseReload();
+    markActive(releaseId);
+    const updated = readRegistry().releases.find((item) => item.release_id === releaseId) || { ...record, tag };
+    const finalRelease = { ...updated, tag, notes: [...updated.notes, reloadNote] };
+    upsertRelease(finalRelease);
+    return { registry: readRegistry(), finalRelease };
+  });
 
   console.log(
     JSON.stringify({
       ok: true,
       message: `Release ${releaseId} is now live.`,
-      release: { ...updated, tag },
-      registry,
+      release: result.finalRelease,
+      registry: result.registry,
     })
   );
 } catch (error) {

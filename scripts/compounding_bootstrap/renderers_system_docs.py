@@ -125,6 +125,7 @@ def render_dev_workflow() -> str:
 - 新版本必须先在后台 release 目录完成准备，再切换 `current`
 - 切换失败前不得影响当前线上版本
 - 回滚通过 `scripts/release/rollback-release.ts` 或本机/内网发布管理页执行
+- 发布和回滚动作必须串行执行，release lock 未释放前不得触发第二个动作
 - 对于 Next.js 门户，服务重载采用 `systemctl restart` 或等价最小重启
 
 {evidence_boundary_block()}
@@ -195,4 +196,3 @@ def render_ai_operating_model() -> str:
 
 {evidence_boundary_block()}
 """
-

@@ -76,6 +76,7 @@ def render_agents(resolved: dict[str, object]) -> str:
 - 若 worktree 不干净、存在 staged changes、或分支 `behind/diverged`，先整理或 `git pull --rebase`。
 - 可在本地短分支完成开发，但发布动作只认 `main`。
 - 发布前必须通过 release build 与 smoke gate；线上回滚走 release registry，不走 git reset。
+- 发布和回滚动作必须串行执行，禁止并发切换 release。
 
 ## Required Reads
 
