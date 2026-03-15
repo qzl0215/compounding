@@ -27,7 +27,7 @@ export function AppShell({ children }: PropsWithChildren) {
             <div>
               <p className="text-xs uppercase tracking-[0.32em] text-accent">AI-Native Repo</p>
               <h1 className="mt-3 font-mono text-2xl font-semibold text-white">指挥中枢</h1>
-              <p className="mt-2 text-sm text-white/65">以 AGENTS 入口合约驱动的只读仓库门户</p>
+              <p className="mt-2 text-sm text-white/65">像创业团队一样运转的 AI 操作系统</p>
             </div>
             <Badge tone="accent">V4</Badge>
           </div>
@@ -62,9 +62,9 @@ export function AppShell({ children }: PropsWithChildren) {
             <p className="text-xs uppercase tracking-[0.28em] text-white/45">默认法则</p>
             <ul className="mt-3 space-y-2 text-sm text-white/72">
               <li>AGENTS.md 是薄入口合约</li>
-              <li>docs / memory / tasks / code_index 四层协作</li>
-              <li>先任务，后改动</li>
-              <li>先记忆，后升格</li>
+              <li>roadmap 定战略，蓝图拆战术</li>
+              <li>task 负责执行边界</li>
+              <li>memory 负责沉淀，index 负责导航</li>
               <li>改动前先做 preflight</li>
               <li>main 是唯一生产主线</li>
               <li>发布通过 current 软链切换</li>

@@ -37,6 +37,16 @@
 - `apps/studio/src/modules/tasks`
 - `scripts/compounding_bootstrap/*`
 
+## 计划
+
+- 先把组织模型收成单一真相源
+- 再把首页从目录入口改成公司介绍式总览
+- 最后同步文档语义分组和相关文档
+
+## 发布说明
+
+这轮主要影响首页与文档入口，不涉及发布机制调整；上线前重点验收首页读感和组织卡片映射正确性。
+
 ## 验收标准
 
 - 首页能清晰展示：我们是谁、今天在打什么仗、组织一览、核心系统、新人入职路径、当前风险
@@ -61,3 +71,7 @@ done
 - 索引：`code_index/module-index.md`, `code_index/dependency-map.md`
 - 路线图：`memory/project/roadmap.md`
 - 文档：`AGENTS.md`, `docs/ARCHITECTURE.md`, `docs/PROJECT_RULES.md`, `docs/AI_OPERATING_MODEL.md`, `docs/ORG_MODEL.md`
+
+## 复盘
+
+组织真相源和首页组织语言已经建立，但“公司介绍页”仍不够像经营驾驶舱，这也是后续 task-004 接手的原因。

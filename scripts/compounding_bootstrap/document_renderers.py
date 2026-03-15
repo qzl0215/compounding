@@ -7,12 +7,11 @@ from .renderers_docs import (
     render_project_rules,
     render_readme,
 )
+from .renderers_experience_docs import render_adr, render_experience_entry, render_experience_readme
 from .renderers_index import render_dependency_map, render_function_index, render_function_index_json, render_module_index
 from .renderers_memory import (
-    render_adr,
     render_current_state,
-    render_experience_entry,
-    render_experience_readme,
+    render_operating_blueprint,
     render_roadmap,
     render_system_overview,
     render_tech_debt,
@@ -33,6 +32,7 @@ __all__ = [
     "render_function_index",
     "render_function_index_json",
     "render_module_index",
+    "render_operating_blueprint",
     "render_project_rules",
     "render_readme",
     "render_refactor_plan",

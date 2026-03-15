@@ -1,7 +1,7 @@
 export type HomeEntryLink = {
   href: string;
   label: string;
-  scope: "agents" | "roadmap" | "memory" | "tasks";
+  scope: "agents" | "roadmap" | "memory" | "tasks" | "release";
 };
 
 export type SemanticEntry = {
@@ -31,17 +31,33 @@ export type OverviewSnippet = {
 
 export type CompanySnapshot = {
   oneLiner: string;
-  currentPhase: string;
+  mission: string;
+  vision: string;
+  values: string[];
   successDefinition: string;
   mustProtect: string[];
 };
 
-export type BattleBoard = {
+export type RoadmapSnapshot = {
+  currentPhase: string;
   currentPriority: string;
-  currentFocus: string[];
+  nextMilestone: string;
+  successCriteria: string[];
+};
+
+export type BlueprintGoal = {
+  title: string;
+  releaseStandards: string[];
+  relatedTasks: string[];
+};
+
+export type BlueprintBoard = {
+  currentMilestone: string;
+  currentPriority: string;
   currentMainline: string;
   doingTasks: TaskSummary[];
-  blockedTasks: TaskSummary[];
+  blockedItems: string[];
+  goals: BlueprintGoal[];
   nextCheckpoint: string[];
 };
 
@@ -65,18 +81,11 @@ export type SystemCard = {
   href: string;
 };
 
-export type OnboardingStep = {
-  title: string;
-  summary: string;
-  href: string;
-};
-
 export type PortalOverview = {
   homeLinks: HomeEntryLink[];
-  company: CompanySnapshot;
-  battle: BattleBoard;
+  identity: CompanySnapshot;
+  roadmap: RoadmapSnapshot;
+  blueprint: BlueprintBoard;
   org: OrgRoleGroup[];
-  systems: SystemCard[];
-  onboarding: OnboardingStep[];
-  risks: SystemCard[];
+  knowledgeRisk: SystemCard[];
 };

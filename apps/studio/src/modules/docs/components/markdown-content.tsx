@@ -24,7 +24,7 @@ function renderHeading(tag: "h1" | "h2" | "h3", children: ReactNode) {
   const id = slugify(text);
   const Heading = tag;
   return (
-    <Heading id={id} data-tone={headingTone(text)} className="group scroll-mt-24">
+    <Heading id={id} className="group scroll-mt-24">
       <a href={`#${id}`} className="heading-anchor">
         <span>{children}</span>
         <span aria-hidden className="anchor-mark">
@@ -46,20 +46,6 @@ function flattenText(node: ReactNode): string {
     return flattenText((node as { props?: { children?: ReactNode } }).props?.children ?? "");
   }
   return "";
-}
-
-function headingTone(value: string) {
-  const label = value.toLowerCase();
-  if (/(risk|risks|debt|风险|技术债)/.test(label)) {
-    return "risk";
-  }
-  if (/(priority|state|status|roadmap|focus|todo|current|待办|优先级|状态|主线|checkpoint)/.test(label)) {
-    return "priority";
-  }
-  if (/(acceptance|goal|success|roles|职责|介绍|overview|snapshot|index|module)/.test(label)) {
-    return "highlight";
-  }
-  return "default";
 }
 
 function slugify(value: string) {

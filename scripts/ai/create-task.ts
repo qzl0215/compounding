@@ -14,7 +14,7 @@ const filled = template
   .replace("# 任务模板", `# 任务 ${taskId}`)
   .replace("## 目标\n", `## 目标\n\n${goal}\n\n`)
   .replace("## 为什么\n", `## 为什么\n\n${why}\n\n`)
-  .replace("## 状态\n", "## 状态\n\n todo\n");
+  .replace("## 状态\n", "## 状态\n\ntodo\n");
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, filled);
 console.log(outputPath);

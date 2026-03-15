@@ -24,7 +24,7 @@ def render_architecture(resolved: dict[str, Any]) -> str:
 - `apps/studio/`: 只读文档门户
 - `scripts/compounding_bootstrap/`: scaffold / audit / proposal 引擎
 - `docs/`: 规则层、架构层、流程层、AI operating model、重构计划
-- `memory/`: 架构记忆、项目状态、经验、ADR
+- `memory/`: 架构记忆、项目状态、运营蓝图、经验、ADR
 - `code_index/`: 模块索引、依赖图、函数索引
 - `tasks/`: 模板、队列、归档
 
@@ -41,10 +41,12 @@ def render_architecture(resolved: dict[str, Any]) -> str:
 ## 依赖方向
 
 1. `AGENTS.md` 提供高频入口
-2. `docs/*` 提供长期规则、架构和流程
-3. `tasks/*` 给出当前变更边界
-4. `code_index/*` 提供上下文导航
-5. 代码模块只依赖必要的邻近模块和共享基础层
+2. `memory/project/roadmap.md` 提供战略层真相
+3. `memory/project/operating-blueprint.md` 提供当前里程碑战术拆解
+4. `tasks/*` 给出当前变更边界
+5. `docs/*` 提供长期规则、架构和流程
+6. `code_index/*` 提供上下文导航
+7. 代码模块只依赖必要的邻近模块和共享基础层
 
 ## 生产发布运行时
 
@@ -94,13 +96,15 @@ def render_dev_workflow() -> str:
 
 1. 先读 `AGENTS.md`
 2. 再读 `docs/PROJECT_RULES.md`、`docs/ARCHITECTURE.md`
-3. 再读当前任务文件、相关 `module.md`、`code_index/*`
-4. 运行 `python3 scripts/pre_mutation_check.py`
-5. 完成最小可验证改动
-6. 更新 `task / memory / code_index / docs`
-7. 完成 review，并让改动进入 `main`
-8. 运行 `node --experimental-strip-types scripts/release/prepare-release.ts --ref main`
-9. 构建与 smoke 通过后，再运行 `node --experimental-strip-types scripts/release/switch-release.ts --release <release-id>`
+3. 再读 `memory/project/roadmap.md` 和 `memory/project/operating-blueprint.md`
+4. 若里程碑、蓝图或关键发布标准不清晰，先创建规划 task，并与用户共商后再继续
+5. 再读当前任务文件、相关 `module.md`、`code_index/*`
+6. 运行 `python3 scripts/pre_mutation_check.py`
+7. 完成最小可验证改动
+8. 更新 `task / memory / code_index / docs`
+9. 完成 review，并让改动进入 `main`
+10. 运行 `node --experimental-strip-types scripts/release/prepare-release.ts --ref main`
+11. 构建与 smoke 通过后，再运行 `node --experimental-strip-types scripts/release/switch-release.ts --release <release-id>`
 
 ## 汇报契约
 
@@ -118,7 +122,7 @@ def render_dev_workflow() -> str:
 
 - 每个结构性改动必须绑定 `tasks/queue/*`
 - 默认先更新 task，再改代码；改完后补齐更新痕迹和必要回写
-- 任务至少包含 目标 / 为什么 / 范围 / 范围外 / 约束 / 关联模块 / 验收标准 / 风险 / 状态 / 更新痕迹
+- 任务至少包含 目标 / 为什么 / 范围 / 范围外 / 约束 / 关联模块 / 计划 / 发布说明 / 验收标准 / 风险 / 状态 / 更新痕迹 / 复盘
 - 修改结束后要同步更新任务状态和验收结果
 - `更新痕迹` 必须明确写出：
   - 记忆
@@ -157,6 +161,7 @@ def render_ai_operating_model() -> str:
 
 - AI 默认围绕 `tasks/queue/*` 工作
 - 若任务不存在，先用 `scripts/ai/create-task.ts` 生成
+- 若 roadmap / operating-blueprint / 发布标准不清晰，先创建规划 task，再与用户共商
 - 任务是 scope 和验收边界，不是可有可无的备注
 - 任务的目标是让团队高效协作，而不是制造更多流程负担
 
@@ -171,7 +176,7 @@ def render_ai_operating_model() -> str:
 
 - 新经验先进入 `memory/experience/*`
 - 已裁决事项进入 `memory/decisions/ADR-*.md`
-- 当前项目状态和 roadmap 在 `memory/project/*`
+- 当前项目状态、roadmap 和 operating blueprint 在 `memory/project/*`
 - 经验重复验证后才允许升格到 `docs/*` 或 `AGENTS.md`
 - 角色职责以 `docs/ORG_MODEL.md` 为准，避免在多个文档里平行复制组织设计
 
@@ -203,6 +208,7 @@ def render_ai_operating_model() -> str:
 - 优先减少隐式依赖
 - 不做大面积业务重写
 - 创业团队文化优先：持续抓重点，不过度优化，少条条框框，但井井有条
+- 规范只保留最关键的三层：规则、工作流、AI operating model；其余优先压回 task / memory / index
 
 {evidence_boundary_block()}
 """

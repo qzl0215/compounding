@@ -2,18 +2,22 @@ import { describe, expect, it } from "vitest";
 import { getPortalOverview } from "../service";
 
 describe("portal overview", () => {
-  it("surfaces company snapshot, battle board, org roles, systems, onboarding, and risks from markdown sources", async () => {
+  it("surfaces identity, roadmap, blueprint, org roles, and knowledge risk from markdown sources", async () => {
     const overview = await getPortalOverview();
 
-    expect(overview.company.oneLiner).toContain("AI-Native Repo");
-    expect(overview.company.currentPhase).toContain("公司介绍式首页与组织架构收口");
-    expect(overview.battle.currentPriority).toContain("创业团队 operating system");
-    expect(overview.battle.currentFocus.some((item) => item.includes("公司介绍"))).toBe(true);
-    expect(overview.battle.doingTasks.some((task) => task.path === "tasks/queue/task-001-repo-refactor.md")).toBe(true);
+    expect(overview.identity.oneLiner).toContain("AI-Native Repo");
+    expect(overview.identity.mission).toContain("AI-Native Repo");
+    expect(overview.identity.values.length).toBeGreaterThanOrEqual(3);
+    expect(overview.roadmap.currentPhase).toContain("经营驾驶舱首页与认知分层收口");
+    expect(overview.roadmap.currentPriority).toContain("经营驾驶舱");
+    expect(overview.roadmap.nextMilestone).toContain("经营驾驶舱");
+    expect(overview.blueprint.currentMilestone).toContain("经营驾驶舱");
+    expect(overview.blueprint.goals.length).toBeGreaterThanOrEqual(3);
+    expect(overview.blueprint.doingTasks.length).toBeGreaterThan(0);
+    expect(overview.blueprint.doingTasks.some((task) => task.status === "进行中")).toBe(true);
     expect(overview.org.some((group) => group.title === "决策层")).toBe(true);
     expect(overview.org.flatMap((group) => group.roles).some((role) => role.name.includes("总经办"))).toBe(true);
-    expect(overview.systems.some((item) => item.title === "发布系统")).toBe(true);
-    expect(overview.onboarding).toHaveLength(4);
-    expect(overview.risks.some((item) => item.title === "技术债")).toBe(true);
+    expect(overview.knowledgeRisk.some((item) => item.title === "发布与风险")).toBe(true);
+    expect(overview.knowledgeRisk.some((item) => item.title === "关键冻结项")).toBe(true);
   });
 });

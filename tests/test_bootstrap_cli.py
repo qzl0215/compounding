@@ -46,6 +46,7 @@ class BootstrapCliTests(unittest.TestCase):
         self.assertTrue((self.target / "docs" / "PROJECT_RULES.md").exists())
         self.assertTrue((self.target / "docs" / "ORG_MODEL.md").exists())
         self.assertTrue((self.target / "memory" / "project" / "current-state.md").exists())
+        self.assertTrue((self.target / "memory" / "project" / "operating-blueprint.md").exists())
         self.assertTrue((self.target / "code_index" / "module-index.md").exists())
         self.assertTrue((self.target / "tasks" / "queue" / "task-001-repo-refactor.md").exists())
         self.assertTrue((self.target / "scripts" / "ai" / "scan-code-health.ts").exists())

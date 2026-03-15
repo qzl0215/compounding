@@ -39,6 +39,16 @@
 - `scripts/ai/*`
 - `scripts/release/*`
 
+## 计划
+
+- 先建立规则层、记忆层、索引层和任务层骨架
+- 再拆分 Studio 与 bootstrap 引擎的一等模块
+- 最后补发布回滚模型与本机管理入口
+
+## 发布说明
+
+这是一轮结构重构任务，发布以本地 `main` 直发生产模型为准；任何 cutover 必须在 release 目录准备与 smoke 完成后执行。
+
 ## 验收标准
 
 - 规则层、记忆层、上下文层全部存在且可用
@@ -64,3 +74,7 @@ in_progress
 - 索引：`no change: 初始骨架任务由后续具体任务回写`
 - 路线图：`memory/project/roadmap.md`
 - 文档：`docs/REFACTOR_PLAN.md`
+
+## 复盘
+
+这轮任务的主要价值是搭起 AI-Native Repo 骨架；后续具体收口由后续 task 逐步接手。

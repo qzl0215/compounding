@@ -56,16 +56,16 @@ repo/
 
 ## 大文件快照
 
-- `apps/studio/.next/cache/webpack/server-production/17.pack`: 716230 LOC
+- `apps/studio/.next/cache/webpack/server-production/17.pack`: 713284 LOC
 - `apps/studio/.next/cache/webpack/server-production/7.pack`: 597718 LOC
+- `apps/studio/.next/cache/webpack/client-development-fallback/0.pack.gz`: 597077 LOC
 - `apps/studio/.next/cache/webpack/server-production/16.pack`: 414575 LOC
 - `apps/studio/.next/cache/webpack/server-production/9.pack`: 411148 LOC
 - `apps/studio/.next/cache/webpack/client-production/0.pack`: 378992 LOC
 - `apps/studio/.next/cache/webpack/server-production/21.pack`: 362326 LOC
-- `apps/studio/.next/cache/webpack/server-production/23.pack`: 343923 LOC
-- `apps/studio/.next/cache/webpack/client-development/4.pack.gz`: 341641 LOC
+- `apps/studio/.next/cache/webpack/server-production/23.pack`: 302161 LOC
+- `apps/studio/.next/cache/webpack/server-development/12.pack.gz`: 285753 LOC
 - `apps/studio/.next/cache/webpack/server-production/0.pack`: 276986 LOC
-- `apps/studio/.next/cache/webpack/client-production/2.pack`: 259679 LOC
 
 ## 第一批建议拆分的模块
 

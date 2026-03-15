@@ -1,5 +1,5 @@
 import { stripMarkdown } from "@/modules/docs";
-import type { OrgRoleCard, OrgRoleGroup } from "./types";
+import type { BlueprintGoal, OrgRoleCard, OrgRoleGroup } from "./types";
 
 export function parseBulletMap(content: string) {
   const map: Record<string, string> = {};
@@ -37,6 +37,61 @@ export function previewSection(content: string, maxItems = 1) {
     return items.join("；");
   }
   return normalizeInline(content).slice(0, 100);
+}
+
+export function parseBlueprintGoals(content: string): BlueprintGoal[] {
+  const lines = content.split(/\r?\n/);
+  const goals: BlueprintGoal[] = [];
+  let inSection = false;
+  let currentGoal: BlueprintGoal | null = null;
+  let currentField: "releaseStandards" | "relatedTasks" | null = null;
+
+  for (const line of lines) {
+    const levelTwo = line.match(/^##\s+(.+)$/);
+    if (levelTwo) {
+      inSection = levelTwo[1].trim() === "关键子目标";
+      if (!inSection) {
+        currentGoal = null;
+        currentField = null;
+      }
+      continue;
+    }
+
+    if (!inSection) {
+      continue;
+    }
+
+    const levelThree = line.match(/^###\s+(.+)$/);
+    if (levelThree) {
+      currentGoal = {
+        title: stripMarkdown(levelThree[1].trim()),
+        releaseStandards: [],
+        relatedTasks: [],
+      };
+      goals.push(currentGoal);
+      currentField = null;
+      continue;
+    }
+
+    if (!currentGoal) {
+      continue;
+    }
+
+    const trimmed = line.trim();
+    if (trimmed.startsWith("- 发布标准：")) {
+      currentField = "releaseStandards";
+      continue;
+    }
+    if (trimmed.startsWith("- 关联任务：")) {
+      currentField = "relatedTasks";
+      continue;
+    }
+    if (currentField && trimmed.startsWith("-")) {
+      currentGoal[currentField].push(stripMarkdown(trimmed.replace(/^-+\s*/, "")));
+    }
+  }
+
+  return goals;
 }
 
 export function parseOrgModel(content: string): OrgRoleGroup[] {

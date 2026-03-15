@@ -96,10 +96,13 @@ def audit(config_path: Path, target: Path) -> AuditResult:
             "## 范围外",
             "## 约束",
             "## 关联模块",
+            "## 计划",
+            "## 发布说明",
             "## 验收标准",
             "## 风险",
             "## 状态",
             "## 更新痕迹",
+            "## 复盘",
         ]:
             if heading not in template_text:
                 result.errors.append(f"task template missing heading: {heading}")

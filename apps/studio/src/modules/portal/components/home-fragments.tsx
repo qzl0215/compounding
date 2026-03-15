@@ -1,7 +1,7 @@
 import Link from "next/link";
-import type { OrgRoleCard, SystemCard, TaskSummary } from "../types";
+import type { BlueprintGoal, OrgRoleCard, SystemCard, TaskSummary } from "../types";
 
-export function Pill({ href, label }: { href: string; label: string }) {
+export function ActionPill({ href, label }: { href: string; label: string }) {
   return (
     <Link
       className="rounded-full border border-accent/40 bg-accent/12 px-4 py-2 text-sm text-accent transition hover:bg-accent/18"
@@ -12,16 +12,7 @@ export function Pill({ href, label }: { href: string; label: string }) {
   );
 }
 
-export function InfoItem({ title, value }: { title: string; value: string }) {
-  return (
-    <div>
-      <p className="text-xs uppercase tracking-[0.24em] text-white/38">{title}</p>
-      <p className="mt-2 text-sm leading-6 text-white/78">{value}</p>
-    </div>
-  );
-}
-
-export function BattleMetric({ title, value }: { title: string; value: string }) {
+export function KeyStat({ title, value }: { title: string; value: string }) {
   return (
     <div className="rounded-3xl border border-white/8 bg-white/[0.03] p-4">
       <p className="text-xs uppercase tracking-[0.22em] text-white/38">{title}</p>
@@ -30,7 +21,7 @@ export function BattleMetric({ title, value }: { title: string; value: string })
   );
 }
 
-export function BulletPanel({ title, items, empty }: { title: string; items: string[]; empty: string }) {
+export function BulletBlock({ title, items, empty }: { title: string; items: string[]; empty: string }) {
   return (
     <div className="rounded-3xl border border-white/8 bg-white/[0.03] p-4">
       <p className="text-xs uppercase tracking-[0.22em] text-white/38">{title}</p>
@@ -47,23 +38,13 @@ export function BulletPanel({ title, items, empty }: { title: string; items: str
   );
 }
 
-export function TaskList({
-  title,
-  tasks,
-  href,
-  empty,
-}: {
-  title: string;
-  tasks: TaskSummary[];
-  href: string;
-  empty: string;
-}) {
+export function TaskFocusList({ title, tasks, href, empty }: { title: string; tasks: TaskSummary[]; href: string; empty: string }) {
   return (
     <section className="rounded-3xl border border-white/8 bg-white/[0.03] p-4">
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs uppercase tracking-[0.22em] text-white/38">{title}</p>
         <Link href={href} className="text-xs text-accent transition hover:text-white">
-          去任务页
+          查看任务
         </Link>
       </div>
       {tasks.length > 0 ? (
@@ -86,33 +67,62 @@ export function TaskList({
   );
 }
 
-export function RoleField({ title, items }: { title: string; items: string[] }) {
-  return items.length > 0 ? (
-    <div className="mt-4">
-      <p className="text-xs uppercase tracking-[0.22em] text-white/38">{title}</p>
-      <ul className="mt-2 space-y-1.5 text-sm leading-6 text-white/72">
-        {items.map((item) => (
-          <li key={item}>- {item}</li>
-        ))}
-      </ul>
-    </div>
-  ) : null;
-}
-
-export function RoleCard({ role }: { role: OrgRoleCard }) {
+export function BlueprintGoalCard({ goal }: { goal: BlueprintGoal }) {
   return (
     <article className="rounded-3xl border border-white/8 bg-white/[0.03] p-5">
-      <p className="text-xs uppercase tracking-[0.24em] text-accent">{role.name}</p>
-      <p className="mt-3 text-sm leading-6 text-white/78">{role.mission}</p>
-      <RoleField title="主要职责" items={role.responsibilities} />
-      <RoleField title="主要产物" items={role.outputs} />
-      <RoleField title="何时介入" items={role.triggerMoments} />
-      <RoleField title="不该做什么" items={role.antiPatterns} />
+      <p className="text-sm font-semibold text-white">{goal.title}</p>
+      <div className="mt-4 space-y-4">
+        <div>
+          <p className="text-xs uppercase tracking-[0.22em] text-white/38">发布标准</p>
+          <ul className="mt-2 space-y-1.5 text-sm leading-6 text-white/72">
+            {goal.releaseStandards.map((item) => (
+              <li key={item}>- {item}</li>
+            ))}
+          </ul>
+        </div>
+        {goal.relatedTasks.length > 0 ? (
+          <div>
+            <p className="text-xs uppercase tracking-[0.22em] text-white/38">关联任务</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {goal.relatedTasks.map((taskPath) => (
+                <span key={taskPath} className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-xs text-white/66">
+                  {taskPath}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </div>
     </article>
   );
 }
 
-export function LinkedCard({ item }: { item: SystemCard }) {
+export function RoleCardCompact({ role }: { role: OrgRoleCard }) {
+  return (
+    <article className="rounded-3xl border border-white/8 bg-white/[0.03] p-5">
+      <p className="text-xs uppercase tracking-[0.24em] text-accent">{role.name}</p>
+      <p className="mt-3 text-sm leading-6 text-white/78">{role.mission}</p>
+      {role.outputs.length > 0 ? (
+        <div className="mt-4">
+          <p className="text-xs uppercase tracking-[0.22em] text-white/38">核心产物</p>
+          <ul className="mt-2 space-y-1.5 text-sm leading-6 text-white/72">
+            {role.outputs.slice(0, 2).map((item) => (
+              <li key={item}>- {item}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+      <Link
+        href="/knowledge-base?path=docs/ORG_MODEL.md"
+        className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-accent transition hover:text-white"
+      >
+        查看职责
+      </Link>
+    </article>
+  );
+}
+
+export function LinkedSummaryCard({ item }: { item: SystemCard }) {
   return (
     <Link
       href={item.href}

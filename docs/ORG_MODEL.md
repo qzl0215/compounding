@@ -34,6 +34,7 @@ last_reviewed_at: 2026-03-15
 - 主要产物：
   - `AGENTS.md`
   - `memory/project/roadmap.md`
+  - `memory/project/operating-blueprint.md`
   - 关键 ADR 与发布决策
 - 何时介入：
   - 方向切换、优先级冲突、角色重叠、发布风险或规则失效时
@@ -53,6 +54,7 @@ last_reviewed_at: 2026-03-15
 - 主要产物：
   - `tasks/queue/*.md`
   - `tasks/archive/*`
+  - `memory/project/operating-blueprint.md`
   - 复盘相关更新痕迹
 - 何时介入：
   - 任何可合并改动开始前、交付中、交付完成后
@@ -69,6 +71,7 @@ last_reviewed_at: 2026-03-15
   - 保证方案不是“做很多”，而是“做对重点”
 - 主要产物：
   - task 的目标、范围、验收标准
+  - `memory/project/operating-blueprint.md` 中的子目标和发布标准
   - 方案摘要与价值判断
 - 何时介入：
   - 新需求进入、优先级竞争、验收标准不清时

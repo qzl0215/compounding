@@ -9,6 +9,7 @@ source_of_truth: tasks/queue/task-001-repo-refactor.md
 related_docs:
   - AGENTS.md
   - memory/project/current-state.md
+  - memory/project/operating-blueprint.md
   - tasks/queue/task-001-repo-refactor.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
@@ -16,27 +17,31 @@ related_docs:
 
 ## 当前阶段
 
-公司介绍式首页与组织架构收口
+经营驾驶舱首页与认知分层收口
+
+## 下个里程碑
+
+首页成为真正的经营驾驶舱，同时建立 `operating-blueprint` 作为当前里程碑拆解真相源，并让任务、记忆、索引与规则各归其位。
+
+## 里程碑成功标准
+
+- 首页成为 5 块高浓度模块的一页驾驶舱，而不是目录或后台
+- `memory/project/operating-blueprint.md` 成为当前里程碑拆解真相源
+- `roadmap / operating-blueprint / task / memory / index` 边界清楚
+- Markdown 阅读恢复自然层级
+- task 模板升级为轻量 SOP，但不长成重型工单
 
 ## 当前优先级
 
-把首页升级成创业团队 operating system，总结组织架构、今日作战、核心系统、新人入职路径与当前风险，并让这些摘要全部稳定映射到 Markdown 真相源。
-
-## 验收阶梯
-
-1. 首页能像公司介绍一样，一屏说明项目是谁、现在打什么仗、谁负责什么、下一步先看什么
-2. `docs/ORG_MODEL.md` 成为 7 个角色卡片的唯一真相源
-3. 首页和文档页的语义入口切到组织语言
-4. task / memory / code_index / roadmap 的既有闭环不被破坏
-5. 不引入更重的 lane/PR/worktree 制度，也不新增平行 read model
+把首页收口成经营驾驶舱，并建立 roadmap / operating-blueprint / task / memory / index 的清晰分层，同时恢复 Markdown 的自然阅读层级。
 
 ## 当前执行待办
 
-- [x] 将当前主线切换到“公司介绍式首页与组织架构收口”
-- [x] 新增 `docs/ORG_MODEL.md` 并定义 7 个核心角色
-- [x] 首页改为“我们是谁 / 今天在打什么仗 / 组织一览 / 核心系统 / 新人入职路径 / 当前风险”
-- [x] 文档页语义入口改成组织语言
-- [x] 吸收轻量任务闭环与经验写法，但不搬重型并行制度
+- [x] 将当前主线切换到“经营驾驶舱首页与认知分层收口”
+- [x] 新增 `memory/project/operating-blueprint.md`
+- [x] 首页改为“使命 / 愿景 / 价值观 / 路线图 / 运营蓝图 / 组织与职责 / 认知资产与风险”
+- [x] task 模板升级为轻量 SOP
+- [x] 恢复 Markdown 的自然阅读层级
 
 ## 证据边界
 

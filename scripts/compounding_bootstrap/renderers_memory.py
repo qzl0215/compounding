@@ -59,18 +59,35 @@ def render_current_state(resolved: dict[str, Any]) -> str:
 ## 项目概览
 
 - 项目名称：{resolved["project_name"]}
-- 当前阶段：公司介绍式首页与组织架构收口
+- 当前阶段：经营驾驶舱首页与认知分层收口
 - 当前优先级：{resolved["current_priority"]}
 - 成功定义：{resolved["success_definition"]}
 - 必须保护：{must_protect}
 - 运行边界：{resolved["runtime_boundary"]}
 
+## 使命与愿景
+
+- 使命：把当前仓库升级成适合 AI 长期协作、任务驱动、可持续重构与自进化的 AI-Native Repo。
+- 愿景：让这个项目既像创业团队一样高效推进，又能把经验、结构和发布能力持续沉淀成复利系统。
+
+## 核心价值观
+
+- 规则服务于效率，不服务于扩张
+- 持续抓重点，不过度优化
+- 少条条框框，但井井有条
+
 ## 当前焦点
 
-- 首页收口成“公司介绍 + 今日作战板”，让新人看一眼就知道项目是谁、现在打什么仗、谁负责什么
-- 新增 `docs/ORG_MODEL.md`，把 7 个角色卡片和组织原则固定成唯一真相源
-- 首页和文档页的语义入口改成组织语言，而不是目录语言
+- 首页收口成经营驾驶舱，让使命、路线图、运营蓝图、组织职责和风险一页可读
+- 新增 `memory/project/operating-blueprint.md`，把里程碑拆解与发布标准从 roadmap 中剥离
+- 恢复 Markdown 的自然文档层级，不再让标题样式覆盖正文结构
 - 保持 task / memory / code_index / roadmap 的回写闭环，不引入新的平行体系
+
+## 关键冻结项
+
+- 不恢复旧 workflow 前台和重型多步骤表单
+- 不把 task 演化成审批流或重型工单系统
+- 不新增平行读模型或后台数据库
 
 ## 下一检查点
 
@@ -109,89 +126,86 @@ def render_roadmap(resolved: dict[str, Any]) -> str:
 
 ## 当前阶段
 
-公司介绍式首页与组织架构收口
+经营驾驶舱首页与认知分层收口
+
+## 下个里程碑
+
+首页成为真正的经营驾驶舱，同时建立 `operating-blueprint` 作为当前里程碑拆解真相源，并让任务、记忆、索引与规则各归其位。
+
+## 里程碑成功标准
+
+- 首页成为 5 块高浓度模块的一页驾驶舱，而不是目录或后台
+- `memory/project/operating-blueprint.md` 成为当前里程碑拆解真相源
+- `roadmap / operating-blueprint / task / memory / index` 边界清楚
+- Markdown 阅读恢复自然层级
+- task 模板升级为轻量 SOP，但不长成重型工单
 
 ## 当前优先级
 
 {resolved["current_priority"]}
 
-## 验收阶梯
-
-1. 首页能像公司介绍一样，一屏说明项目是谁、现在打什么仗、谁负责什么、下一步先看什么
-2. `docs/ORG_MODEL.md` 成为 7 个角色卡片的唯一真相源
-3. 首页和文档页的语义入口切到组织语言
-4. task / memory / code_index / roadmap 的既有闭环不被破坏
-5. 不引入更重的 lane/PR/worktree 制度，也不新增平行 read model
-
 ## 当前执行待办
 
-- [x] 将当前主线切换到“公司介绍式首页与组织架构收口”
-- [x] 新增 `docs/ORG_MODEL.md` 并定义 7 个核心角色
-- [x] 首页改为“我们是谁 / 今天在打什么仗 / 组织一览 / 核心系统 / 新人入职路径 / 当前风险”
-- [x] 文档页语义入口改成组织语言
-- [x] 吸收轻量任务闭环与经验写法，但不搬重型并行制度
+- [x] 将当前主线切换到“经营驾驶舱首页与认知分层收口”
+- [x] 新增 `memory/project/operating-blueprint.md`
+- [x] 首页改为“使命 / 愿景 / 价值观 / 路线图 / 运营蓝图 / 组织与职责 / 认知资产与风险”
+- [x] task 模板升级为轻量 SOP
+- [x] 恢复 Markdown 的自然阅读层级
 
 {evidence_boundary_block()}
 """
 
 
-def render_experience_readme() -> str:
-    return """# 经验记录说明
+def render_operating_blueprint(resolved: dict[str, Any]) -> str:
+    return f"""# 运营蓝图
 
-这里记录尚未升格为长期规则的经验。默认先记忆，再验证，再决定是否升格。
+## 当前里程碑
 
-## 记录格式
+经营驾驶舱首页与认知分层收口
 
-- 背景
-- 决策
-- 为什么
-- 影响
-- 复用
+## 关键子目标
 
-## 升格候选
+### 首页经营驾驶舱
 
-- 重复出现 2 次以上且无明显例外的经验，才能候选升格
-- 若现有规则已直接阻碍 roadmap 主线效率，可直接改规，但必须同步写 ADR
-"""
+- 发布标准：
+  - 首页固定为 5 个高浓度模块，且无右侧导航
+  - 首页本身承担阅读顺序和导航作用
+- 关联任务：
+  - `tasks/queue/task-004-dashboard-and-cognition-architecture.md`
 
+### 认知分层收口
 
-def render_experience_entry(title: str, context: str, decision: str, why: str, impact: str, reuse: str) -> str:
-    return f"""# {title}
+- 发布标准：
+  - `roadmap / operating-blueprint / task / memory / index` 的边界在文档中清楚
+  - 首页摘要只从 Markdown 真相源提取
+- 关联任务：
+  - `tasks/queue/task-004-dashboard-and-cognition-architecture.md`
 
-## 背景
+### 轻量 Task PM
 
-{context}
+- 发布标准：
+  - task 模板包含 `计划 / 发布说明 / 验收标准 / 复盘`
+  - 缺规划时先创建共商 task，而不是直接进入执行
+- 关联任务：
+  - `tasks/queue/task-004-dashboard-and-cognition-architecture.md`
 
-## 决策
+### Markdown 阅读体验
 
-{decision}
+- 发布标准：
+  - 文档页的 `# / ## / ###` 视觉层级清楚
+  - 标题不再被重卡片样式覆盖
+- 关联任务：
+  - `tasks/queue/task-004-dashboard-and-cognition-architecture.md`
 
-## 为什么
+## 当前阻塞
 
-{why}
+- 暂无结构性阻塞；当前主要风险是首页信息结构和文档真相源若不同步，后续会再次返工。
 
-## 影响
+## 下一检查点
 
-{impact}
+- 首页经营驾驶舱 5 模块成型
+- `memory/project/operating-blueprint.md` 纳入 scaffold / audit
+- task 模板与 `validate-change-trace` 继续通过
 
-## 复用
-
-{reuse}
-"""
-
-
-def render_adr(title: str, context: str, decision: str, consequences: str) -> str:
-    return f"""# {title}
-
-## 背景
-
-{context}
-
-## 决策
-
-{decision}
-
-## 影响结果
-
-{consequences}
+{evidence_boundary_block()}
 """

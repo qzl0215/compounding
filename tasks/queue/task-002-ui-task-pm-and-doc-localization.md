@@ -38,6 +38,16 @@
 - `scripts/ai/*`
 - `scripts/compounding_bootstrap/*`
 
+## 计划
+
+- 先统一标题别名和 task parser
+- 再补 `/tasks` 页面与全站粘性目录
+- 最后接入自动校验和文档中文化回归测试
+
+## 发布说明
+
+这轮主要是 UI 与文档结构改动，不涉及发布模型切换；上线前以 `pnpm build` 与 `bootstrap:audit` 为主验收。
+
 ## 验收标准
 
 - live 文档 `# / ##` 标题中文友好，现有摘要解析仍然正常
@@ -62,3 +72,7 @@ done
 - 索引：`code_index/module-index.md`, `code_index/dependency-map.md`, `code_index/function-index.json`
 - 路线图：`memory/project/roadmap.md`
 - 文档：`AGENTS.md`, `docs/PROJECT_RULES.md`, `docs/ARCHITECTURE.md`, `docs/DEV_WORKFLOW.md`, `docs/AI_OPERATING_MODEL.md`
+
+## 复盘
+
+任务系统和标题中文化已经落地，但首页经营驾驶舱和认知分层仍需要后续任务继续收口。

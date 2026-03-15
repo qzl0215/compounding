@@ -30,6 +30,7 @@ related_docs:
 
 - AI 默认围绕 `tasks/queue/*` 工作
 - 若任务不存在，先用 `scripts/ai/create-task.ts` 生成
+- 若 roadmap / operating-blueprint / 发布标准不清晰，先创建规划 task，再与用户共商
 - 任务是 scope 和验收边界，不是可有可无的备注
 - 任务的目标是让团队高效协作，而不是制造更多流程负担
 
@@ -44,7 +45,7 @@ related_docs:
 
 - 新经验先进入 `memory/experience/*`
 - 已裁决事项进入 `memory/decisions/ADR-*.md`
-- 当前项目状态和 roadmap 在 `memory/project/*`
+- 当前项目状态、roadmap 和 operating blueprint 在 `memory/project/*`
 - 经验重复验证后才允许升格到 `docs/*` 或 `AGENTS.md`
 - 角色职责以 `docs/ORG_MODEL.md` 为准，避免在多个文档里平行复制组织设计
 
@@ -76,6 +77,7 @@ related_docs:
 - 优先减少隐式依赖
 - 不做大面积业务重写
 - 创业团队文化优先：持续抓重点，不过度优化，少条条框框，但井井有条
+- 规范只保留最关键的三层：规则、工作流、AI operating model；其余优先压回 task / memory / index
 
 ## 证据边界
 

@@ -23,9 +23,9 @@ describe("docs repository", () => {
   it("keeps the home entry links focused on AGENTS, roadmap, and current state", () => {
     expect(HOME_ENTRY_LINKS).toEqual([
       { href: "/knowledge-base?path=AGENTS.md", label: "打开 AGENTS", scope: "agents" },
-      { href: "/tasks", label: "查看任务清单", scope: "tasks" },
       { href: "/knowledge-base?path=memory/project/roadmap.md", label: "查看路线图", scope: "roadmap" },
-      { href: "/knowledge-base?path=memory/project/current-state.md", label: "查看当前状态", scope: "memory" }
+      { href: "/tasks", label: "查看任务", scope: "tasks" },
+      { href: "/releases", label: "查看发布", scope: "release" }
     ]);
   });
 
@@ -43,11 +43,11 @@ describe("docs repository", () => {
   it("builds semantic entry groups and queue filters from the live docs tree", async () => {
     const [groups, queueDocs] = await Promise.all([getSemanticEntryGroups(), listDocsUnder("tasks/queue")]);
 
-    expect(groups.some((group) => group.title === "公司介绍")).toBe(true);
-    expect(groups.some((group) => group.title === "今日作战")).toBe(true);
-    expect(groups.some((group) => group.title === "组织架构")).toBe(true);
-    expect(groups.some((group) => group.title === "核心系统")).toBe(true);
-    expect(groups.some((group) => group.title === "新人入职")).toBe(true);
+    expect(groups.some((group) => group.title === "使命与方向")).toBe(true);
+    expect(groups.some((group) => group.title === "路线图与蓝图")).toBe(true);
+    expect(groups.some((group) => group.title === "任务与交付")).toBe(true);
+    expect(groups.some((group) => group.title === "组织与职责")).toBe(true);
+    expect(groups.some((group) => group.title === "认知资产")).toBe(true);
     expect(groups.some((group) => group.title === "风险与发布")).toBe(true);
     expect(queueDocs).toContain("tasks/queue/task-001-repo-refactor.md");
   });

@@ -1,7 +1,7 @@
 project_name: Compounding AI Operating System
 project_one_liner: 把当前仓库升级成适合 AI 长期协作、任务驱动、可持续重构与自进化的 AI-Native Repo。
-success_definition: 首页像创业团队公司介绍页一样高浓度、易理解；新人只看首页就知道项目是谁、当前打什么仗、谁负责什么、下一步先看哪里；组织、任务、记忆、索引和发布信息都能从真相源稳定映射出来。
-current_priority: 把首页升级成创业团队 operating system，总结组织架构、今日作战、核心系统、新人入职路径与当前风险，并让这些摘要全部稳定映射到 Markdown 真相源。
+success_definition: 首页成为一页经营驾驶舱；用户与 AI 能快速看懂使命、路线图、运营蓝图、组织职责与认知资产边界，并能沿统一 task 闭环持续推进。
+current_priority: 把首页收口成经营驾驶舱，并建立 roadmap / operating-blueprint / task / memory / index 的清晰分层，同时恢复 Markdown 的自然阅读层级。
 must_protect:
   - AGENTS.md 是唯一主源
   - Git 文件即真相

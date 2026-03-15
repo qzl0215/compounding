@@ -57,44 +57,20 @@ body {
   }
 
   .markdown-shell h1 {
-    @apply text-3xl font-semibold tracking-tight;
-  }
-
-  .markdown-shell h2,
-  .markdown-shell h3 {
-    @apply rounded-2xl border px-4 py-3 font-semibold shadow-[0_16px_60px_rgba(0,0,0,0.16)];
-    border-color: rgba(255, 255, 255, 0.08);
-    background-color: rgba(255, 255, 255, 0.03);
+    @apply text-4xl font-semibold tracking-tight leading-tight;
   }
 
   .markdown-shell h2 {
-    @apply text-2xl;
+    @apply border-b pb-3 text-[1.7rem] font-semibold tracking-tight;
+    border-color: rgba(255, 255, 255, 0.1);
   }
 
   .markdown-shell h3 {
-    @apply text-xl;
-  }
-
-  .markdown-shell h2[data-tone="priority"],
-  .markdown-shell h3[data-tone="priority"] {
-    border-color: rgba(57, 208, 255, 0.3);
-    background-color: rgba(57, 208, 255, 0.1);
-  }
-
-  .markdown-shell h2[data-tone="risk"],
-  .markdown-shell h3[data-tone="risk"] {
-    border-color: rgba(252, 211, 77, 0.25);
-    background-color: rgba(252, 211, 77, 0.08);
-  }
-
-  .markdown-shell h2[data-tone="highlight"],
-  .markdown-shell h3[data-tone="highlight"] {
-    border-color: rgba(255, 255, 255, 0.12);
-    background-color: rgba(255, 255, 255, 0.05);
+    @apply text-[1.28rem] font-semibold tracking-tight;
   }
 
   .markdown-shell .heading-anchor {
-    @apply inline-flex w-full items-center justify-between gap-4 no-underline;
+    @apply inline-flex w-full items-start justify-between gap-4 no-underline;
   }
 
   .markdown-shell .anchor-mark {
@@ -109,6 +85,10 @@ body {
   .markdown-shell p,
   .markdown-shell li {
     color: rgba(255, 255, 255, 0.78);
+  }
+
+  .markdown-shell p {
+    @apply leading-7;
   }
 
   .markdown-shell strong {
@@ -183,19 +163,14 @@ body {
   }
 
   .markdown-compact h1 {
-    @apply text-2xl;
+    @apply text-[1.8rem];
   }
 
   .markdown-compact h2 {
-    @apply text-xl;
+    @apply text-[1.35rem];
   }
 
   .markdown-compact h3 {
-    @apply text-lg;
-  }
-
-  .markdown-compact h2,
-  .markdown-compact h3 {
-    @apply px-3 py-2;
+    @apply text-[1.1rem];
   }
 }

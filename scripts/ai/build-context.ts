@@ -132,6 +132,7 @@ const baseFiles = [
   relTask,
   "memory/project/current-state.md",
   "memory/project/roadmap.md",
+  "memory/project/operating-blueprint.md",
   "code_index/module-index.md",
   "code_index/dependency-map.md",
 ];

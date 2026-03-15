@@ -14,7 +14,14 @@ function listChangedFiles() {
   if (status) {
     return status
       .split("\n")
-      .map((line) => line.slice(3).trim())
+      .map((line) => {
+        const match = line.match(/^.. (.+)$/);
+        if (!match) {
+          return "";
+        }
+        const value = match[1].trim();
+        return value.includes(" -> ") ? value.split(" -> ").at(-1)?.trim() ?? "" : value;
+      })
       .filter(Boolean);
   }
 

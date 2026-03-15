@@ -14,6 +14,7 @@ CANONICAL_DOCS = [
 MEMORY_DOCS = [
     "memory/architecture/system-overview.md",
     "memory/project/current-state.md",
+    "memory/project/operating-blueprint.md",
     "memory/project/tech-debt.md",
     "memory/project/roadmap.md",
     "memory/experience/README.md",
@@ -138,7 +139,15 @@ DOC_META = {
         "update_mode": "manual",
         "owner_role": "Foreman",
         "source_of_truth": "memory/project/roadmap.md",
-        "related_docs": [AGENTS_SOURCE, "memory/project/roadmap.md", "tasks/queue/task-001-repo-refactor.md"],
+        "related_docs": [AGENTS_SOURCE, "memory/project/roadmap.md", "memory/project/operating-blueprint.md", "tasks/queue/task-001-repo-refactor.md"],
+    },
+    "memory/project/operating-blueprint.md": {
+        "title": "OPERATING_BLUEPRINT",
+        "doc_role": "planning",
+        "update_mode": "manual",
+        "owner_role": "PMO",
+        "source_of_truth": "memory/project/roadmap.md",
+        "related_docs": [AGENTS_SOURCE, "memory/project/roadmap.md", "memory/project/current-state.md", "tasks/queue/task-001-repo-refactor.md"],
     },
     "memory/project/tech-debt.md": {
         "title": "TECH_DEBT",
@@ -154,7 +163,7 @@ DOC_META = {
         "update_mode": "manual",
         "owner_role": "Foreman",
         "source_of_truth": "tasks/queue/task-001-repo-refactor.md",
-        "related_docs": [AGENTS_SOURCE, "memory/project/current-state.md", "tasks/queue/task-001-repo-refactor.md"],
+        "related_docs": [AGENTS_SOURCE, "memory/project/current-state.md", "memory/project/operating-blueprint.md", "tasks/queue/task-001-repo-refactor.md"],
     },
     "memory/experience/README.md": {
         "title": "EXPERIENCE_README",

@@ -19,7 +19,7 @@ related_docs:
 - `apps/studio/`: 只读文档门户
 - `scripts/compounding_bootstrap/`: scaffold / audit / proposal 引擎
 - `docs/`: 规则层、架构层、流程层、AI operating model、重构计划
-- `memory/`: 架构记忆、项目状态、经验、ADR
+- `memory/`: 架构记忆、项目状态、运营蓝图、经验、ADR
 - `code_index/`: 模块索引、依赖图、函数索引
 - `tasks/`: 模板、队列、归档
 
@@ -49,6 +49,7 @@ related_docs:
 - `scripts/compounding_bootstrap/renderers_docs.py`
 - `scripts/compounding_bootstrap/renderers_index.py`
 - `scripts/compounding_bootstrap/renderers_memory.py`
+- `scripts/compounding_bootstrap/renderers_org_docs.py`
 - `scripts/compounding_bootstrap/renderers_refactor_docs.py`
 - `scripts/compounding_bootstrap/renderers_system_docs.py`
 - `scripts/compounding_bootstrap/repo_scan.py`
@@ -59,10 +60,12 @@ related_docs:
 ## 依赖方向
 
 1. `AGENTS.md` 提供高频入口
-2. `docs/*` 提供长期规则、架构和流程
-3. `tasks/*` 给出当前变更边界
-4. `code_index/*` 提供上下文导航
-5. 代码模块只依赖必要的邻近模块和共享基础层
+2. `memory/project/roadmap.md` 提供战略层真相
+3. `memory/project/operating-blueprint.md` 提供当前里程碑战术拆解
+4. `tasks/*` 给出当前变更边界
+5. `docs/*` 提供长期规则、架构和流程
+6. `code_index/*` 提供上下文导航
+7. 代码模块只依赖必要的邻近模块和共享基础层
 
 ## 生产发布运行时
 
