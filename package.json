@@ -15,6 +15,10 @@
     "ai:scan-health:strict": "node --experimental-strip-types scripts/ai/scan-code-health.ts --strict",
     "ai:generate-index": "node --experimental-strip-types scripts/ai/generate-module-index.ts",
     "ai:build-context": "node --experimental-strip-types scripts/ai/build-context.ts tasks/queue/task-001-repo-refactor.md",
-    "ai:create-task": "node --experimental-strip-types scripts/ai/create-task.ts"
+    "ai:create-task": "node --experimental-strip-types scripts/ai/create-task.ts",
+    "release:prepare": "node --experimental-strip-types scripts/release/prepare-release.ts --ref main",
+    "release:switch": "node --experimental-strip-types scripts/release/switch-release.ts",
+    "release:rollback": "node --experimental-strip-types scripts/release/rollback-release.ts",
+    "release:summarize": "node --experimental-strip-types scripts/release/summarize-release.ts"
   }
 }

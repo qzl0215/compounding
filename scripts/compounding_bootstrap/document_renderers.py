@@ -5,7 +5,6 @@ from .renderers_docs import (
     render_dev_workflow,
     render_project_rules,
     render_readme,
-    render_refactor_plan,
 )
 from .renderers_index import render_dependency_map, render_function_index, render_function_index_json, render_module_index
 from .renderers_memory import (
@@ -17,6 +16,7 @@ from .renderers_memory import (
     render_system_overview,
     render_tech_debt,
 )
+from .renderers_refactor_docs import render_refactor_plan
 
 __all__ = [
     "render_adr",

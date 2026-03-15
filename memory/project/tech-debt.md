@@ -15,17 +15,17 @@ related_docs:
 
 ## Active Debt
 
-1. 当前已清空超软上限文件，但 proposal 链路仍可继续沿 `generation / patch / git` 三层再下切，给后续增长留余量
-2. proposal engine 已支持模型优先生成，但默认仍依赖 `OPENAI_API_KEY + OPENAI_MODEL`；未配置时会回退到 deterministic rewrite
-3. `scripts/ai/build-context.ts` 与 `generate-module-index.ts` 仍是轻量版本，后续可继续提高相关性判断和索引精度
-4. code health strict gate 已接入 CI，但目前只做规则检查，不做自动修复或 issue 自动创建
-5. 当前还没有真正独立 worktree 的强制校验；执行纪律仍主要靠 `DEV_WORKFLOW` 和 preflight
+1. 当前发布模型是单机 `systemd + reverse proxy + symlink cutover` 骨架；还没有多进程零停机或多机容灾能力
+2. 本机/内网发布管理页已可读写 release registry，但尚未经过真实生产反向代理环境的 live 验证
+3. proposal engine 已支持模型优先生成，但默认仍依赖 Ark/Volcano/OpenAI 环境变量；未配置时会回退到 deterministic rewrite
+4. `scripts/ai/build-context.ts` 与 `generate-module-index.ts` 仍是轻量版本，后续可继续提高相关性判断和索引精度
+5. 当前没有 remote，`main` 直发生产只在本地仓库语义上成立；远端分支和 release tag 推送仍需后续接通
 
 ## Delete Plan
 
 - 任何仍然保留的 legacy 文本或兼容路径，都要在下一轮重构中删除或归档
 - 任何新增临时层都必须写清删除触发条件
-- 仍接近软上限的 bootstrap 模块，在下一轮继续下切
+- 若后续验证 `systemctl restart` 对当前流量影响仍偏大，再评估更细粒度的 reload / socket activation 策略
 
 ## Evidence Boundary
 

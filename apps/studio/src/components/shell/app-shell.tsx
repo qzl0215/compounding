@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { BookOpen, LayoutDashboard } from "lucide-react";
+import { BookOpen, LayoutDashboard, Rocket } from "lucide-react";
 import type { PropsWithChildren } from "react";
 import { cn } from "@/lib/classnames";
 
 const navigation = [
   { href: "/", label: "首页", icon: LayoutDashboard },
-  { href: "/knowledge-base", label: "文档", icon: BookOpen }
+  { href: "/knowledge-base", label: "文档", icon: BookOpen },
+  { href: "/releases", label: "发布", icon: Rocket }
 ];
 
 export function AppShell({ children }: PropsWithChildren) {
@@ -64,7 +65,8 @@ export function AppShell({ children }: PropsWithChildren) {
               <li>先任务，后改动</li>
               <li>先记忆，后升格</li>
               <li>改动前先做 preflight</li>
-              <li>archive 负责隔离旧体系</li>
+              <li>main 是唯一生产主线</li>
+              <li>发布通过 current 软链切换</li>
             </ul>
             <Link className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-accent" href="/knowledge-base">
               <BookOpen className="size-3.5" />

@@ -14,11 +14,11 @@ related_docs:
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # DEV_WORKFLOW
 
-## Branch And Worktree Rule
+## Main Release Rule
 
-- 结构性改动必须在独立 worktree / branch 中完成
-- 当前标准分支名：`codex/ai-native-repo-refactor`
-- 不允许直接在主线做结构升级
+- `main` 是唯一生产主线
+- 本地短分支仍可用于临时开发，但发布动作只认 `main`
+- 不再使用 `dev` 作为发布缓冲层
 
 ## Standard Flow
 
@@ -28,7 +28,9 @@ related_docs:
 4. 运行 `python3 scripts/pre_mutation_check.py`
 5. 完成最小可验证改动
 6. 更新 `task / memory / code_index / docs`
-7. 提交 PR
+7. 完成 review，并让改动进入 `main`
+8. 运行 `node --experimental-strip-types scripts/release/prepare-release.ts --ref main`
+9. 构建与 smoke 通过后，再运行 `node --experimental-strip-types scripts/release/switch-release.ts --release <release-id>`
 
 ## Reporting Contract
 
@@ -48,11 +50,12 @@ related_docs:
 - 任务至少包含 Goal / Why / Scope / Out of Scope / Constraints / Related Modules / Acceptance Criteria / Risks / Status
 - 修改结束后要同步更新任务状态和验收结果
 
-## PR Rule
+## Release Rule
 
-- 结构升级必须通过 PR 合并
-- PR 必须说明删除了什么、保留了什么兼容层、还有哪些技术债
-- 任何新抽象都必须解释职责和删除条件
+- 新版本必须先在后台 release 目录完成准备，再切换 `current`
+- 切换失败前不得影响当前线上版本
+- 回滚通过 `scripts/release/rollback-release.ts` 或本机/内网发布管理页执行
+- 对于 Next.js 门户，服务重载采用 `systemctl restart` 或等价最小重启
 
 ## Evidence Boundary
 

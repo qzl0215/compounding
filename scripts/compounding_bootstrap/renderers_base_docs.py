@@ -46,9 +46,10 @@ def render_agents(resolved: dict[str, object]) -> str:
 - `AGENTS.md` 是仓库内唯一高频执行主源；长文规则落在 `docs/*`，状态和经验落在 `memory/*`。
 - 默认先做只读盘点，再做最小可验证改动。
 - 默认先做高 ROI 动作，不做过度工程和抽象炫技。
-- 任何结构性改动都必须绑定任务、更新相关记忆，并通过 PR 合并。
+- 任何结构性改动都必须绑定任务、更新相关记忆，并在进入 `main` 前完成 review。
 - 巨型 util / helper / common 不允许继续扩张；新增逻辑必须伴随清理或明确删除计划。
 - 经验先写入 `memory/experience/*`，稳定后再升格到 `docs/*` 或 `AGENTS.md`。
+- 生产发布只认 `main`；回滚通过 release 切换完成，不通过 `git reset` 改写线上状态。
 
 ## Current State
 
@@ -73,7 +74,8 @@ def render_agents(resolved: dict[str, object]) -> str:
 - 只读分析不强制同步。
 - 任何文件改动前先运行 `python3 scripts/pre_mutation_check.py`。
 - 若 worktree 不干净、存在 staged changes、或分支 `behind/diverged`，先整理或 `git pull --rebase`。
-- 结构改动默认绑定 worktree / branch / task / PR，不允许直接在主线乱改。
+- 可在本地短分支完成开发，但发布动作只认 `main`。
+- 发布前必须通过 release build 与 smoke gate；线上回滚走 release registry，不走 git reset。
 
 ## Required Reads
 
@@ -91,6 +93,7 @@ def render_agents(resolved: dict[str, object]) -> str:
 4. 运行 `python3 scripts/pre_mutation_check.py`
 5. 只构建最小必要上下文后再改代码
 6. 改动后更新 task / memory / code_index / docs
+7. 进入 `main` 后再准备 release 与 cutover
 
 ## Read More If...
 
@@ -137,6 +140,13 @@ def render_project_rules() -> str:
 - 替代旧逻辑时，必须删除旧逻辑、或在技术债中写明兼容层和删除计划
 - 任何结构性改动都必须同步更新 `task`、`memory`、`code_index`
 - 规则若限制主线效率，可直接更新，但必须同步回 `AGENTS.md`、相关文档和 ADR
+
+## Release Governance
+
+- `main` 是唯一生产主线，不再使用 `dev` 作为发布缓冲层
+- 新 release 必须先在后台目录完成安装、构建与 smoke check，成功后才允许切换 `current`
+- 线上回滚以 release 切换为准，不以 `git reset` 为准
+- 发布失败不得影响当前线上版本；未切换前禁止覆盖现网目录
 
 ## Legacy Compatibility Rule
 

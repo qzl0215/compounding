@@ -1,18 +1,14 @@
----
-title: REFACTOR_PLAN
-doc_role: planning
-update_mode: manual
-owner_role: Foreman
-status: active
-last_reviewed_at: 2026-03-15
-source_of_truth: tasks/queue/task-001-repo-refactor.md
-related_docs:
-  - memory/project/current-state.md
-  - memory/project/tech-debt.md
-  - memory/project/roadmap.md
----
-<!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
-# REFACTOR_PLAN
+from __future__ import annotations
+
+from typing import Any
+
+from .renderers_base_docs import bullet_list, evidence_boundary_block
+
+
+def render_refactor_plan(resolved: dict[str, Any]) -> str:
+    largest = resolved["repo_scan"].get("largest_files", [])
+    largest_section = bullet_list([f"`{path}`: {lines} LOC" for lines, path in largest]) or "- 当前扫描暂无数据"
+    return f"""# REFACTOR_PLAN
 
 ## Current Problem Overview
 
@@ -56,16 +52,7 @@ repo/
 
 ## Largest Files Snapshot
 
-- `apps/studio/.next/cache/webpack/server-production/17.pack`: 760611 LOC
-- `apps/studio/.next/cache/webpack/server-production/8.pack`: 710108 LOC
-- `apps/studio/.next/cache/webpack/server-production/7.pack`: 605237 LOC
-- `apps/studio/.next/cache/webpack/server-production/9.pack`: 520925 LOC
-- `apps/studio/.next/cache/webpack/server-production/16.pack`: 414575 LOC
-- `apps/studio/.next/cache/webpack/client-production/13.pack`: 391962 LOC
-- `apps/studio/.next/cache/webpack/client-production/2.pack`: 390905 LOC
-- `apps/studio/.next/cache/webpack/client-production/0.pack`: 378992 LOC
-- `apps/studio/.next/cache/webpack/client-development/4.pack.gz`: 341641 LOC
-- `apps/studio/.next/cache/webpack/client-development/8.pack.gz`: 340102 LOC
+{largest_section}
 
 ## First Module Split Candidates
 
@@ -88,9 +75,5 @@ repo/
 - 允许真实删除旧页面、旧 API、旧组件和重复逻辑
 - 允许直接更新规范，只要它们正在限制当前主线效率
 
-## Evidence Boundary
-
-- 本地离线证据：
-- 服务器真实证据：
-- 当前结论适用边界：
-<!-- END MANAGED BLOCK: CANONICAL_CONTENT -->
+{evidence_boundary_block()}
+"""

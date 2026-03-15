@@ -41,7 +41,7 @@ describe("docs repository", () => {
   it("builds semantic entry groups and queue filters from the live docs tree", async () => {
     const [groups, queueDocs] = await Promise.all([getSemanticEntryGroups(), listDocsUnder("tasks/queue")]);
 
-    expect(groups.some((group) => group.title === "项目介绍")).toBe(true);
+    expect(groups.some((group) => group.title === "项目介绍与规则")).toBe(true);
     expect(groups.some((group) => group.title === "待办任务")).toBe(true);
     expect(groups.some((group) => group.title === "模块索引")).toBe(true);
     expect(queueDocs).toContain("tasks/queue/task-001-repo-refactor.md");

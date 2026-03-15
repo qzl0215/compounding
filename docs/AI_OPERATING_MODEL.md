@@ -53,8 +53,19 @@ related_docs:
 → 修改模块
 → 更新 memory
 → 更新 code_index
-→ 发起 PR
+→ 进入 `main`
+→ 生成 release
+→ 切换或回滚
 → 在下一轮扫描中验证是否真正收敛
+
+## Production Direct Release
+
+- 生产发布以 `main` 为唯一主线
+- 版本构建在后台 release 目录完成
+- 线上切换只在构建和 smoke 成功后发生
+- 若新版异常，优先选择：
+  - 继续在 `main` 上修出下一次 release
+  - 或直接回滚到上一个健康 release
 
 ## Working Principle
 

@@ -38,7 +38,8 @@ body {
 
 @layer components {
   .markdown-shell {
-    @apply max-w-none text-[15px] leading-7 text-white/78;
+    @apply max-w-none text-[15px] leading-7;
+    color: rgba(255, 255, 255, 0.78);
   }
 
   .markdown-shell > :first-child {
@@ -61,7 +62,9 @@ body {
 
   .markdown-shell h2,
   .markdown-shell h3 {
-    @apply rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 font-semibold shadow-[0_16px_60px_rgba(0,0,0,0.16)];
+    @apply rounded-2xl border px-4 py-3 font-semibold shadow-[0_16px_60px_rgba(0,0,0,0.16)];
+    border-color: rgba(255, 255, 255, 0.08);
+    background-color: rgba(255, 255, 255, 0.03);
   }
 
   .markdown-shell h2 {
@@ -74,17 +77,20 @@ body {
 
   .markdown-shell h2[data-tone="priority"],
   .markdown-shell h3[data-tone="priority"] {
-    @apply border-accent/30 bg-accent/10;
+    border-color: rgba(57, 208, 255, 0.3);
+    background-color: rgba(57, 208, 255, 0.1);
   }
 
   .markdown-shell h2[data-tone="risk"],
   .markdown-shell h3[data-tone="risk"] {
-    @apply border-amber-300/25 bg-amber-300/8;
+    border-color: rgba(252, 211, 77, 0.25);
+    background-color: rgba(252, 211, 77, 0.08);
   }
 
   .markdown-shell h2[data-tone="highlight"],
   .markdown-shell h3[data-tone="highlight"] {
-    @apply border-white/12 bg-white/[0.05];
+    border-color: rgba(255, 255, 255, 0.12);
+    background-color: rgba(255, 255, 255, 0.05);
   }
 
   .markdown-shell .heading-anchor {
@@ -92,12 +98,17 @@ body {
   }
 
   .markdown-shell .anchor-mark {
-    @apply text-sm font-mono text-accent/0 transition group-hover:text-accent/85;
+    @apply text-sm font-mono transition;
+    color: transparent;
+  }
+
+  .markdown-shell .group:hover .anchor-mark {
+    color: rgba(57, 208, 255, 0.85);
   }
 
   .markdown-shell p,
   .markdown-shell li {
-    @apply text-white/78;
+    color: rgba(255, 255, 255, 0.78);
   }
 
   .markdown-shell strong {
@@ -118,23 +129,32 @@ body {
   }
 
   .markdown-shell .markdown-callout {
-    @apply rounded-3xl border border-white/10 bg-white/[0.04] px-5 py-4 text-white/80 shadow-[0_18px_60px_rgba(0,0,0,0.18)];
+    @apply rounded-3xl border px-5 py-4 shadow-[0_18px_60px_rgba(0,0,0,0.18)];
+    border-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.8);
   }
 
   .markdown-shell .markdown-pre {
-    @apply overflow-x-auto rounded-3xl border border-white/10 bg-[#02050b] p-4 shadow-[0_20px_80px_rgba(0,0,0,0.22)];
+    @apply overflow-x-auto rounded-3xl border bg-[#02050b] p-4 shadow-[0_20px_80px_rgba(0,0,0,0.22)];
+    border-color: rgba(255, 255, 255, 0.1);
   }
 
   .markdown-shell .markdown-inline-code {
-    @apply rounded-lg border border-accent/20 bg-accent/10 px-1.5 py-0.5 font-mono text-[0.92em] text-accent;
+    @apply rounded-lg border px-1.5 py-0.5 font-mono text-[0.92em] text-accent;
+    border-color: rgba(57, 208, 255, 0.2);
+    background-color: rgba(57, 208, 255, 0.1);
   }
 
   .markdown-shell .markdown-code-block {
-    @apply font-mono text-[13px] leading-6 text-white/86;
+    @apply font-mono text-[13px] leading-6;
+    color: rgba(255, 255, 255, 0.86);
   }
 
   .markdown-shell .markdown-table-shell {
-    @apply overflow-x-auto rounded-3xl border border-white/10 bg-white/[0.03];
+    @apply overflow-x-auto rounded-3xl border;
+    border-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.03);
   }
 
   .markdown-shell .markdown-table {
@@ -142,15 +162,20 @@ body {
   }
 
   .markdown-shell .markdown-th {
-    @apply border-b border-white/10 bg-white/[0.04] px-4 py-3 text-left font-medium text-white;
+    @apply border-b px-4 py-3 text-left font-medium text-white;
+    border-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.04);
   }
 
   .markdown-shell .markdown-td {
-    @apply border-t border-white/8 px-4 py-3 align-top text-white/76;
+    @apply border-t px-4 py-3 align-top;
+    border-color: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.76);
   }
 
   .markdown-shell .markdown-hr {
-    @apply my-8 border-white/10;
+    @apply my-8;
+    border-color: rgba(255, 255, 255, 0.1);
   }
 
   .markdown-compact {

@@ -46,6 +46,17 @@ def render_architecture(resolved: dict[str, Any]) -> str:
 4. `code_index/*` 提供上下文导航
 5. 代码模块只依赖必要的邻近模块和共享基础层
 
+## Production Release Runtime
+
+- 运行根目录由 `AI_OS_RELEASE_ROOT` 决定；默认是仓库同级的 `.compounding-runtime`
+- 目录约定固定为：
+  - `releases/<release-id>/`
+  - `current`
+  - `shared/`
+  - `registry.json`
+- 新版本先在 `releases/<release-id>` 完成构建与 smoke check，再原子切换 `current`
+- 本机或内网管理页通过 `apps/studio/src/modules/releases` 读取 registry，并触发 deploy / rollback
+
 ## Operating Roles
 
 - `Foreman`: 负责当前主线、任务边界、优先级裁决与规则同步
@@ -73,11 +84,11 @@ def render_architecture(resolved: dict[str, Any]) -> str:
 def render_dev_workflow() -> str:
     return f"""# DEV_WORKFLOW
 
-## Branch And Worktree Rule
+## Main Release Rule
 
-- 结构性改动必须在独立 worktree / branch 中完成
-- 当前标准分支名：`codex/ai-native-repo-refactor`
-- 不允许直接在主线做结构升级
+- `main` 是唯一生产主线
+- 本地短分支仍可用于临时开发，但发布动作只认 `main`
+- 不再使用 `dev` 作为发布缓冲层
 
 ## Standard Flow
 
@@ -87,7 +98,9 @@ def render_dev_workflow() -> str:
 4. 运行 `python3 scripts/pre_mutation_check.py`
 5. 完成最小可验证改动
 6. 更新 `task / memory / code_index / docs`
-7. 提交 PR
+7. 完成 review，并让改动进入 `main`
+8. 运行 `node --experimental-strip-types scripts/release/prepare-release.ts --ref main`
+9. 构建与 smoke 通过后，再运行 `node --experimental-strip-types scripts/release/switch-release.ts --release <release-id>`
 
 ## Reporting Contract
 
@@ -107,11 +120,12 @@ def render_dev_workflow() -> str:
 - 任务至少包含 Goal / Why / Scope / Out of Scope / Constraints / Related Modules / Acceptance Criteria / Risks / Status
 - 修改结束后要同步更新任务状态和验收结果
 
-## PR Rule
+## Release Rule
 
-- 结构升级必须通过 PR 合并
-- PR 必须说明删除了什么、保留了什么兼容层、还有哪些技术债
-- 任何新抽象都必须解释职责和删除条件
+- 新版本必须先在后台 release 目录完成准备，再切换 `current`
+- 切换失败前不得影响当前线上版本
+- 回滚通过 `scripts/release/rollback-release.ts` 或本机/内网发布管理页执行
+- 对于 Next.js 门户，服务重载采用 `systemctl restart` 或等价最小重启
 
 {evidence_boundary_block()}
 """
@@ -158,8 +172,19 @@ def render_ai_operating_model() -> str:
 → 修改模块
 → 更新 memory
 → 更新 code_index
-→ 发起 PR
+→ 进入 `main`
+→ 生成 release
+→ 切换或回滚
 → 在下一轮扫描中验证是否真正收敛
+
+## Production Direct Release
+
+- 生产发布以 `main` 为唯一主线
+- 版本构建在后台 release 目录完成
+- 线上切换只在构建和 smoke 成功后发生
+- 若新版异常，优先选择：
+  - 继续在 `main` 上修出下一次 release
+  - 或直接回滚到上一个健康 release
 
 ## Working Principle
 
@@ -171,72 +196,3 @@ def render_ai_operating_model() -> str:
 {evidence_boundary_block()}
 """
 
-
-def render_refactor_plan(resolved: dict[str, Any]) -> str:
-    largest = resolved["repo_scan"].get("largest_files", [])
-    largest_section = bullet_list([f"`{path}`: {lines} LOC" for lines, path in largest]) or "- 当前扫描暂无数据"
-    return f"""# REFACTOR_PLAN
-
-## Current Problem Overview
-
-- 当前仓库历史上混合了 bootstrap 产品、文档操作系统和半退役 workflow 前台
-- 旧 docs 体系、旧 API、旧组件仍对 AI 理解造成噪声
-- bootstrap 引擎曾长期集中在单一巨型文件中
-- 缺少面向 AI 的 task / memory / code_index 闭环
-
-## Top 10 Priority Problems
-
-1. `AGENTS.md` 必须从长文主源收口为薄入口 bootloader
-2. 旧的分层 docs 子树已经不应继续作为 live docs 使用，必须全部归档隔离
-3. `scripts/compounding_bootstrap/engine.py` 过大，妨碍维护和并行修改
-4. Studio 旧 workflow 页面和 API 已失效但仍残留
-5. 任务系统缺失，AI 改动难以绑定明确 scope
-6. 项目记忆层和 ADR 没有清晰归宿
-7. code index 缺失，AI 每次都要重新摸索模块入口
-8. 巨型 util / helper 扩张缺少明确治理阈值
-9. 技术债没有系统化沉淀
-10. 缺少自进化扫描脚本来持续生成后续任务
-
-## Target Structure
-
-```text
-repo/
-├─ AGENTS.md
-├─ docs/
-│  ├─ PROJECT_RULES.md
-│  ├─ ARCHITECTURE.md
-│  ├─ DEV_WORKFLOW.md
-│  ├─ AI_OPERATING_MODEL.md
-│  └─ REFACTOR_PLAN.md
-├─ memory/
-├─ code_index/
-├─ tasks/
-├─ scripts/ai/
-└─ apps/studio/src/modules/
-```
-
-## Largest Files Snapshot
-
-{largest_section}
-
-## First Module Split Candidates
-
-- `apps/studio/src/modules/docs`
-- `apps/studio/src/modules/portal`
-- `apps/studio/src/modules/git-health`
-- `scripts/compounding_bootstrap/*`
-
-## High Risk Points
-
-- 改文档结构时容易产生平行主源
-- bootstrap 行为改动必须保持 scaffold / audit / propose / apply 对外接口稳定
-- 删除旧前台时必须确保 `/` 和 `/knowledge-base` 仍能正常构建
-
-## Refactor Boundary
-
-- 本轮以结构升级为主，不做大面积业务重写
-- 允许真实删除旧页面、旧 API、旧组件和重复逻辑
-- 允许直接更新规范，只要它们正在限制当前主线效率
-
-{evidence_boundary_block()}
-"""

@@ -1,4 +1,4 @@
-name: dev-merge-guard
+name: main-release-guard
 
 on:
   pull_request:
@@ -25,3 +25,4 @@ jobs:
       - run: node --experimental-strip-types scripts/ai/generate-module-index.ts
       - run: node --experimental-strip-types scripts/ai/scan-code-health.ts --strict
       - run: pnpm test
+      - run: pnpm build

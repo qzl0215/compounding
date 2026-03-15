@@ -20,17 +20,18 @@ last_reviewed_at: 2026-03-15
 - `AGENTS.md` 是仓库内唯一高频执行主源；长文规则落在 `docs/*`，状态和经验落在 `memory/*`。
 - 默认先做只读盘点，再做最小可验证改动。
 - 默认先做高 ROI 动作，不做过度工程和抽象炫技。
-- 任何结构性改动都必须绑定任务、更新相关记忆，并通过 PR 合并。
+- 任何结构性改动都必须绑定任务、更新相关记忆，并在进入 `main` 前完成 review。
 - 巨型 util / helper / common 不允许继续扩张；新增逻辑必须伴随清理或明确删除计划。
 - 经验先写入 `memory/experience/*`，稳定后再升格到 `docs/*` 或 `AGENTS.md`。
+- 生产发布只认 `main`；回滚通过 release 切换完成，不通过 `git reset` 改写线上状态。
 
 ## Current State
 
 - 项目名称：Compounding AI Operating System
 - 项目一句话：把当前仓库升级成适合 AI 长期协作、任务驱动、可持续重构与自进化的 AI-Native Repo。
-- 当前优先级：完成 AI-Native Repo 第一轮结构收敛，并继续压缩剩余软上限文件与命名技术债。
-- 成功定义：任何新线程先读 AGENTS.md 即可进入统一执行协议，并沿 docs、memory、tasks、code_index 和 module.md 在最小上下文内完成可信改动。
-- 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系
+- 当前优先级：切到 main 直发生产，并补齐最小影响发布、回滚和本机管理入口。
+- 成功定义：生产构建样式稳定，main 可直接发布；新版本先在后台 release 目录完成构建与检查，再通过 current 软链秒级切换；一旦改坏，可在本机或内网管理页 review 最近版本并快速回滚。
+- 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
 - 运行边界：server-only
 - 当前主线来源：`memory/project/roadmap.md`
 - 当前任务入口：`tasks/queue/task-001-repo-refactor.md`
@@ -47,7 +48,8 @@ last_reviewed_at: 2026-03-15
 - 只读分析不强制同步。
 - 任何文件改动前先运行 `python3 scripts/pre_mutation_check.py`。
 - 若 worktree 不干净、存在 staged changes、或分支 `behind/diverged`，先整理或 `git pull --rebase`。
-- 结构改动默认绑定 worktree / branch / task / PR，不允许直接在主线乱改。
+- 可在本地短分支完成开发，但发布动作只认 `main`。
+- 发布前必须通过 release build 与 smoke gate；线上回滚走 release registry，不走 git reset。
 
 ## Required Reads
 
@@ -65,6 +67,7 @@ last_reviewed_at: 2026-03-15
 4. 运行 `python3 scripts/pre_mutation_check.py`
 5. 只构建最小必要上下文后再改代码
 6. 改动后更新 task / memory / code_index / docs
+7. 进入 `main` 后再准备 release 与 cutover
 
 ## Read More If...
 

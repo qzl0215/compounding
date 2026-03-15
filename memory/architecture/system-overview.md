@@ -31,7 +31,7 @@ related_docs:
 
 ## 数据流
 
-任务 → 最小上下文 → 模块改动 → 记忆回写 → 索引更新 → PR → 新一轮扫描
+任务 → 最小上下文 → 模块改动 → 记忆回写 → 索引更新 → review → main → release 准备 → `current` 切换 / 回滚 → 新一轮扫描
 
 ## 关键边界
 
@@ -39,6 +39,7 @@ related_docs:
 - `docs/*` 不与 `AGENTS.md` 竞争主源
 - `memory/*` 先记忆，后升格
 - `code_index/*` 只做导航，不替代真实代码
+- 生产 runtime 用 `releases/<id> + current + shared + registry.json` 管理，而不是原地覆盖
 
 ## 模块职责
 

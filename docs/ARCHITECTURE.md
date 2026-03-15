@@ -30,6 +30,7 @@ related_docs:
 - `apps/studio/src/modules/docs`
 - `apps/studio/src/modules/git-health`
 - `apps/studio/src/modules/portal`
+- `apps/studio/src/modules/releases`
 
 ### Bootstrap Engine Modules
 
@@ -47,6 +48,7 @@ related_docs:
 - `scripts/compounding_bootstrap/renderers_docs.py`
 - `scripts/compounding_bootstrap/renderers_index.py`
 - `scripts/compounding_bootstrap/renderers_memory.py`
+- `scripts/compounding_bootstrap/renderers_refactor_docs.py`
 - `scripts/compounding_bootstrap/renderers_system_docs.py`
 - `scripts/compounding_bootstrap/repo_scan.py`
 - `scripts/compounding_bootstrap/scaffold.py`
@@ -60,6 +62,17 @@ related_docs:
 3. `tasks/*` 给出当前变更边界
 4. `code_index/*` 提供上下文导航
 5. 代码模块只依赖必要的邻近模块和共享基础层
+
+## Production Release Runtime
+
+- 运行根目录由 `AI_OS_RELEASE_ROOT` 决定；默认是仓库同级的 `.compounding-runtime`
+- 目录约定固定为：
+  - `releases/<release-id>/`
+  - `current`
+  - `shared/`
+  - `registry.json`
+- 新版本先在 `releases/<release-id>` 完成构建与 smoke check，再原子切换 `current`
+- 本机或内网管理页通过 `apps/studio/src/modules/releases` 读取 registry，并触发 deploy / rollback
 
 ## Operating Roles
 

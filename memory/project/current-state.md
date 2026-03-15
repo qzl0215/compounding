@@ -17,24 +17,25 @@ related_docs:
 ## Project Snapshot
 
 - 项目名称：Compounding AI Operating System
-- 当前阶段：AI-Native Repo 第一轮结构重构
-- 当前优先级：完成 AI-Native Repo 第一轮结构收敛，并继续压缩剩余软上限文件与命名技术债。
-- 成功定义：任何新线程先读 AGENTS.md 即可进入统一执行协议，并沿 docs、memory、tasks、code_index 和 module.md 在最小上下文内完成可信改动。
-- 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系
+- 当前阶段：main 直发生产与可回滚发布模型收口
+- 当前优先级：切到 main 直发生产，并补齐最小影响发布、回滚和本机管理入口。
+- 成功定义：生产构建样式稳定，main 可直接发布；新版本先在后台 release 目录完成构建与检查，再通过 current 软链秒级切换；一旦改坏，可在本机或内网管理页 review 最近版本并快速回滚。
+- 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
 - 运行边界：server-only
 
 ## Current Focus
 
-- 规则层改造为 `AGENTS + PROJECT_RULES + ARCHITECTURE + DEV_WORKFLOW + AI_OPERATING_MODEL`
-- 搭起 memory / tasks / code_index / scripts/ai 骨架
-- 收敛旧 workflow 前台与对应 API
-- 拆分 Studio 与 bootstrap 引擎的第一批微模块
+- 修复生产构建 Tailwind 样式裁剪问题
+- 把发布主线切到 `main = production`
+- 落地 `releases/<id> + current + shared + registry.json`
+- 提供本机/内网发布管理页与回滚入口
 
 ## Next Checkpoint
 
 - `pnpm build`
 - `pnpm test`
 - `python3 scripts/init_project_compounding.py audit --config bootstrap/project_brief.yaml --target .`
+- `node --experimental-strip-types scripts/release/prepare-release.ts --ref main`
 
 ## Evidence Boundary
 

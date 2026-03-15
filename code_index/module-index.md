@@ -16,29 +16,36 @@ related_docs:
 
 ## apps/studio/src/modules
 
-- `apps/studio/src/modules/docs`
-- `apps/studio/src/modules/git-health`
-- `apps/studio/src/modules/portal`
+- `docs`: Studio 一等模块
+- `git-health`: Studio 一等模块
+- `portal`: Studio 一等模块
+- `releases`: Studio 一等模块
 
 ## scripts/compounding_bootstrap
 
-- `scripts/compounding_bootstrap/audit.py`
-- `scripts/compounding_bootstrap/catalog.py`
-- `scripts/compounding_bootstrap/config_resolution.py`
-- `scripts/compounding_bootstrap/defaults.py`
-- `scripts/compounding_bootstrap/document_renderers.py`
-- `scripts/compounding_bootstrap/engine.py`
-- `scripts/compounding_bootstrap/managed_blocks.py`
-- `scripts/compounding_bootstrap/proposal_engine.py`
-- `scripts/compounding_bootstrap/proposal_generation.py`
-- `scripts/compounding_bootstrap/proposal_support.py`
-- `scripts/compounding_bootstrap/renderers_base_docs.py`
-- `scripts/compounding_bootstrap/renderers_docs.py`
-- `scripts/compounding_bootstrap/renderers_index.py`
-- `scripts/compounding_bootstrap/renderers_memory.py`
-- `scripts/compounding_bootstrap/renderers_system_docs.py`
-- `scripts/compounding_bootstrap/repo_scan.py`
-- `scripts/compounding_bootstrap/scaffold.py`
-- `scripts/compounding_bootstrap/scaffold_assets.py`
-- `scripts/compounding_bootstrap/yaml_io.py`
+- `audit`: bootstrap 引擎模块
+- `catalog`: bootstrap 引擎模块
+- `config_resolution`: bootstrap 引擎模块
+- `defaults`: bootstrap 引擎模块
+- `document_renderers`: bootstrap 引擎模块
+- `engine`: bootstrap 引擎模块
+- `managed_blocks`: bootstrap 引擎模块
+- `proposal_engine`: bootstrap 引擎模块
+- `proposal_generation`: bootstrap 引擎模块
+- `proposal_support`: bootstrap 引擎模块
+- `renderers_base_docs`: bootstrap 引擎模块
+- `renderers_docs`: bootstrap 引擎模块
+- `renderers_index`: bootstrap 引擎模块
+- `renderers_memory`: bootstrap 引擎模块
+- `renderers_refactor_docs`: bootstrap 引擎模块
+- `renderers_system_docs`: bootstrap 引擎模块
+- `repo_scan`: bootstrap 引擎模块
+- `scaffold`: bootstrap 引擎模块
+- `scaffold_assets`: bootstrap 引擎模块
+- `yaml_io`: bootstrap 引擎模块
+
+## Read This Before Editing
+
+- 先读对应 `module.md`
+- 再读相关 task / docs / memory / code_index
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

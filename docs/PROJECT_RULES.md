@@ -45,6 +45,13 @@ related_docs:
 - 任何结构性改动都必须同步更新 `task`、`memory`、`code_index`
 - 规则若限制主线效率，可直接更新，但必须同步回 `AGENTS.md`、相关文档和 ADR
 
+## Release Governance
+
+- `main` 是唯一生产主线，不再使用 `dev` 作为发布缓冲层
+- 新 release 必须先在后台目录完成安装、构建与 smoke check，成功后才允许切换 `current`
+- 线上回滚以 release 切换为准，不以 `git reset` 为准
+- 发布失败不得影响当前线上版本；未切换前禁止覆盖现网目录
+
 ## Legacy Compatibility Rule
 
 - 旧 workflow 前台、旧 API、旧 docs 树不允许再作为 live 结构继续扩张

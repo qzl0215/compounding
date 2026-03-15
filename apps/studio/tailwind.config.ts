@@ -4,7 +4,8 @@ const config: Config = {
   content: [
     "./src/app/**/*.{ts,tsx}",
     "./src/components/**/*.{ts,tsx}",
-    "./src/lib/**/*.{ts,tsx}"
+    "./src/lib/**/*.{ts,tsx}",
+    "./src/modules/**/*.{ts,tsx}"
   ],
   theme: {
     extend: {
