@@ -69,7 +69,7 @@ def render_markdown_docs(target: Path, resolved: dict[str, Any]) -> None:
         "memory/project/roadmap.md": render_roadmap(resolved),
         "memory/experience/README.md": render_experience_readme(),
         "memory/experience/exp-001-thin-agents-entry.md": render_experience_entry(
-            "Thin AGENTS Entry",
+            "保持 AGENTS 轻入口",
             "AGENTS 曾长期承载过多正文，导致每个线程都要吞下过重上下文。",
             "把 AGENTS 收口成薄入口，只保留高频执行约束和必读清单。",
             "这样最符合 Codex 的天然入口读取模式，也降低主源污染风险。",
@@ -77,7 +77,7 @@ def render_markdown_docs(target: Path, resolved: dict[str, Any]) -> None:
             "若未来再出现高频长文倾向，应优先压回 docs / memory，而不是继续加重 AGENTS。",
         ),
         "memory/experience/exp-002-memory-before-promotion.md": render_experience_entry(
-            "Memory Before Promotion",
+            "先记忆，再升格",
             "经验如果直接升格进主规则，往往会把一次性判断写成长期规则。",
             "先写 memory，再验证，再决定是否升格。",
             "这能避免主规则快速膨胀，也让经验拥有可追溯来源。",
@@ -85,7 +85,7 @@ def render_markdown_docs(target: Path, resolved: dict[str, Any]) -> None:
             "所有暂未稳定的经验都应该先进入 memory/experience。",
         ),
         "memory/experience/exp-003-delete-legacy-ui-first.md": render_experience_entry(
-            "Delete Legacy UI First",
+            "先删除半活旧前台",
             "当前仓库曾经存在大量已退役的 workflow 页面和 API。",
             "优先删除半活前台，再谈新骨架。",
             "对 AI 来说，错误入口比缺入口更糟。",
@@ -93,19 +93,19 @@ def render_markdown_docs(target: Path, resolved: dict[str, Any]) -> None:
             "以后凡是退役前台，都应该先从构建入口清掉，再决定是否归档。",
         ),
         "memory/decisions/ADR-001-ai-native-repo-skeleton.md": render_adr(
-            "ADR-001 AI-Native Repo Skeleton",
+            "ADR-001 AI-Native Repo 骨架",
             "仓库需要从“文档产品 + 旧 workflow 前台 + 巨型引擎”收敛为适合 AI 长期协作的结构。",
             "采用 `AGENTS + docs + memory + code_index + tasks + scripts/ai` 的骨架，并以 Studio 只读门户做可视化入口。",
             "这让规则、状态、记忆、上下文和任务各有归宿，同时避免再建平行体系。",
         ),
         "memory/decisions/ADR-002-thin-agents-entry-contract.md": render_adr(
-            "ADR-002 Thin AGENTS Entry Contract",
+            "ADR-002 AGENTS 轻入口合约",
             "Codex 线程天然会读 AGENTS.md，但不保证额外跳转总是发生。",
             "把 AGENTS 定义为薄入口合约，而不是长篇规则文档。",
             "这样可以同时保证入口约束力和长期可维护性。",
         ),
         "memory/decisions/ADR-003-no-new-giant-utils.md": render_adr(
-            "ADR-003 No New Giant Utils",
+            "ADR-003 禁止新增巨型工具层",
             "历史上巨型 util / helper 常成为无边界逻辑堆积点。",
             "禁止继续扩张这类命名和承载层，优先按能力拆到清晰模块。",
             "这样可以降低 AI 理解成本，也让并行修改的冲突更少。",
@@ -115,7 +115,7 @@ def render_markdown_docs(target: Path, resolved: dict[str, Any]) -> None:
     }
     for relative_path, block_content in block_map.items():
         meta = build_meta(relative_path)
-        suffix = "## Manual Notes\n\n人工补充内容写在这里。`scaffold` 只更新 managed blocks，不覆盖这一区域。" if relative_path == AGENTS_PATH else ""
+        suffix = "## 人工备注\n\n人工补充内容写在这里。`scaffold` 只更新 managed blocks，不覆盖这一区域。" if relative_path == AGENTS_PATH else ""
         write_managed_document(target / relative_path, meta, block_content, suffix)
 
 

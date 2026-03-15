@@ -10,19 +10,19 @@ related_docs:
   - memory/decisions/ADR-001-ai-native-repo-skeleton.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
-# Experience README
+# 经验记录说明
 
 这里记录尚未升格为长期规则的经验。默认先记忆，再验证，再决定是否升格。
 
-## Entry Format
+## 记录格式
 
-- Context
-- Decision
-- Why
-- Impact
-- Reuse
+- 背景
+- 决策
+- 为什么
+- 影响
+- 复用
 
-## Promotion Candidates
+## 升格候选
 
 - 重复出现 2 次以上且无明显例外的经验，才能候选升格
 - 若现有规则已直接阻碍 roadmap 主线效率，可直接改规，但必须同步写 ADR

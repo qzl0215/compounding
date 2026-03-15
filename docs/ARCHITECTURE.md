@@ -12,9 +12,9 @@ related_docs:
   - memory/architecture/system-overview.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
-# ARCHITECTURE
+# 架构
 
-## Repository Shape
+## 仓库结构
 
 - `apps/studio/`: 只读文档门户
 - `scripts/compounding_bootstrap/`: scaffold / audit / proposal 引擎
@@ -23,16 +23,17 @@ related_docs:
 - `code_index/`: 模块索引、依赖图、函数索引
 - `tasks/`: 模板、队列、归档
 
-## Primary Module Domains
+## 核心模块域
 
-### Studio Modules
+### Studio 模块
 
 - `apps/studio/src/modules/docs`
 - `apps/studio/src/modules/git-health`
 - `apps/studio/src/modules/portal`
 - `apps/studio/src/modules/releases`
+- `apps/studio/src/modules/tasks`
 
-### Bootstrap Engine Modules
+### Bootstrap 引擎模块
 
 - `scripts/compounding_bootstrap/audit.py`
 - `scripts/compounding_bootstrap/catalog.py`
@@ -55,7 +56,7 @@ related_docs:
 - `scripts/compounding_bootstrap/scaffold_assets.py`
 - `scripts/compounding_bootstrap/yaml_io.py`
 
-## Dependency Direction
+## 依赖方向
 
 1. `AGENTS.md` 提供高频入口
 2. `docs/*` 提供长期规则、架构和流程
@@ -63,7 +64,7 @@ related_docs:
 4. `code_index/*` 提供上下文导航
 5. 代码模块只依赖必要的邻近模块和共享基础层
 
-## Production Release Runtime
+## 生产发布运行时
 
 - 运行根目录由 `AI_OS_RELEASE_ROOT` 决定；默认是仓库同级的 `.compounding-runtime`
 - 目录约定固定为：
@@ -74,27 +75,27 @@ related_docs:
 - 新版本先在 `releases/<release-id>` 完成构建与 smoke check，再原子切换 `current`
 - 本机或内网管理页通过 `apps/studio/src/modules/releases` 读取 registry，并触发 deploy / rollback
 
-## Operating Roles
+## 角色职责
 
 - `Foreman`: 负责当前主线、任务边界、优先级裁决与规则同步
 - `Architect`: 负责模块边界、依赖方向、长期结构收敛
 - `Builder`: 负责最小可验证实现、收敛旧逻辑与删除兼容层
 - `Auditor`: 负责证据边界、技术债、规则漂移与回归检查
 
-## First Refactor Batch
+## 当前重构批次
 
 - 删除旧 workflow 前台和对应 API
 - 把 Studio 收口为 `portal / docs / git-health`
 - 把 bootstrap 引擎拆成可维护的 Python 微模块
 - 补齐 `memory / tasks / code_index / scripts/ai` 骨架
 
-## Forbidden Call Patterns
+## 禁止调用方式
 
 - 禁止从 UI 组件跨层读取任意文件系统状态而不经过模块仓储层
 - 禁止在 bootstrap 引擎里继续堆单一巨型 `engine.py`
 - 禁止把临时上下文直接塞回 `AGENTS.md`
 
-## Evidence Boundary
+## 证据边界
 
 - 本地离线证据：
 - 服务器真实证据：

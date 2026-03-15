@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
@@ -66,7 +67,7 @@ def audit(config_path: Path, target: Path) -> AuditResult:
 
     if agents_path.exists() and roadmap_path.exists():
         agents_priority = extract_value(agents_path.read_text(encoding="utf8"), "当前优先级")
-        roadmap_priority = extract_heading_block(roadmap_path.read_text(encoding="utf8"), "Current Priority")
+        roadmap_priority = extract_heading_block(target, roadmap_path.read_text(encoding="utf8"), "current_priority")
         if agents_priority and roadmap_priority and agents_priority.strip() != roadmap_priority.strip():
             result.errors.append("AGENTS current priority must mirror roadmap current priority.")
 
@@ -82,22 +83,23 @@ def audit(config_path: Path, target: Path) -> AuditResult:
     memory_readme = target / "memory/experience/README.md"
     if memory_readme.exists():
         memory_text = memory_readme.read_text(encoding="utf8")
-        if "## Promotion Candidates" not in memory_text:
-            result.errors.append("memory/experience/README.md missing section: ## Promotion Candidates")
+        if not extract_heading_block(target, memory_text, "promotion_candidates"):
+            result.errors.append("memory/experience/README.md missing section: ## 升格候选")
 
     task_template = target / "tasks/templates/task-template.md"
     if task_template.exists():
         template_text = task_template.read_text(encoding="utf8")
         for heading in [
-            "## Goal",
-            "## Why",
-            "## Scope",
-            "## Out of Scope",
-            "## Constraints",
-            "## Related Modules",
-            "## Acceptance Criteria",
-            "## Risks",
-            "## Status",
+            "## 目标",
+            "## 为什么",
+            "## 范围",
+            "## 范围外",
+            "## 约束",
+            "## 关联模块",
+            "## 验收标准",
+            "## 风险",
+            "## 状态",
+            "## 更新痕迹",
         ]:
             if heading not in template_text:
                 result.errors.append(f"task template missing heading: {heading}")
@@ -124,6 +126,26 @@ def extract_value(text: str, label: str) -> str | None:
     return match.group(1).strip() if match else None
 
 
-def extract_heading_block(text: str, heading: str) -> str | None:
-    match = re.search(rf"## {re.escape(heading)}\n\n([\s\S]*?)(?=\n## |\Z)", text)
-    return match.group(1).strip() if match else None
+def extract_heading_block(target: Path, text: str, heading_key: str) -> str | None:
+    for heading in heading_aliases(target, heading_key):
+        match = re.search(rf"## {re.escape(heading)}\n\n([\s\S]*?)(?=\n## |\Z)", text)
+        if match:
+            return match.group(1).strip()
+    return None
+
+
+def heading_aliases(target: Path, heading_key: str) -> list[str]:
+    aliases = load_heading_aliases(target)
+    if heading_key in aliases:
+        return aliases[heading_key]
+    for values in aliases.values():
+        if any(item.strip().lower() == heading_key.strip().lower() for item in values):
+            return values
+    return [heading_key]
+
+
+def load_heading_aliases(target: Path) -> dict[str, list[str]]:
+    alias_path = target / "bootstrap" / "heading_aliases.json"
+    if alias_path.exists():
+        return json.loads(alias_path.read_text(encoding="utf8"))
+    return {}

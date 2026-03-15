@@ -9,7 +9,6 @@ const suspiciousNames = new Set(["utils", "helpers", "common", "misc", "temp", "
 const legacyPaths = [
   "apps/studio/src/app/bootstrap-wizard",
   "apps/studio/src/app/initialize",
-  "apps/studio/src/app/tasks",
   "apps/studio/src/app/reviews",
   "apps/studio/src/app/rewrite-proposals",
   "apps/studio/src/app/goals-priorities",

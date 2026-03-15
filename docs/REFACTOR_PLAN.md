@@ -12,17 +12,17 @@ related_docs:
   - memory/project/roadmap.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
-# REFACTOR_PLAN
+# 重构计划
 
-## Current Problem Overview
+## 当前问题总览
 
 - 当前仓库历史上混合了 bootstrap 产品、文档操作系统和半退役 workflow 前台
 - 旧 docs 体系、旧 API、旧组件仍对 AI 理解造成噪声
 - bootstrap 引擎曾长期集中在单一巨型文件中
 - 缺少面向 AI 的 task / memory / code_index 闭环
-- 还没有 `main` 直发生产、最小影响 cutover 和版本回滚的统一模型
+- 文档标题和 task 可视化仍不够中文友好、不够直观
 
-## Top 10 Priority Problems
+## 最值得优先处理的 10 个问题
 
 1. `AGENTS.md` 必须从长文主源收口为薄入口 bootloader
 2. 旧的分层 docs 子树已经不应继续作为 live docs 使用，必须全部归档隔离
@@ -33,9 +33,9 @@ related_docs:
 7. code index 缺失，AI 每次都要重新摸索模块入口
 8. 巨型 util / helper 扩张缺少明确治理阈值
 9. 生产发布还缺少后台准备 + 原子切换 + rollback registry
-10. 技术债和发布风险缺少统一回写与回滚入口
+10. 中文化和任务可视化仍不足以支撑高效组织
 
-## Target Structure
+## 目标结构
 
 ```text
 repo/
@@ -54,7 +54,7 @@ repo/
 └─ apps/studio/src/modules/
 ```
 
-## Largest Files Snapshot
+## 大文件快照
 
 - `apps/studio/.next/cache/webpack/server-production/17.pack`: 760611 LOC
 - `apps/studio/.next/cache/webpack/server-production/8.pack`: 710108 LOC
@@ -62,12 +62,12 @@ repo/
 - `apps/studio/.next/cache/webpack/server-production/9.pack`: 520925 LOC
 - `apps/studio/.next/cache/webpack/server-production/16.pack`: 414575 LOC
 - `apps/studio/.next/cache/webpack/client-production/13.pack`: 391962 LOC
-- `apps/studio/.next/cache/webpack/client-production/2.pack`: 390905 LOC
+- `apps/studio/.next/cache/webpack/client-production/2.pack`: 390817 LOC
 - `apps/studio/.next/cache/webpack/client-production/0.pack`: 378992 LOC
 - `apps/studio/.next/cache/webpack/client-development/4.pack.gz`: 341641 LOC
-- `apps/studio/.next/cache/webpack/client-development/8.pack.gz`: 340102 LOC
+- `apps/studio/.next/cache/webpack/server-production/0.pack`: 279405 LOC
 
-## First Module Split Candidates
+## 第一批建议拆分的模块
 
 - `apps/studio/src/modules/docs`
 - `apps/studio/src/modules/portal`
@@ -75,20 +75,20 @@ repo/
 - `apps/studio/src/modules/releases`
 - `scripts/compounding_bootstrap/*`
 
-## High Risk Points
+## 高风险点
 
 - 改文档结构时容易产生平行主源
 - bootstrap 行为改动必须保持 scaffold / audit / propose / apply 对外接口稳定
 - 删除旧前台时必须确保 `/`、`/knowledge-base`、`/releases` 仍能正常构建
 - 发布与回滚脚本必须做到“失败不切流”，不能破坏当前线上版本
 
-## Refactor Boundary
+## 本次重构边界
 
 - 本轮以结构升级为主，不做大面积业务重写
 - 允许真实删除旧页面、旧 API、旧组件和重复逻辑
 - 允许直接更新规范，只要它们正在限制当前主线效率
 
-## Evidence Boundary
+## 证据边界
 
 - 本地离线证据：
 - 服务器真实证据：

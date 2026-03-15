@@ -12,32 +12,32 @@ related_docs:
   - tasks/queue/task-001-repo-refactor.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
-# Current State
+# 当前状态
 
-## Project Snapshot
+## 项目概览
 
 - 项目名称：Compounding AI Operating System
-- 当前阶段：main 直发生产与可回滚发布模型收口
-- 当前优先级：切到 main 直发生产，并补齐最小影响发布、回滚和本机管理入口。
-- 成功定义：生产构建样式稳定，main 可直接发布；新版本先在后台 release 目录完成构建与检查，再通过 current 软链秒级切换；一旦改坏，可在本机或内网管理页 review 最近版本并快速回滚。
+- 当前阶段：中文友好文档、轻量任务清单与粘性导航收口
+- 当前优先级：收口中文友好文档、轻量任务清单与全站粘性导航，确保每次改动都能沿 task / memory / code_index / roadmap 被追踪。
+- 成功定义：live 文档主标题中文友好，首页/任务页/文档页/发布页都具备清晰的粘性右侧导航；任何可合并改动都能绑定到 task，并通过任务、记忆、索引、路线图的最小闭环维持高效组织。
 - 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
 - 运行边界：server-only
 
-## Current Focus
+## 当前焦点
 
-- 修复生产构建 Tailwind 样式裁剪问题
-- 把发布主线切到 `main = production`
-- 落地 `releases/<id> + current + shared + registry.json`
-- 提供本机/内网发布管理页与回滚入口
+- live 文档主标题改成中文友好写法
+- 首页、任务页、文档页、发布页统一右侧粘性导航
+- task 升级成轻量项目管理清单，并补上更新痕迹
+- 让 task / memory / code_index / roadmap 形成最小闭环
 
-## Next Checkpoint
+## 下一检查点
 
 - `pnpm build`
 - `pnpm test`
 - `python3 scripts/init_project_compounding.py audit --config bootstrap/project_brief.yaml --target .`
-- `node --experimental-strip-types scripts/release/prepare-release.ts --ref main`
+- `node --experimental-strip-types scripts/ai/validate-change-trace.ts`
 
-## Evidence Boundary
+## 证据边界
 
 - 本地离线证据：
 - 服务器真实证据：

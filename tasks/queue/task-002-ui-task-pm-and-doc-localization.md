@@ -1,0 +1,64 @@
+# 任务 task-002-ui-task-pm-and-doc-localization
+
+## 目标
+
+把 live 文档标题中文化，补齐全站粘性右侧导航，并把现有 `tasks/*` 升级成轻量项目管理清单。
+
+## 为什么
+
+当前页面仍有不少英文主标题，右侧导航只在单页局部存在，task 体系也还偏“有文件但不好管理”。这会增加阅读成本，削弱高效组织和持续抓重点的执行力。
+
+## 范围
+
+- live 文档的 `# / ##` 标题中文友好化
+- 首页、任务页、文档页、发布页统一右侧粘性导航
+- 新增 `/tasks` 页面
+- task 模板和 task parser 收口为轻量项目管理清单
+- 新增 `validate-change-trace` 自动校验
+
+## 范围外
+
+- 改变 `main` 直发生产与 rollback 模型
+- 新增数据库、编辑器、复杂后台系统
+- 引入参考项目里的重型 lane / PR / branch 制度
+
+## 约束
+
+- Markdown 仍是真相源
+- 不新增平行文档体系
+- roadmap 仅在主线变化时更新
+- 保持页面入口只有首页 / 任务 / 文档 / 发布
+
+## 关联模块
+
+- `apps/studio/src/modules/docs`
+- `apps/studio/src/modules/portal`
+- `apps/studio/src/modules/tasks`
+- `apps/studio/src/modules/releases`
+- `scripts/ai/*`
+- `scripts/compounding_bootstrap/*`
+
+## 验收标准
+
+- live 文档 `# / ##` 标题中文友好，现有摘要解析仍然正常
+- `/`、`/tasks`、`/knowledge-base`、`/releases` 都有右侧粘性导航
+- `/tasks` 可按 `todo / doing / blocked / done` 查看任务
+- task 模板带“更新痕迹”，并有自动校验脚本兜底
+- `pnpm lint`、`pnpm test`、`pnpm build`、`bootstrap:audit` 通过
+
+## 风险
+
+- 标题中文化后，旧的英文解析逻辑可能失效
+- 右侧导航共享化后，长页布局可能出现回归
+- task 闭环如果要求过重，容易反向长出管理负担
+
+## 状态
+
+done
+
+## 更新痕迹
+
+- 记忆：`no change: no reusable learning`
+- 索引：`code_index/module-index.md`, `code_index/dependency-map.md`, `code_index/function-index.json`
+- 路线图：`memory/project/roadmap.md`
+- 文档：`AGENTS.md`, `docs/PROJECT_RULES.md`, `docs/ARCHITECTURE.md`, `docs/DEV_WORKFLOW.md`, `docs/AI_OPERATING_MODEL.md`

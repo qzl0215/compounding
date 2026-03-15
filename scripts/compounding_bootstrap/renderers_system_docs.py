@@ -17,9 +17,9 @@ def render_architecture(resolved: dict[str, Any]) -> str:
         "proposal_engine",
         "engine",
     ]
-    return f"""# ARCHITECTURE
+    return f"""# 架构
 
-## Repository Shape
+## 仓库结构
 
 - `apps/studio/`: 只读文档门户
 - `scripts/compounding_bootstrap/`: scaffold / audit / proposal 引擎
@@ -28,17 +28,17 @@ def render_architecture(resolved: dict[str, Any]) -> str:
 - `code_index/`: 模块索引、依赖图、函数索引
 - `tasks/`: 模板、队列、归档
 
-## Primary Module Domains
+## 核心模块域
 
-### Studio Modules
+### Studio 模块
 
 {bullet_list([f"`apps/studio/src/modules/{name}`" for name in studio_modules])}
 
-### Bootstrap Engine Modules
+### Bootstrap 引擎模块
 
 {bullet_list([f"`scripts/compounding_bootstrap/{name}.py`" for name in bootstrap_modules])}
 
-## Dependency Direction
+## 依赖方向
 
 1. `AGENTS.md` 提供高频入口
 2. `docs/*` 提供长期规则、架构和流程
@@ -46,7 +46,7 @@ def render_architecture(resolved: dict[str, Any]) -> str:
 4. `code_index/*` 提供上下文导航
 5. 代码模块只依赖必要的邻近模块和共享基础层
 
-## Production Release Runtime
+## 生产发布运行时
 
 - 运行根目录由 `AI_OS_RELEASE_ROOT` 决定；默认是仓库同级的 `.compounding-runtime`
 - 目录约定固定为：
@@ -57,21 +57,21 @@ def render_architecture(resolved: dict[str, Any]) -> str:
 - 新版本先在 `releases/<release-id>` 完成构建与 smoke check，再原子切换 `current`
 - 本机或内网管理页通过 `apps/studio/src/modules/releases` 读取 registry，并触发 deploy / rollback
 
-## Operating Roles
+## 角色职责
 
 - `Foreman`: 负责当前主线、任务边界、优先级裁决与规则同步
 - `Architect`: 负责模块边界、依赖方向、长期结构收敛
 - `Builder`: 负责最小可验证实现、收敛旧逻辑与删除兼容层
 - `Auditor`: 负责证据边界、技术债、规则漂移与回归检查
 
-## First Refactor Batch
+## 当前重构批次
 
 - 删除旧 workflow 前台和对应 API
 - 把 Studio 收口为 `portal / docs / git-health`
 - 把 bootstrap 引擎拆成可维护的 Python 微模块
 - 补齐 `memory / tasks / code_index / scripts/ai` 骨架
 
-## Forbidden Call Patterns
+## 禁止调用方式
 
 - 禁止从 UI 组件跨层读取任意文件系统状态而不经过模块仓储层
 - 禁止在 bootstrap 引擎里继续堆单一巨型 `engine.py`
@@ -82,15 +82,15 @@ def render_architecture(resolved: dict[str, Any]) -> str:
 
 
 def render_dev_workflow() -> str:
-    return f"""# DEV_WORKFLOW
+    return f"""# 开发工作流
 
-## Main Release Rule
+## 主发布规则
 
 - `main` 是唯一生产主线
 - 本地短分支仍可用于临时开发，但发布动作只认 `main`
 - 不再使用 `dev` 作为发布缓冲层
 
-## Standard Flow
+## 标准流程
 
 1. 先读 `AGENTS.md`
 2. 再读 `docs/PROJECT_RULES.md`、`docs/ARCHITECTURE.md`
@@ -102,7 +102,7 @@ def render_dev_workflow() -> str:
 8. 运行 `node --experimental-strip-types scripts/release/prepare-release.ts --ref main`
 9. 构建与 smoke 通过后，再运行 `node --experimental-strip-types scripts/release/switch-release.ts --release <release-id>`
 
-## Reporting Contract
+## 汇报契约
 
 - 默认回复结构：
   - 已完成清单
@@ -114,13 +114,19 @@ def render_dev_workflow() -> str:
   - 服务器真实证据
   - 当前结论适用边界
 
-## Task Rule
+## 任务规则
 
 - 每个结构性改动必须绑定 `tasks/queue/*`
-- 任务至少包含 Goal / Why / Scope / Out of Scope / Constraints / Related Modules / Acceptance Criteria / Risks / Status
+- 任务至少包含 目标 / 为什么 / 范围 / 范围外 / 约束 / 关联模块 / 验收标准 / 风险 / 状态 / 更新痕迹
 - 修改结束后要同步更新任务状态和验收结果
+- `更新痕迹` 必须明确写出：
+  - 记忆
+  - 索引
+  - 路线图
+  - 文档
+  若某项无变化，写 `no change: <reason>`
 
-## Release Rule
+## 发布规则
 
 - 新版本必须先在后台 release 目录完成准备，再切换 `current`
 - 切换失败前不得影响当前线上版本
@@ -133,9 +139,9 @@ def render_dev_workflow() -> str:
 
 
 def render_ai_operating_model() -> str:
-    return f"""# AI_OPERATING_MODEL
+    return f"""# AI 工作模型
 
-## Standard Reading Order
+## 标准阅读顺序
 
 1. `AGENTS.md`
 2. `docs/PROJECT_RULES.md`
@@ -146,27 +152,27 @@ def render_ai_operating_model() -> str:
 7. 必要代码
 8. 动手前 `python3 scripts/pre_mutation_check.py`
 
-## Task-Driven Development
+## 任务驱动开发
 
 - AI 默认围绕 `tasks/queue/*` 工作
 - 若任务不存在，先用 `scripts/ai/create-task.ts` 生成
 - 任务是 scope 和验收边界，不是可有可无的备注
 
-## Context System
+## 上下文系统
 
 - `code_index/module-index.md` 给模块入口
 - `code_index/dependency-map.md` 给依赖方向
 - `code_index/function-index.json` 给粗粒度函数索引
 - `scripts/ai/build-context.ts` 负责把规则、架构、任务、模块和记忆压缩成最小上下文包
 
-## Memory System
+## 记忆系统
 
 - 新经验先进入 `memory/experience/*`
 - 已裁决事项进入 `memory/decisions/ADR-*.md`
 - 当前项目状态和 roadmap 在 `memory/project/*`
 - 经验重复验证后才允许升格到 `docs/*` 或 `AGENTS.md`
 
-## Self-Improving Loop
+## 自进化闭环
 
 扫描问题
 → 生成 task
@@ -178,7 +184,7 @@ def render_ai_operating_model() -> str:
 → 切换或回滚
 → 在下一轮扫描中验证是否真正收敛
 
-## Production Direct Release
+## 生产直发
 
 - 生产发布以 `main` 为唯一主线
 - 版本构建在后台 release 目录完成
@@ -187,12 +193,13 @@ def render_ai_operating_model() -> str:
   - 继续在 `main` 上修出下一次 release
   - 或直接回滚到上一个健康 release
 
-## Working Principle
+## 工作原则
 
 - 优先减少理解成本
 - 优先减少重复逻辑
 - 优先减少隐式依赖
 - 不做大面积业务重写
+- 创业团队文化优先：持续抓重点，不过度优化，少条条框框，但井井有条
 
 {evidence_boundary_block()}
 """

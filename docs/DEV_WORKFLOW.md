@@ -12,15 +12,15 @@ related_docs:
   - tasks/templates/task-template.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
-# DEV_WORKFLOW
+# 开发工作流
 
-## Main Release Rule
+## 主发布规则
 
 - `main` 是唯一生产主线
 - 本地短分支仍可用于临时开发，但发布动作只认 `main`
 - 不再使用 `dev` 作为发布缓冲层
 
-## Standard Flow
+## 标准流程
 
 1. 先读 `AGENTS.md`
 2. 再读 `docs/PROJECT_RULES.md`、`docs/ARCHITECTURE.md`
@@ -32,7 +32,7 @@ related_docs:
 8. 运行 `node --experimental-strip-types scripts/release/prepare-release.ts --ref main`
 9. 构建与 smoke 通过后，再运行 `node --experimental-strip-types scripts/release/switch-release.ts --release <release-id>`
 
-## Reporting Contract
+## 汇报契约
 
 - 默认回复结构：
   - 已完成清单
@@ -44,13 +44,19 @@ related_docs:
   - 服务器真实证据
   - 当前结论适用边界
 
-## Task Rule
+## 任务规则
 
 - 每个结构性改动必须绑定 `tasks/queue/*`
-- 任务至少包含 Goal / Why / Scope / Out of Scope / Constraints / Related Modules / Acceptance Criteria / Risks / Status
+- 任务至少包含 目标 / 为什么 / 范围 / 范围外 / 约束 / 关联模块 / 验收标准 / 风险 / 状态 / 更新痕迹
 - 修改结束后要同步更新任务状态和验收结果
+- `更新痕迹` 必须明确写出：
+  - 记忆
+  - 索引
+  - 路线图
+  - 文档
+  若某项无变化，写 `no change: <reason>`
 
-## Release Rule
+## 发布规则
 
 - 新版本必须先在后台 release 目录完成准备，再切换 `current`
 - 切换失败前不得影响当前线上版本
@@ -58,7 +64,7 @@ related_docs:
 - 发布和回滚动作必须串行执行，release lock 未释放前不得触发第二个动作
 - 对于 Next.js 门户，服务重载采用 `systemctl restart` 或等价最小重启
 
-## Evidence Boundary
+## 证据边界
 
 - 本地离线证据：
 - 服务器真实证据：

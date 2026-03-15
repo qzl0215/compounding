@@ -72,6 +72,70 @@
     "exported": true
   },
   {
+    "module": "apps/studio/src/modules/docs",
+    "file": "apps/studio/src/modules/docs/sections.ts",
+    "symbol": "extractHeadings",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/docs",
+    "file": "apps/studio/src/modules/docs/sections.ts",
+    "symbol": "extractSection",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/docs",
+    "file": "apps/studio/src/modules/docs/sections.ts",
+    "symbol": "extractFirstHeading",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/docs",
+    "file": "apps/studio/src/modules/docs/sections.ts",
+    "symbol": "parseMarkdownSections",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/docs",
+    "file": "apps/studio/src/modules/docs/sections.ts",
+    "symbol": "stripMarkdown",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/docs",
+    "file": "apps/studio/src/modules/docs/sections.ts",
+    "symbol": "resolveHeadingAliases",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/docs",
+    "file": "apps/studio/src/modules/docs/sections.ts",
+    "symbol": "normalizeHeading",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/docs",
+    "file": "apps/studio/src/modules/docs/sections.ts",
+    "symbol": "slugify",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
     "module": "apps/studio/src/modules/git-health",
     "file": "apps/studio/src/modules/git-health/service.ts",
     "symbol": "runGit",
@@ -154,14 +218,6 @@
   {
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/service.ts",
-    "symbol": "toTaskSummary",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/service.ts",
     "symbol": "toOverviewSnippet",
     "kind": "function",
     "language": "TypeScript",
@@ -171,6 +227,14 @@
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/service.ts",
     "symbol": "entry",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/service.ts",
+    "symbol": "summarizeTaskTrace",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -264,6 +328,62 @@
     "exported": true
   },
   {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/service.ts",
+    "symbol": "getTaskBoard",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/service.ts",
+    "symbol": "listTaskCards",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/service.ts",
+    "symbol": "toTaskCard",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/service.ts",
+    "symbol": "parseRelatedModules",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/service.ts",
+    "symbol": "parseUpdateTrace",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/service.ts",
+    "symbol": "extractTraceValue",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/service.ts",
+    "symbol": "normalizeTaskStatus",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
     "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/audit.py",
     "symbol": "audit",
@@ -283,6 +403,22 @@
     "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/audit.py",
     "symbol": "extract_heading_block",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/audit.py",
+    "symbol": "heading_aliases",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/audit.py",
+    "symbol": "load_heading_aliases",
     "kind": "function",
     "language": "Python",
     "exported": true

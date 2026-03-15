@@ -1,5 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const { extractSection, parseMarkdownSections } = require("./lib/markdown-sections.ts");
 
 const taskPath = process.argv[2];
 if (!taskPath) {
@@ -18,22 +19,6 @@ function readIfExists(relPath) {
   return fs.readFileSync(absolute, "utf8");
 }
 
-function parseMarkdownSections(markdown) {
-  const sections = {};
-  let current = "root";
-  sections[current] = [];
-  for (const line of markdown.split(/\r?\n/)) {
-    const heading = line.match(/^##\s+(.+)$/);
-    if (heading) {
-      current = heading[1].trim();
-      sections[current] = [];
-      continue;
-    }
-    sections[current].push(line);
-  }
-  return Object.fromEntries(Object.entries(sections).map(([key, lines]) => [key, lines.join("\n").trim()]));
-}
-
 function unique(values) {
   return Array.from(new Set(values.filter(Boolean)));
 }
@@ -43,7 +28,7 @@ function normalizeModuleToken(token) {
 }
 
 function extractRelatedModules(taskSections) {
-  const raw = taskSections["Related Modules"] || "";
+  const raw = taskSections["Related Modules"] || taskSections["关联模块"] || "";
   const inline = Array.from(raw.matchAll(/`([^`]+)`/g)).map((match) => match[1]);
   const bullets = raw
     .split(/\r?\n/)
@@ -74,7 +59,13 @@ function findRelevantFunctions(relatedModules) {
 }
 
 function buildKeywords(taskSections, relatedModules) {
-  const combined = [taskSections.Goal, taskSections.Why, taskSections.Scope, taskSections.Constraints, ...relatedModules]
+  const combined = [
+    taskSections.Goal || taskSections["目标"],
+    taskSections.Why || taskSections["为什么"] || taskSections["原因"],
+    taskSections.Scope || taskSections["范围"],
+    taskSections.Constraints || taskSections["约束"],
+    ...relatedModules,
+  ]
     .filter(Boolean)
     .join(" ");
   const matches = combined.match(/[\u4e00-\u9fff]{2,}|[A-Za-z][A-Za-z0-9_-]{3,}/g) || [];
@@ -154,10 +145,21 @@ output += `- Memory Matches: ${memoryDocs.length ? memoryDocs.map((item) => `\`$
 output += `- Function Hits: ${relevantFunctions.length}\n\n`;
 
 output += "## Task Summary\n\n";
-output += `- Goal: ${taskSections.Goal || "n/a"}\n`;
-output += `- Why: ${taskSections.Why || "n/a"}\n`;
-output += `- Scope: ${taskSections.Scope || "n/a"}\n`;
-output += `- Constraints: ${taskSections.Constraints || "n/a"}\n\n`;
+output += `- Goal: ${taskSections.Goal || taskSections["目标"] || "n/a"}\n`;
+output += `- Why: ${taskSections.Why || taskSections["为什么"] || taskSections["原因"] || "n/a"}\n`;
+output += `- Scope: ${taskSections.Scope || taskSections["范围"] || "n/a"}\n`;
+output += `- Constraints: ${taskSections.Constraints || taskSections["约束"] || "n/a"}\n`;
+
+const updateTrace = extractSection(taskContent, "update_trace", root);
+if (updateTrace) {
+  output += `- Update Trace:\n${updateTrace
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .map((line) => `  - ${line}`)
+    .join("\n")}\n\n`;
+} else {
+  output += "\n";
+}
 
 output += "## Relevant Function Index\n\n";
 output += "```json\n";

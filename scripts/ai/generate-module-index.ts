@@ -8,7 +8,7 @@ const functionIndexPath = path.join(root, "code_index", "function-index.json");
 const today = new Date().toISOString().slice(0, 10);
 const meta = {
   "code_index/module-index.md": {
-    title: "MODULE_INDEX",
+    title: "模块索引",
     doc_role: "reference",
     update_mode: "generated",
     owner_role: "Builder",
@@ -17,7 +17,7 @@ const meta = {
     related_docs: ["docs/ARCHITECTURE.md", "code_index/dependency-map.md", "code_index/function-index.json"]
   },
   "code_index/dependency-map.md": {
-    title: "DEPENDENCY_MAP",
+    title: "依赖图",
     doc_role: "reference",
     update_mode: "generated",
     owner_role: "Builder",
@@ -102,8 +102,39 @@ for (const moduleInfo of bootstrapFiles) {
   }
 }
 
-const moduleIndex = ["# Module Index", "", "## apps/studio/src/modules", "", ...studioModules.map((item) => `- \`${item.path}\``), "", "## scripts/compounding_bootstrap", "", ...bootstrapFiles.map((item) => `- \`${item.path}\``), ""].join("\n");
-const dependencyMap = ["# Dependency Map", "", "- `apps/studio/src/app/*` -> `apps/studio/src/modules/*`", "- `scripts/init_project_compounding.py` -> `scripts/compounding_bootstrap/engine.py` -> split modules", "- `scripts/ai/*` -> docs / memory / code_index / tasks", ""].join("\n");
+const moduleIndex = [
+  "# 模块索引",
+  "",
+  "## 前端模块",
+  "",
+  ...studioModules.map((item) => `- \`${item.path}\``),
+  "",
+  "## Bootstrap 引擎模块",
+  "",
+  ...bootstrapFiles.map((item) => `- \`${item.path}\``),
+  "",
+  "## 修改前先看",
+  "",
+  "- 先读对应 `module.md`",
+  "- 再读相关 task / docs / memory / code_index",
+  "",
+].join("\n");
+const dependencyMap = [
+  "# 依赖图",
+  "",
+  "## 允许的依赖方向",
+  "",
+  "- `apps/studio/src/app/*` -> `apps/studio/src/modules/*`",
+  "- `scripts/init_project_compounding.py` -> `scripts/compounding_bootstrap/engine.py` -> split modules",
+  "- `scripts/ai/*` -> docs / memory / code_index / tasks",
+  "",
+  "## 禁止的依赖方向",
+  "",
+  "- app 层直接读取任意仓库文件而绕过模块仓储层",
+  "- 模块之间跨层访问私有实现",
+  "- 任务、记忆、索引互相覆盖职责",
+  "",
+].join("\n");
 
 fs.mkdirSync(path.dirname(moduleIndexPath), { recursive: true });
 fs.writeFileSync(moduleIndexPath, renderManagedDoc("code_index/module-index.md", moduleIndex));

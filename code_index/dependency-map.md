@@ -1,5 +1,5 @@
 ---
-title: DEPENDENCY_MAP
+title: 依赖图
 doc_role: reference
 update_mode: generated
 owner_role: Builder
@@ -11,9 +11,17 @@ related_docs:
   - docs/ARCHITECTURE.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
-# Dependency Map
+# 依赖图
+
+## 允许的依赖方向
 
 - `apps/studio/src/app/*` -> `apps/studio/src/modules/*`
 - `scripts/init_project_compounding.py` -> `scripts/compounding_bootstrap/engine.py` -> split modules
 - `scripts/ai/*` -> docs / memory / code_index / tasks
+
+## 禁止的依赖方向
+
+- app 层直接读取任意仓库文件而绕过模块仓储层
+- 模块之间跨层访问私有实现
+- 任务、记忆、索引互相覆盖职责
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

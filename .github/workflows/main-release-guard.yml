@@ -24,5 +24,6 @@ jobs:
       - run: python3 scripts/init_project_compounding.py audit --config bootstrap/project_brief.yaml --target .
       - run: node --experimental-strip-types scripts/ai/generate-module-index.ts
       - run: node --experimental-strip-types scripts/ai/scan-code-health.ts --strict
+      - run: node --experimental-strip-types scripts/ai/validate-change-trace.ts
       - run: pnpm test
       - run: pnpm build

@@ -6,7 +6,7 @@ from .renderers_docs import evidence_boundary_block
 
 
 def render_system_overview() -> str:
-    return f"""# System Overview
+    return f"""# 系统总览
 
 ## 系统目标
 
@@ -54,47 +54,47 @@ def render_system_overview() -> str:
 
 def render_current_state(resolved: dict[str, Any]) -> str:
     must_protect = "，".join(str(item) for item in resolved["must_protect"])
-    return f"""# Current State
+    return f"""# 当前状态
 
-## Project Snapshot
+## 项目概览
 
 - 项目名称：{resolved["project_name"]}
-- 当前阶段：main 直发生产与可回滚发布模型收口
+- 当前阶段：中文友好文档、轻量任务清单与粘性导航收口
 - 当前优先级：{resolved["current_priority"]}
 - 成功定义：{resolved["success_definition"]}
 - 必须保护：{must_protect}
 - 运行边界：{resolved["runtime_boundary"]}
 
-## Current Focus
+## 当前焦点
 
-- 修复生产构建 Tailwind 样式裁剪问题
-- 把发布主线切到 `main = production`
-- 落地 `releases/<id> + current + shared + registry.json`
-- 提供本机/内网发布管理页与回滚入口
+- live 文档主标题改成中文友好写法
+- 首页、任务页、文档页、发布页统一右侧粘性导航
+- task 升级成轻量项目管理清单，并补上更新痕迹
+- 让 task / memory / code_index / roadmap 形成最小闭环
 
-## Next Checkpoint
+## 下一检查点
 
 - `pnpm build`
 - `pnpm test`
 - `python3 scripts/init_project_compounding.py audit --config bootstrap/project_brief.yaml --target .`
-- `node --experimental-strip-types scripts/release/prepare-release.ts --ref main`
+- `node --experimental-strip-types scripts/ai/validate-change-trace.ts`
 
 {evidence_boundary_block()}
 """
 
 
 def render_tech_debt() -> str:
-    return f"""# Tech Debt
+    return f"""# 技术债
 
-## Active Debt
+## 当前技术债
 
 1. 当前发布模型是单机 `systemd + reverse proxy + symlink cutover` 骨架；还没有多进程零停机或多机容灾能力
 2. 本机/内网发布管理页已可读写 release registry，但尚未经过真实生产反向代理环境的 live 验证
 3. proposal engine 已支持模型优先生成，但默认仍依赖 Ark/Volcano/OpenAI 环境变量；未配置时会回退到 deterministic rewrite
-4. `scripts/ai/build-context.ts` 与 `generate-module-index.ts` 仍是轻量版本，后续可继续提高相关性判断和索引精度
+4. `scripts/ai/build-context.ts`、`generate-module-index.ts` 与 `validate-change-trace.ts` 仍是轻量版本，后续可继续提高相关性判断与 trace 精度
 5. 当前没有 remote，`main` 直发生产只在本地仓库语义上成立；远端分支和 release tag 推送仍需后续接通
 
-## Delete Plan
+## 删除计划
 
 - 任何仍然保留的 legacy 文本或兼容路径，都要在下一轮重构中删除或归档
 - 任何新增临时层都必须写清删除触发条件
@@ -105,51 +105,51 @@ def render_tech_debt() -> str:
 
 
 def render_roadmap(resolved: dict[str, Any]) -> str:
-    return f"""# Roadmap
+    return f"""# roadmap
 
-## Current Phase
+## 当前阶段
 
-生产直发与可回滚发布模型收口
+中文友好文档、轻量任务清单与全站粘性导航收口
 
-## Current Priority
+## 当前优先级
 
 {resolved["current_priority"]}
 
-## Acceptance Ladder
+## 验收阶梯
 
-1. 生产构建样式稳定
-2. `main` 成为唯一生产主线
-3. release 准备、切换与回滚骨架可用
-4. UI 可查看近期 releases 与改动摘要
-5. 失败发布不会切走当前线上版本
+1. live 文档主标题中文友好
+2. `/`、`/tasks`、`/knowledge-base`、`/releases` 都有粘性右侧导航
+3. task 模板带更新痕迹，且 `/tasks` 可按状态查看
+4. task / memory / code_index / roadmap 的更新闭环可校验
+5. 不引入更重的 lane/PR/worktree 制度
 
-## Current Execution TODOs
+## 当前执行待办
 
-- [x] 修复生产态 Tailwind 裁剪，恢复首页和文档页样式
-- [x] 切换到 `main = production` 的发布规则
-- [x] 建立 `releases/<id> + current + shared + registry.json`
-- [x] 新增本机/内网发布管理页与 deploy / rollback API
-- [x] 补齐 systemd 与 reverse proxy skeleton
-- [x] 把发布与回滚规则写回 AGENTS / docs / memory
+- [x] 把所有 live 文档的主标题和一级/二级段落标题改成中文友好写法
+- [x] 首页、任务页、文档页、发布页统一使用右侧粘性导航
+- [x] 新增 `/tasks` 页面，按 `todo / doing / blocked / done` 管理任务
+- [x] task 模板补齐“更新痕迹”
+- [x] 接入 `validate-change-trace` 自动校验
+- [x] 吸收参考项目中的轻量任务闭环，但不搬重型并行制度
 
 {evidence_boundary_block()}
 """
 
 
 def render_experience_readme() -> str:
-    return """# Experience README
+    return """# 经验记录说明
 
 这里记录尚未升格为长期规则的经验。默认先记忆，再验证，再决定是否升格。
 
-## Entry Format
+## 记录格式
 
-- Context
-- Decision
-- Why
-- Impact
-- Reuse
+- 背景
+- 决策
+- 为什么
+- 影响
+- 复用
 
-## Promotion Candidates
+## 升格候选
 
 - 重复出现 2 次以上且无明显例外的经验，才能候选升格
 - 若现有规则已直接阻碍 roadmap 主线效率，可直接改规，但必须同步写 ADR
@@ -159,23 +159,23 @@ def render_experience_readme() -> str:
 def render_experience_entry(title: str, context: str, decision: str, why: str, impact: str, reuse: str) -> str:
     return f"""# {title}
 
-## Context
+## 背景
 
 {context}
 
-## Decision
+## 决策
 
 {decision}
 
-## Why
+## 为什么
 
 {why}
 
-## Impact
+## 影响
 
 {impact}
 
-## Reuse
+## 复用
 
 {reuse}
 """
@@ -184,15 +184,15 @@ def render_experience_entry(title: str, context: str, decision: str, why: str, i
 def render_adr(title: str, context: str, decision: str, consequences: str) -> str:
     return f"""# {title}
 
-## Context
+## 背景
 
 {context}
 
-## Decision
+## 决策
 
 {decision}
 
-## Consequences
+## 影响结果
 
 {consequences}
 """

@@ -1,16 +1,18 @@
-import { extractFirstHeading, extractSection, listDocsUnder, readDoc, stripMarkdown } from "@/modules/docs";
-import type { HomeEntryLink, OverviewSnippet, PortalOverview, SemanticEntry, SemanticEntryGroup, TaskSummary } from "./types";
+import { extractSection, listDocsUnder, readDoc } from "@/modules/docs";
+import { listTaskCards, TASK_STATUS_LABELS } from "@/modules/tasks";
+import type { HomeEntryLink, OverviewSnippet, PortalOverview, SemanticEntry, SemanticEntryGroup } from "./types";
 
 export const DEFAULT_DOC_PATH = "AGENTS.md";
 
 export const HOME_ENTRY_LINKS: HomeEntryLink[] = [
   { href: "/knowledge-base?path=AGENTS.md", label: "打开 AGENTS", scope: "agents" },
+  { href: "/tasks", label: "查看任务清单", scope: "tasks" },
   { href: "/knowledge-base?path=memory/project/roadmap.md", label: "查看路线图", scope: "roadmap" },
   { href: "/knowledge-base?path=memory/project/current-state.md", label: "查看当前状态", scope: "memory" }
 ];
 
 export async function getPortalOverview(): Promise<PortalOverview> {
-  const [agents, architecture, currentState, roadmap, techDebt, moduleIndex, dependencyMap, taskPaths, experiencePaths, decisionPaths] =
+  const [agents, architecture, currentState, roadmap, techDebt, moduleIndex, dependencyMap, taskCards, experiencePaths, decisionPaths] =
     await Promise.all([
       readDoc("AGENTS.md"),
       readDoc("docs/ARCHITECTURE.md"),
@@ -19,39 +21,44 @@ export async function getPortalOverview(): Promise<PortalOverview> {
       readDoc("memory/project/tech-debt.md"),
       readDoc("code_index/module-index.md"),
       readDoc("code_index/dependency-map.md"),
-      listDocsUnder("tasks/queue"),
+      listTaskCards(),
       listDocsUnder("memory/experience"),
       listDocsUnder("memory/decisions")
     ]);
 
   const recentExperiencePath = experiencePaths.filter((path) => path !== "memory/experience/README.md").slice(-1)[0];
   const recentDecisionPath = decisionPaths.slice(-1)[0];
-  const taskDocs = await Promise.all(taskPaths.map((path) => readDoc(path)));
   const memorySnippets: OverviewSnippet[] = [
-    toOverviewSnippet("项目状态", "memory/project/current-state.md", extractSection(currentState.content, "Project Snapshot") ?? currentState.content),
-    toOverviewSnippet("技术债", "memory/project/tech-debt.md", extractSection(techDebt.content, "Active Debt") ?? techDebt.content)
+    toOverviewSnippet("项目状态", "memory/project/current-state.md", extractSection(currentState.content, "project_snapshot") ?? currentState.content),
+    toOverviewSnippet("技术债", "memory/project/tech-debt.md", extractSection(techDebt.content, "active_debt") ?? techDebt.content)
   ];
 
   if (recentExperiencePath) {
     const experienceDoc = await readDoc(recentExperiencePath);
-    memorySnippets.push(toOverviewSnippet("最近经验", recentExperiencePath, extractSection(experienceDoc.content, "Decision") ?? experienceDoc.content));
+    memorySnippets.push(toOverviewSnippet("最近经验", recentExperiencePath, extractSection(experienceDoc.content, "decision") ?? experienceDoc.content));
   }
   if (recentDecisionPath) {
     const decisionDoc = await readDoc(recentDecisionPath);
-    memorySnippets.push(toOverviewSnippet("最近 ADR", recentDecisionPath, extractSection(decisionDoc.content, "Decision") ?? decisionDoc.content));
+    memorySnippets.push(toOverviewSnippet("最近 ADR", recentDecisionPath, extractSection(decisionDoc.content, "decision") ?? decisionDoc.content));
   }
 
   return {
-    projectIntro: extractSection(agents.content, "Current State"),
-    currentFocus: extractSection(currentState.content, "Current Focus"),
+    projectIntro: extractSection(agents.content, "current_state"),
+    currentFocus: extractSection(currentState.content, "current_focus"),
     roadmap: roadmap.content,
-    tasks: taskPaths.map((path, index) => toTaskSummary(path, taskDocs[index].content)),
+    tasks: taskCards.map((task) => ({
+      title: task.title,
+      goal: task.goal,
+      status: TASK_STATUS_LABELS[task.status],
+      path: task.path,
+      updateTrace: summarizeTaskTrace(task),
+    })),
     memory: memorySnippets,
     index: [
-      toOverviewSnippet("模块索引", "code_index/module-index.md", extractSection(moduleIndex.content, "apps/studio/src/modules") ?? moduleIndex.content),
-      toOverviewSnippet("依赖方向", "code_index/dependency-map.md", extractSection(dependencyMap.content, "Allowed Direction") ?? dependencyMap.content)
+      toOverviewSnippet("模块索引", "code_index/module-index.md", extractSection(moduleIndex.content, "studio_modules_index") ?? moduleIndex.content),
+      toOverviewSnippet("依赖方向", "code_index/dependency-map.md", extractSection(dependencyMap.content, "dependency_direction") ?? dependencyMap.content)
     ],
-    roleOverview: extractSection(architecture.content, "Operating Roles")
+    roleOverview: extractSection(architecture.content, "operating_roles")
   };
 }
 
@@ -79,7 +86,7 @@ export async function getSemanticEntryGroups(): Promise<SemanticEntryGroup[]> {
       ]
     },
     {
-      title: "待办任务",
+      title: "任务清单",
       items: taskPaths.map((path) => entry(path.split("/").pop() ?? path, path))
     },
     {
@@ -132,19 +139,17 @@ export function formatSyncStatus(value: string) {
   return labels[value] ?? value;
 }
 
-function toTaskSummary(path: string, content: string): TaskSummary {
-  return {
-    path,
-    title: extractFirstHeading(content) ?? path.split("/").pop() ?? path,
-    goal: stripMarkdown(extractSection(content, "Goal") ?? "当前任务尚未填写 Goal。"),
-    status: stripMarkdown(extractSection(content, "Status") ?? "todo")
-  };
-}
-
 function toOverviewSnippet(label: string, path: string, content: string): OverviewSnippet {
   return { label, path, content };
 }
 
 function entry(label: string, path: string): SemanticEntry {
   return { label, path };
+}
+
+function summarizeTaskTrace(task: { updateTrace: { memory: string; index: string; roadmap: string; docs: string } }): string {
+  return [task.updateTrace.memory, task.updateTrace.index, task.updateTrace.roadmap, task.updateTrace.docs]
+    .filter(Boolean)
+    .slice(0, 2)
+    .join(" / ");
 }

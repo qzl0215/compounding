@@ -11,7 +11,7 @@ related_docs:
   - code_index/dependency-map.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
-# System Overview
+# 系统总览
 
 ## 系统目标
 
@@ -53,7 +53,7 @@ related_docs:
 - 禁止继续堆巨型 `engine.py`
 - 禁止未过 preflight 就进入改动
 
-## Evidence Boundary
+## 证据边界
 
 - 本地离线证据：
 - 服务器真实证据：

@@ -1,5 +1,5 @@
 ---
-title: MODULE_INDEX
+title: 模块索引
 doc_role: reference
 update_mode: generated
 owner_role: Builder
@@ -12,16 +12,17 @@ related_docs:
   - code_index/function-index.json
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
-# Module Index
+# 模块索引
 
-## apps/studio/src/modules
+## 前端模块
 
 - `apps/studio/src/modules/docs`
 - `apps/studio/src/modules/git-health`
 - `apps/studio/src/modules/portal`
 - `apps/studio/src/modules/releases`
+- `apps/studio/src/modules/tasks`
 
-## scripts/compounding_bootstrap
+## Bootstrap 引擎模块
 
 - `scripts/compounding_bootstrap/audit.py`
 - `scripts/compounding_bootstrap/catalog.py`
@@ -43,4 +44,9 @@ related_docs:
 - `scripts/compounding_bootstrap/scaffold.py`
 - `scripts/compounding_bootstrap/scaffold_assets.py`
 - `scripts/compounding_bootstrap/yaml_io.py`
+
+## 修改前先看
+
+- 先读对应 `module.md`
+- 再读相关 task / docs / memory / code_index
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

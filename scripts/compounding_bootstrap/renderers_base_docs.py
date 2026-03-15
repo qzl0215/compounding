@@ -8,7 +8,7 @@ def bullet_list(items: list[str]) -> str:
 
 
 def evidence_boundary_block() -> str:
-    return """## Evidence Boundary
+    return """## 证据边界
 
 - 本地离线证据：
 - 服务器真实证据：
@@ -17,18 +17,18 @@ def evidence_boundary_block() -> str:
 
 
 def render_readme(resolved: dict[str, object]) -> str:
-    return f"""# {resolved["project_name"]}
+    return f"""# 仓库说明
 
 这是一个面向 AI 长期协作的 AI-Native Repo。默认先读 `AGENTS.md`，再按需进入 `docs/*`、`memory/*`、`code_index/*` 和 `tasks/*`。
 
-## Quick Start
+## 快速开始
 
 1. 先读 `AGENTS.md`
 2. 运行 `python3 scripts/pre_mutation_check.py`
-3. 打开当前任务：`tasks/queue/task-001-repo-refactor.md`
+3. 打开当前任务：`tasks/queue/*.md`
 4. 需要更深上下文时，读 `docs/PROJECT_RULES.md`、`docs/ARCHITECTURE.md`、`docs/DEV_WORKFLOW.md`、`docs/AI_OPERATING_MODEL.md`
 
-## Repo Shape
+## 仓库结构
 
 - `apps/studio/`: 只读文档门户
 - `scripts/compounding_bootstrap/`: bootstrap / scaffold / audit / proposal 引擎
@@ -41,7 +41,7 @@ def render_readme(resolved: dict[str, object]) -> str:
 
 def render_agents(resolved: dict[str, object]) -> str:
     must_protect = "，".join(str(item) for item in resolved["must_protect"])
-    return f"""## Hard Rules
+    return f"""## 硬规则
 
 - `AGENTS.md` 是仓库内唯一高频执行主源；长文规则落在 `docs/*`，状态和经验落在 `memory/*`。
 - 默认先做只读盘点，再做最小可验证改动。
@@ -49,9 +49,11 @@ def render_agents(resolved: dict[str, object]) -> str:
 - 任何结构性改动都必须绑定任务、更新相关记忆，并在进入 `main` 前完成 review。
 - 巨型 util / helper / common 不允许继续扩张；新增逻辑必须伴随清理或明确删除计划。
 - 经验先写入 `memory/experience/*`，稳定后再升格到 `docs/*` 或 `AGENTS.md`。
+- 任务是边界，不是官僚表单；roadmap 只记录主线变化，不追踪碎片执行。
+- 规范是为了避免熵增，不是为了制造新的熵增；若规则本身拖慢主线，可直接简化规则。
 - 生产发布只认 `main`；回滚通过 release 切换完成，不通过 `git reset` 改写线上状态。
 
-## Current State
+## 当前状态
 
 - 项目名称：{resolved["project_name"]}
 - 项目一句话：{resolved["project_one_liner"]}
@@ -60,16 +62,16 @@ def render_agents(resolved: dict[str, object]) -> str:
 - 必须保护：{must_protect}
 - 运行边界：{resolved["runtime_boundary"]}
 - 当前主线来源：`memory/project/roadmap.md`
-- 当前任务入口：`tasks/queue/task-001-repo-refactor.md`
+- 当前任务入口：`tasks/queue/*.md`，优先处理 `doing` 状态任务
 
-## Default Response Format
+## 默认回复格式
 
 1. 已完成清单
 2. 证据与当前结论适用边界
 3. 风险与待决策
 4. 下一步
 
-## Mutation Gate
+## 改动门禁
 
 - 只读分析不强制同步。
 - 任何文件改动前先运行 `python3 scripts/pre_mutation_check.py`。
@@ -78,7 +80,7 @@ def render_agents(resolved: dict[str, object]) -> str:
 - 发布前必须通过 release build 与 smoke gate；线上回滚走 release registry，不走 git reset。
 - 发布和回滚动作必须串行执行，禁止并发切换 release。
 
-## Required Reads
+## 必读文档
 
 - `docs/PROJECT_RULES.md`
 - `docs/ARCHITECTURE.md`
@@ -86,7 +88,7 @@ def render_agents(resolved: dict[str, object]) -> str:
 - `docs/AI_OPERATING_MODEL.md`
 - 当前任务文件
 
-## Working Order
+## 工作顺序
 
 1. 先读 `AGENTS.md`
 2. 再读 `docs/PROJECT_RULES.md` 和 `docs/ARCHITECTURE.md`
@@ -96,7 +98,7 @@ def render_agents(resolved: dict[str, object]) -> str:
 6. 改动后更新 task / memory / code_index / docs
 7. 进入 `main` 后再准备 release 与 cutover
 
-## Read More If...
+## 按需补读
 
 - 代码治理、命名、体量限制：`docs/PROJECT_RULES.md`
 - 系统结构、模块边界、依赖方向：`docs/ARCHITECTURE.md`
@@ -109,47 +111,54 @@ def render_agents(resolved: dict[str, object]) -> str:
 
 
 def render_project_rules() -> str:
-    return f"""# PROJECT_RULES
+    return f"""# 项目规则
 
-## Goal
+## 目标
 
 这份文档定义当前仓库的代码治理规则。目标不是增加流程，而是降低 AI 理解成本、降低重复逻辑和隐式依赖、稳定支撑多 agent 并行。
 
-## File Size Limits
+## 文件体量限制
 
 - TypeScript / TSX / Python 文件软上限：{SOFT_FILE_LIMIT} LOC
 - TypeScript / TSX / Python 文件硬上限：{HARD_FILE_LIMIT} LOC
 - 超过软上限时，必须在任务或技术债中写明拆分计划
 - 超过硬上限时，不允许继续扩张，必须进入 task queue 或 `memory/project/tech-debt.md`
 
-## Module Boundary Rules
+## 模块边界规则
 
 - 每个一等模块只做一件事
 - 模块必须通过明确 public API 对外暴露能力
 - 禁止跨模块直接访问内部私有实现
 - `apps/studio/src/modules/*` 与 `scripts/compounding_bootstrap/*` 是当前第一批高价值模块域
 
-## Naming Governance
+## 命名治理
 
 - 除非有极明确边界，不允许新增以下名字作为核心承载层：`utils`、`helpers`、`common`、`misc`、`temp`、`final`、`new`、`v2`
 - 模块名优先使用能力名，不用历史性或阶段性名字
 - 兼容层必须在名字或文档中明确写出删除条件
 
-## Change Contract
+## 变更契约
 
 - 新增代码必须伴随清理
 - 替代旧逻辑时，必须删除旧逻辑、或在技术债中写明兼容层和删除计划
 - 任何结构性改动都必须同步更新 `task`、`memory`、`code_index`
 - 规则若限制主线效率，可直接更新，但必须同步回 `AGENTS.md`、相关文档和 ADR
 
-## Release Governance
+## 发布治理
 
 - `main` 是唯一生产主线，不再使用 `dev` 作为发布缓冲层
 - 新 release 必须先在后台目录完成安装、构建与 smoke check，成功后才允许切换 `current`
 - 线上回滚以 release 切换为准，不以 `git reset` 为准
 - 发布失败不得影响当前线上版本；未切换前禁止覆盖现网目录
 
-## Legacy Compatibility Rule
+## 高效组织原则
+
+- 规则服务于效率，不服务于自我扩张
+- task 是项目管理清单，不是审批流
+- roadmap 只反映主线、优先级和阶段变化
+- 记忆只沉淀可复用经验或明确裁决，不写流水账
+
+## 兼容层规则
 
 - 旧 workflow 前台、旧 API、旧 docs 树不允许再作为 live 结构继续扩张
 - 必须收敛到 `AGENTS + docs + memory + code_index + tasks`

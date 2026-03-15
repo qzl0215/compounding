@@ -9,8 +9,6 @@ type Props = {
   className?: string;
 };
 
-const HEADING_PATTERN = /^(#{1,3})\s+(.+)$/;
-
 export function MarkdownContent({ content, compact = false, className }: Props) {
   return (
     <div className={cn("markdown-shell", compact && "markdown-compact", className)}>
@@ -19,40 +17,6 @@ export function MarkdownContent({ content, compact = false, className }: Props) 
       </ReactMarkdown>
     </div>
   );
-}
-
-export function extractHeadings(content: string) {
-  return content
-    .split("\n")
-    .map((line) => line.match(HEADING_PATTERN))
-    .filter((match): match is RegExpMatchArray => Boolean(match))
-    .map((match) => ({
-      depth: match[1].length,
-      label: match[2].trim(),
-      id: slugify(match[2].trim())
-    }));
-}
-
-export function extractSection(content: string, heading: string) {
-  const pattern = new RegExp(`## ${escapeRegExp(heading)}\\n\\n([\\s\\S]*?)(?=\\n## |$)`);
-  const match = content.match(pattern);
-  return match ? match[1].trim() : null;
-}
-
-export function extractFirstHeading(content: string) {
-  const match = content.match(/^#\s+(.+)$/m);
-  return match ? match[1].trim() : null;
-}
-
-export function stripMarkdown(value: string) {
-  return value
-    .replace(/`([^`]+)`/g, "$1")
-    .replace(/\*\*([^*]+)\*\*/g, "$1")
-    .replace(/\*([^*]+)\*/g, "$1")
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-    .replace(/^[-*]\s+/gm, "")
-    .replace(/^#+\s+/gm, "")
-    .trim();
 }
 
 function renderHeading(tag: "h1" | "h2" | "h3", children: ReactNode) {
@@ -84,14 +48,6 @@ function flattenText(node: ReactNode): string {
   return "";
 }
 
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
-    .replace(/\s+/g, "-");
-}
-
 function headingTone(value: string) {
   const label = value.toLowerCase();
   if (/(risk|risks|debt|风险|技术债)/.test(label)) {
@@ -106,8 +62,12 @@ function headingTone(value: string) {
   return "default";
 }
 
-function escapeRegExp(value: string) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
+    .replace(/\s+/g, "-");
 }
 
 const MARKDOWN_COMPONENTS = {

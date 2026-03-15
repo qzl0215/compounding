@@ -102,7 +102,7 @@ class BootstrapCliTests(unittest.TestCase):
         (legacy_reference / "stale.md").write_text("stale", encoding="utf8")
         experience_path = self.target / "memory" / "experience" / "README.md"
         experience_path.write_text(
-            experience_path.read_text(encoding="utf8").replace("## Promotion Candidates", "## Candidates"),
+            experience_path.read_text(encoding="utf8").replace("## 升格候选", "## Candidates"),
             encoding="utf8",
         )
 
@@ -110,7 +110,7 @@ class BootstrapCliTests(unittest.TestCase):
 
         self.assertFalse(result.passed)
         self.assertTrue(any("Legacy live docs path still exists: docs/reference" in item for item in result.errors))
-        self.assertTrue(any("memory/experience/README.md missing section: ## Promotion Candidates" in item for item in result.errors))
+        self.assertTrue(any("memory/experience/README.md missing section: ## 升格候选" in item for item in result.errors))
 
     def test_validate_config_file_passes(self) -> None:
         result = validate_config_file(self.brief_path, self.target)

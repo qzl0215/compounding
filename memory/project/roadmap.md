@@ -12,34 +12,34 @@ related_docs:
   - tasks/queue/task-001-repo-refactor.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
-# Roadmap
+# roadmap
 
-## Current Phase
+## 当前阶段
 
-生产直发与可回滚发布模型收口
+中文友好文档、轻量任务清单与全站粘性导航收口
 
-## Current Priority
+## 当前优先级
 
-切到 main 直发生产，并补齐最小影响发布、回滚和本机管理入口。
+收口中文友好文档、轻量任务清单与全站粘性导航，确保每次改动都能沿 task / memory / code_index / roadmap 被追踪。
 
-## Acceptance Ladder
+## 验收阶梯
 
-1. 生产构建样式稳定
-2. `main` 成为唯一生产主线
-3. release 准备、切换与回滚骨架可用
-4. UI 可查看近期 releases 与改动摘要
-5. 失败发布不会切走当前线上版本
+1. live 文档主标题中文友好
+2. `/`、`/tasks`、`/knowledge-base`、`/releases` 都有粘性右侧导航
+3. task 模板带更新痕迹，且 `/tasks` 可按状态查看
+4. task / memory / code_index / roadmap 的更新闭环可校验
+5. 不引入更重的 lane/PR/worktree 制度
 
-## Current Execution TODOs
+## 当前执行待办
 
-- [x] 修复生产态 Tailwind 裁剪，恢复首页和文档页样式
-- [x] 切换到 `main = production` 的发布规则
-- [x] 建立 `releases/<id> + current + shared + registry.json`
-- [x] 新增本机/内网发布管理页与 deploy / rollback API
-- [x] 补齐 systemd 与 reverse proxy skeleton
-- [x] 把发布与回滚规则写回 AGENTS / docs / memory
+- [x] 把所有 live 文档的主标题和一级/二级段落标题改成中文友好写法
+- [x] 首页、任务页、文档页、发布页统一使用右侧粘性导航
+- [x] 新增 `/tasks` 页面，按 `todo / doing / blocked / done` 管理任务
+- [x] task 模板补齐“更新痕迹”
+- [x] 接入 `validate-change-trace` 自动校验
+- [x] 吸收参考项目中的轻量任务闭环，但不搬重型并行制度
 
-## Evidence Boundary
+## 证据边界
 
 - 本地离线证据：
 - 服务器真实证据：

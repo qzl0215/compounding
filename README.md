@@ -1,15 +1,15 @@
-# Compounding AI Operating System
+# 仓库说明
 
 这是一个面向 AI 长期协作的 AI-Native Repo。默认先读 `AGENTS.md`，再按需进入 `docs/*`、`memory/*`、`code_index/*` 和 `tasks/*`。
 
-## Quick Start
+## 快速开始
 
 1. 先读 `AGENTS.md`
 2. 运行 `python3 scripts/pre_mutation_check.py`
-3. 打开当前任务：`tasks/queue/task-001-repo-refactor.md`
+3. 打开当前任务：`tasks/queue/*.md`
 4. 需要更深上下文时，读 `docs/PROJECT_RULES.md`、`docs/ARCHITECTURE.md`、`docs/DEV_WORKFLOW.md`、`docs/AI_OPERATING_MODEL.md`
 
-## Repo Shape
+## 仓库结构
 
 - `apps/studio/`: 只读文档门户
 - `scripts/compounding_bootstrap/`: bootstrap / scaffold / audit / proposal 引擎

@@ -22,6 +22,7 @@ describe("docs repository", () => {
   it("keeps the home entry links focused on AGENTS, roadmap, and current state", () => {
     expect(HOME_ENTRY_LINKS).toEqual([
       { href: "/knowledge-base?path=AGENTS.md", label: "打开 AGENTS", scope: "agents" },
+      { href: "/tasks", label: "查看任务清单", scope: "tasks" },
       { href: "/knowledge-base?path=memory/project/roadmap.md", label: "查看路线图", scope: "roadmap" },
       { href: "/knowledge-base?path=memory/project/current-state.md", label: "查看当前状态", scope: "memory" }
     ]);
@@ -42,7 +43,7 @@ describe("docs repository", () => {
     const [groups, queueDocs] = await Promise.all([getSemanticEntryGroups(), listDocsUnder("tasks/queue")]);
 
     expect(groups.some((group) => group.title === "项目介绍与规则")).toBe(true);
-    expect(groups.some((group) => group.title === "待办任务")).toBe(true);
+    expect(groups.some((group) => group.title === "任务清单")).toBe(true);
     expect(groups.some((group) => group.title === "模块索引")).toBe(true);
     expect(queueDocs).toContain("tasks/queue/task-001-repo-refactor.md");
   });

@@ -53,7 +53,7 @@ export function ReleaseDashboardPanel({ releases, activeReleaseId }: Props) {
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="text-lg font-semibold text-white">{release.release_id}</h3>
-                    <StatusBadge label={isActive ? "当前版本" : release.status} />
+                    <StatusBadge label={isActive ? "当前版本" : formatReleaseStatus(release.status)} />
                   </div>
                   <p className="mt-2 font-mono text-xs text-white/42">{release.commit_sha}</p>
                 </div>
@@ -116,4 +116,15 @@ function Meta({ title, value }: { title: string; value: string }) {
 
 function StatusBadge({ label }: { label: string }) {
   return <span className="rounded-full border border-accent/35 bg-accent/12 px-3 py-1 text-xs text-accent">{label}</span>;
+}
+
+function formatReleaseStatus(status: ReleaseRecord["status"]) {
+  const labels: Record<ReleaseRecord["status"], string> = {
+    prepared: "已准备",
+    active: "当前版本",
+    superseded: "已被替代",
+    failed: "失败",
+    rolled_back: "已回滚",
+  };
+  return labels[status];
 }

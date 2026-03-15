@@ -25,6 +25,7 @@
 - 构建 live docs tree
 - 读取 Markdown
 - 统一 Markdown 富文本渲染
+- 通过标题别名表解析中英文段落标题
 - 从标题结构中提取页内导航和区块摘要
 - 清理 managed block 标记
 - 规范化 frontmatter

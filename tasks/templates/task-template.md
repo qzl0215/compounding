@@ -1,19 +1,26 @@
-# Task ID
+# 任务模板
 
-## Goal
+## 目标
 
-## Why
+## 为什么
 
-## Scope
+## 范围
 
-## Out of Scope
+## 范围外
 
-## Constraints
+## 约束
 
-## Related Modules
+## 关联模块
 
-## Acceptance Criteria
+## 验收标准
 
-## Risks
+## 风险
 
-## Status
+## 状态
+
+## 更新痕迹
+
+- 记忆：
+- 索引：
+- 路线图：
+- 文档：

@@ -1,7 +1,7 @@
 export type HomeEntryLink = {
   href: string;
   label: string;
-  scope: "agents" | "roadmap" | "memory";
+  scope: "agents" | "roadmap" | "memory" | "tasks";
 };
 
 export type SemanticEntry = {
@@ -19,6 +19,7 @@ export type TaskSummary = {
   goal: string;
   status: string;
   path: string;
+  updateTrace: string;
 };
 
 export type OverviewSnippet = {
