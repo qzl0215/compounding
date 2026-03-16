@@ -14,7 +14,7 @@ describe("tasks service", () => {
     expect(first?.git.state).toBe("merged");
     expect(first?.updateTrace.docs.length).toBeGreaterThan(0);
     expect(current?.branch).toBe("codex/task-006-rich-doc-edit-and-ai-rewrite");
-    expect(current?.recentCommit).toContain("auto:");
+    expect(current?.recentCommit).toBe("bd37dec");
     expect(current?.git.state).toBeDefined();
   });
 

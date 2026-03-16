@@ -44,7 +44,7 @@
 
 ## 最近提交
 
-`auto: branch HEAD`
+`bd37dec`
 
 ## 计划
 
@@ -72,13 +72,16 @@
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
-- 记忆：`memory/project/current-state.md`, `memory/project/roadmap.md`, `memory/project/operating-blueprint.md`
-- 索引：`code_index/module-index.md`, `code_index/dependency-map.md`, `code_index/function-index.json`
-- 路线图：`memory/project/roadmap.md`, `memory/project/operating-blueprint.md`
-- 文档：`AGENTS.md`, `docs/DEV_WORKFLOW.md`, `docs/AI_OPERATING_MODEL.md`, `docs/prompts/ai-doc-rewrite-system.md`, `docs/prompts/ai-doc-clarify-user.md`, `docs/prompts/ai-doc-rewrite-user.md`
+- 记忆：no change: main follow-up 只校准测试与 task 元数据，没有新增可复用记忆
+- 索引：no change: main follow-up 未改变模块边界、导出或函数导航
+- 路线图：no change: current priority unchanged
+- 文档：no change: main follow-up 未改动规则文档或 prompt 真相源
 
 ## 复盘
+
+- 默认正文直编、完整 Markdown 高级模式、两步 AI 重构与 prompt 版本回退已在同一知识库链路中收口，后续迭代可围绕编辑质量和提示词质量继续减法优化。
+- 主线合并后，任务页测试已同步改成读取真实最近提交值，避免表格展示与测试基线继续依赖 `auto:` 占位写法。
