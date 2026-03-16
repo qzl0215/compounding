@@ -38,7 +38,7 @@
 
 ## 当前模式
 
-质量验收
+发布复盘
 
 ## 分支
 
@@ -73,7 +73,7 @@
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
@@ -83,3 +83,6 @@ doing
 - 文档：`AGENTS.md, README.md, docs/WORK_MODES.md, docs/ORG_MODEL.md, docs/ARCHITECTURE.md, docs/DEV_WORKFLOW.md, docs/AI_OPERATING_MODEL.md, tasks/templates/task-template.md, tasks/queue/task-009-ai-work-modes-productization.md`
 
 ## 复盘
+
+- 角色与工作模式彻底分离后，首页、`AGENTS`、任务模板与 AI 工作流都能沿同一条业务链对齐，不再需要在组织文档里混写“谁负责什么”和“当前处于哪种工作状态”。
+- `WORK_MODES` 作为单一真相源成立后，后续工作模式调整可以集中发生，避免角色文档、首页和 task 入口再次漂移。

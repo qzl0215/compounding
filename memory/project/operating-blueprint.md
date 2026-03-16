@@ -17,45 +17,43 @@ last_reviewed_at: 2026-03-16
 
 ## 当前里程碑
 
-AI 工作模式产品化
+建立分层验证体系
 
 ## 关键子目标
 
-### 工作模式收口
+### 验证边界分层
 
 - 发布标准：
-  - `docs/WORK_MODES.md` 成为工作模式唯一详细真相源
-  - 每个模式都能说明输入、输出、基本原则、限制条件与进入退出条件
+  - 所有检查被收口为静态、构建、运行时与 AI 输出四层
+  - 每层都能说明解决什么问题、失败时意味着什么
 - 关联任务：
-  - `tasks/queue/task-009-ai-work-modes-productization.md`
+  - `tasks/queue/task-010-layered-validation-system.md`
 
-### 首页入口承接
+### 推荐校验顺序
 
 - 发布标准：
-  - 首页用流程链呈现 `需求提出 → 战略澄清 → 方案评审 → 工程执行 → 质量验收 → 发布复盘`
-  - 首页不引入新页面，也不把模式做成噪声卡片墙
+  - 本地开发和发布前都存在清晰的推荐校验顺序
+  - 执行者不需要再凭经验猜“先跑哪个检查”
 - 关联任务：
-  - `tasks/queue/task-009-ai-work-modes-productization.md`
+  - `tasks/queue/task-010-layered-validation-system.md`
 
-### 统一入口规则
+### 失败语义可解释
 
 - 发布标准：
-  - `AGENTS` 与 `AI operating model` 能回答何时进入哪种模式
-  - task 模板和任务页能挂到 `当前模式`
-  - 模式入口不与角色文档形成双体系
+  - 关键门禁失败时能直接说明下一步动作
+  - 运行时与发布页说明不再和脚本语义冲突
 - 关联任务：
-  - `tasks/queue/task-009-ai-work-modes-productization.md`
+  - `tasks/queue/task-010-layered-validation-system.md`
 
 ## 当前阻塞
 
-- 当前无结构性阻塞；关键在于保持模式数量少、边界清楚，不把角色镜头再次扩成重型流程。
+- 当前无结构性阻塞；关键在于保持分层数量少、边界清楚，不把验证体系再次扩成新的官僚流程。
 
 ## 下一检查点
 
-- 首页可直接呈现工作模式流程链
-- `ORG_MODEL` 只保留角色，`WORK_MODES` 只保留模式
-- `AGENTS`、`WORK_MODES` 与 `AI_OPERATING_MODEL` 对模式定义保持一致
-- `task-009` 的执行状态、分支和最近提交可追踪
+- 四层验证的名称、边界、失败语义与命令入口固定下来
+- `DEV_WORKFLOW` 与 `AI_OPERATING_MODEL` 对推荐校验顺序保持一致
+- `task-010` 的执行状态、分支和最近提交可追踪
 
 ## 证据边界
 
