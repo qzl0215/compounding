@@ -11,6 +11,12 @@ CANONICAL_DOCS = [
     "docs/REFACTOR_PLAN.md",
 ]
 
+PROMPT_DOCS = [
+    "docs/prompts/ai-doc-rewrite-system.md",
+    "docs/prompts/ai-doc-clarify-user.md",
+    "docs/prompts/ai-doc-rewrite-user.md",
+]
+
 MEMORY_DOCS = [
     "memory/architecture/system-overview.md",
     "memory/project/current-state.md",
@@ -55,6 +61,7 @@ SCAFFOLD_PATHS = [
     AGENTS_SOURCE,
     "README.md",
     *CANONICAL_DOCS,
+    *PROMPT_DOCS,
     *MEMORY_DOCS,
     *CODE_INDEX_DOCS,
     *TASK_DOCS,

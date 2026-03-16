@@ -131,6 +131,15 @@ def render_task_template(target: Path) -> None:
     copy_canonical_file(target, "tasks/templates/task-template.md")
 
 
+def render_prompt_docs(target: Path) -> None:
+    for relative_path in (
+        "docs/prompts/ai-doc-rewrite-system.md",
+        "docs/prompts/ai-doc-clarify-user.md",
+        "docs/prompts/ai-doc-rewrite-user.md",
+    ):
+        copy_canonical_file(target, relative_path)
+
+
 def render_manifest(target: Path) -> None:
     manifest = {
         "core_docs": [
@@ -141,6 +150,9 @@ def render_manifest(target: Path) -> None:
             "docs/DEV_WORKFLOW.md",
             "docs/AI_OPERATING_MODEL.md",
             "docs/REFACTOR_PLAN.md",
+            "docs/prompts/ai-doc-rewrite-system.md",
+            "docs/prompts/ai-doc-clarify-user.md",
+            "docs/prompts/ai-doc-rewrite-user.md",
             "memory/project/current-state.md",
             "memory/project/operating-blueprint.md",
             "memory/project/roadmap.md",

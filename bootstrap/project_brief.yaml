@@ -1,7 +1,7 @@
 project_name: Compounding AI Operating System
 project_one_liner: 把当前仓库升级成适合 AI 长期协作、任务驱动、可持续重构与自进化的 AI-Native Repo。
 success_definition: 首页成为一页经营驾驶舱；用户与 AI 能快速看懂使命、路线图、运营蓝图、组织职责与认知资产边界，并能沿统一 task 闭环持续推进。
-current_priority: 把首页文案收口为更专业的经营驾驶舱表达，并建立 task/Git 联动与 Markdown 直编能力。
+current_priority: 把知识库升级为默认正文富文本直编，并接入“先提问、后重构”的两步 AI 文档重构能力。
 must_protect:
   - AGENTS.md 是唯一主源
   - Git 文件即真相

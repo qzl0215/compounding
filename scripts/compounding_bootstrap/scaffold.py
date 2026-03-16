@@ -27,7 +27,7 @@ from .document_renderers import (
     render_tech_debt,
 )
 from .managed_blocks import write_managed_document
-from .scaffold_assets import render_ai_scripts, render_manifest, render_pull_request_template, render_task_template, task_001
+from .scaffold_assets import render_ai_scripts, render_manifest, render_prompt_docs, render_pull_request_template, render_task_template, task_001
 
 
 def scaffold(config_path: Path, target: Path) -> None:
@@ -129,6 +129,7 @@ def render_plain_files(target: Path, resolved: dict[str, Any]) -> None:
     (target / "code_index" / "function-index.json").parent.mkdir(parents=True, exist_ok=True)
     (target / "code_index" / "function-index.json").write_text(render_function_index_json(target), encoding="utf8")
     render_task_template(target)
+    render_prompt_docs(target)
     (target / "tasks" / "queue" / "task-001-repo-refactor.md").parent.mkdir(parents=True, exist_ok=True)
     (target / "tasks" / "queue" / "task-001-repo-refactor.md").write_text(task_001(resolved), encoding="utf8")
     (target / "tasks" / "archive" / ".gitkeep").parent.mkdir(parents=True, exist_ok=True)

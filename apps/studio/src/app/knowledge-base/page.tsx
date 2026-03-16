@@ -14,7 +14,16 @@ export default async function KnowledgeBasePage({
   const params = await searchParams;
   const selectedPath = params.path?.trim() || DEFAULT_DOC_PATH;
   const access = getManagementAccessState(await headers());
-  const [tree, doc, semanticGroups] = await Promise.all([getDocTree(), readDoc(selectedPath), getSemanticEntryGroups()]);
+  const [tree, doc, semanticGroups, promptDocs] = await Promise.all([
+    getDocTree(),
+    readDoc(selectedPath),
+    getSemanticEntryGroups(),
+    Promise.all([
+      readDoc("docs/prompts/ai-doc-rewrite-system.md"),
+      readDoc("docs/prompts/ai-doc-clarify-user.md"),
+      readDoc("docs/prompts/ai-doc-rewrite-user.md"),
+    ]),
+  ]);
   const outline = extractHeadings(doc.content)
     .filter((heading) => heading.depth <= 3)
     .map((heading) => ({ id: heading.id, label: heading.label }));
@@ -59,6 +68,11 @@ export default async function KnowledgeBasePage({
         kind={doc.kind}
         editable={doc.editable && access.allowed}
         hasManagedBlocks={doc.hasManagedBlocks}
+        promptDocs={promptDocs.map((item) => ({
+          path: item.relativePath,
+          title: item.meta.title ?? item.relativePath,
+          content: item.content,
+        }))}
       />
       <PageOutline items={outline} />
     </div>

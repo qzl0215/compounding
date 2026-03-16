@@ -132,6 +132,16 @@ def render_dev_workflow() -> str:
   - 文档
   若某项无变化，写 `no change: <reason>`
 
+## 文档编辑规则
+
+- 知识库默认只在原阅读界面内直接编辑正文，不默认暴露原始 Markdown
+- frontmatter、managed block 与其它托管标记默认隐藏；需要精确修改时再进入高级模式
+- AI 文档重构固定采用两步法：
+  1. 先提出关键补充问题
+  2. 再基于用户补充重构正文
+- AI 重构结果必须先预览，再人工应用；不得自动直接落盘
+- 若文档结构过于复杂，允许回退到高级模式编辑
+
 ## 发布规则
 
 - 新版本必须先在后台 release 目录完成准备，再切换 `current`
@@ -211,7 +221,8 @@ def render_ai_operating_model() -> str:
 - 不做大面积业务重写
 - 创业团队文化优先：持续抓重点，不过度优化，少条条框框，但井井有条
 - 规范只保留最关键的三层：规则、工作流、AI operating model；其余优先压回 task / memory / index
-- 文档以 Markdown 为唯一真相源；知识库允许直接编辑，但托管区块后续仍可能被 scaffold 覆盖
+- 文档以 Markdown 为唯一真相源；知识库默认编辑正文层，高级模式才编辑完整 Markdown
+- prompt 文档是 AI 重构行为的可维护真相源，应支持预览、保存生效与上一版本回退
 
 {evidence_boundary_block()}
 """

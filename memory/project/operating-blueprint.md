@@ -17,51 +17,51 @@ last_reviewed_at: 2026-03-16
 
 ## 当前里程碑
 
-专业驾驶舱、task/Git 联动与 Markdown 直编收口
+知识库富文本直编与两步 AI 文档重构收口
 
 ## 关键子目标
 
-### 专业经营驾驶舱
+### 正文富文本直编
 
 - 发布标准：
-  - 首页固定为 5 个高浓度模块，且无右侧导航
-  - 模块标题与摘要表达更专业，但仍然易读
+  - 文档默认在原阅读界面内直接编辑正文
+  - 标题、段落、列表、引用、代码块、表格单元格都可直接修改
 - 关联任务：
-  - `tasks/queue/task-005-professional-dashboard-editing.md`
+  - `tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md`
 
-### Task / Git 联动
+### 正文与系统元数据分层
 
 - 发布标准：
-  - 每个 task 至少具备状态、分支、最近提交
-  - `/tasks` 能展示 Git 状态与是否已并入 `main`
+  - 默认编辑模式不暴露 frontmatter 与 managed block
+  - 高级模式才允许编辑完整 Markdown 原文
 - 关联任务：
-  - `tasks/queue/task-005-professional-dashboard-editing.md`
+  - `tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md`
 
-### Markdown 直编能力
+### 两步 AI 文档重构
 
 - 发布标准：
-  - 知识库支持 Markdown 阅读 / 编辑双模式
-  - 保存后立即回到阅读视图并展示最新内容
+  - 第一步只提出关键补充问题，不直接改文
+  - 第二步基于用户补充重构正文，并给出结构摘要与缺失提示
 - 关联任务：
-  - `tasks/queue/task-005-professional-dashboard-editing.md`
+  - `tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md`
 
-### 轻量 Task PM
+### Prompt 资产治理
 
 - 发布标准：
-  - task 模板包含 `分支 / 最近提交 / 计划 / 发布说明 / 验收标准 / 复盘`
-  - task 是边界，不演化成重型工单
+  - prompt 文档可在 UI 中预览与编辑
+  - prompt 变更后可保存生效，并支持回退到上一版本
 - 关联任务：
-  - `tasks/queue/task-005-professional-dashboard-editing.md`
+  - `tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md`
 
 ## 当前阻塞
 
-- 暂无结构性阻塞；当前主要风险是 task 状态、Git 运行态与文档真相不同步，后续会再次返工。
+- 暂无结构性阻塞；当前主要风险是复杂 Markdown 结构在正文模式下可能丢失格式细节，需要继续用测试守住序列化边界。
 
 ## 下一检查点
 
-- 首页专业驾驶舱 5 模块稳定
-- `/tasks` 与 `validate-task-git-link` 共同通过
-- Markdown 编辑链在本机/内网访问下可用
+- 正文直编、保存与高级模式切换在知识库页面可用
+- AI 补充问题与正文重构两步链路可用
+- prompt 预览、保存与回退链路可用
 
 ## 证据边界
 
