@@ -4,6 +4,7 @@ from .renderers_docs import (
     render_architecture,
     render_dev_workflow,
     render_org_model,
+    render_work_modes,
     render_project_rules,
     render_readme,
 )
@@ -24,6 +25,7 @@ __all__ = [
     "render_ai_operating_model",
     "render_architecture",
     "render_org_model",
+    "render_work_modes",
     "render_current_state",
     "render_dependency_map",
     "render_dev_workflow",

@@ -31,9 +31,14 @@
 
 - `AGENTS.md`
 - `docs/ORG_MODEL.md`
+- `docs/WORK_MODES.md`
 - `docs/AI_OPERATING_MODEL.md`
 - `docs/ARCHITECTURE.md`
 - `apps/studio/src/modules/portal/*`
+
+## 当前模式
+
+质量验收
 
 ## 分支
 
@@ -75,6 +80,6 @@ doing
 - 记忆：`memory/project/current-state.md, memory/project/operating-blueprint.md`
 - 索引：`no change: 本次不改模块边界与代码索引`
 - 路线图：`memory/project/roadmap.md`
-- 文档：`AGENTS.md, docs/ORG_MODEL.md, docs/AI_OPERATING_MODEL.md, tasks/queue/task-009-ai-work-modes-productization.md`
+- 文档：`AGENTS.md, README.md, docs/WORK_MODES.md, docs/ORG_MODEL.md, docs/ARCHITECTURE.md, docs/DEV_WORKFLOW.md, docs/AI_OPERATING_MODEL.md, tasks/templates/task-template.md, tasks/queue/task-009-ai-work-modes-productization.md`
 
 ## 复盘

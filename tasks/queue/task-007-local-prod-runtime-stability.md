@@ -39,6 +39,10 @@
 - `scripts/ai/generate-module-index.ts`
 - `package.json`
 
+## 当前模式
+
+发布复盘
+
 ## 分支
 
 `codex/task-007-local-prod-runtime-stability`
@@ -78,10 +82,10 @@ done
 
 ## 更新痕迹
 
-- 记忆：`memory/project/current-state.md, memory/project/operating-blueprint.md`
-- 索引：`no change: 本次提交只修正本地运行时环境注入与健康检查，不涉及索引结构`
-- 路线图：`memory/project/roadmap.md`
-- 文档：`no change: 本次提交只硬化本地运行时与状态校验，不改规则文档`
+- 记忆：`no change: historical task metadata alignment only`
+- 索引：`no change: historical task metadata alignment only`
+- 路线图：`no change: current priority unchanged`
+- 文档：`tasks/queue/task-007-local-prod-runtime-stability.md`
 
 ## 复盘
 

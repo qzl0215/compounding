@@ -8,6 +8,7 @@ last_reviewed_at: 2026-03-16
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
+  - docs/WORK_MODES.md
   - docs/DEV_WORKFLOW.md
   - memory/experience/README.md
   - code_index/module-index.md
@@ -37,18 +38,21 @@ related_docs:
 
 ## 工作模式
 
-- 当前系统把高频协作收口成 5 种工作模式：
+- 业务链固定为：`需求提出 → 战略澄清 → 方案评审 → 工程执行 → 质量验收 → 发布复盘`
+- 当前系统只保留 5 种高频工作模式：
   - 战略澄清
   - 方案评审
   - 工程执行
   - 质量验收
   - 发布复盘
+- 详细定义、输入输出与进入退出条件以 `docs/WORK_MODES.md` 为准
 - 选模式的原则是“当前最需要哪种脑力”，而不是“当前角色名叫什么”
-- 若路线图、蓝图或成功标准不清，先进入战略澄清模式
-- 若边界已清、准备动手，进入工程执行模式
-- 若实现已完成但结果是否达标不明，进入质量验收模式
-- 若准备并入 `main` 或切换 release，进入发布复盘模式
-- 组织角色仍是职责镜头；工作模式是可调用入口，两者不能互相替代
+- 若路线图、蓝图或成功标准不清，先进入战略澄清
+- 若目标已清、边界未定，先进入方案评审
+- 若 task 已明确、准备动手，进入工程执行
+- 若实现已完成但结果是否达标不明，进入质量验收
+- 若准备并入 `main` 或切换 release，进入发布复盘
+- 组织角色仍是职责镜头；工作模式是业务链入口，两者不能互相替代
 
 ## 上下文系统
 
@@ -64,6 +68,7 @@ related_docs:
 - 当前项目状态、roadmap 和 operating blueprint 在 `memory/project/*`
 - 经验重复验证后才允许升格到 `docs/*` 或 `AGENTS.md`
 - 角色职责以 `docs/ORG_MODEL.md` 为准，避免在多个文档里平行复制组织设计
+- 工作模式以 `docs/WORK_MODES.md` 为准，避免把输入输出和角色职责再次混写
 
 ## 自进化闭环
 

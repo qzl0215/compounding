@@ -28,6 +28,8 @@ const GIT_STATE_TONE: Record<TaskGitState, string> = {
   drift: "border-red-400/20 bg-red-400/10 text-red-100",
 };
 
+const MODE_TONE = "border-white/12 bg-white/[0.05] text-white/78";
+
 export default async function TasksPage() {
   const board = await getTaskBoard();
   const outline = [
@@ -69,6 +71,7 @@ export default async function TasksPage() {
                         <HeadCell>Task</HeadCell>
                         <HeadCell>目标</HeadCell>
                         <HeadCell>状态</HeadCell>
+                        <HeadCell>当前模式</HeadCell>
                         <HeadCell>Git</HeadCell>
                         <HeadCell>关联模块</HeadCell>
                         <HeadCell>更新痕迹</HeadCell>
@@ -80,7 +83,7 @@ export default async function TasksPage() {
                         group.tasks.map((task) => <TaskRow key={task.path} task={task} />)
                       ) : (
                         <tr>
-                          <td colSpan={7} className="px-4 py-5 text-white/58">
+                          <td colSpan={8} className="px-4 py-5 text-white/58">
                             当前没有该状态的任务。
                           </td>
                         </tr>
@@ -111,6 +114,11 @@ function TaskRow({ task }: { task: TaskCard }) {
       <Cell className="min-w-[120px]">
         <span className={`inline-flex rounded-full border px-3 py-1 text-xs ${STATUS_TONE[task.status]}`}>
           {TASK_STATUS_LABELS[task.status]}
+        </span>
+      </Cell>
+      <Cell className="min-w-[140px]">
+        <span className={`inline-flex rounded-full border px-3 py-1 text-xs ${MODE_TONE}`}>
+          {task.currentMode || "未标注"}
         </span>
       </Cell>
       <Cell className="min-w-[220px]">

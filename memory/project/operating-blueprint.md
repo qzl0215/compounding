@@ -24,15 +24,15 @@ AI 工作模式产品化
 ### 工作模式收口
 
 - 发布标准：
-  - 系统只保留少数几个高频 AI 工作模式
-  - 每个模式都能说明适用场景、主要产物和边界
+  - `docs/WORK_MODES.md` 成为工作模式唯一详细真相源
+  - 每个模式都能说明输入、输出、基本原则、限制条件与进入退出条件
 - 关联任务：
   - `tasks/queue/task-009-ai-work-modes-productization.md`
 
 ### 首页入口承接
 
 - 发布标准：
-  - 首页能展示工作模式与职责矩阵之间的关系
+  - 首页用流程链呈现 `需求提出 → 战略澄清 → 方案评审 → 工程执行 → 质量验收 → 发布复盘`
   - 首页不引入新页面，也不把模式做成噪声卡片墙
 - 关联任务：
   - `tasks/queue/task-009-ai-work-modes-productization.md`
@@ -41,6 +41,7 @@ AI 工作模式产品化
 
 - 发布标准：
   - `AGENTS` 与 `AI operating model` 能回答何时进入哪种模式
+  - task 模板和任务页能挂到 `当前模式`
   - 模式入口不与角色文档形成双体系
 - 关联任务：
   - `tasks/queue/task-009-ai-work-modes-productization.md`
@@ -51,8 +52,9 @@ AI 工作模式产品化
 
 ## 下一检查点
 
-- 首页可直接呈现高频工作模式
-- `ORG_MODEL` 与 `AI_OPERATING_MODEL` 对模式定义保持一致
+- 首页可直接呈现工作模式流程链
+- `ORG_MODEL` 只保留角色，`WORK_MODES` 只保留模式
+- `AGENTS`、`WORK_MODES` 与 `AI_OPERATING_MODEL` 对模式定义保持一致
 - `task-009` 的执行状态、分支和最近提交可追踪
 
 ## 证据边界

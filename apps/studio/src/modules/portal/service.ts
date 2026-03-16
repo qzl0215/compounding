@@ -8,7 +8,7 @@ import {
   buildRoadmapSnapshot,
   toTaskSummary,
 } from "./builders";
-import { normalizeInline, parseBlueprintGoals, parseBulletList, parseBulletMap, parseOrgModel, parseWorkModes } from "./parsing";
+import { normalizeInline, parseBlueprintGoals, parseBulletList, parseBulletMap, parseOrgModel, parseWorkModeFlow } from "./parsing";
 import type { HomeEntryLink, PortalOverview, SemanticEntry, SemanticEntryGroup } from "./types";
 
 export const DEFAULT_DOC_PATH = "AGENTS.md";
@@ -21,7 +21,7 @@ export const HOME_ENTRY_LINKS: HomeEntryLink[] = [
 ];
 
 export async function getPortalOverview(): Promise<PortalOverview> {
-  const [agents, currentState, roadmap, blueprint, techDebt, moduleIndex, dependencyMap, orgModel, taskCards] = await Promise.all([
+  const [agents, currentState, roadmap, blueprint, techDebt, moduleIndex, dependencyMap, orgModel, workModes, taskCards] = await Promise.all([
     readDoc("AGENTS.md"),
     readDoc("memory/project/current-state.md"),
     readDoc("memory/project/roadmap.md"),
@@ -30,6 +30,7 @@ export async function getPortalOverview(): Promise<PortalOverview> {
     readDoc("code_index/module-index.md"),
     readDoc("code_index/dependency-map.md"),
     readDoc("docs/ORG_MODEL.md"),
+    readDoc("docs/WORK_MODES.md"),
     listTaskCards(),
   ]);
 
@@ -58,7 +59,15 @@ export async function getPortalOverview(): Promise<PortalOverview> {
     identity: buildIdentitySnapshot(agentsState, missionAndVision, coreValues),
     roadmap: buildRoadmapSnapshot(roadmapPhase, currentPriority, nextMilestone, milestoneSuccessCriteria),
     blueprint: buildBlueprintBoard(currentMilestone, currentPriority, blueprintGoals, doingTasks, blockedItems, nextCheckpoint),
-    workModes: parseWorkModes(orgModel.content),
+    workModeFlow: [
+      {
+        kind: "trigger",
+        name: "需求提出",
+        summary: "用户需求、问题或机会进入系统，触发后续工作模式链路。",
+        href: "/knowledge-base?path=AGENTS.md",
+      },
+      ...parseWorkModeFlow(workModes.content),
+    ],
     org: parseOrgModel(orgModel.content),
     knowledgeRisk: buildKnowledgeRiskCards(
       moduleIndex.content,
@@ -86,8 +95,9 @@ export async function getSemanticEntryGroups(): Promise<SemanticEntryGroup[]> {
       items: [entry("任务模板", "tasks/templates/task-template.md"), entry("开发工作流", "docs/DEV_WORKFLOW.md"), ...taskPaths.map(toTaskEntry)],
     },
     {
-      title: "组织与职责",
+      title: "工作模式与职责",
       items: [
+        entry("工作模式", "docs/WORK_MODES.md"),
         entry("组织模型", "docs/ORG_MODEL.md"),
         entry("架构说明", "docs/ARCHITECTURE.md"),
         entry("系统总览", "memory/architecture/system-overview.md"),

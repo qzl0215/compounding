@@ -19,7 +19,7 @@ related_docs:
 
 - 项目名称：Compounding AI Operating System
 - 当前阶段：AI 工作模式产品化
-- 当前优先级：把现有组织角色收口成少数几个可调用的 AI 工作模式，并让首页、规则入口和任务闭环真正承接这些模式。
+- 当前优先级：把工作模式从角色文档中剥离成独立真相源，并让首页、`AGENTS`、任务模板和 AI 工作流入口沿统一业务链承接这些模式。
 - 成功定义：首页成为一页经营驾驶舱；用户与 AI 能快速看懂使命、路线图、运营蓝图、组织职责与认知资产边界，并能沿统一 task 闭环持续推进。
 - 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
 - 运行边界：server-only
@@ -37,11 +37,11 @@ related_docs:
 
 ## 当前焦点
 
-- 把现有角色从“职责说明”升级为“可调用工作模式”
-- 让首页真正承担工作模式入口，而不是只展示组织职责
-- 让 AI operating model 能明确回答“当前该进入哪种模式”
-- 保持模式数量少而高频，避免把组织设计重新做成大公司部门树
-- 在不新增重平台的前提下，让模式定义、任务边界和首页导航形成统一闭环
+- 把工作模式从角色文档中剥离成独立真相源
+- 让首页用清晰流程链承接工作模式，而不是继续展示模式卡片
+- 让 `AGENTS` 只保留工作模式摘要，详细输入输出收口到 `WORK_MODES`
+- 让 task 通过 `当前模式` 字段和业务链联动
+- 保持角色与模式边界清楚，避免再次混写
 
 ## 关键冻结项
 
@@ -51,9 +51,10 @@ related_docs:
 
 ## 下一检查点
 
-- 首页可直接呈现高频工作模式
-- `docs/ORG_MODEL.md` 明确给出工作模式定义
-- `docs/AI_OPERATING_MODEL.md` 明确给出模式选择规则
+- 首页用流程链清晰呈现工作模式入口
+- `docs/ORG_MODEL.md` 只保留角色定义
+- `docs/WORK_MODES.md` 成为工作模式唯一详细真相源
+- `docs/AI_OPERATING_MODEL.md` 与 `AGENTS` 对工作模式摘要保持一致
 - `pnpm build`
 - `pnpm test`
 - `python3 scripts/init_project_compounding.py audit --config bootstrap/project_brief.yaml --target .`

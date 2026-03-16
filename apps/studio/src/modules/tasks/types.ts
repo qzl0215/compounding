@@ -22,6 +22,7 @@ export type TaskCard = {
   title: string;
   goal: string;
   status: TaskStatus;
+  currentMode: string;
   branch: string;
   recentCommit: string;
   git: TaskGitInfo;

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { BlueprintGoal, OrgRoleCard, SystemCard, TaskSummary, WorkModeCard } from "../types";
+import type { BlueprintGoal, OrgRoleCard, SystemCard, TaskSummary, WorkModeStep } from "../types";
 
 export function ActionPill({ href, label }: { href: string; label: string }) {
   return (
@@ -122,36 +122,27 @@ export function RoleCardCompact({ role }: { role: OrgRoleCard }) {
   );
 }
 
-export function WorkModeCardCompact({ mode }: { mode: WorkModeCard }) {
+export function WorkModeFlowNode({ step, index }: { step: WorkModeStep; index: number }) {
   return (
     <article className="rounded-3xl border border-white/8 bg-white/[0.03] p-5">
-      <p className="text-xs uppercase tracking-[0.24em] text-accent">{mode.name}</p>
-      <p className="mt-3 text-sm leading-6 text-white/78">{mode.mission}</p>
-      {mode.scenarios.length > 0 ? (
-        <div className="mt-4">
-          <p className="text-xs uppercase tracking-[0.22em] text-white/38">适用场景</p>
-          <ul className="mt-2 space-y-1.5 text-sm leading-6 text-white/72">
-            {mode.scenarios.slice(0, 2).map((item) => (
-              <li key={item}>- {item}</li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-      {mode.outputs.length > 0 ? (
-        <div className="mt-4">
-          <p className="text-xs uppercase tracking-[0.22em] text-white/38">关键产物</p>
-          <ul className="mt-2 space-y-1.5 text-sm leading-6 text-white/72">
-            {mode.outputs.slice(0, 2).map((item) => (
-              <li key={item}>- {item}</li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
+      <div className="flex items-center gap-3">
+        <span
+          className={`inline-flex h-9 w-9 items-center justify-center rounded-full border text-sm font-medium ${
+            step.kind === "trigger"
+              ? "border-accent/35 bg-accent/10 text-accent"
+              : "border-white/12 bg-white/[0.05] text-white/78"
+          }`}
+        >
+          {index + 1}
+        </span>
+        <p className="text-sm font-semibold tracking-[0.08em] text-white">{step.name}</p>
+      </div>
+      <p className="mt-4 text-sm leading-6 text-white/74">{step.summary}</p>
       <Link
-        href="/knowledge-base?path=docs/ORG_MODEL.md"
+        href={step.href}
         className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-accent transition hover:text-white"
       >
-        查看模式
+        查看详情
       </Link>
     </article>
   );

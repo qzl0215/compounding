@@ -8,6 +8,7 @@ source_of_truth: AGENTS.md
 related_docs:
   - docs/PROJECT_RULES.md
   - docs/ARCHITECTURE.md
+  - docs/WORK_MODES.md
   - docs/DEV_WORKFLOW.md
   - docs/AI_OPERATING_MODEL.md
   - memory/project/current-state.md
@@ -34,13 +35,21 @@ last_reviewed_at: 2026-03-16
 
 - 项目名称：Compounding AI Operating System
 - 项目一句话：把当前仓库升级成适合 AI 长期协作、任务驱动、可持续重构与自进化的 AI-Native Repo。
-- 当前优先级：把现有组织角色收口成少数几个可调用的 AI 工作模式，并让首页、规则入口和任务闭环真正承接这些模式。
+- 当前优先级：把工作模式从角色文档中剥离成独立真相源，并让首页、`AGENTS`、任务模板和 AI 工作流入口沿统一业务链承接这些模式。
 - 成功定义：首页成为一页经营驾驶舱；用户与 AI 能快速看懂使命、路线图、运营蓝图、组织职责与认知资产边界，并能沿统一 task 闭环持续推进。
 - 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
 - 运行边界：server-only
 - 当前主线来源：`memory/project/roadmap.md`
 - 当前战术蓝图来源：`memory/project/operating-blueprint.md`
 - 当前任务入口：`tasks/queue/*.md`，优先处理 `doing` 状态任务，并校验 task/Git 一致性
+
+## 工作模式摘要
+
+- 战略澄清：当 roadmap、蓝图或发布标准不清时进入；关键产物是更新后的 `roadmap / operating-blueprint` 与规划 task。
+- 方案评审：当需求已澄清、准备动手时进入；关键产物是方案结论、范围、验收标准与 task 约束。
+- 工程执行：当 task 与方案边界已明确时进入；关键产物是代码改动、回写结果与可审查提交。
+- 质量验收：当实现完成、准备交付时进入；关键产物是通过/不通过结论、风险说明与 task 状态建议。
+- 发布复盘：当结果已通过验收时进入；关键产物是 `main` 合并、release 切换/回滚结果与经验沉淀。
 
 ## 默认回复格式
 
@@ -65,6 +74,7 @@ last_reviewed_at: 2026-03-16
 - `docs/PROJECT_RULES.md`
 - `docs/ARCHITECTURE.md`
 - `docs/ORG_MODEL.md`
+- `docs/WORK_MODES.md`
 - `docs/DEV_WORKFLOW.md`
 - `docs/AI_OPERATING_MODEL.md`
 - 当前任务文件
@@ -88,6 +98,7 @@ last_reviewed_at: 2026-03-16
 - worktree / task / PR / reporting：`docs/DEV_WORKFLOW.md`
 - AI 标准工作流、上下文和记忆回写：`docs/AI_OPERATING_MODEL.md`
 - 组织架构、角色职责、组织设计：`docs/ORG_MODEL.md`
+- 工作模式、输入输出与进入退出条件：`docs/WORK_MODES.md`
 - 系统状态、roadmap、运营蓝图、技术债：`memory/project/*`
 - 经验和 ADR：`memory/experience/*`、`memory/decisions/*`
 - 模块和函数导航：`code_index/*`

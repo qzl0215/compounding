@@ -38,6 +38,10 @@
 - `scripts/ai/*`
 - `docs/prompts/*`
 
+## 当前模式
+
+发布复盘
+
 ## 分支
 
 `codex/task-006-rich-doc-edit-and-ai-rewrite`
@@ -76,10 +80,10 @@ done
 
 ## 更新痕迹
 
-- 记忆：no change: main follow-up 只校准测试与 task 元数据，没有新增可复用记忆
-- 索引：no change: main follow-up 未改变模块边界、导出或函数导航
-- 路线图：no change: current priority unchanged
-- 文档：no change: main follow-up 未改动规则文档或 prompt 真相源
+- 记忆：`no change: historical task metadata alignment only`
+- 索引：`no change: historical task metadata alignment only`
+- 路线图：`no change: current priority unchanged`
+- 文档：`tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md`
 
 ## 复盘
 

@@ -37,6 +37,7 @@ function parseTask(pathname) {
   return {
     path: pathname,
     status: normalizeStatus(stripMarkdown(extractSection(content, "status", root) || "")),
+    currentMode: cleanValue(stripMarkdown(extractSection(content, "current_mode", root) || "")),
     branch: stripMarkdown(extractSection(content, "branch", root) || ""),
     recentCommit: stripMarkdown(extractSection(content, "recent_commit", root) || ""),
   };
@@ -54,6 +55,8 @@ function normalizeStatus(value) {
 function cleanValue(value) {
   return String(value || "").replace(/`/g, "").trim();
 }
+
+const ALLOWED_MODES = new Set(["战略澄清", "方案评审", "工程执行", "质量验收", "发布复盘"]);
 
 function isLegacyMainBranch(branch) {
   return branch === "main" || branch.startsWith("main ");
@@ -117,6 +120,12 @@ function validateTask(task, errors) {
     return;
   }
 
+  if (!task.currentMode) {
+    errors.push(`${task.path}: 缺少当前模式。`);
+  } else if (!ALLOWED_MODES.has(task.currentMode)) {
+    errors.push(`${task.path}: 当前模式不在允许列表内。`);
+  }
+
   const snapshot = getTaskGitSnapshot(task);
 
   if (task.status !== "done" && !snapshot.branch) {
@@ -163,6 +172,7 @@ function main() {
     return {
       path: task.path,
       status: task.status,
+      current_mode: task.currentMode,
       branch: snapshot.branch,
       merged_to_main: snapshot.mergedToMain,
       has_local_branch: snapshot.hasLocalBranch,

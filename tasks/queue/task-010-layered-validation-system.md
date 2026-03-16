@@ -36,6 +36,10 @@
 - `docs/AI_OPERATING_MODEL.md`
 - `docs/PROJECT_RULES.md`
 
+## 当前模式
+
+方案评审
+
 ## 分支
 
 `codex/task-010-layered-validation-system`

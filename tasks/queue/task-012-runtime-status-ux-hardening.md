@@ -35,6 +35,10 @@
 - `scripts/release/*`
 - `docs/DEV_WORKFLOW.md`
 
+## 当前模式
+
+方案评审
+
 ## 分支
 
 `codex/task-012-runtime-status-ux-hardening`

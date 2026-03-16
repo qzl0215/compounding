@@ -6,6 +6,7 @@ CANONICAL_DOCS = [
     "docs/PROJECT_RULES.md",
     "docs/ARCHITECTURE.md",
     "docs/ORG_MODEL.md",
+    "docs/WORK_MODES.md",
     "docs/DEV_WORKFLOW.md",
     "docs/AI_OPERATING_MODEL.md",
     "docs/REFACTOR_PLAN.md",
@@ -79,6 +80,7 @@ DOC_META = {
         "related_docs": [
             "docs/PROJECT_RULES.md",
             "docs/ARCHITECTURE.md",
+            "docs/WORK_MODES.md",
             "docs/DEV_WORKFLOW.md",
             "docs/AI_OPERATING_MODEL.md",
             "memory/project/current-state.md",
@@ -107,7 +109,15 @@ DOC_META = {
         "update_mode": "promote_only",
         "owner_role": "Foreman",
         "source_of_truth": AGENTS_SOURCE,
-        "related_docs": [AGENTS_SOURCE, "docs/ARCHITECTURE.md", "memory/project/roadmap.md"],
+        "related_docs": [AGENTS_SOURCE, "docs/WORK_MODES.md", "docs/ARCHITECTURE.md", "memory/project/roadmap.md"],
+    },
+    "docs/WORK_MODES.md": {
+        "title": "WORK_MODES",
+        "doc_role": "reference",
+        "update_mode": "manual",
+        "owner_role": "Foreman",
+        "source_of_truth": AGENTS_SOURCE,
+        "related_docs": [AGENTS_SOURCE, "docs/ORG_MODEL.md", "docs/AI_OPERATING_MODEL.md", "memory/project/roadmap.md"],
     },
     "docs/DEV_WORKFLOW.md": {
         "title": "DEV_WORKFLOW",
@@ -115,7 +125,7 @@ DOC_META = {
         "update_mode": "manual",
         "owner_role": "Builder",
         "source_of_truth": AGENTS_SOURCE,
-        "related_docs": [AGENTS_SOURCE, "docs/AI_OPERATING_MODEL.md", "tasks/templates/task-template.md"],
+        "related_docs": [AGENTS_SOURCE, "docs/WORK_MODES.md", "docs/AI_OPERATING_MODEL.md", "tasks/templates/task-template.md"],
     },
     "docs/AI_OPERATING_MODEL.md": {
         "title": "AI_OPERATING_MODEL",
@@ -123,7 +133,7 @@ DOC_META = {
         "update_mode": "manual",
         "owner_role": "Foreman",
         "source_of_truth": AGENTS_SOURCE,
-        "related_docs": [AGENTS_SOURCE, "docs/DEV_WORKFLOW.md", "memory/experience/README.md", "code_index/module-index.md"],
+        "related_docs": [AGENTS_SOURCE, "docs/WORK_MODES.md", "docs/DEV_WORKFLOW.md", "memory/experience/README.md", "code_index/module-index.md"],
     },
     "docs/REFACTOR_PLAN.md": {
         "title": "REFACTOR_PLAN",

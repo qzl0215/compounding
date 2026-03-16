@@ -15,6 +15,7 @@ const filled = template
   .replace("# 任务模板", `# 任务 ${taskId}`)
   .replace("## 目标\n", `## 目标\n\n${goal}\n\n`)
   .replace("## 为什么\n", `## 为什么\n\n${why}\n\n`)
+  .replace("## 当前模式\n", "## 当前模式\n\n方案评审\n\n")
   .replace("## 分支\n", `## 分支\n\n\`${suggestedBranch}\`\n\n`)
   .replace("## 最近提交\n", "## 最近提交\n\n`auto: branch HEAD`\n\n")
   .replace("## 状态\n", "## 状态\n\ntodo\n");

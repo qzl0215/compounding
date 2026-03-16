@@ -35,6 +35,10 @@
 - `code_index/*`
 - `docs/AI_OPERATING_MODEL.md`
 
+## 当前模式
+
+方案评审
+
 ## 分支
 
 `codex/task-013-memory-assets-comparison-layer`

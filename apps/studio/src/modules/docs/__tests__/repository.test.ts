@@ -17,6 +17,7 @@ describe("docs repository", () => {
     const memoryNode = tree.find((node) => node.path === "memory");
     expect(docsNode?.children?.some((node) => node.path === "docs/PROJECT_RULES.md")).toBe(true);
     expect(docsNode?.children?.some((node) => node.path === "docs/ORG_MODEL.md")).toBe(true);
+    expect(docsNode?.children?.some((node) => node.path === "docs/WORK_MODES.md")).toBe(true);
     expect(memoryNode?.children?.some((node) => node.path === "memory/project")).toBe(true);
   });
 
@@ -52,7 +53,7 @@ describe("docs repository", () => {
     expect(groups.some((group) => group.title === "使命与方向")).toBe(true);
     expect(groups.some((group) => group.title === "路线图与蓝图")).toBe(true);
     expect(groups.some((group) => group.title === "任务与交付")).toBe(true);
-    expect(groups.some((group) => group.title === "组织与职责")).toBe(true);
+    expect(groups.some((group) => group.title === "工作模式与职责")).toBe(true);
     expect(groups.some((group) => group.title === "认知资产")).toBe(true);
     expect(groups.some((group) => group.title === "风险与发布")).toBe(true);
     expect(queueDocs).toContain("tasks/queue/task-001-repo-refactor.md");

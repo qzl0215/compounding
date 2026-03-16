@@ -29,6 +29,7 @@ def render_readme(resolved: dict[str, object]) -> str:
 4. 需要理解当前战略与战术时，读 `memory/project/roadmap.md` 和 `memory/project/operating-blueprint.md`
 5. 需要更深上下文时，读 `docs/PROJECT_RULES.md`、`docs/ARCHITECTURE.md`、`docs/DEV_WORKFLOW.md`、`docs/AI_OPERATING_MODEL.md`
 6. 需要理解组织分工和角色职责时，读 `docs/ORG_MODEL.md`
+7. 需要理解业务链与工作模式时，读 `docs/WORK_MODES.md`
 
 ## 仓库结构
 
@@ -70,6 +71,14 @@ def render_agents(resolved: dict[str, object]) -> str:
 - 当前战术蓝图来源：`memory/project/operating-blueprint.md`
 - 当前任务入口：`tasks/queue/*.md`，优先处理 `doing` 状态任务，并校验 task/Git 一致性
 
+## 工作模式摘要
+
+- 战略澄清：当 roadmap、蓝图或发布标准不清时进入；关键产物是更新后的 `roadmap / operating-blueprint` 与规划 task。
+- 方案评审：当需求已澄清、准备动手时进入；关键产物是方案结论、范围、验收标准与 task 约束。
+- 工程执行：当 task 与方案边界已明确时进入；关键产物是代码改动、回写结果与可审查提交。
+- 质量验收：当实现完成、准备交付时进入；关键产物是通过/不通过结论、风险说明与 task 状态建议。
+- 发布复盘：当结果已通过验收时进入；关键产物是 `main` 合并、release 切换/回滚结果与经验沉淀。
+
 ## 默认回复格式
 
 1. 已完成清单
@@ -91,6 +100,7 @@ def render_agents(resolved: dict[str, object]) -> str:
 - `docs/PROJECT_RULES.md`
 - `docs/ARCHITECTURE.md`
 - `docs/ORG_MODEL.md`
+- `docs/WORK_MODES.md`
 - `docs/DEV_WORKFLOW.md`
 - `docs/AI_OPERATING_MODEL.md`
 - 当前任务文件
@@ -114,6 +124,7 @@ def render_agents(resolved: dict[str, object]) -> str:
 - worktree / task / PR / reporting：`docs/DEV_WORKFLOW.md`
 - AI 标准工作流、上下文和记忆回写：`docs/AI_OPERATING_MODEL.md`
 - 组织架构、角色职责、组织设计：`docs/ORG_MODEL.md`
+- 工作模式、输入输出与进入退出条件：`docs/WORK_MODES.md`
 - 系统状态、roadmap、运营蓝图、技术债：`memory/project/*`
 - 经验和 ADR：`memory/experience/*`、`memory/decisions/*`
 - 模块和函数导航：`code_index/*`

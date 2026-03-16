@@ -39,6 +39,10 @@
 - `scripts/ai/*`
 - `scripts/release/*`
 
+## 当前模式
+
+发布复盘
+
 ## 分支
 
 `main (legacy direct release)`
@@ -78,10 +82,10 @@ done
 
 ## 更新痕迹
 
-- 记忆：`no change: 初始骨架任务由后续具体任务回写`
-- 索引：`no change: 初始骨架任务由后续具体任务回写`
-- 路线图：`memory/project/roadmap.md`
-- 文档：`docs/REFACTOR_PLAN.md`
+- 记忆：`no change: historical task metadata alignment only`
+- 索引：`no change: historical task metadata alignment only`
+- 路线图：`no change: current priority unchanged`
+- 文档：`tasks/queue/task-001-repo-refactor.md`
 
 ## 复盘
 

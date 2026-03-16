@@ -7,6 +7,7 @@ export function parseTaskCard(path: string, content: string): Omit<TaskCard, "gi
     title: extractFirstHeading(content) ?? path.split("/").pop() ?? path,
     goal: stripMarkdown(extractSection(content, "goal") ?? "当前任务尚未填写目标。"),
     status: normalizeTaskStatus(stripMarkdown(extractSection(content, "status") ?? "todo")),
+    currentMode: stripMarkdown(extractSection(content, "current_mode") ?? ""),
     branch: stripMarkdown(extractSection(content, "branch") ?? ""),
     recentCommit: stripMarkdown(extractSection(content, "recent_commit") ?? ""),
     relatedModules: parseRelatedModules(content),

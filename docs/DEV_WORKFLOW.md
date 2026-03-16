@@ -8,6 +8,7 @@ last_reviewed_at: 2026-03-16
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
+  - docs/WORK_MODES.md
   - docs/AI_OPERATING_MODEL.md
   - tasks/templates/task-template.md
 ---
@@ -52,9 +53,12 @@ related_docs:
 
 - 每个结构性改动必须绑定 `tasks/queue/*`
 - 默认先更新 task，再改代码；改完后补齐更新痕迹和必要回写
-- 每个 task 至少包含 目标 / 为什么 / 范围 / 范围外 / 约束 / 关联模块 / 分支 / 最近提交 / 计划 / 发布说明 / 验收标准 / 风险 / 状态 / 更新痕迹 / 复盘
+- 每个 task 至少包含 目标 / 为什么 / 范围 / 范围外 / 约束 / 关联模块 / 当前模式 / 分支 / 最近提交 / 计划 / 发布说明 / 验收标准 / 风险 / 状态 / 更新痕迹 / 复盘
 - 修改结束后要同步更新任务状态和验收结果
 - 每个 task 对应一条短分支；进入 `main` 后，任务状态与 Git 状态必须一致
+- task 默认挂到当前工作模式，而不是挂到角色名称
+- 若 roadmap、blueprint 或发布标准不清，task 只能进入 `战略澄清`
+- 只有 `质量验收` 通过，task 才能进入 `发布复盘`
 - `更新痕迹` 必须明确写出：
   - 记忆
   - 索引

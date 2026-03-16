@@ -38,6 +38,10 @@
 - `apps/studio/src/modules/tasks/*`
 - `apps/studio/src/modules/releases/*`
 
+## 当前模式
+
+发布复盘
+
 ## 分支
 
 `codex/task-008-current-uiux-package`
@@ -77,7 +81,7 @@ done
 - 记忆：`no change: 本次只补充 UIUX 资料包，不改变项目状态或经验沉淀`
 - 索引：`no change: 本次不改模块边界与代码索引`
 - 路线图：`no change: current priority unchanged`
-- 文档：`docs/UIUX_CURRENT_PACKAGE.md`
+- 文档：`tasks/queue/task-008-current-uiux-package.md`
 
 ## 复盘
 

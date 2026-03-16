@@ -18,6 +18,7 @@ describe("tasks service", () => {
     expect(current?.recentCommit).toBe("bd37dec");
     expect(current?.git.state).toBeDefined();
     expect(planned?.status).toBe("doing");
+    expect(planned?.currentMode).toBe("质量验收");
     expect(planned?.branch).toBe("codex/task-009-ai-work-modes-productization");
     expect(planned?.git.state).toBe("developing");
   });

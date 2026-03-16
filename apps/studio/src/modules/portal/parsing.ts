@@ -1,5 +1,5 @@
 import { stripMarkdown } from "@/modules/docs";
-import type { BlueprintGoal, OrgRoleCard, OrgRoleGroup, WorkModeCard } from "./types";
+import type { BlueprintGoal, OrgRoleCard, OrgRoleGroup, WorkModeStep } from "./types";
 
 export function parseBulletMap(content: string) {
   const map: Record<string, string> = {};
@@ -164,63 +164,31 @@ export function parseOrgModel(content: string): OrgRoleGroup[] {
   return groups;
 }
 
-export function parseWorkModes(content: string): WorkModeCard[] {
+export function parseWorkModeFlow(content: string): WorkModeStep[] {
   const lines = content.split(/\r?\n/);
-  const modes: WorkModeCard[] = [];
-  let inSection = false;
-  let currentMode: WorkModeCard | null = null;
-  let currentField: keyof Pick<WorkModeCard, "scenarios" | "outputs" | "antiPatterns"> | null = null;
+  const knownModes = ["战略澄清", "方案评审", "工程执行", "质量验收", "发布复盘"];
+  const modes: WorkModeStep[] = [];
+  let currentMode: WorkModeStep | null = null;
 
   for (const line of lines) {
     const levelTwo = line.match(/^##\s+(.+)$/);
     if (levelTwo) {
-      inSection = levelTwo[1].trim() === "工作模式";
+      const title = stripMarkdown(levelTwo[1].trim());
       currentMode = null;
-      currentField = null;
+      if (knownModes.includes(title)) {
+        currentMode = {
+          kind: "mode",
+          name: title,
+          summary: "",
+          href: `/knowledge-base?path=${encodeURIComponent("docs/WORK_MODES.md")}#${encodeURIComponent(title)}`,
+        };
+        modes.push(currentMode);
+      }
       continue;
     }
 
-    if (!inSection) {
-      continue;
-    }
-
-    const levelThree = line.match(/^###\s+(.+)$/);
-    if (levelThree) {
-      currentMode = {
-        name: stripMarkdown(levelThree[1].trim()),
-        mission: "",
-        scenarios: [],
-        outputs: [],
-        antiPatterns: [],
-      };
-      modes.push(currentMode);
-      currentField = null;
-      continue;
-    }
-
-    if (!currentMode) {
-      continue;
-    }
-
-    if (line.startsWith("- 使命：")) {
-      currentMode.mission = line.replace("- 使命：", "").trim();
-      currentField = null;
-      continue;
-    }
-    if (line.startsWith("- 适用场景：")) {
-      currentField = "scenarios";
-      continue;
-    }
-    if (line.startsWith("- 主要产物：")) {
-      currentField = "outputs";
-      continue;
-    }
-    if (line.startsWith("- 不该做什么：")) {
-      currentField = "antiPatterns";
-      continue;
-    }
-    if (currentField && line.trim().startsWith("-")) {
-      currentMode[currentField].push(line.replace(/^\s*-\s*/, "").trim());
+    if (currentMode && line.startsWith("- 模式目标：")) {
+      currentMode.summary = line.replace("- 模式目标：", "").trim();
     }
   }
 

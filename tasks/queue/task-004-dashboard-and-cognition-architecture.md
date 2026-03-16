@@ -41,6 +41,10 @@
 - `memory/project/*`
 - `docs/*`
 
+## 当前模式
+
+发布复盘
+
 ## 分支
 
 `main (legacy direct release)`
@@ -80,10 +84,10 @@ done
 
 ## 更新痕迹
 
-- 记忆：`memory/project/current-state.md, memory/project/operating-blueprint.md`
-- 索引：`no change: 本轮不改变模块边界与函数导航`
-- 路线图：`memory/project/roadmap.md`
-- 文档：`AGENTS.md, docs/PROJECT_RULES.md, docs/ARCHITECTURE.md, docs/DEV_WORKFLOW.md, docs/AI_OPERATING_MODEL.md, docs/ORG_MODEL.md`
+- 记忆：`no change: historical task metadata alignment only`
+- 索引：`no change: historical task metadata alignment only`
+- 路线图：`no change: current priority unchanged`
+- 文档：`tasks/queue/task-004-dashboard-and-cognition-architecture.md`
 
 ## 复盘
 

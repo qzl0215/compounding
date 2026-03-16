@@ -35,6 +35,10 @@
 - `scripts/ai/*`
 - `docs/PROJECT_RULES.md`
 
+## 当前模式
+
+方案评审
+
 ## 分支
 
 `codex/task-011-anti-drift-docs-prompts-index`
