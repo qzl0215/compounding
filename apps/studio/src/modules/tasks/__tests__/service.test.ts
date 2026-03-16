@@ -6,6 +6,7 @@ describe("tasks service", () => {
     const tasks = await listTaskCards();
     const first = tasks.find((task) => task.path === "tasks/queue/task-001-repo-refactor.md");
     const current = tasks.find((task) => task.path === "tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md");
+    const planned = tasks.find((task) => task.path === "tasks/queue/task-009-ai-work-modes-productization.md");
 
     expect(first).toBeTruthy();
     expect(first?.goal.length).toBeGreaterThan(0);
@@ -16,6 +17,9 @@ describe("tasks service", () => {
     expect(current?.branch).toBe("codex/task-006-rich-doc-edit-and-ai-rewrite");
     expect(current?.recentCommit).toBe("bd37dec");
     expect(current?.git.state).toBeDefined();
+    expect(planned?.status).toBe("todo");
+    expect(planned?.branch).toBe("codex/task-009-ai-work-modes-productization");
+    expect(planned?.git.state).toBe("missing_branch");
   });
 
   it("groups tasks by status for the board view", async () => {

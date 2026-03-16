@@ -140,6 +140,16 @@ export function resolveTaskGitInfo(status: TaskStatus, branchValue: string, rece
     };
   }
 
+  if (status === "todo") {
+    return {
+      branch,
+      recentCommit,
+      mergedToMain: false,
+      state: "missing_branch",
+      detail: "建议分支尚未创建，可在正式启动任务时创建",
+    };
+  }
+
   return {
     branch,
     recentCommit,

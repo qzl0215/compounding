@@ -107,6 +107,10 @@ function getTaskGitSnapshot(task) {
   };
 }
 
+function allowsPlannedBranch(task, snapshot) {
+  return task.status === "todo" && snapshot.branch && !snapshot.hasLocalBranch && !snapshot.effectiveCommit;
+}
+
 function validateTask(task, errors) {
   if (!task.status) {
     errors.push(`${task.path}: 缺少状态。`);
@@ -124,7 +128,8 @@ function validateTask(task, errors) {
     snapshot.branch &&
     !snapshot.hasLocalBranch &&
     !isLegacyMainBranch(snapshot.branch) &&
-    snapshot.branch !== snapshot.activeBranch
+    snapshot.branch !== snapshot.activeBranch &&
+    !allowsPlannedBranch(task, snapshot)
   ) {
     errors.push(`${task.path}: 已绑定分支，但本地无法读取该分支。`);
   }
@@ -133,7 +138,8 @@ function validateTask(task, errors) {
     snapshot.branch &&
     !snapshot.effectiveCommit &&
     !isLegacyMainBranch(snapshot.branch) &&
-    !(snapshot.branch === snapshot.activeBranch && snapshot.dirtyWorktree)
+    !(snapshot.branch === snapshot.activeBranch && snapshot.dirtyWorktree) &&
+    !allowsPlannedBranch(task, snapshot)
   ) {
     errors.push(`${task.path}: 已绑定分支，但无法解析最近提交。`);
   }
