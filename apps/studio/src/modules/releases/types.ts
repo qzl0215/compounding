@@ -23,6 +23,27 @@ export type ReleaseRegistry = {
   releases: ReleaseRecord[];
 };
 
+export type LocalRuntimeStatusType =
+  | "stopped"
+  | "running"
+  | "stale_pid"
+  | "port_error"
+  | "drift"
+  | "unmanaged";
+
+export type LocalRuntimeStatus = {
+  status: LocalRuntimeStatusType;
+  running: boolean;
+  port: number;
+  pid: number | null;
+  runtime_release_id: string | null;
+  current_release_id: string | null;
+  drift: boolean;
+  reason: string;
+  log_path: string;
+  state_path: string;
+};
+
 export type ManagementAccessState = {
   allowed: boolean;
   reason: string;
@@ -33,6 +54,7 @@ export type ReleaseDashboard = {
   active_release_id: string | null;
   active_release: ReleaseRecord | null;
   releases: ReleaseRecord[];
+  local_runtime: LocalRuntimeStatus;
 };
 
 export type ReleaseActionResult = {

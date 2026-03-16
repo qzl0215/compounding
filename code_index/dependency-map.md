@@ -18,6 +18,8 @@ related_docs:
 - `apps/studio/src/app/*` -> `apps/studio/src/modules/*`
 - `scripts/init_project_compounding.py` -> `scripts/compounding_bootstrap/engine.py` -> split modules
 - `scripts/ai/*` -> docs / memory / code_index / tasks
+- `scripts/release/*` -> `scripts/local-runtime/*`（本地无 systemd 时）
+- `scripts/local-runtime/*` -> `../.compounding-runtime/current` 与 `../.compounding-runtime/shared`
 
 ## 禁止的依赖方向
 

@@ -83,6 +83,11 @@ const bootstrapFiles = fs.existsSync(path.join(root, "scripts", "compounding_boo
       .filter((entry) => entry.isFile() && entry.name.endsWith(".py") && entry.name !== "__init__.py")
       .map((entry) => ({ name: entry.name.replace(/\.py$/, ""), path: path.join("scripts/compounding_bootstrap", entry.name).replace(/\\/g, "/") }))
   : [];
+const localRuntimeFiles = fs.existsSync(path.join(root, "scripts", "local-runtime"))
+  ? fs.readdirSync(path.join(root, "scripts", "local-runtime"), { withFileTypes: true })
+      .filter((entry) => entry.isFile() && entry.name.endsWith(".ts"))
+      .map((entry) => ({ name: entry.name.replace(/\.ts$/, ""), path: path.join("scripts/local-runtime", entry.name).replace(/\\/g, "/") }))
+  : [];
 
 const functionIndex = [];
 for (const moduleInfo of studioModules) {
@@ -101,6 +106,12 @@ for (const moduleInfo of bootstrapFiles) {
     functionIndex.push({ module: "scripts/compounding_bootstrap", file: moduleInfo.path, symbol, kind: "function", language: "Python", exported: !symbol.startsWith("_") });
   }
 }
+for (const moduleInfo of localRuntimeFiles) {
+  const full = path.join(root, moduleInfo.path);
+  for (const symbol of readFunctions(full)) {
+    functionIndex.push({ module: "scripts/local-runtime", file: moduleInfo.path, symbol, kind: "function", language: "TypeScript", exported: true });
+  }
+}
 
 const moduleIndex = [
   "# 模块索引",
@@ -112,6 +123,10 @@ const moduleIndex = [
   "## Bootstrap 引擎模块",
   "",
   ...bootstrapFiles.map((item) => `- \`${item.path}\``),
+  "",
+  "## 本地运行时脚本",
+  "",
+  ...localRuntimeFiles.map((item) => `- \`${item.path}\``),
   "",
   "## 修改前先看",
   "",
@@ -127,6 +142,8 @@ const dependencyMap = [
   "- `apps/studio/src/app/*` -> `apps/studio/src/modules/*`",
   "- `scripts/init_project_compounding.py` -> `scripts/compounding_bootstrap/engine.py` -> split modules",
   "- `scripts/ai/*` -> docs / memory / code_index / tasks",
+  "- `scripts/release/*` -> `scripts/local-runtime/*`（本地无 systemd 时）",
+  "- `scripts/local-runtime/*` -> `../.compounding-runtime/current` 与 `../.compounding-runtime/shared`",
   "",
   "## 禁止的依赖方向",
   "",

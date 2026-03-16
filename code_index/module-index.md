@@ -47,6 +47,19 @@ related_docs:
 - `scripts/compounding_bootstrap/scaffold_assets.py`
 - `scripts/compounding_bootstrap/yaml_io.py`
 
+## 本地运行时脚本
+
+- `scripts/local-runtime/check-prod.ts`
+- `scripts/local-runtime/core.ts`
+- `scripts/local-runtime/health.ts`
+- `scripts/local-runtime/lib.ts`
+- `scripts/local-runtime/process.ts`
+- `scripts/local-runtime/restart-prod.ts`
+- `scripts/local-runtime/start-prod.ts`
+- `scripts/local-runtime/status-prod.ts`
+- `scripts/local-runtime/status.ts`
+- `scripts/local-runtime/stop-prod.ts`
+
 ## 修改前先看
 
 - 先读对应 `module.md`

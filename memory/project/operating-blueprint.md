@@ -17,51 +17,51 @@ last_reviewed_at: 2026-03-16
 
 ## 当前里程碑
 
-知识库富文本直编与两步 AI 文档重构收口
+本地生产运行时稳定化
 
 ## 关键子目标
 
-### 正文富文本直编
+### 本地生产运行时
 
 - 发布标准：
-  - 文档默认在原阅读界面内直接编辑正文
-  - 标题、段落、列表、引用、代码块、表格单元格都可直接修改
+  - `pnpm prod:start / stop / status / check` 可用
+  - 本地生产启动后会写入单一运行态元数据
 - 关联任务：
-  - `tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md`
+  - `tasks/queue/task-007-local-prod-runtime-stability.md`
 
-### 正文与系统元数据分层
+### Release 切换联动
 
 - 发布标准：
-  - 默认编辑模式不暴露 frontmatter 与 managed block
-  - 高级模式才允许编辑完整 Markdown 原文
+  - 若本地生产已在运行，`release:switch` 与 `release:rollback` 会自动最小重启
+  - 若本地生产未运行，切换和回滚不会偷偷启动新进程
 - 关联任务：
-  - `tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md`
+  - `tasks/queue/task-007-local-prod-runtime-stability.md`
 
-### 两步 AI 文档重构
+### 运行态可观测
 
 - 发布标准：
-  - 第一步只提出关键补充问题，不直接改文
-  - 第二步基于用户补充重构正文，并给出结构摘要与缺失提示
+  - `/releases` 能明确显示未启动、运行中、PID 失效、端口异常、版本漂移
+  - 页面问题能被直接解释为“服务未运行”或“版本漂移”，而不是泛泛报错
 - 关联任务：
-  - `tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md`
+  - `tasks/queue/task-007-local-prod-runtime-stability.md`
 
-### Prompt 资产治理
+### 页面在线与样式健康
 
 - 发布标准：
-  - prompt 文档可在 UI 中预览与编辑
-  - prompt 变更后可保存生效，并支持回退到上一版本
+  - 首页、任务页、文档页、发布页都能通过本地生产健康检查
+  - CSS 资源路由返回 `200`，页面不再出现裸 HTML
 - 关联任务：
-  - `tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md`
+  - `tasks/queue/task-007-local-prod-runtime-stability.md`
 
 ## 当前阻塞
 
-- 暂无结构性阻塞；当前主要风险是复杂 Markdown 结构在正文模式下可能丢失格式细节，需要继续用测试守住序列化边界。
+- 当前 `3000` 端口由未托管的临时 `next dev` 进程占用；在本地生产运行时接管前，页面状态和版本状态都不可信。
 
 ## 下一检查点
 
-- 正文直编、保存与高级模式切换在知识库页面可用
-- AI 补充问题与正文重构两步链路可用
-- prompt 预览、保存与回退链路可用
+- 本地生产可手动拉起并通过健康检查
+- release 切换后运行中的本地生产自动最小重启
+- `/releases` 能正确解释为什么页面打不开或为什么版本漂移
 
 ## 证据边界
 

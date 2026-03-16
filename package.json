@@ -21,6 +21,10 @@
     "release:prepare": "node --experimental-strip-types scripts/release/prepare-release.ts --ref main",
     "release:switch": "node --experimental-strip-types scripts/release/switch-release.ts",
     "release:rollback": "node --experimental-strip-types scripts/release/rollback-release.ts",
-    "release:summarize": "node --experimental-strip-types scripts/release/summarize-release.ts"
+    "release:summarize": "node --experimental-strip-types scripts/release/summarize-release.ts",
+    "prod:start": "node --experimental-strip-types scripts/local-runtime/start-prod.ts",
+    "prod:stop": "node --experimental-strip-types scripts/local-runtime/stop-prod.ts",
+    "prod:status": "node --experimental-strip-types scripts/local-runtime/status-prod.ts",
+    "prod:check": "node --experimental-strip-types scripts/local-runtime/check-prod.ts"
   }
 }

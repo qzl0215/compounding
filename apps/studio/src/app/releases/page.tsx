@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { PageOutline } from "@/components/page-outline";
 import { Card } from "@/components/ui/card";
 import { getManagementAccessState, getReleaseDashboard } from "@/modules/releases";
+import type { LocalRuntimeStatusType } from "@/modules/releases";
 import { ReleaseDashboardPanel } from "@/modules/releases/components/release-dashboard-panel";
 
 export const dynamic = "force-dynamic";
@@ -25,6 +26,7 @@ export default async function ReleasesPage() {
   const dashboard = getReleaseDashboard();
   const outline = [
     { id: "release-overview", label: "发布模型" },
+    { id: "runtime-status", label: "运行态" },
     { id: "release-history", label: "版本台账" },
   ];
 
@@ -46,13 +48,38 @@ export default async function ReleasesPage() {
             </dl>
           </Card>
         </section>
+        <section id="runtime-status">
+          <Card>
+            <p className="text-xs uppercase tracking-[0.28em] text-accent">本地运行态</p>
+            <h2 className="mt-3 text-3xl font-semibold">3000 端口的真实状态</h2>
+            <p className="mt-4 max-w-4xl text-white/68">{dashboard.local_runtime.reason}</p>
+            <dl className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <Meta title="运行状态" value={formatRuntimeStatus(dashboard.local_runtime.status)} />
+              <Meta title="监听端口" value={String(dashboard.local_runtime.port)} />
+              <Meta title="运行版本" value={dashboard.local_runtime.runtime_release_id || "未启动"} />
+              <Meta title="current 指向" value={dashboard.local_runtime.current_release_id || "未切换 release"} />
+            </dl>
+          </Card>
+        </section>
         <section id="release-history">
-          <ReleaseDashboardPanel activeReleaseId={dashboard.active_release_id} releases={dashboard.releases} />
+          <ReleaseDashboardPanel activeReleaseId={dashboard.active_release_id} releases={dashboard.releases} runtimeStatus={dashboard.local_runtime} />
         </section>
       </div>
       <PageOutline items={outline} />
     </div>
   );
+}
+
+function formatRuntimeStatus(status: LocalRuntimeStatusType) {
+  const labels = {
+    stopped: "未启动",
+    running: "运行中",
+    stale_pid: "PID 失效",
+    port_error: "端口异常",
+    drift: "版本漂移",
+    unmanaged: "未托管进程占用",
+  };
+  return labels[status];
 }
 
 function Meta({ title, value }: { title: string; value: string }) {

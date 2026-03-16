@@ -18,8 +18,8 @@ related_docs:
 ## 项目概览
 
 - 项目名称：Compounding AI Operating System
-- 当前阶段：知识库富文本直编与两步 AI 文档重构收口
-- 当前优先级：把知识库升级为默认正文富文本直编，并接入“先提问、后重构”的两步 AI 文档重构能力。
+- 当前阶段：本地生产运行时稳定化
+- 当前优先级：把本地生产运行时补齐为手动拉起、显式可观测、可随 release 切换与回滚稳定重启的长期可维护模型。
 - 成功定义：首页成为一页经营驾驶舱；用户与 AI 能快速看懂使命、路线图、运营蓝图、组织职责与认知资产边界，并能沿统一 task 闭环持续推进。
 - 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
 - 运行边界：server-only
@@ -37,10 +37,10 @@ related_docs:
 
 ## 当前焦点
 
-- 知识库默认在阅读界面中直接编辑正文，而不是切到原始源码编辑器
-- 为带 frontmatter 或 managed block 的文档保留高级模式，避免日常编辑误触系统元数据
-- 把 AI 文档重构收口为“先提关键问题，再重构正文”的两步流程
-- 让 prompt 文档具备预览、保存生效与上一版本回退能力，保证后续输出稳定
+- 为 `release/current` 补齐本地常驻运行时，避免页面依赖临时 `next dev`
+- 让本地生产状态能被页面和脚本直接观测，而不是靠浏览器报错倒推
+- 让切换与回滚在本地生产已运行时自动最小重启，在未运行时保持静默
+- 用健康检查直接验证首页、任务页、文档页、发布页与 CSS 资源都真实在线
 
 ## 关键冻结项
 
@@ -50,11 +50,12 @@ related_docs:
 
 ## 下一检查点
 
+- `pnpm prod:start`
+- `pnpm prod:status`
+- `pnpm prod:check`
 - `pnpm build`
 - `pnpm test`
 - `python3 scripts/init_project_compounding.py audit --config bootstrap/project_brief.yaml --target .`
-- `node --experimental-strip-types scripts/ai/validate-change-trace.ts`
-- `node --experimental-strip-types scripts/ai/validate-task-git-link.ts`
 
 ## 证据边界
 

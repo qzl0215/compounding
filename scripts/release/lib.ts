@@ -1,6 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { execFileSync } = require("node:child_process");
+const { releaseReload: releaseReloadImpl } = require("./reload.ts");
 
 function workspaceRoot() {
   return process.cwd();
@@ -90,15 +91,6 @@ function run(command, args, cwd = workspaceRoot()) {
   }).trim();
 }
 
-function commandExists(command) {
-  try {
-    execFileSync("which", [command], { stdio: ["ignore", "ignore", "ignore"] });
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 function git(args, cwd = workspaceRoot()) {
   return run("git", args, cwd);
 }
@@ -133,15 +125,7 @@ function ensureReleaseTag(tag, commitSha) {
 }
 
 function releaseReload() {
-  if (process.env.AI_OS_RELOAD_COMMAND) {
-    run("sh", ["-lc", process.env.AI_OS_RELOAD_COMMAND]);
-    return "custom reload command executed";
-  }
-  if (process.env.AI_OS_SYSTEMD_SERVICE && commandExists("systemctl")) {
-    run("systemctl", ["restart", process.env.AI_OS_SYSTEMD_SERVICE]);
-    return `systemd restarted ${process.env.AI_OS_SYSTEMD_SERVICE}`;
-  }
-  return "reload skipped (no AI_OS_RELOAD_COMMAND or AI_OS_SYSTEMD_SERVICE configured)";
+  return releaseReloadImpl(workspaceRoot(), run);
 }
 
 function updateCurrentSymlink(releaseId) {

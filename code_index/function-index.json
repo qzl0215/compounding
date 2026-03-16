@@ -722,6 +722,14 @@
   {
     "module": "apps/studio/src/modules/releases",
     "file": "apps/studio/src/modules/releases/service.ts",
+    "symbol": "getLocalRuntimeStatus",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/service.ts",
     "symbol": "runDeployRelease",
     "kind": "function",
     "language": "TypeScript",
@@ -1613,6 +1621,214 @@
     "symbol": "save_yaml",
     "kind": "function",
     "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/check-prod.ts",
+    "symbol": "main",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/core.ts",
+    "symbol": "localRuntimePaths",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/core.ts",
+    "symbol": "ensureLocalRuntimeLayout",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/core.ts",
+    "symbol": "currentReleaseSnapshot",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/core.ts",
+    "symbol": "readLocalState",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/core.ts",
+    "symbol": "writeLocalState",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/core.ts",
+    "symbol": "clearLocalState",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/core.ts",
+    "symbol": "pidAlive",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/core.ts",
+    "symbol": "listPortListener",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/core.ts",
+    "symbol": "parseEnvFile",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/core.ts",
+    "symbol": "readSharedEnv",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/health.ts",
+    "symbol": "sleep",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/health.ts",
+    "symbol": "fetchRoute",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/health.ts",
+    "symbol": "extractCssUrls",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/health.ts",
+    "symbol": "checkLocalProduction",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/health.ts",
+    "symbol": "waitForHealthyRuntime",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/process.ts",
+    "symbol": "sleep",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/process.ts",
+    "symbol": "stopProcess",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/process.ts",
+    "symbol": "waitForExit",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/process.ts",
+    "symbol": "spawnLocalProduction",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/restart-prod.ts",
+    "symbol": "runScript",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/restart-prod.ts",
+    "symbol": "main",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/start-prod.ts",
+    "symbol": "main",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/status.ts",
+    "symbol": "managedListenerMatches",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/status.ts",
+    "symbol": "detectLocalProdStatus",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/stop-prod.ts",
+    "symbol": "main",
+    "kind": "function",
+    "language": "TypeScript",
     "exported": true
   }
 ]

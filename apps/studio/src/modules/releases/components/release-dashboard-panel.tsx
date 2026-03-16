@@ -2,14 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import type { ReleaseRecord } from "../types";
+import type { LocalRuntimeStatus, ReleaseRecord } from "../types";
 
 type Props = {
   releases: ReleaseRecord[];
   activeReleaseId: string | null;
+  runtimeStatus: LocalRuntimeStatus;
 };
 
-export function ReleaseDashboardPanel({ releases, activeReleaseId }: Props) {
+export function ReleaseDashboardPanel({ releases, activeReleaseId, runtimeStatus }: Props) {
   const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -41,6 +42,9 @@ export function ReleaseDashboardPanel({ releases, activeReleaseId }: Props) {
         >
           发布 main 当前版本
         </button>
+        <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-white/68">
+          本地运行态：{formatRuntimeStatus(runtimeStatus.status)}
+        </span>
         {message ? <p className="text-sm text-white/68">{message}</p> : null}
       </div>
 
@@ -125,6 +129,18 @@ function formatReleaseStatus(status: ReleaseRecord["status"]) {
     superseded: "已被替代",
     failed: "失败",
     rolled_back: "已回滚",
+  };
+  return labels[status];
+}
+
+function formatRuntimeStatus(status: LocalRuntimeStatus["status"]) {
+  const labels: Record<LocalRuntimeStatus["status"], string> = {
+    stopped: "未启动",
+    running: "运行中",
+    stale_pid: "PID 失效",
+    port_error: "端口异常",
+    drift: "版本漂移",
+    unmanaged: "未托管进程占用",
   };
   return labels[status];
 }

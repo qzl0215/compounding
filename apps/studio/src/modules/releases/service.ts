@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { getWorkspaceRoot } from "@/lib/workspace";
 import type {
+  LocalRuntimeStatus,
   ManagementAccessState,
   ReleaseActionResult,
   ReleaseDashboard,
@@ -65,8 +66,60 @@ export function getReleaseDashboard(): ReleaseDashboard {
     runtime_root: getReleaseRuntimeRoot(),
     active_release_id: registry.active_release_id,
     active_release: activeRelease,
-    releases
+    releases,
+    local_runtime: getLocalRuntimeStatus(),
   };
+}
+
+export function getLocalRuntimeStatus(): LocalRuntimeStatus {
+  const scriptPath = path.join(getWorkspaceRoot(), "scripts", "local-runtime", "status-prod.ts");
+  if (!fs.existsSync(scriptPath)) {
+    return {
+      status: "stopped",
+      running: false,
+      port: 3000,
+      pid: null,
+      runtime_release_id: null,
+      current_release_id: null,
+      drift: false,
+      reason: "本地运行时脚本尚未安装。",
+      log_path: path.join(getReleaseRuntimeRoot(), "shared", "local-prod.log"),
+      state_path: path.join(getReleaseRuntimeRoot(), "shared", "local-prod.json"),
+    };
+  }
+
+  try {
+    const output = execFileSync("node", ["--experimental-strip-types", scriptPath], {
+      cwd: getWorkspaceRoot(),
+      encoding: "utf8"
+    }).trim();
+    const payload = JSON.parse(output) as { ok?: boolean } & LocalRuntimeStatus;
+    return {
+      status: payload.status,
+      running: payload.running,
+      port: payload.port,
+      pid: payload.pid,
+      runtime_release_id: payload.runtime_release_id,
+      current_release_id: payload.current_release_id,
+      drift: payload.drift,
+      reason: payload.reason,
+      log_path: payload.log_path,
+      state_path: payload.state_path,
+    };
+  } catch (error) {
+    return {
+      status: "port_error",
+      running: false,
+      port: 3000,
+      pid: null,
+      runtime_release_id: null,
+      current_release_id: null,
+      drift: false,
+      reason: error instanceof Error ? error.message : "无法读取本地运行时状态。",
+      log_path: path.join(getReleaseRuntimeRoot(), "shared", "local-prod.log"),
+      state_path: path.join(getReleaseRuntimeRoot(), "shared", "local-prod.json"),
+    };
+  }
 }
 
 export function runDeployRelease(ref = "main"): ReleaseActionResult {

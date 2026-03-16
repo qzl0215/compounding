@@ -33,6 +33,8 @@ related_docs:
 9. 完成 review，并让改动进入 `main`
 10. 运行 `node --experimental-strip-types scripts/release/prepare-release.ts --ref main`
 11. 构建与 smoke 通过后，再运行 `node --experimental-strip-types scripts/release/switch-release.ts --release <release-id>`
+12. 首次或已停止时，手动运行 `pnpm prod:start`
+13. 用 `pnpm prod:status`、`pnpm prod:check` 或 `/releases` 确认真正在线
 
 ## 汇报契约
 
@@ -76,7 +78,9 @@ related_docs:
 - 切换失败前不得影响当前线上版本
 - 回滚通过 `scripts/release/rollback-release.ts` 或本机/内网发布管理页执行
 - 发布和回滚动作必须串行执行，release lock 未释放前不得触发第二个动作
-- 对于 Next.js 门户，服务重载采用 `systemctl restart` 或等价最小重启
+- 对于 Next.js 门户，服务重载优先使用 `AI_OS_RELOAD_COMMAND` 或 `systemctl restart`
+- 在本地 macOS 环境中，若本地生产已在运行，release 切换和回滚会自动调用本地运行时最小重启
+- 若本地生产未运行，release 切换不会偷偷拉起新进程；需要手动执行 `pnpm prod:start`
 
 ## 证据边界
 

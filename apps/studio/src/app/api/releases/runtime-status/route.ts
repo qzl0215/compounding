@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getLocalRuntimeStatus, getManagementAccessState, readReleaseRegistry } from "@/modules/releases";
+import { getLocalRuntimeStatus, getManagementAccessState } from "@/modules/releases";
 
 export const dynamic = "force-dynamic";
 
@@ -8,5 +8,6 @@ export async function GET(request: Request) {
   if (!access.allowed) {
     return NextResponse.json({ ok: false, message: access.reason }, { status: 403 });
   }
-  return NextResponse.json({ ok: true, registry: readReleaseRegistry(), runtime: getLocalRuntimeStatus() });
+
+  return NextResponse.json({ ok: true, runtime: getLocalRuntimeStatus() });
 }
