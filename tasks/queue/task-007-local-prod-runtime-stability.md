@@ -74,13 +74,16 @@
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
-- 记忆：`no change: 本轮优先修复本地生产运行时，不改变主线目标`
+- 记忆：`memory/project/current-state.md, memory/project/operating-blueprint.md`
 - 索引：`code_index/module-index.md, code_index/dependency-map.md, code_index/function-index.json`
-- 路线图：`no change: current priority unchanged`
+- 路线图：`memory/project/roadmap.md`
 - 文档：`AGENTS.md, docs/DEV_WORKFLOW.md, docs/AI_OPERATING_MODEL.md`
 
 ## 复盘
+
+- 本地页面的“裸 HTML / 连接拒绝”问题，根因不是页面渲染崩溃，而是缺少受控的本地生产运行时。
+- 以后要先看运行态：release registry 管版本，local runtime 管端口；两者缺一都会让生产状态失真。
