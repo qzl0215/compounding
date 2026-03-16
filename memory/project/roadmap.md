@@ -37,11 +37,11 @@ related_docs:
 
 ## 当前执行待办
 
-- [ ] 首页文案收口成更专业的经营驾驶舱表达
-- [ ] 建立 task / Git 状态联动与校验
-- [ ] `/tasks` 切换为表格化项目管理视图
-- [ ] `/knowledge-base` 支持 Markdown 阅读 / 编辑双模式
-- [ ] task / memory / docs / roadmap 与当前主线保持同步
+- [x] 首页文案收口成更专业的经营驾驶舱表达
+- [x] 建立 task / Git 状态联动与校验
+- [x] `/tasks` 切换为表格化项目管理视图
+- [x] `/knowledge-base` 支持 Markdown 阅读 / 编辑双模式
+- [x] task / memory / docs / roadmap 与当前主线保持同步
 
 ## 证据边界
 
