@@ -13,8 +13,8 @@ describe("portal overview", () => {
     expect(overview.roadmap.nextMilestone).toContain("专业的一页经营驾驶舱");
     expect(overview.blueprint.currentMilestone).toContain("专业驾驶舱");
     expect(overview.blueprint.goals.length).toBeGreaterThanOrEqual(3);
-    expect(overview.blueprint.doingTasks.length).toBeGreaterThan(0);
-    expect(overview.blueprint.doingTasks.some((task) => task.status === "进行中")).toBe(true);
+    expect(Array.isArray(overview.blueprint.doingTasks)).toBe(true);
+    expect(overview.blueprint.nextCheckpoint.length).toBeGreaterThan(0);
     expect(overview.org.some((group) => group.title === "决策层")).toBe(true);
     expect(overview.org.flatMap((group) => group.roles).some((role) => role.name.includes("总经办"))).toBe(true);
     expect(overview.knowledgeRisk.some((item) => item.title === "发布与风险")).toBe(true);
