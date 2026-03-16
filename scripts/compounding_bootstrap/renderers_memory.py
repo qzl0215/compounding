@@ -59,7 +59,7 @@ def render_current_state(resolved: dict[str, Any]) -> str:
 ## 项目概览
 
 - 项目名称：{resolved["project_name"]}
-- 当前阶段：专业驾驶舱、task/Git 联动与 Markdown 直编收口
+- 当前阶段：知识库富文本直编与两步 AI 文档重构收口
 - 当前优先级：{resolved["current_priority"]}
 - 成功定义：{resolved["success_definition"]}
 - 必须保护：{must_protect}
@@ -78,10 +78,10 @@ def render_current_state(resolved: dict[str, Any]) -> str:
 
 ## 当前焦点
 
-- 首页文案收口为更专业的经营驾驶舱表达，同时保持高浓度可读
-- 建立 task 与 Git 的双轨联动，让状态、分支、提交和是否并入 `main` 一致可追踪
-- 为知识库补齐“边阅读边编辑”的最小闭环，支持 Markdown 直接维护
-- 保持 task / memory / code_index / roadmap 的回写闭环，不引入新的平行体系
+- 知识库默认在阅读界面中直接编辑正文，而不是切到原始源码编辑器
+- 为带 frontmatter 或 managed block 的文档保留高级模式，避免日常编辑误触系统元数据
+- 把 AI 文档重构收口为“先提关键问题，再重构正文”的两步流程
+- 让 prompt 文档具备预览、保存生效与上一版本回退能力，保证后续输出稳定
 
 ## 关键冻结项
 
@@ -127,19 +127,19 @@ def render_roadmap(resolved: dict[str, Any]) -> str:
 
 ## 当前阶段
 
-专业驾驶舱、task/Git 联动与 Markdown 直编收口
+知识库富文本直编与两步 AI 文档重构收口
 
 ## 下个里程碑
 
-首页成为更专业的一页经营驾驶舱，同时建立 task/Git 联动和 Markdown 直编能力，让执行、维护与发布状态收口到同一链路。
+知识库进入长期可维护状态：默认在富文本阅读界面内直接编辑正文，并支持基于项目背景的两步 AI 文档重构，让人和 AI 都能更高质量地维护 Markdown 真相源。
 
 ## 里程碑成功标准
 
-- 首页文案专业、信息高浓度，且保持无右侧导航的一页阅读顺序
-- `/tasks` 支持表格化任务管理，并展示 task/Git 联动状态
-- `/knowledge-base` 支持 Markdown 边阅读边编辑与实时预览
-- `roadmap / operating-blueprint / task / memory / index` 边界继续清晰
-- task 模板与校验脚本共同约束“一个 task 一条交付链”
+- `/knowledge-base` 默认在原阅读界面内直接编辑正文，而不是源码加预览双栏
+- 带托管区块的文档在默认模式下只回写正文，高级模式下才允许编辑完整 Markdown
+- AI 先提出最关键补充问题，再基于用户补充重构正文
+- prompt 文档可预览、保存生效并回退到上一版本
+- `roadmap / operating-blueprint / task / memory / index` 的边界继续清晰
 
 ## 当前优先级
 
@@ -147,10 +147,10 @@ def render_roadmap(resolved: dict[str, Any]) -> str:
 
 ## 当前执行待办
 
-- [x] 首页文案收口成更专业的经营驾驶舱表达
-- [x] 建立 task / Git 状态联动与校验
-- [x] `/tasks` 切换为表格化项目管理视图
-- [x] `/knowledge-base` 支持 Markdown 阅读 / 编辑双模式
+- [x] 知识库默认进入正文富文本直编，而不是原始源码编辑
+- [x] 保留高级模式，用于全文 Markdown / frontmatter / managed block 编辑
+- [x] 接入“两步 AI 重构”链路：先提问题，再重构正文
+- [x] 新增 prompt 文档预览、保存生效与上一版本回退
 - [x] task / memory / docs / roadmap 与当前主线保持同步
 
 {evidence_boundary_block()}
@@ -162,51 +162,51 @@ def render_operating_blueprint(resolved: dict[str, Any]) -> str:
 
 ## 当前里程碑
 
-专业驾驶舱、task/Git 联动与 Markdown 直编收口
+知识库富文本直编与两步 AI 文档重构收口
 
 ## 关键子目标
 
-### 专业经营驾驶舱
+### 正文富文本直编
 
 - 发布标准：
-  - 首页固定为 5 个高浓度模块，且无右侧导航
-  - 模块标题与摘要表达更专业，但仍然易读
+  - 文档默认在原阅读界面内直接编辑正文
+  - 标题、段落、列表、引用、代码块、表格单元格都可直接修改
 - 关联任务：
-  - `tasks/queue/task-005-professional-dashboard-editing.md`
+  - `tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md`
 
-### Task / Git 联动
+### 正文与系统元数据分层
 
 - 发布标准：
-  - 每个 task 至少具备状态、分支、最近提交
-  - `/tasks` 能展示 Git 状态与是否已并入 `main`
+  - 默认编辑模式不暴露 frontmatter 与 managed block
+  - 高级模式才允许编辑完整 Markdown 原文
 - 关联任务：
-  - `tasks/queue/task-005-professional-dashboard-editing.md`
+  - `tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md`
 
-### Markdown 直编能力
+### 两步 AI 文档重构
 
 - 发布标准：
-  - 知识库支持 Markdown 阅读 / 编辑双模式
-  - 保存后立即回到阅读视图并展示最新内容
+  - 第一步只提出关键补充问题，不直接改文
+  - 第二步基于用户补充重构正文，并给出结构摘要与缺失提示
 - 关联任务：
-  - `tasks/queue/task-005-professional-dashboard-editing.md`
+  - `tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md`
 
-### 轻量 Task PM
+### Prompt 资产治理
 
 - 发布标准：
-  - task 模板包含 `分支 / 最近提交 / 计划 / 发布说明 / 验收标准 / 复盘`
-  - task 是边界，不演化成重型工单
+  - prompt 文档可在 UI 中预览与编辑
+  - prompt 变更后可保存生效，并支持回退到上一版本
 - 关联任务：
-  - `tasks/queue/task-005-professional-dashboard-editing.md`
+  - `tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md`
 
 ## 当前阻塞
 
-- 暂无结构性阻塞；当前主要风险是 task 状态、Git 运行态与文档真相不同步，后续会再次返工。
+- 暂无结构性阻塞；当前主要风险是复杂 Markdown 结构在正文模式下可能丢失格式细节，需要继续用测试守住序列化边界。
 
 ## 下一检查点
 
-- 首页专业驾驶舱 5 模块稳定
-- `/tasks` 与 `validate-task-git-link` 共同通过
-- Markdown 编辑链在本机/内网访问下可用
+- 正文直编、保存与高级模式切换在知识库页面可用
+- AI 补充问题与正文重构两步链路可用
+- prompt 预览、保存与回退链路可用
 
 {evidence_boundary_block()}
 """

@@ -1,11 +1,12 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
-import { detectDocKind, hasManagedBlocks, renderDocContent } from "./content";
-import type { DocMeta, DocNode, DocRecord } from "./types";
+import { detectDocKind, hasManagedBlocks, mergeEditableMarkdown, renderDocContent } from "./content";
+import type { DocMeta, DocNode, DocRecord, PromptHistoryEntry } from "./types";
 import { getWorkspaceRoot } from "@/lib/workspace";
 
 const workspaceRoot = getWorkspaceRoot();
+const promptHistoryRoot = path.join(workspaceRoot, "output", "prompt-history");
 
 const TOP_LEVEL_FILES = ["AGENTS.md", "README.md"] as const;
 const LIVE_ROOTS = ["docs", "memory", "code_index", "tasks"] as const;
@@ -72,15 +73,58 @@ export async function readDoc(relativePath: string): Promise<DocRecord> {
 }
 
 export async function writeMarkdownDoc(relativePath: string, rawContent: string) {
+  return writeDoc(relativePath, rawContent, "raw");
+}
+
+export async function writeDoc(relativePath: string, content: string, mode: "body" | "raw" = "raw") {
   const normalized = relativePath.replace(/^\/+/, "");
   if (!normalized.endsWith(".md")) {
     throw new Error("Only Markdown documents can be edited.");
   }
 
-  matter(rawContent);
   const absolute = resolveDocPath(normalized);
-  await fs.writeFile(absolute, rawContent, "utf8");
+  const previousRaw = await fs.readFile(absolute, "utf8");
+  const nextRaw = mode === "body" ? mergeEditableMarkdown(previousRaw, content, "markdown") : content;
+  matter(nextRaw);
+
+  await backupPromptDoc(normalized, previousRaw, nextRaw);
+  await fs.writeFile(absolute, nextRaw, "utf8");
   return readDoc(normalized);
+}
+
+export async function listPromptHistory(relativePath: string): Promise<PromptHistoryEntry[]> {
+  const normalized = relativePath.replace(/^\/+/, "");
+  if (!isPromptDoc(normalized)) {
+    return [];
+  }
+  const historyDir = promptHistoryDir(normalized);
+  try {
+    const entries = await fs.readdir(historyDir, { withFileTypes: true });
+    return entries
+      .filter((entry) => entry.isFile() && entry.name.endsWith(".md"))
+      .sort((left, right) => right.name.localeCompare(left.name))
+      .map((entry) => {
+        const versionId = entry.name.replace(/\.md$/, "");
+        return {
+          versionId,
+          createdAt: versionId,
+          label: versionId.replace(/[-T]/g, " "),
+        };
+      });
+  } catch {
+    return [];
+  }
+}
+
+export async function rollbackPromptDoc(relativePath: string, versionId: string) {
+  const normalized = relativePath.replace(/^\/+/, "");
+  if (!isPromptDoc(normalized)) {
+    throw new Error("Only prompt documents support rollback.");
+  }
+
+  const historyPath = path.join(promptHistoryDir(normalized), `${versionId}.md`);
+  const snapshot = await fs.readFile(historyPath, "utf8");
+  return writeDoc(normalized, snapshot, "raw");
 }
 
 function resolveDocPath(normalized: string) {
@@ -92,6 +136,26 @@ function resolveDocPath(normalized: string) {
     throw new Error(`Unsupported doc path: ${normalized}`);
   }
   return path.join(workspaceRoot, normalized);
+}
+
+function promptHistoryDir(relativePath: string) {
+  const slug = relativePath.replace(/[\\/]/g, "__").replace(/\.md$/, "");
+  return path.join(promptHistoryRoot, slug);
+}
+
+function isPromptDoc(relativePath: string) {
+  return relativePath.startsWith("docs/prompts/");
+}
+
+async function backupPromptDoc(relativePath: string, previousRaw: string, nextRaw: string) {
+  if (!isPromptDoc(relativePath) || previousRaw === nextRaw) {
+    return;
+  }
+
+  const historyDir = promptHistoryDir(relativePath);
+  await fs.mkdir(historyDir, { recursive: true });
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+  await fs.writeFile(path.join(historyDir, `${stamp}.md`), previousRaw, "utf8");
 }
 
 async function walkDocsDir(absoluteDir: string, relativeDir: string): Promise<DocNode[]> {

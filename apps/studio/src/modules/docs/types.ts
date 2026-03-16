@@ -28,3 +28,9 @@ export type DocRecord = {
   editable: boolean;
   hasManagedBlocks: boolean;
 };
+
+export type PromptHistoryEntry = {
+  versionId: string;
+  createdAt: string;
+  label: string;
+};
