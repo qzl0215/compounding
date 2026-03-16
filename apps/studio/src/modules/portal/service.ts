@@ -8,7 +8,7 @@ import {
   buildRoadmapSnapshot,
   toTaskSummary,
 } from "./builders";
-import { normalizeInline, parseBlueprintGoals, parseBulletList, parseBulletMap, parseOrgModel } from "./parsing";
+import { normalizeInline, parseBlueprintGoals, parseBulletList, parseBulletMap, parseOrgModel, parseWorkModes } from "./parsing";
 import type { HomeEntryLink, PortalOverview, SemanticEntry, SemanticEntryGroup } from "./types";
 
 export const DEFAULT_DOC_PATH = "AGENTS.md";
@@ -58,6 +58,7 @@ export async function getPortalOverview(): Promise<PortalOverview> {
     identity: buildIdentitySnapshot(agentsState, missionAndVision, coreValues),
     roadmap: buildRoadmapSnapshot(roadmapPhase, currentPriority, nextMilestone, milestoneSuccessCriteria),
     blueprint: buildBlueprintBoard(currentMilestone, currentPriority, blueprintGoals, doingTasks, blockedItems, nextCheckpoint),
+    workModes: parseWorkModes(orgModel.content),
     org: parseOrgModel(orgModel.content),
     knowledgeRisk: buildKnowledgeRiskCards(
       moduleIndex.content,

@@ -18,8 +18,8 @@ related_docs:
 ## 项目概览
 
 - 项目名称：Compounding AI Operating System
-- 当前阶段：本地生产运行时稳定化
-- 当前优先级：把本地生产运行时补齐为手动拉起、显式可观测、可随 release 切换与回滚稳定重启的长期可维护模型。
+- 当前阶段：AI 工作模式产品化
+- 当前优先级：把现有组织角色收口成少数几个可调用的 AI 工作模式，并让首页、规则入口和任务闭环真正承接这些模式。
 - 成功定义：首页成为一页经营驾驶舱；用户与 AI 能快速看懂使命、路线图、运营蓝图、组织职责与认知资产边界，并能沿统一 task 闭环持续推进。
 - 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
 - 运行边界：server-only
@@ -37,11 +37,11 @@ related_docs:
 
 ## 当前焦点
 
-- 为 `release/current` 补齐本地常驻运行时，避免页面依赖临时 `next dev`
-- 让本地生产状态能被页面和脚本直接观测，而不是靠浏览器报错倒推
-- 让切换与回滚在本地生产已运行时自动最小重启，在未运行时保持静默
-- 用健康检查直接验证首页、任务页、文档页、发布页与 CSS 资源都真实在线
-- 确保运行中的生产进程显式读取正确的 workspace/release 根目录，避免页面返回 `200` 但运行态上下文失真
+- 把现有角色从“职责说明”升级为“可调用工作模式”
+- 让首页真正承担工作模式入口，而不是只展示组织职责
+- 让 AI operating model 能明确回答“当前该进入哪种模式”
+- 保持模式数量少而高频，避免把组织设计重新做成大公司部门树
+- 在不新增重平台的前提下，让模式定义、任务边界和首页导航形成统一闭环
 
 ## 关键冻结项
 
@@ -51,9 +51,9 @@ related_docs:
 
 ## 下一检查点
 
-- `pnpm prod:start`
-- `pnpm prod:status`
-- `pnpm prod:check`
+- 首页可直接呈现高频工作模式
+- `docs/ORG_MODEL.md` 明确给出工作模式定义
+- `docs/AI_OPERATING_MODEL.md` 明确给出模式选择规则
 - `pnpm build`
 - `pnpm test`
 - `python3 scripts/init_project_compounding.py audit --config bootstrap/project_brief.yaml --target .`

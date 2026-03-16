@@ -17,51 +17,43 @@ last_reviewed_at: 2026-03-16
 
 ## 当前里程碑
 
-本地生产运行时稳定化
+AI 工作模式产品化
 
 ## 关键子目标
 
-### 本地生产运行时
+### 工作模式收口
 
 - 发布标准：
-  - `pnpm prod:start / stop / status / check` 可用
-  - 本地生产启动后会写入单一运行态元数据
+  - 系统只保留少数几个高频 AI 工作模式
+  - 每个模式都能说明适用场景、主要产物和边界
 - 关联任务：
-  - `tasks/queue/task-007-local-prod-runtime-stability.md`
+  - `tasks/queue/task-009-ai-work-modes-productization.md`
 
-### Release 切换联动
+### 首页入口承接
 
 - 发布标准：
-  - 若本地生产已在运行，`release:switch` 与 `release:rollback` 会自动最小重启
-  - 若本地生产未运行，切换和回滚不会偷偷启动新进程
+  - 首页能展示工作模式与职责矩阵之间的关系
+  - 首页不引入新页面，也不把模式做成噪声卡片墙
 - 关联任务：
-  - `tasks/queue/task-007-local-prod-runtime-stability.md`
+  - `tasks/queue/task-009-ai-work-modes-productization.md`
 
-### 运行态可观测
+### 统一入口规则
 
 - 发布标准：
-  - `/releases` 能明确显示未启动、运行中、PID 失效、端口异常、版本漂移
-  - 页面问题能被直接解释为“服务未运行”或“版本漂移”，而不是泛泛报错
+  - `AGENTS` 与 `AI operating model` 能回答何时进入哪种模式
+  - 模式入口不与角色文档形成双体系
 - 关联任务：
-  - `tasks/queue/task-007-local-prod-runtime-stability.md`
-
-### 页面在线与样式健康
-
-- 发布标准：
-  - 首页、任务页、文档页、发布页都能通过本地生产健康检查
-  - CSS 资源路由返回 `200`，页面不再出现裸 HTML
-- 关联任务：
-  - `tasks/queue/task-007-local-prod-runtime-stability.md`
+  - `tasks/queue/task-009-ai-work-modes-productization.md`
 
 ## 当前阻塞
 
-- 当前无结构性阻塞；继续用本地运行态与页面健康检查监控 release、端口与页面样式是否一致。
+- 当前无结构性阻塞；关键在于保持模式数量少、边界清楚，不把角色镜头再次扩成重型流程。
 
 ## 下一检查点
 
-- 本地生产状态与 `/releases` 页面显示一致
-- release 切换后运行中的本地生产自动最小重启
-- 健康检查同时验证关键页面与当前激活 release id
+- 首页可直接呈现高频工作模式
+- `ORG_MODEL` 与 `AI_OPERATING_MODEL` 对模式定义保持一致
+- `task-009` 的执行状态、分支和最近提交可追踪
 
 ## 证据边界
 

@@ -17,9 +17,9 @@ describe("tasks service", () => {
     expect(current?.branch).toBe("codex/task-006-rich-doc-edit-and-ai-rewrite");
     expect(current?.recentCommit).toBe("bd37dec");
     expect(current?.git.state).toBeDefined();
-    expect(planned?.status).toBe("todo");
+    expect(planned?.status).toBe("doing");
     expect(planned?.branch).toBe("codex/task-009-ai-work-modes-productization");
-    expect(planned?.git.state).toBe("missing_branch");
+    expect(planned?.git.state).toBe("developing");
   });
 
   it("groups tasks by status for the board view", async () => {

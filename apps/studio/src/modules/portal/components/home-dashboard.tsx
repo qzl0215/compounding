@@ -9,6 +9,7 @@ import {
   LinkedSummaryCard,
   RoleCardCompact,
   TaskFocusList,
+  WorkModeCardCompact,
 } from "./home-fragments";
 
 export function HomeDashboard({ overview }: { overview: PortalOverview }) {
@@ -133,7 +134,7 @@ export function HomeDashboard({ overview }: { overview: PortalOverview }) {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.28em] text-accent">组织职责矩阵</p>
-              <h2 className="mt-3 text-3xl font-semibold">职责分工与关键产物</h2>
+              <h2 className="mt-3 text-3xl font-semibold">工作模式与职责矩阵</h2>
             </div>
             <Link
               href="/knowledge-base?path=docs/ORG_MODEL.md"
@@ -143,6 +144,14 @@ export function HomeDashboard({ overview }: { overview: PortalOverview }) {
             </Link>
           </div>
           <div className="mt-6 space-y-6">
+            <section>
+              <p className="text-sm font-semibold tracking-[0.14em] text-white">高频工作模式</p>
+              <div className="mt-4 grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+                {overview.workModes.map((mode) => (
+                  <WorkModeCardCompact key={mode.name} mode={mode} />
+                ))}
+              </div>
+            </section>
             {overview.org.map((group) => (
               <section key={group.title}>
                 <p className="text-sm font-semibold tracking-[0.14em] text-white">{group.title}</p>

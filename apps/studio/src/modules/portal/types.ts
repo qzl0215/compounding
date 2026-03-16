@@ -70,6 +70,14 @@ export type OrgRoleCard = {
   antiPatterns: string[];
 };
 
+export type WorkModeCard = {
+  name: string;
+  mission: string;
+  scenarios: string[];
+  outputs: string[];
+  antiPatterns: string[];
+};
+
 export type OrgRoleGroup = {
   title: string;
   roles: OrgRoleCard[];
@@ -86,6 +94,7 @@ export type PortalOverview = {
   identity: CompanySnapshot;
   roadmap: RoadmapSnapshot;
   blueprint: BlueprintBoard;
+  workModes: WorkModeCard[];
   org: OrgRoleGroup[];
   knowledgeRisk: SystemCard[];
 };

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { BlueprintGoal, OrgRoleCard, SystemCard, TaskSummary } from "../types";
+import type { BlueprintGoal, OrgRoleCard, SystemCard, TaskSummary, WorkModeCard } from "../types";
 
 export function ActionPill({ href, label }: { href: string; label: string }) {
   return (
@@ -117,6 +117,41 @@ export function RoleCardCompact({ role }: { role: OrgRoleCard }) {
         className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-accent transition hover:text-white"
       >
         查看职责
+      </Link>
+    </article>
+  );
+}
+
+export function WorkModeCardCompact({ mode }: { mode: WorkModeCard }) {
+  return (
+    <article className="rounded-3xl border border-white/8 bg-white/[0.03] p-5">
+      <p className="text-xs uppercase tracking-[0.24em] text-accent">{mode.name}</p>
+      <p className="mt-3 text-sm leading-6 text-white/78">{mode.mission}</p>
+      {mode.scenarios.length > 0 ? (
+        <div className="mt-4">
+          <p className="text-xs uppercase tracking-[0.22em] text-white/38">适用场景</p>
+          <ul className="mt-2 space-y-1.5 text-sm leading-6 text-white/72">
+            {mode.scenarios.slice(0, 2).map((item) => (
+              <li key={item}>- {item}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+      {mode.outputs.length > 0 ? (
+        <div className="mt-4">
+          <p className="text-xs uppercase tracking-[0.22em] text-white/38">关键产物</p>
+          <ul className="mt-2 space-y-1.5 text-sm leading-6 text-white/72">
+            {mode.outputs.slice(0, 2).map((item) => (
+              <li key={item}>- {item}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+      <Link
+        href="/knowledge-base?path=docs/ORG_MODEL.md"
+        className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-accent transition hover:text-white"
+      >
+        查看模式
       </Link>
     </article>
   );

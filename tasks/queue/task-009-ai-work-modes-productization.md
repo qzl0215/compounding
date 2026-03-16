@@ -68,13 +68,13 @@
 
 ## 状态
 
-todo
+doing
 
 ## 更新痕迹
 
-- 记忆：`no change: planning candidate only`
-- 索引：`no change: planning candidate only`
-- 路线图：`no change: current priority unchanged`
-- 文档：`tasks/queue/task-009-ai-work-modes-productization.md`
+- 记忆：`memory/project/current-state.md, memory/project/operating-blueprint.md`
+- 索引：`no change: 本次不改模块边界与代码索引`
+- 路线图：`memory/project/roadmap.md`
+- 文档：`AGENTS.md, docs/ORG_MODEL.md, docs/AI_OPERATING_MODEL.md, tasks/queue/task-009-ai-work-modes-productization.md`
 
 ## 复盘
