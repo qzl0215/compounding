@@ -4,7 +4,7 @@ doc_role: memory
 update_mode: append_only
 owner_role: Auditor
 status: active
-last_reviewed_at: 2026-03-15
+last_reviewed_at: 2026-03-16
 source_of_truth: docs/REFACTOR_PLAN.md
 related_docs:
   - docs/PROJECT_RULES.md
@@ -18,7 +18,7 @@ related_docs:
 1. 当前发布模型是单机 `systemd + reverse proxy + symlink cutover` 骨架；还没有多进程零停机或多机容灾能力
 2. 本机/内网发布管理页已可读写 release registry，但尚未经过真实生产反向代理环境的 live 验证
 3. proposal engine 已支持模型优先生成，但默认仍依赖 Ark/Volcano/OpenAI 环境变量；未配置时会回退到 deterministic rewrite
-4. `scripts/ai/build-context.ts`、`generate-module-index.ts` 与 `validate-change-trace.ts` 仍是轻量版本，后续可继续提高相关性判断与 trace 精度
+4. `scripts/ai/build-context.ts`、`generate-module-index.ts`、`validate-change-trace.ts` 与 `validate-task-git-link.ts` 仍是轻量版本，后续可继续提高相关性判断与 trace 精度
 5. 当前没有 remote，`main` 直发生产只在本地仓库语义上成立；远端分支和 release tag 推送仍需后续接通
 
 ## 删除计划

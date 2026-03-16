@@ -8,10 +8,10 @@ describe("portal overview", () => {
     expect(overview.identity.oneLiner).toContain("AI-Native Repo");
     expect(overview.identity.mission).toContain("AI-Native Repo");
     expect(overview.identity.values.length).toBeGreaterThanOrEqual(3);
-    expect(overview.roadmap.currentPhase).toContain("经营驾驶舱首页与认知分层收口");
-    expect(overview.roadmap.currentPriority).toContain("经营驾驶舱");
-    expect(overview.roadmap.nextMilestone).toContain("经营驾驶舱");
-    expect(overview.blueprint.currentMilestone).toContain("经营驾驶舱");
+    expect(overview.roadmap.currentPhase).toContain("专业驾驶舱");
+    expect(overview.roadmap.currentPriority).toContain("task/Git");
+    expect(overview.roadmap.nextMilestone).toContain("专业的一页经营驾驶舱");
+    expect(overview.blueprint.currentMilestone).toContain("专业驾驶舱");
     expect(overview.blueprint.goals.length).toBeGreaterThanOrEqual(3);
     expect(overview.blueprint.doingTasks.length).toBeGreaterThan(0);
     expect(overview.blueprint.doingTasks.some((task) => task.status === "进行中")).toBe(true);

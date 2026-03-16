@@ -12,7 +12,7 @@ related_docs:
   - docs/AI_OPERATING_MODEL.md
   - memory/project/current-state.md
   - memory/project/roadmap.md
-last_reviewed_at: 2026-03-15
+last_reviewed_at: 2026-03-16
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 ## 硬规则
@@ -21,6 +21,7 @@ last_reviewed_at: 2026-03-15
 - 默认先做只读盘点，再做最小可验证改动。
 - 默认先做高 ROI 动作，不做过度工程和抽象炫技。
 - 任何结构性改动都必须绑定任务、更新相关记忆，并在进入 `main` 前完成 review。
+- 每个执行 task 对应一条短分支；任务状态、最近提交与是否并入 `main` 必须可追踪。
 - 巨型 util / helper / common 不允许继续扩张；新增逻辑必须伴随清理或明确删除计划。
 - 经验先写入 `memory/experience/*`，稳定后再升格到 `docs/*` 或 `AGENTS.md`。
 - 任务是边界，不是官僚表单；roadmap 只记录主线变化，不追踪碎片执行。
@@ -33,13 +34,13 @@ last_reviewed_at: 2026-03-15
 
 - 项目名称：Compounding AI Operating System
 - 项目一句话：把当前仓库升级成适合 AI 长期协作、任务驱动、可持续重构与自进化的 AI-Native Repo。
-- 当前优先级：把首页收口成经营驾驶舱，并建立 roadmap / operating-blueprint / task / memory / index 的清晰分层，同时恢复 Markdown 的自然阅读层级。
+- 当前优先级：把首页文案收口为更专业的经营驾驶舱表达，并建立 task/Git 联动与 Markdown 直编能力。
 - 成功定义：首页成为一页经营驾驶舱；用户与 AI 能快速看懂使命、路线图、运营蓝图、组织职责与认知资产边界，并能沿统一 task 闭环持续推进。
 - 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
 - 运行边界：server-only
 - 当前主线来源：`memory/project/roadmap.md`
 - 当前战术蓝图来源：`memory/project/operating-blueprint.md`
-- 当前任务入口：`tasks/queue/*.md`，优先处理 `doing` 状态任务
+- 当前任务入口：`tasks/queue/*.md`，优先处理 `doing` 状态任务，并校验 task/Git 一致性
 
 ## 默认回复格式
 

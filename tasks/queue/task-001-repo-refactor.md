@@ -39,6 +39,14 @@
 - `scripts/ai/*`
 - `scripts/release/*`
 
+## 分支
+
+`main (legacy direct release)`
+
+## 最近提交
+
+`cd388a8`
+
 ## 计划
 
 - 先建立规则层、记忆层、索引层和任务层骨架
@@ -66,7 +74,7 @@
 
 ## 状态
 
-in_progress
+done
 
 ## 更新痕迹
 

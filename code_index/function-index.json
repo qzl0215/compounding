@@ -1,6 +1,54 @@
 [
   {
     "module": "apps/studio/src/modules/docs",
+    "file": "apps/studio/src/modules/docs/content.ts",
+    "symbol": "detectDocKind",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/docs",
+    "file": "apps/studio/src/modules/docs/content.ts",
+    "symbol": "hasManagedBlocks",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/docs",
+    "file": "apps/studio/src/modules/docs/content.ts",
+    "symbol": "stripFrontmatter",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/docs",
+    "file": "apps/studio/src/modules/docs/content.ts",
+    "symbol": "sanitizeManagedBlocks",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/docs",
+    "file": "apps/studio/src/modules/docs/content.ts",
+    "symbol": "renderJsonAsMarkdown",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/docs",
+    "file": "apps/studio/src/modules/docs/content.ts",
+    "symbol": "renderDocContent",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/docs",
     "file": "apps/studio/src/modules/docs/repository.ts",
     "symbol": "getDocTree",
     "kind": "function",
@@ -34,6 +82,14 @@
   {
     "module": "apps/studio/src/modules/docs",
     "file": "apps/studio/src/modules/docs/repository.ts",
+    "symbol": "writeMarkdownDoc",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/docs",
+    "file": "apps/studio/src/modules/docs/repository.ts",
     "symbol": "resolveDocPath",
     "kind": "function",
     "language": "TypeScript",
@@ -43,22 +99,6 @@
     "module": "apps/studio/src/modules/docs",
     "file": "apps/studio/src/modules/docs/repository.ts",
     "symbol": "walkDocsDir",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/docs",
-    "file": "apps/studio/src/modules/docs/repository.ts",
-    "symbol": "sanitizeManagedBlocks",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/docs",
-    "file": "apps/studio/src/modules/docs/repository.ts",
-    "symbol": "renderJsonAsMarkdown",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -425,6 +465,142 @@
   },
   {
     "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/git.ts",
+    "symbol": "runGit",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/git.ts",
+    "symbol": "getCurrentBranch",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/git.ts",
+    "symbol": "hasDirtyWorktree",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/git.ts",
+    "symbol": "branchExists",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/git.ts",
+    "symbol": "getBranchHead",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/git.ts",
+    "symbol": "commitExists",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/git.ts",
+    "symbol": "shortSha",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/git.ts",
+    "symbol": "isCommitMergedIntoMain",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/git.ts",
+    "symbol": "isLegacyMainBranch",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/git.ts",
+    "symbol": "cleanValue",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/git.ts",
+    "symbol": "isPendingCommit",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/git.ts",
+    "symbol": "resolveTaskGitInfo",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/parsing.ts",
+    "symbol": "parseTaskCard",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/parsing.ts",
+    "symbol": "parseRelatedModules",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/parsing.ts",
+    "symbol": "parseUpdateTrace",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/parsing.ts",
+    "symbol": "extractTraceValue",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/parsing.ts",
+    "symbol": "normalizeTaskStatus",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
     "file": "apps/studio/src/modules/tasks/service.ts",
     "symbol": "getTaskBoard",
     "kind": "function",
@@ -435,46 +611,6 @@
     "module": "apps/studio/src/modules/tasks",
     "file": "apps/studio/src/modules/tasks/service.ts",
     "symbol": "listTaskCards",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/tasks",
-    "file": "apps/studio/src/modules/tasks/service.ts",
-    "symbol": "toTaskCard",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/tasks",
-    "file": "apps/studio/src/modules/tasks/service.ts",
-    "symbol": "parseRelatedModules",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/tasks",
-    "file": "apps/studio/src/modules/tasks/service.ts",
-    "symbol": "parseUpdateTrace",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/tasks",
-    "file": "apps/studio/src/modules/tasks/service.ts",
-    "symbol": "extractTraceValue",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/tasks",
-    "file": "apps/studio/src/modules/tasks/service.ts",
-    "symbol": "normalizeTaskStatus",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -873,6 +1009,30 @@
   },
   {
     "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/renderers_experience_docs.py",
+    "symbol": "render_experience_readme",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/renderers_experience_docs.py",
+    "symbol": "render_experience_entry",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/renderers_experience_docs.py",
+    "symbol": "render_adr",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/renderers_index.py",
     "symbol": "render_module_index",
     "kind": "function",
@@ -939,30 +1099,6 @@
     "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/renderers_memory.py",
     "symbol": "render_operating_blueprint",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/renderers_memory.py",
-    "symbol": "render_experience_readme",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/renderers_memory.py",
-    "symbol": "render_experience_entry",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/renderers_memory.py",
-    "symbol": "render_adr",
     "kind": "function",
     "language": "Python",
     "exported": true

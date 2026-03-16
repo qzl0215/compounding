@@ -1,8 +1,10 @@
+import { headers } from "next/headers";
 import Link from "next/link";
 import { PageOutline } from "@/components/page-outline";
 import { Card } from "@/components/ui/card";
 import { DocTree, DocViewer, extractHeadings, getDocTree, readDoc } from "@/modules/docs";
 import { DEFAULT_DOC_PATH, getSemanticEntryGroups } from "@/modules/portal";
+import { getManagementAccessState } from "@/modules/releases";
 
 export default async function KnowledgeBasePage({
   searchParams
@@ -11,6 +13,7 @@ export default async function KnowledgeBasePage({
 }) {
   const params = await searchParams;
   const selectedPath = params.path?.trim() || DEFAULT_DOC_PATH;
+  const access = getManagementAccessState(await headers());
   const [tree, doc, semanticGroups] = await Promise.all([getDocTree(), readDoc(selectedPath), getSemanticEntryGroups()]);
   const outline = extractHeadings(doc.content)
     .filter((heading) => heading.depth <= 3)
@@ -47,7 +50,16 @@ export default async function KnowledgeBasePage({
           </div>
         </Card>
       </div>
-      <DocViewer content={doc.content} meta={doc.meta} title={selectedPath} />
+      <DocViewer
+        content={doc.content}
+        rawContent={doc.rawContent}
+        meta={doc.meta}
+        title={selectedPath}
+        path={doc.relativePath}
+        kind={doc.kind}
+        editable={doc.editable && access.allowed}
+        hasManagedBlocks={doc.hasManagedBlocks}
+      />
       <PageOutline items={outline} />
     </div>
   );

@@ -1,3 +1,5 @@
+import type { DocKind } from "./content";
+
 export type DocMeta = {
   title?: string;
   doc_role?: string;
@@ -14,4 +16,15 @@ export type DocNode = {
   path: string;
   children?: DocNode[];
   defaultExpanded?: boolean;
+};
+
+export type DocRecord = {
+  content: string;
+  rawContent: string;
+  meta: DocMeta;
+  absolutePath: string;
+  relativePath: string;
+  kind: DocKind;
+  editable: boolean;
+  hasManagedBlocks: boolean;
 };

@@ -4,7 +4,7 @@ doc_role: planning
 update_mode: manual
 owner_role: Foreman
 status: active
-last_reviewed_at: 2026-03-15
+last_reviewed_at: 2026-03-16
 source_of_truth: tasks/queue/task-001-repo-refactor.md
 related_docs:
   - memory/project/current-state.md
@@ -56,7 +56,7 @@ repo/
 
 ## 大文件快照
 
-- `apps/studio/.next/cache/webpack/server-production/17.pack`: 713284 LOC
+- `apps/studio/.next/cache/webpack/server-production/17.pack`: 710503 LOC
 - `apps/studio/.next/cache/webpack/server-production/7.pack`: 597718 LOC
 - `apps/studio/.next/cache/webpack/client-development-fallback/0.pack.gz`: 597077 LOC
 - `apps/studio/.next/cache/webpack/server-production/16.pack`: 414575 LOC
@@ -64,8 +64,8 @@ repo/
 - `apps/studio/.next/cache/webpack/client-production/0.pack`: 378992 LOC
 - `apps/studio/.next/cache/webpack/server-production/21.pack`: 362326 LOC
 - `apps/studio/.next/cache/webpack/server-production/23.pack`: 302161 LOC
-- `apps/studio/.next/cache/webpack/server-development/12.pack.gz`: 285753 LOC
 - `apps/studio/.next/cache/webpack/server-production/0.pack`: 276986 LOC
+- `apps/studio/.next/cache/webpack/server-development/21.pack.gz`: 261367 LOC
 
 ## 第一批建议拆分的模块
 

@@ -25,5 +25,6 @@ jobs:
       - run: node --experimental-strip-types scripts/ai/generate-module-index.ts
       - run: node --experimental-strip-types scripts/ai/scan-code-health.ts --strict
       - run: node --experimental-strip-types scripts/ai/validate-change-trace.ts
+      - run: node --experimental-strip-types scripts/ai/validate-task-git-link.ts
       - run: pnpm test
       - run: pnpm build

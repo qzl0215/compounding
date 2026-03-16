@@ -1,0 +1,150 @@
+import { execFileSync } from "node:child_process";
+import { getWorkspaceRoot } from "@/lib/workspace";
+import type { TaskGitInfo, TaskStatus } from "./types";
+
+type GitResult = {
+  ok: boolean;
+  output: string;
+};
+
+function runGit(args: string[]): GitResult {
+  try {
+    return {
+      ok: true,
+      output: execFileSync("git", args, {
+        cwd: getWorkspaceRoot(),
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "ignore"],
+      }).trim(),
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      output: error instanceof Error ? error.message : "",
+    };
+  }
+}
+
+function getCurrentBranch() {
+  const result = runGit(["branch", "--show-current"]);
+  return result.ok ? result.output : "";
+}
+
+function hasDirtyWorktree() {
+  const result = runGit(["status", "--short"]);
+  return Boolean(result.ok && result.output.trim());
+}
+
+function branchExists(branch: string) {
+  return runGit(["show-ref", "--verify", "--quiet", `refs/heads/${branch}`]).ok;
+}
+
+function getBranchHead(branch: string) {
+  const result = runGit(["rev-parse", branch]);
+  return result.ok ? result.output : "";
+}
+
+function commitExists(commit: string) {
+  return Boolean(commit) && runGit(["cat-file", "-e", `${commit}^{commit}`]).ok;
+}
+
+function shortSha(ref: string) {
+  const result = runGit(["rev-parse", "--short", ref]);
+  return result.ok ? result.output : ref;
+}
+
+function isCommitMergedIntoMain(commit: string) {
+  return Boolean(commit) && runGit(["merge-base", "--is-ancestor", commit, "main"]).ok;
+}
+
+function isLegacyMainBranch(branch: string) {
+  return branch === "main" || branch.startsWith("main ");
+}
+
+function cleanValue(value: string) {
+  return value.replace(/`/g, "").trim();
+}
+
+function isPendingCommit(value: string) {
+  const normalized = cleanValue(value).toLowerCase();
+  return !normalized || normalized === "pending" || normalized === "auto" || normalized.startsWith("auto:");
+}
+
+export function resolveTaskGitInfo(status: TaskStatus, branchValue: string, recentCommitValue: string): TaskGitInfo {
+  const branch = cleanValue(branchValue);
+  const storedCommit = isPendingCommit(recentCommitValue) ? "" : cleanValue(recentCommitValue);
+  const currentBranch = getCurrentBranch();
+  const dirtyWorktree = hasDirtyWorktree();
+  const localBranchExists = branch && !isLegacyMainBranch(branch) ? branchExists(branch) : false;
+  const branchHead = localBranchExists ? getBranchHead(branch) : "";
+  const effectiveCommit = branchHead || (commitExists(storedCommit) ? storedCommit : "");
+  const recentCommit = effectiveCommit ? shortSha(effectiveCommit) : cleanValue(recentCommitValue) || "auto: branch HEAD";
+  const mergedToMain = isLegacyMainBranch(branch) || (branch !== currentBranch && isCommitMergedIntoMain(effectiveCommit));
+
+  if (status === "done") {
+    if (mergedToMain) {
+      return {
+        branch,
+        recentCommit,
+        mergedToMain: true,
+        state: "merged",
+        detail: isLegacyMainBranch(branch) ? "历史直发结果已在 main" : "最近提交已并入 main",
+      };
+    }
+    return {
+      branch,
+      recentCommit,
+      mergedToMain: false,
+      state: "drift",
+      detail: effectiveCommit ? "任务标记已完成，但提交尚未并入 main" : "任务标记已完成，但缺少可验证提交",
+    };
+  }
+
+  if (!branch) {
+    return {
+      branch,
+      recentCommit,
+      mergedToMain: false,
+      state: "missing_branch",
+      detail: "缺少分支绑定",
+    };
+  }
+
+  if (mergedToMain) {
+    return {
+      branch,
+      recentCommit,
+      mergedToMain: true,
+      state: "drift",
+      detail: "分支提交已并入 main，但任务状态仍未完成",
+    };
+  }
+
+  if (currentBranch === branch) {
+    return {
+      branch,
+      recentCommit,
+      mergedToMain: false,
+      state: "developing",
+      detail: dirtyWorktree ? "当前分支存在未提交改动" : "当前正在该分支开发",
+    };
+  }
+
+  if (effectiveCommit) {
+    return {
+      branch,
+      recentCommit,
+      mergedToMain: false,
+      state: "committed",
+      detail: "分支已有提交，尚未并入 main",
+    };
+  }
+
+  return {
+    branch,
+    recentCommit,
+    mergedToMain: false,
+    state: "drift",
+    detail: "已记录分支，但无法读取最近提交",
+  };
+}

@@ -5,11 +5,17 @@ describe("tasks service", () => {
   it("parses queue docs into lightweight project-management cards", async () => {
     const tasks = await listTaskCards();
     const first = tasks.find((task) => task.path === "tasks/queue/task-001-repo-refactor.md");
+    const current = tasks.find((task) => task.path === "tasks/queue/task-005-professional-dashboard-editing.md");
 
     expect(first).toBeTruthy();
     expect(first?.goal.length).toBeGreaterThan(0);
-    expect(first?.status).toBeDefined();
+    expect(first?.status).toBe("done");
+    expect(first?.branch).toContain("main");
+    expect(first?.git.state).toBe("merged");
     expect(first?.updateTrace.docs.length).toBeGreaterThan(0);
+    expect(current?.branch).toBe("codex/task-005-professional-dashboard-editing");
+    expect(current?.recentCommit.length).toBeGreaterThan(0);
+    expect(current?.git.state).toBeDefined();
   });
 
   it("groups tasks by status for the board view", async () => {

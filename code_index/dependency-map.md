@@ -4,7 +4,7 @@ doc_role: reference
 update_mode: generated
 owner_role: Builder
 status: active
-last_reviewed_at: 2026-03-15
+last_reviewed_at: 2026-03-16
 source_of_truth: scripts/ai/generate-module-index.ts
 related_docs:
   - code_index/module-index.md

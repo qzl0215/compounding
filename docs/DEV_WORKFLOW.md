@@ -4,7 +4,7 @@ doc_role: operation
 update_mode: manual
 owner_role: Builder
 status: active
-last_reviewed_at: 2026-03-15
+last_reviewed_at: 2026-03-16
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -50,8 +50,9 @@ related_docs:
 
 - 每个结构性改动必须绑定 `tasks/queue/*`
 - 默认先更新 task，再改代码；改完后补齐更新痕迹和必要回写
-- 任务至少包含 目标 / 为什么 / 范围 / 范围外 / 约束 / 关联模块 / 计划 / 发布说明 / 验收标准 / 风险 / 状态 / 更新痕迹 / 复盘
+- 每个 task 至少包含 目标 / 为什么 / 范围 / 范围外 / 约束 / 关联模块 / 分支 / 最近提交 / 计划 / 发布说明 / 验收标准 / 风险 / 状态 / 更新痕迹 / 复盘
 - 修改结束后要同步更新任务状态和验收结果
+- 每个 task 对应一条短分支；进入 `main` 后，任务状态与 Git 状态必须一致
 - `更新痕迹` 必须明确写出：
   - 记忆
   - 索引

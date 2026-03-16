@@ -4,7 +4,7 @@ doc_role: reference
 update_mode: promote_only
 owner_role: Architect
 status: active
-last_reviewed_at: 2026-03-15
+last_reviewed_at: 2026-03-16
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -47,6 +47,7 @@ related_docs:
 - `scripts/compounding_bootstrap/proposal_support.py`
 - `scripts/compounding_bootstrap/renderers_base_docs.py`
 - `scripts/compounding_bootstrap/renderers_docs.py`
+- `scripts/compounding_bootstrap/renderers_experience_docs.py`
 - `scripts/compounding_bootstrap/renderers_index.py`
 - `scripts/compounding_bootstrap/renderers_memory.py`
 - `scripts/compounding_bootstrap/renderers_org_docs.py`

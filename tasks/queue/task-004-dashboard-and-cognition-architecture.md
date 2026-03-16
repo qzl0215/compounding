@@ -41,6 +41,14 @@
 - `memory/project/*`
 - `docs/*`
 
+## 分支
+
+`main (legacy direct release)`
+
+## 最近提交
+
+`1782d4c`
+
 ## 计划
 
 - 新增 `operating-blueprint` 文档，并同步更新 roadmap/current-state/AGENTS

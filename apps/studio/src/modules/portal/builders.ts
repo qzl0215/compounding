@@ -60,12 +60,12 @@ export function buildKnowledgeRiskCards(
   return [
     {
       title: "执行入口",
-      summary: "所有新线程先读 AGENTS，再进入 roadmap、运营蓝图、task、module.md 和 code index。",
+      summary: "统一从 AGENTS 进入执行协议，再按路线图、运营蓝图、task、module.md 与 code index 逐层补足上下文。",
       href: "/knowledge-base?path=AGENTS.md",
     },
     {
       title: "记忆系统",
-      summary: "经验、ADR、当前状态与技术债都在 memory/*，只沉淀可复用经验和明确裁决，不记流水账。",
+      summary: "memory/* 负责沉淀当前状态、经验、ADR 与技术债，只保留可复用结论与明确裁决。",
       href: "/knowledge-base?path=memory/project/current-state.md",
     },
     {
@@ -82,7 +82,7 @@ export function buildKnowledgeRiskCards(
       title: "发布与风险",
       summary: activeReleaseId
         ? `当前激活版本为 ${activeReleaseId}；${previewSection(techDebtContent, 1)}`
-        : `当前还没有活跃 release；${previewSection(techDebtContent, 1)}`,
+        : `当前尚未形成活跃 release；${previewSection(techDebtContent, 1)}`,
       href: "/releases",
     },
   ];

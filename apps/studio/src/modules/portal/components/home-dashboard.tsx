@@ -17,7 +17,7 @@ export function HomeDashboard({ overview }: { overview: PortalOverview }) {
       <section id="mission-values" className="grid gap-6 xl:grid-cols-[1.04fr_0.96fr]">
         <Card>
           <p className="text-xs uppercase tracking-[0.32em] text-accent">经营驾驶舱</p>
-          <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-tight">使命 / 愿景 / 价值观</h1>
+          <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-tight">使命 / 愿景 / 价值主张</h1>
           <p className="mt-4 max-w-3xl text-lg text-white/72">{overview.identity.oneLiner}</p>
           <div className="mt-6 grid gap-4 lg:grid-cols-2">
             <KeyStat title="使命" value={overview.identity.mission} />
@@ -39,7 +39,7 @@ export function HomeDashboard({ overview }: { overview: PortalOverview }) {
         </Card>
         <Card>
           <p className="text-xs uppercase tracking-[0.28em] text-accent">关键约束</p>
-          <h2 className="mt-3 text-3xl font-semibold">这家公司为什么能高效运转</h2>
+          <h2 className="mt-3 text-3xl font-semibold">核心约束与保护项</h2>
           <p className="mt-4 text-sm leading-7 text-white/72">{overview.identity.successDefinition}</p>
           <div className="mt-6 flex flex-wrap gap-2">
             {overview.identity.mustProtect.map((item) => (
@@ -63,8 +63,8 @@ export function HomeDashboard({ overview }: { overview: PortalOverview }) {
         <Card>
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs uppercase tracking-[0.28em] text-accent">路线图 / 下个里程碑</p>
-              <h2 className="mt-3 text-3xl font-semibold">现在在打什么仗，以及下一步要到哪</h2>
+              <p className="text-xs uppercase tracking-[0.28em] text-accent">战略路线与下一里程碑</p>
+              <h2 className="mt-3 text-3xl font-semibold">阶段目标与里程碑要求</h2>
             </div>
             <Link
               href="/knowledge-base?path=memory/project/roadmap.md"
@@ -91,7 +91,7 @@ export function HomeDashboard({ overview }: { overview: PortalOverview }) {
           </div>
         </Card>
         <Card>
-          <p className="text-xs uppercase tracking-[0.28em] text-accent">里程碑压缩镜像</p>
+          <p className="text-xs uppercase tracking-[0.28em] text-accent">当前阶段镜像</p>
           <div className="mt-5 space-y-4">
             <KeyStat title="当前主线" value={overview.blueprint.currentMainline} />
             <KeyStat title="当前里程碑" value={overview.blueprint.currentMilestone} />
@@ -103,8 +103,8 @@ export function HomeDashboard({ overview }: { overview: PortalOverview }) {
         <Card>
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs uppercase tracking-[0.28em] text-accent">运营蓝图</p>
-              <h2 className="mt-3 text-3xl font-semibold">这场仗怎么拆，今天推进到哪</h2>
+              <p className="text-xs uppercase tracking-[0.28em] text-accent">当前战役与运营蓝图</p>
+              <h2 className="mt-3 text-3xl font-semibold">子目标拆解与推进状态</h2>
             </div>
             <Link
               href="/knowledge-base?path=memory/project/operating-blueprint.md"
@@ -132,8 +132,8 @@ export function HomeDashboard({ overview }: { overview: PortalOverview }) {
         <Card>
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs uppercase tracking-[0.28em] text-accent">组织与职责</p>
-              <h2 className="mt-3 text-3xl font-semibold">谁负责把这场仗打赢</h2>
+              <p className="text-xs uppercase tracking-[0.28em] text-accent">组织职责矩阵</p>
+              <h2 className="mt-3 text-3xl font-semibold">职责分工与关键产物</h2>
             </div>
             <Link
               href="/knowledge-base?path=docs/ORG_MODEL.md"
@@ -159,8 +159,8 @@ export function HomeDashboard({ overview }: { overview: PortalOverview }) {
 
       <section id="knowledge-risk">
         <Card>
-          <p className="text-xs uppercase tracking-[0.28em] text-accent">认知资产与风险</p>
-          <h2 className="mt-3 text-3xl font-semibold">有哪些资产可复用，哪些边界当前不要碰</h2>
+          <p className="text-xs uppercase tracking-[0.28em] text-accent">关键认知资产与风险</p>
+          <h2 className="mt-3 text-3xl font-semibold">认知基础设施、冻结项与发布风险</h2>
           <div className="mt-6 grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
             {overview.knowledgeRisk.map((item) => (
               <LinkedSummaryCard key={item.title} item={item} />

@@ -14,10 +14,10 @@ import type { HomeEntryLink, PortalOverview, SemanticEntry, SemanticEntryGroup }
 export const DEFAULT_DOC_PATH = "AGENTS.md";
 
 export const HOME_ENTRY_LINKS: HomeEntryLink[] = [
-  { href: "/knowledge-base?path=AGENTS.md", label: "打开 AGENTS", scope: "agents" },
-  { href: "/knowledge-base?path=memory/project/roadmap.md", label: "查看路线图", scope: "roadmap" },
-  { href: "/tasks", label: "查看任务", scope: "tasks" },
-  { href: "/releases", label: "查看发布", scope: "release" },
+  { href: "/knowledge-base?path=AGENTS.md", label: "执行入口", scope: "agents" },
+  { href: "/knowledge-base?path=memory/project/roadmap.md", label: "战略路线", scope: "roadmap" },
+  { href: "/tasks", label: "任务清单", scope: "tasks" },
+  { href: "/releases", label: "发布记录", scope: "release" },
 ];
 
 export async function getPortalOverview(): Promise<PortalOverview> {

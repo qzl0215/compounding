@@ -44,6 +44,7 @@ AI_SCRIPT_PATHS = [
     "scripts/ai/build-context.ts",
     "scripts/ai/create-task.ts",
     "scripts/ai/validate-change-trace.ts",
+    "scripts/ai/validate-task-git-link.ts",
 ]
 
 WORKFLOW_FILES = [

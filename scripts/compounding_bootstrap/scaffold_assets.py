@@ -61,6 +61,14 @@ def task_001(resolved: dict[str, Any]) -> str:
 - `scripts/ai/*`
 - `scripts/release/*`
 
+## 分支
+
+`main (legacy direct release)`
+
+## 最近提交
+
+`cd388a8`
+
 ## 计划
 
 - 先建立规则层、记忆层、索引层和任务层骨架
@@ -88,7 +96,7 @@ def task_001(resolved: dict[str, Any]) -> str:
 
 ## 状态
 
-in_progress
+done
 
 ## 更新痕迹
 
@@ -110,6 +118,7 @@ def render_ai_scripts(target: Path) -> None:
         "scripts/ai/build-context.ts",
         "scripts/ai/create-task.ts",
         "scripts/ai/validate-change-trace.ts",
+        "scripts/ai/validate-task-git-link.ts",
     ):
         copy_canonical_file(target, relative_path)
 

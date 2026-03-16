@@ -11,6 +11,8 @@
   "out_of_scope": ["Out of Scope", "范围外", "不在范围内"],
   "constraints": ["Constraints", "约束"],
   "related_modules": ["Related Modules", "关联模块"],
+  "branch": ["Branch", "分支"],
+  "recent_commit": ["Recent Commit", "最近提交"],
   "plan": ["Plan", "计划"],
   "release_notes": ["Release Notes", "发布说明"],
   "acceptance_criteria": ["Acceptance Criteria", "验收标准"],

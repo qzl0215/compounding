@@ -59,7 +59,7 @@ def render_current_state(resolved: dict[str, Any]) -> str:
 ## 项目概览
 
 - 项目名称：{resolved["project_name"]}
-- 当前阶段：经营驾驶舱首页与认知分层收口
+- 当前阶段：专业驾驶舱、task/Git 联动与 Markdown 直编收口
 - 当前优先级：{resolved["current_priority"]}
 - 成功定义：{resolved["success_definition"]}
 - 必须保护：{must_protect}
@@ -78,9 +78,9 @@ def render_current_state(resolved: dict[str, Any]) -> str:
 
 ## 当前焦点
 
-- 首页收口成经营驾驶舱，让使命、路线图、运营蓝图、组织职责和风险一页可读
-- 新增 `memory/project/operating-blueprint.md`，把里程碑拆解与发布标准从 roadmap 中剥离
-- 恢复 Markdown 的自然文档层级，不再让标题样式覆盖正文结构
+- 首页文案收口为更专业的经营驾驶舱表达，同时保持高浓度可读
+- 建立 task 与 Git 的双轨联动，让状态、分支、提交和是否并入 `main` 一致可追踪
+- 为知识库补齐“边阅读边编辑”的最小闭环，支持 Markdown 直接维护
 - 保持 task / memory / code_index / roadmap 的回写闭环，不引入新的平行体系
 
 ## 关键冻结项
@@ -95,6 +95,7 @@ def render_current_state(resolved: dict[str, Any]) -> str:
 - `pnpm test`
 - `python3 scripts/init_project_compounding.py audit --config bootstrap/project_brief.yaml --target .`
 - `node --experimental-strip-types scripts/ai/validate-change-trace.ts`
+- `node --experimental-strip-types scripts/ai/validate-task-git-link.ts`
 
 {evidence_boundary_block()}
 """
@@ -108,7 +109,7 @@ def render_tech_debt() -> str:
 1. 当前发布模型是单机 `systemd + reverse proxy + symlink cutover` 骨架；还没有多进程零停机或多机容灾能力
 2. 本机/内网发布管理页已可读写 release registry，但尚未经过真实生产反向代理环境的 live 验证
 3. proposal engine 已支持模型优先生成，但默认仍依赖 Ark/Volcano/OpenAI 环境变量；未配置时会回退到 deterministic rewrite
-4. `scripts/ai/build-context.ts`、`generate-module-index.ts` 与 `validate-change-trace.ts` 仍是轻量版本，后续可继续提高相关性判断与 trace 精度
+4. `scripts/ai/build-context.ts`、`generate-module-index.ts`、`validate-change-trace.ts` 与 `validate-task-git-link.ts` 仍是轻量版本，后续可继续提高相关性判断与 trace 精度
 5. 当前没有 remote，`main` 直发生产只在本地仓库语义上成立；远端分支和 release tag 推送仍需后续接通
 
 ## 删除计划
@@ -126,19 +127,19 @@ def render_roadmap(resolved: dict[str, Any]) -> str:
 
 ## 当前阶段
 
-经营驾驶舱首页与认知分层收口
+专业驾驶舱、task/Git 联动与 Markdown 直编收口
 
 ## 下个里程碑
 
-首页成为真正的经营驾驶舱，同时建立 `operating-blueprint` 作为当前里程碑拆解真相源，并让任务、记忆、索引与规则各归其位。
+首页成为更专业的一页经营驾驶舱，同时建立 task/Git 联动和 Markdown 直编能力，让执行、维护与发布状态收口到同一链路。
 
 ## 里程碑成功标准
 
-- 首页成为 5 块高浓度模块的一页驾驶舱，而不是目录或后台
-- `memory/project/operating-blueprint.md` 成为当前里程碑拆解真相源
-- `roadmap / operating-blueprint / task / memory / index` 边界清楚
-- Markdown 阅读恢复自然层级
-- task 模板升级为轻量 SOP，但不长成重型工单
+- 首页文案专业、信息高浓度，且保持无右侧导航的一页阅读顺序
+- `/tasks` 支持表格化任务管理，并展示 task/Git 联动状态
+- `/knowledge-base` 支持 Markdown 边阅读边编辑与实时预览
+- `roadmap / operating-blueprint / task / memory / index` 边界继续清晰
+- task 模板与校验脚本共同约束“一个 task 一条交付链”
 
 ## 当前优先级
 
@@ -146,11 +147,11 @@ def render_roadmap(resolved: dict[str, Any]) -> str:
 
 ## 当前执行待办
 
-- [x] 将当前主线切换到“经营驾驶舱首页与认知分层收口”
-- [x] 新增 `memory/project/operating-blueprint.md`
-- [x] 首页改为“使命 / 愿景 / 价值观 / 路线图 / 运营蓝图 / 组织与职责 / 认知资产与风险”
-- [x] task 模板升级为轻量 SOP
-- [x] 恢复 Markdown 的自然阅读层级
+- [ ] 首页文案收口成更专业的经营驾驶舱表达
+- [ ] 建立 task / Git 状态联动与校验
+- [ ] `/tasks` 切换为表格化项目管理视图
+- [ ] `/knowledge-base` 支持 Markdown 阅读 / 编辑双模式
+- [ ] task / memory / docs / roadmap 与当前主线保持同步
 
 {evidence_boundary_block()}
 """
@@ -161,51 +162,51 @@ def render_operating_blueprint(resolved: dict[str, Any]) -> str:
 
 ## 当前里程碑
 
-经营驾驶舱首页与认知分层收口
+专业驾驶舱、task/Git 联动与 Markdown 直编收口
 
 ## 关键子目标
 
-### 首页经营驾驶舱
+### 专业经营驾驶舱
 
 - 发布标准：
   - 首页固定为 5 个高浓度模块，且无右侧导航
-  - 首页本身承担阅读顺序和导航作用
+  - 模块标题与摘要表达更专业，但仍然易读
 - 关联任务：
-  - `tasks/queue/task-004-dashboard-and-cognition-architecture.md`
+  - `tasks/queue/task-005-professional-dashboard-editing.md`
 
-### 认知分层收口
+### Task / Git 联动
 
 - 发布标准：
-  - `roadmap / operating-blueprint / task / memory / index` 的边界在文档中清楚
-  - 首页摘要只从 Markdown 真相源提取
+  - 每个 task 至少具备状态、分支、最近提交
+  - `/tasks` 能展示 Git 状态与是否已并入 `main`
 - 关联任务：
-  - `tasks/queue/task-004-dashboard-and-cognition-architecture.md`
+  - `tasks/queue/task-005-professional-dashboard-editing.md`
+
+### Markdown 直编能力
+
+- 发布标准：
+  - 知识库支持 Markdown 阅读 / 编辑双模式
+  - 保存后立即回到阅读视图并展示最新内容
+- 关联任务：
+  - `tasks/queue/task-005-professional-dashboard-editing.md`
 
 ### 轻量 Task PM
 
 - 发布标准：
-  - task 模板包含 `计划 / 发布说明 / 验收标准 / 复盘`
-  - 缺规划时先创建共商 task，而不是直接进入执行
+  - task 模板包含 `分支 / 最近提交 / 计划 / 发布说明 / 验收标准 / 复盘`
+  - task 是边界，不演化成重型工单
 - 关联任务：
-  - `tasks/queue/task-004-dashboard-and-cognition-architecture.md`
-
-### Markdown 阅读体验
-
-- 发布标准：
-  - 文档页的 `# / ## / ###` 视觉层级清楚
-  - 标题不再被重卡片样式覆盖
-- 关联任务：
-  - `tasks/queue/task-004-dashboard-and-cognition-architecture.md`
+  - `tasks/queue/task-005-professional-dashboard-editing.md`
 
 ## 当前阻塞
 
-- 暂无结构性阻塞；当前主要风险是首页信息结构和文档真相源若不同步，后续会再次返工。
+- 暂无结构性阻塞；当前主要风险是 task 状态、Git 运行态与文档真相不同步，后续会再次返工。
 
 ## 下一检查点
 
-- 首页经营驾驶舱 5 模块成型
-- `memory/project/operating-blueprint.md` 纳入 scaffold / audit
-- task 模板与 `validate-change-trace` 继续通过
+- 首页专业驾驶舱 5 模块稳定
+- `/tasks` 与 `validate-task-git-link` 共同通过
+- Markdown 编辑链在本机/内网访问下可用
 
 {evidence_boundary_block()}
 """

@@ -38,6 +38,14 @@
 - `scripts/ai/*`
 - `scripts/compounding_bootstrap/*`
 
+## 分支
+
+`main (legacy direct release)`
+
+## 最近提交
+
+`0316b85`
+
 ## 计划
 
 - 先统一标题别名和 task parser

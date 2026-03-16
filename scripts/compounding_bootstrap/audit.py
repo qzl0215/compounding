@@ -96,6 +96,8 @@ def audit(config_path: Path, target: Path) -> AuditResult:
             "## 范围外",
             "## 约束",
             "## 关联模块",
+            "## 分支",
+            "## 最近提交",
             "## 计划",
             "## 发布说明",
             "## 验收标准",

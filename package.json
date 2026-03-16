@@ -17,6 +17,7 @@
     "ai:build-context": "node --experimental-strip-types scripts/ai/build-context.ts tasks/queue/task-002-ui-task-pm-and-doc-localization.md",
     "ai:create-task": "node --experimental-strip-types scripts/ai/create-task.ts",
     "ai:validate-trace": "node --experimental-strip-types scripts/ai/validate-change-trace.ts",
+    "ai:validate-task-git": "node --experimental-strip-types scripts/ai/validate-task-git-link.ts",
     "release:prepare": "node --experimental-strip-types scripts/release/prepare-release.ts --ref main",
     "release:switch": "node --experimental-strip-types scripts/release/switch-release.ts",
     "release:rollback": "node --experimental-strip-types scripts/release/rollback-release.ts",

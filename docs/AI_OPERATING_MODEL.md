@@ -4,7 +4,7 @@ doc_role: reference
 update_mode: manual
 owner_role: Foreman
 status: active
-last_reviewed_at: 2026-03-15
+last_reviewed_at: 2026-03-16
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -33,6 +33,7 @@ related_docs:
 - 若 roadmap / operating-blueprint / 发布标准不清晰，先创建规划 task，再与用户共商
 - 任务是 scope 和验收边界，不是可有可无的备注
 - 任务的目标是让团队高效协作，而不是制造更多流程负担
+- 每个执行 task 都应绑定短分支，并在任务中记录最近提交和是否并入 `main`
 
 ## 上下文系统
 
@@ -78,6 +79,7 @@ related_docs:
 - 不做大面积业务重写
 - 创业团队文化优先：持续抓重点，不过度优化，少条条框框，但井井有条
 - 规范只保留最关键的三层：规则、工作流、AI operating model；其余优先压回 task / memory / index
+- 文档以 Markdown 为唯一真相源；知识库允许直接编辑，但托管区块后续仍可能被 scaffold 覆盖
 
 ## 证据边界
 

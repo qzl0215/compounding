@@ -4,7 +4,7 @@ doc_role: planning
 update_mode: manual
 owner_role: Foreman
 status: active
-last_reviewed_at: 2026-03-15
+last_reviewed_at: 2026-03-16
 source_of_truth: tasks/queue/task-001-repo-refactor.md
 related_docs:
   - AGENTS.md
@@ -17,31 +17,31 @@ related_docs:
 
 ## 当前阶段
 
-经营驾驶舱首页与认知分层收口
+专业驾驶舱、task/Git 联动与 Markdown 直编收口
 
 ## 下个里程碑
 
-首页成为真正的经营驾驶舱，同时建立 `operating-blueprint` 作为当前里程碑拆解真相源，并让任务、记忆、索引与规则各归其位。
+首页成为更专业的一页经营驾驶舱，同时建立 task/Git 联动和 Markdown 直编能力，让执行、维护与发布状态收口到同一链路。
 
 ## 里程碑成功标准
 
-- 首页成为 5 块高浓度模块的一页驾驶舱，而不是目录或后台
-- `memory/project/operating-blueprint.md` 成为当前里程碑拆解真相源
-- `roadmap / operating-blueprint / task / memory / index` 边界清楚
-- Markdown 阅读恢复自然层级
-- task 模板升级为轻量 SOP，但不长成重型工单
+- 首页文案专业、信息高浓度，且保持无右侧导航的一页阅读顺序
+- `/tasks` 支持表格化任务管理，并展示 task/Git 联动状态
+- `/knowledge-base` 支持 Markdown 边阅读边编辑与实时预览
+- `roadmap / operating-blueprint / task / memory / index` 边界继续清晰
+- task 模板与校验脚本共同约束“一个 task 一条交付链”
 
 ## 当前优先级
 
-把首页收口成经营驾驶舱，并建立 roadmap / operating-blueprint / task / memory / index 的清晰分层，同时恢复 Markdown 的自然阅读层级。
+把首页文案收口为更专业的经营驾驶舱表达，并建立 task/Git 联动与 Markdown 直编能力。
 
 ## 当前执行待办
 
-- [x] 将当前主线切换到“经营驾驶舱首页与认知分层收口”
-- [x] 新增 `memory/project/operating-blueprint.md`
-- [x] 首页改为“使命 / 愿景 / 价值观 / 路线图 / 运营蓝图 / 组织与职责 / 认知资产与风险”
-- [x] task 模板升级为轻量 SOP
-- [x] 恢复 Markdown 的自然阅读层级
+- [ ] 首页文案收口成更专业的经营驾驶舱表达
+- [ ] 建立 task / Git 状态联动与校验
+- [ ] `/tasks` 切换为表格化项目管理视图
+- [ ] `/knowledge-base` 支持 Markdown 阅读 / 编辑双模式
+- [ ] task / memory / docs / roadmap 与当前主线保持同步
 
 ## 证据边界
 

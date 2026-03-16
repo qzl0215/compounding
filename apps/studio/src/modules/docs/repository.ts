@@ -1,7 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
-import type { DocMeta, DocNode } from "./types";
+import { detectDocKind, hasManagedBlocks, renderDocContent } from "./content";
+import type { DocMeta, DocNode, DocRecord } from "./types";
 import { getWorkspaceRoot } from "@/lib/workspace";
 
 const workspaceRoot = getWorkspaceRoot();
@@ -52,17 +53,34 @@ export async function listDocsUnder(prefix: string) {
   return (await listMarkdownDocs()).filter((item) => item === normalized || item.startsWith(`${normalized}/`));
 }
 
-export async function readDoc(relativePath: string) {
+export async function readDoc(relativePath: string): Promise<DocRecord> {
   const normalized = relativePath.replace(/^\/+/, "");
   const absolute = resolveDocPath(normalized);
   const raw = await fs.readFile(absolute, "utf8");
-  const { content, data } = matter(raw);
-  const renderedContent = absolute.endsWith(".json") ? renderJsonAsMarkdown(raw) : sanitizeManagedBlocks(content);
+  const { data } = matter(raw);
+  const kind = detectDocKind(normalized);
   return {
-    content: renderedContent,
+    content: renderDocContent(raw, kind),
+    rawContent: raw,
     meta: normalizeFrontmatter(data) as DocMeta,
-    absolutePath: absolute
+    absolutePath: absolute,
+    relativePath: normalized,
+    kind,
+    editable: kind === "markdown",
+    hasManagedBlocks: hasManagedBlocks(raw),
   };
+}
+
+export async function writeMarkdownDoc(relativePath: string, rawContent: string) {
+  const normalized = relativePath.replace(/^\/+/, "");
+  if (!normalized.endsWith(".md")) {
+    throw new Error("Only Markdown documents can be edited.");
+  }
+
+  matter(rawContent);
+  const absolute = resolveDocPath(normalized);
+  await fs.writeFile(absolute, rawContent, "utf8");
+  return readDoc(normalized);
 }
 
 function resolveDocPath(normalized: string) {
@@ -102,22 +120,6 @@ async function walkDocsDir(absoluteDir: string, relativeDir: string): Promise<Do
 
   return nodes.filter((node) => node.children?.length !== 0 || node.path.endsWith(".md") || node.path.endsWith(".json"));
 }
-
-function sanitizeManagedBlocks(content: string) {
-  return content
-    .replace(/<!-- BEGIN MANAGED BLOCK: [A-Z_]+ -->\n?/g, "")
-    .replace(/\n?<!-- END MANAGED BLOCK: [A-Z_]+ -->/g, "")
-    .trim();
-}
-
-function renderJsonAsMarkdown(raw: string) {
-  try {
-    return `\`\`\`json\n${JSON.stringify(JSON.parse(raw), null, 2)}\n\`\`\``;
-  } catch {
-    return `\`\`\`json\n${raw.trim()}\n\`\`\``;
-  }
-}
-
 function normalizeFrontmatter(value: unknown): unknown {
   if (value instanceof Date) {
     return value.toISOString().slice(0, 10);

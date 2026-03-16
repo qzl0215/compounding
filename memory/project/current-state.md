@@ -4,7 +4,7 @@ doc_role: memory
 update_mode: manual
 owner_role: Foreman
 status: active
-last_reviewed_at: 2026-03-15
+last_reviewed_at: 2026-03-16
 source_of_truth: memory/project/roadmap.md
 related_docs:
   - AGENTS.md
@@ -18,8 +18,8 @@ related_docs:
 ## 项目概览
 
 - 项目名称：Compounding AI Operating System
-- 当前阶段：经营驾驶舱首页与认知分层收口
-- 当前优先级：把首页收口成经营驾驶舱，并建立 roadmap / operating-blueprint / task / memory / index 的清晰分层，同时恢复 Markdown 的自然阅读层级。
+- 当前阶段：专业驾驶舱、task/Git 联动与 Markdown 直编收口
+- 当前优先级：把首页文案收口为更专业的经营驾驶舱表达，并建立 task/Git 联动与 Markdown 直编能力。
 - 成功定义：首页成为一页经营驾驶舱；用户与 AI 能快速看懂使命、路线图、运营蓝图、组织职责与认知资产边界，并能沿统一 task 闭环持续推进。
 - 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
 - 运行边界：server-only
@@ -37,9 +37,9 @@ related_docs:
 
 ## 当前焦点
 
-- 首页收口成经营驾驶舱，让使命、路线图、运营蓝图、组织职责和风险一页可读
-- 新增 `memory/project/operating-blueprint.md`，把里程碑拆解与发布标准从 roadmap 中剥离
-- 恢复 Markdown 的自然文档层级，不再让标题样式覆盖正文结构
+- 首页文案收口为更专业的经营驾驶舱表达，同时保持高浓度可读
+- 建立 task 与 Git 的双轨联动，让状态、分支、提交和是否并入 `main` 一致可追踪
+- 为知识库补齐“边阅读边编辑”的最小闭环，支持 Markdown 直接维护
 - 保持 task / memory / code_index / roadmap 的回写闭环，不引入新的平行体系
 
 ## 关键冻结项
@@ -54,6 +54,7 @@ related_docs:
 - `pnpm test`
 - `python3 scripts/init_project_compounding.py audit --config bootstrap/project_brief.yaml --target .`
 - `node --experimental-strip-types scripts/ai/validate-change-trace.ts`
+- `node --experimental-strip-types scripts/ai/validate-task-git-link.ts`
 
 ## 证据边界
 

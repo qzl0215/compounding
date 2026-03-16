@@ -37,6 +37,14 @@
 - `apps/studio/src/modules/tasks`
 - `scripts/compounding_bootstrap/*`
 
+## 分支
+
+`main (legacy direct release)`
+
+## 最近提交
+
+`6c6f594`
+
 ## 计划
 
 - 先把组织模型收成单一真相源
