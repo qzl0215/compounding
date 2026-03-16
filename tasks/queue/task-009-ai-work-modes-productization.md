@@ -77,12 +77,13 @@ done
 
 ## 更新痕迹
 
-- 记忆：`memory/project/current-state.md, memory/project/operating-blueprint.md`
-- 索引：`no change: 本次不改模块边界与代码索引`
-- 路线图：`memory/project/roadmap.md`
-- 文档：`AGENTS.md, README.md, docs/WORK_MODES.md, docs/ORG_MODEL.md, docs/ARCHITECTURE.md, docs/DEV_WORKFLOW.md, docs/AI_OPERATING_MODEL.md, tasks/templates/task-template.md, tasks/queue/task-009-ai-work-modes-productization.md`
+- 记忆：`no change: release follow-up only`
+- 索引：`no change: release follow-up only`
+- 路线图：`no change: current priority unchanged`
+- 文档：`tasks/queue/task-009-ai-work-modes-productization.md`
 
 ## 复盘
 
 - 角色与工作模式彻底分离后，首页、`AGENTS`、任务模板与 AI 工作流都能沿同一条业务链对齐，不再需要在组织文档里混写“谁负责什么”和“当前处于哪种工作状态”。
 - `WORK_MODES` 作为单一真相源成立后，后续工作模式调整可以集中发生，避免角色文档、首页和 task 入口再次漂移。
+- 发布前把主线切换到 `task-010` 的验证分层方向是必要收尾；否则系统会在 `task-009` 已完成后仍然显示过期优先级。

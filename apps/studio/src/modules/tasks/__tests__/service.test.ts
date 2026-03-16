@@ -17,10 +17,10 @@ describe("tasks service", () => {
     expect(current?.branch).toBe("codex/task-006-rich-doc-edit-and-ai-rewrite");
     expect(current?.recentCommit).toBe("bd37dec");
     expect(current?.git.state).toBeDefined();
-    expect(planned?.status).toBe("doing");
-    expect(planned?.currentMode).toBe("质量验收");
+    expect(planned?.status).toBe("done");
+    expect(planned?.currentMode).toBe("发布复盘");
     expect(planned?.branch).toBe("codex/task-009-ai-work-modes-productization");
-    expect(planned?.git.state).toBe("developing");
+    expect(planned?.git.state).toBe("merged");
   });
 
   it("groups tasks by status for the board view", async () => {
