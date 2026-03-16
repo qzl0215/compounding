@@ -1,4 +1,4 @@
-const { PROD_BASE_URL } = require("./core.ts");
+const { PROD_BASE_URL, currentReleaseSnapshot } = require("./core.ts");
 const { detectLocalProdStatus } = require("./status.ts");
 
 async function sleep(ms) {
@@ -42,7 +42,9 @@ async function checkLocalProduction() {
   }
 
   const home = routeResults.find((item) => item.url === `${PROD_BASE_URL}/`);
+  const releasesPage = routeResults.find((item) => item.url === `${PROD_BASE_URL}/releases`);
   const cssResults = [];
+  const contentChecks = [];
 
   if (home?.ok) {
     const cssUrls = extractCssUrls(home.text);
@@ -76,10 +78,21 @@ async function checkLocalProduction() {
     }
   }
 
+  const currentReleaseId = currentReleaseSnapshot().releaseId;
+  if (releasesPage?.ok && currentReleaseId) {
+    const containsCurrentRelease = releasesPage.text.includes(currentReleaseId);
+    contentChecks.push({
+      label: "release page active id",
+      ok: containsCurrentRelease,
+      snippet: containsCurrentRelease ? "" : releasesPage.text.slice(0, 240),
+    });
+  }
+
   const ok =
     routeResults.every((item) => item.ok) &&
     cssResults.length > 0 &&
-    cssResults.every((item) => item.ok);
+    cssResults.every((item) => item.ok) &&
+    contentChecks.every((item) => item.ok);
 
   return {
     ok,
@@ -96,6 +109,7 @@ async function checkLocalProduction() {
       ok: item.ok,
       snippet: item.ok ? "" : item.text.slice(0, 240),
     })),
+    content_checks: contentChecks,
   };
 }
 

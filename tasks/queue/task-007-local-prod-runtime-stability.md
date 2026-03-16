@@ -78,12 +78,13 @@ done
 
 ## 更新痕迹
 
-- 记忆：`no change: 最后一笔提交只收口 task 记录`
-- 索引：`no change: 最后一笔提交只收口 task 记录`
-- 路线图：`no change: 最后一笔提交只收口 task 记录`
-- 文档：`no change: 最后一笔提交只收口 task 记录`
+- 记忆：`memory/project/current-state.md, memory/project/operating-blueprint.md`
+- 索引：`no change: 本次提交只修正本地运行时环境注入与健康检查，不涉及索引结构`
+- 路线图：`memory/project/roadmap.md`
+- 文档：`no change: 本次提交只硬化本地运行时与状态校验，不改规则文档`
 
 ## 复盘
 
 - 本地页面的“裸 HTML / 连接拒绝”问题，根因不是页面渲染崩溃，而是缺少受控的本地生产运行时。
 - 以后要先看运行态：release registry 管版本，local runtime 管端口；两者缺一都会让生产状态失真。
+- 运行中的生产进程必须显式注入 workspace/release 根目录；否则页面即使返回 `200`，也可能读取到错误的运行态上下文。

@@ -1,6 +1,7 @@
-const { spawn } = require("node:child_process");
 const fs = require("node:fs");
-const { PROD_HOST, PROD_PORT, clearLocalState, currentReleaseSnapshot, ensureLocalRuntimeLayout, pidAlive, readSharedEnv, writeLocalState } = require("./core.ts");
+const path = require("node:path");
+const { spawn } = require("node:child_process");
+const { PROD_HOST, PROD_PORT, clearLocalState, currentReleaseSnapshot, ensureLocalRuntimeLayout, pidAlive, readSharedEnv, runtimeRoot, writeLocalState } = require("./core.ts");
 
 async function sleep(ms) {
   await new Promise((resolve) => setTimeout(resolve, ms));
@@ -40,6 +41,8 @@ function spawnLocalProduction() {
     ...readSharedEnv(),
     PORT: String(PROD_PORT),
     HOSTNAME: PROD_HOST,
+    AI_OS_WORKSPACE_ROOT: path.resolve(process.cwd()),
+    AI_OS_RELEASE_ROOT: runtimeRoot(),
   };
 
   const child = spawn(process.execPath, [current.nextBin, "start", "--hostname", PROD_HOST, "--port", String(PROD_PORT)], {
