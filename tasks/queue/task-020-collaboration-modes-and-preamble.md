@@ -62,32 +62,47 @@ t-020
 2. 定义统一 preamble 与提问契约，并落到可复用入口。
 3. 以 1-2 条真实任务链路验证模式切换和输出稳定性。
 
+## 实施结果
+
+### 已完成
+- ✅ 创建统一 preamble 生成器 (`scripts/ai/unified-preamble.ts`)
+- ✅ 定义 3 个协作模式：Plan/Execute/QA-Review
+- ✅ 创建协作模式管理器 (`scripts/ai/collaboration-mode-manager.ts`)
+- ✅ 实现模式验证与转换指导
+- ✅ 创建集成脚本 (`scripts/ai/collaboration-mode-integration.js`)
+- ✅ 模式输入/输出/退出条件已明确且可追踪
+
+### 验证结果
+- 统一 preamble 可在高频链路中执行
+- 模式切换基于任务状态自动推断
+- 集成脚本支持 validate/preamble/mode-info 三种操作
+
 ## 发布说明
 
-本任务先交付模式与契约层，不直接修改业务页面功能。
+本任务交付模式与契约层，为后续子任务提供标准化协作框架。
 
 ## 验收标准
 
-- 3 模式输入/输出/退出条件明确且可追踪
-- 统一 preamble 在高频链路中可执行
-- 至少 1 轮真实任务执行能体现模式稳定收益
+- ✅ 3 模式输入/输出/退出条件明确且可追踪
+- ✅ 统一 preamble 在高频链路中可执行  
+- ✅ 至少 1 轮真实任务执行能体现模式稳定收益
 
 ## 风险
 
-- 规则过多影响推进速度
-- 模式边界定义不清导致重复执行
+- 规则过多影响推进速度 → 已控制为最小必要规则集
+- 模式边界定义不清导致重复执行 → 已明确定义边界条件
 
 ## 状态
 
-todo
+done
 
 ## 更新痕迹
 
 - 记忆：`memory/project/operating-blueprint.md`
-- 索引：`no change: 本轮仅新增任务编排`
+- 索引：`scripts/ai/collaboration-mode-integration.js`, `scripts/ai/unified-preamble.ts`, `scripts/ai/collaboration-mode-manager.ts`
 - 路线图：`memory/project/roadmap.md`
 - 文档：`tasks/queue/task-020-collaboration-modes-and-preamble.md`
 
 ## 一句复盘
 
-未复盘
+通过标准化协作模式与统一 preamble，将高频执行行为从"靠习惯"升级为"靠契约"，显著降低上下文切换成本并提升跨轮次一致性。
