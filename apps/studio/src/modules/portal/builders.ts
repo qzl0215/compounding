@@ -1,4 +1,4 @@
-import type { LocalRuntimeStatus } from "@/modules/releases";
+import { getRuntimeStatusExplanation, type LocalRuntimeStatus } from "@/modules/releases";
 import { TASK_STATUS_LABELS } from "@/modules/tasks";
 import type {
   CockpitCurrentFocus,
@@ -176,10 +176,13 @@ export function toTaskSummary(task: {
 }
 
 export function toRuntimeSignal(label: string, runtime: LocalRuntimeStatus): CockpitRuntimeSignal {
+  const exp = getRuntimeStatusExplanation(runtime.status, label, runtime);
+  const summary =
+    exp.tone === "stable" ? exp.explanation : `${exp.explanation} 下一步：${exp.nextStep}`;
   return {
     label,
-    status: formatRuntimeStatus(runtime.status),
-    summary: formatRuntimeSummary(label, runtime),
+    status: exp.humanLabel,
+    summary,
     href: "/releases#runtime-status",
   };
 }
@@ -192,58 +195,17 @@ function summarizeTaskTrace(task: { updateTrace: { memory: string; index: string
 }
 
 function toRuntimeRiskItem(label: string, runtime: LocalRuntimeStatus): CockpitRiskItem {
+  const exp = getRuntimeStatusExplanation(runtime.status, label, runtime);
+  const summary =
+    exp.tone === "stable" ? exp.explanation : `${exp.explanation} 下一步：${exp.nextStep}`;
   return {
     title: `${label} 运行态`,
-    summary: formatRuntimeSummary(label, runtime),
-    tone: runtimeTone(runtime.status),
+    summary,
+    tone: exp.tone,
     href: "/releases#runtime-status",
   };
 }
 
-function runtimeTone(status: LocalRuntimeStatus["status"]): CockpitRiskTone {
-  if (status === "running") {
-    return "stable";
-  }
-  if (status === "stopped" || status === "stale_pid") {
-    return "warning";
-  }
-  return "danger";
-}
-
-function formatRuntimeStatus(status: LocalRuntimeStatus["status"]) {
-  const labels: Record<LocalRuntimeStatus["status"], string> = {
-    stopped: "未启动",
-    running: "运行中",
-    stale_pid: "进程失效",
-    port_error: "端口异常",
-    drift: "版本漂移",
-    unmanaged: "未托管占用",
-  };
-  return labels[status];
-}
-
-function formatRuntimeSummary(label: string, runtime: LocalRuntimeStatus) {
-  if (runtime.status === "running") {
-    return `${label} 当前在线${
-      runtime.runtime_release_id ? `，运行版本 ${runtime.runtime_release_id}` : ""
-    }；可直接进入对应页面继续验收。`;
-  }
-  if (runtime.status === "stopped") {
-    return `${label} 当前未启动；如需验收该环境，先到发布页确认是否需要启动对应服务。`;
-  }
-  if (runtime.status === "stale_pid") {
-    return `${label} 记录中的进程已经失效；先到发布页确认是否需要清理状态并重启。`;
-  }
-  if (runtime.status === "drift") {
-    return `${label} 当前存在版本漂移，运行版本 ${
-      runtime.runtime_release_id || "未知"
-    } 与 current ${runtime.current_release_id || "未切换"} 不一致；先确认是否需要重启或重新切换。`;
-  }
-  if (runtime.status === "unmanaged") {
-    return `${label} 的端口正被未托管进程占用；先确认是否有手动拉起的旧服务在干扰验收。`;
-  }
-  return `${label} 当前端口或进程状态异常；先到发布页查看原因与下一步动作。`;
-}
 
 function splitChineseList(value: string) {
   return value

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { getRuntimeStatusExplanation } from "../runtime-status";
 import type { LocalRuntimeStatus, ReleaseRecord, ReleaseTaskOption } from "../types";
 import { resolveReleaseActionRedirect, type ReleaseActionKind, type ReleaseActionResponse } from "../actions";
 
@@ -137,7 +138,7 @@ export function ReleaseDashboardPanel({
           </>
         ) : null}
         <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-white/68">
-          本地运行态：{formatRuntimeStatus(runtimeStatus.status)}
+          本地运行态：{getRuntimeStatusExplanation(runtimeStatus.status).humanLabel}
         </span>
         {message ? <p className="text-sm text-white/68">{message}</p> : null}
       </div>
@@ -285,14 +286,3 @@ function formatAcceptance(status: ReleaseRecord["acceptance_status"]) {
   return labels[status];
 }
 
-function formatRuntimeStatus(status: LocalRuntimeStatus["status"]) {
-  const labels: Record<LocalRuntimeStatus["status"], string> = {
-    stopped: "未启动",
-    running: "运行中",
-    stale_pid: "PID 失效",
-    port_error: "端口异常",
-    drift: "版本漂移",
-    unmanaged: "未托管进程占用",
-  };
-  return labels[status];
-}

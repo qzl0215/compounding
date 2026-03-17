@@ -1,8 +1,8 @@
 import { headers } from "next/headers";
 import { PageOutline } from "@/components/page-outline";
 import { Card } from "@/components/ui/card";
-import { getManagementAccessState, getReleaseDashboard } from "@/modules/releases";
-import type { LocalRuntimeStatus, LocalRuntimeStatusType } from "@/modules/releases";
+import { getManagementAccessState, getReleaseDashboard, getRuntimeStatusExplanation } from "@/modules/releases";
+import type { LocalRuntimeStatus } from "@/modules/releases";
 import { ReleaseDashboardPanel } from "@/modules/releases/components/release-dashboard-panel";
 import { VALIDATION_LAYERS } from "@/modules/releases/validation";
 import { listTaskCards } from "@/modules/tasks";
@@ -124,18 +124,6 @@ export default async function ReleasesPage() {
   );
 }
 
-function formatRuntimeStatus(status: LocalRuntimeStatusType) {
-  const labels = {
-    stopped: "未启动",
-    running: "运行中",
-    stale_pid: "PID 失效",
-    port_error: "端口异常",
-    drift: "版本漂移",
-    unmanaged: "未托管进程占用",
-  };
-  return labels[status];
-}
-
 function Meta({ title, value }: { title: string; value: string }) {
   return (
     <div className="rounded-3xl border border-white/8 bg-white/[0.03] p-4">
@@ -146,12 +134,20 @@ function Meta({ title, value }: { title: string; value: string }) {
 }
 
 function RuntimeCard({ title, runtime }: { title: string; runtime: LocalRuntimeStatus }) {
+  const exp = getRuntimeStatusExplanation(runtime.status, title, runtime);
+  const showNextStep = runtime.status !== "running";
   return (
     <div className="rounded-3xl border border-white/8 bg-white/[0.03] p-5">
       <p className="text-xs uppercase tracking-[0.22em] text-accent">{title}</p>
-      <p className="mt-3 text-sm text-white/68">{runtime.reason}</p>
+      <p className="mt-3 text-sm text-white/68">{exp.explanation}</p>
+      {showNextStep ? (
+        <div className="mt-4 rounded-2xl border border-accent/20 bg-accent/8 px-4 py-3">
+          <p className="text-xs uppercase tracking-[0.18em] text-accent/80">下一步</p>
+          <p className="mt-2 text-sm text-white/78">{exp.nextStep}</p>
+        </div>
+      ) : null}
       <dl className="mt-4 grid gap-3 md:grid-cols-2">
-        <Meta title="运行状态" value={formatRuntimeStatus(runtime.status)} />
+        <Meta title="运行状态" value={exp.humanLabel} />
         <Meta title="监听端口" value={String(runtime.port)} />
         <Meta title="运行版本" value={runtime.runtime_release_id || "未启动"} />
         <Meta title="软链指向" value={runtime.current_release_id || "未切换 release"} />

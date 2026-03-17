@@ -37,7 +37,7 @@
 
 ## 当前模式
 
-方案评审
+工程执行
 
 ## 分支
 
@@ -53,9 +53,21 @@
 - 设计更清晰的状态模型和页面告警表达
 - 让关键运行态问题都能给出直接的下一步动作建议
 
+## 交付收益
+
+运行态问题可被明确分类和解释，用户无需读日志也能理解多数常见故障；非 running 状态会直接给出下一步动作建议。
+
+## 交付风险
+
+若状态模型后续扩展不当，可能增加认知和实现复杂度；告警语言需持续面向非技术用户。
+
+## 一句复盘
+
+把运行态解释做成统一模块，让“为什么打不开”“是否需要重启”等问题一眼可见。
+
 ## 发布说明
 
-本任务当前仅入列，不触发运行态变化；正式实施时再评估发布影响。
+本任务新增 `releases/runtime-status.ts` 统一运行态解释模块，为 stopped/stale_pid/port_error/drift/unmanaged 提供人类可读的说明与下一步动作；`/releases` 运行态卡片在非 running 时展示下一步区块，首页风险区与推进状态摘要复用同一解释。
 
 ## 验收标准
 
@@ -72,12 +84,12 @@
 
 ## 状态
 
-todo
+doing
 
 ## 更新痕迹
 
-- 记忆：`no change: planning candidate only`
-- 索引：`no change: planning candidate only`
+- 记忆：`no change: 实现层改动，主源未变`
+- 索引：`no change: 实现层改动，索引可后续生成`
 - 路线图：`no change: current priority unchanged`
 - 文档：`tasks/queue/task-012-runtime-status-ux-hardening.md`
 

@@ -1,3 +1,5 @@
+export { getRuntimeStatusExplanation } from "./runtime-status";
+export type { RuntimeStatusExplanation } from "./runtime-status";
 export {
   getManagementAccessState,
   getLocalRuntimeStatus,
