@@ -113,6 +113,7 @@ last_reviewed_at: 2026-03-16
 - 系统结构、模块边界、依赖方向：`docs/ARCHITECTURE.md`
 - worktree / task / PR / reporting：`docs/DEV_WORKFLOW.md`
 - AI 标准工作流、上下文和记忆回写：`docs/AI_OPERATING_MODEL.md`
+- 高频知识资产的维护方式：`docs/ASSET_MAINTENANCE.md`
 - 组织架构、角色职责、组织设计：`docs/ORG_MODEL.md`
 - 工作模式、输入输出与进入退出条件：`docs/WORK_MODES.md`
 - 系统状态、roadmap、运营蓝图、技术债：`memory/project/*`

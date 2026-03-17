@@ -18,8 +18,8 @@ export async function runDocRewriteAction(args: {
   }
 
   const doc = await readDoc(args.path);
-  const promptText = loadPromptText(args.action === "clarify" ? "ai-doc-clarify-user.md" : "ai-doc-rewrite-user.md");
-  const systemPrompt = loadPromptText("ai-doc-rewrite-system.md");
+  const promptText = loadPromptText(args.action === "clarify" ? "doc-rewrite-clarify" : "doc-rewrite-execute");
+  const systemPrompt = loadPromptText("doc-rewrite-system");
   const context = await buildRewriteContext({
     path: args.path,
     title: doc.meta.title ?? path.basename(args.path),

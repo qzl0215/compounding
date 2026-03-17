@@ -22,8 +22,10 @@ jobs:
           version: 10
       - run: pnpm install --frozen-lockfile=false
       - run: python3 scripts/init_project_compounding.py audit --config bootstrap/project_brief.yaml --target .
+      - run: node --experimental-strip-types scripts/ai/generate-asset-maintenance.ts
       - run: node --experimental-strip-types scripts/ai/generate-module-index.ts
       - run: node --experimental-strip-types scripts/ai/scan-code-health.ts --strict
+      - run: node --experimental-strip-types scripts/ai/validate-knowledge-assets.ts
       - run: node --experimental-strip-types scripts/ai/validate-change-trace.ts
       - run: node --experimental-strip-types scripts/ai/validate-task-git-link.ts
       - run: pnpm test

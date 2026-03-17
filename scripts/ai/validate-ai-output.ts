@@ -1,28 +1,16 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const { loadPromptManifest } = require("./lib/knowledge-assets.ts");
 
 const root = process.cwd();
 
-const PROMPT_SPECS = [
-  {
-    path: "docs/prompts/ai-doc-rewrite-system.md",
-    required: ["# 文档重构系统提示词", "## 核心原则", "## 输出要求"],
-  },
-  {
-    path: "docs/prompts/ai-doc-clarify-user.md",
-    required: ["# 文档重构补充问题提示词", "## 输出 JSON 结构", "## 约束"],
-  },
-  {
-    path: "docs/prompts/ai-doc-rewrite-user.md",
-    required: ["# 文档重构执行提示词", "## 输出 JSON 结构", "## 重构要求"],
-  },
-];
-
 const SUPPORTING_FILES = [
+  "docs/prompts/prompt-assets.json",
   "apps/studio/src/app/api/docs/ai-rewrite/route.ts",
   "apps/studio/src/modules/docs/ai-rewrite.ts",
   "apps/studio/src/modules/docs/ai-rewrite-context.ts",
   "apps/studio/src/modules/docs/ai-rewrite-provider.ts",
+  "apps/studio/src/modules/docs/ai-rewrite-prompts.ts",
 ];
 
 function readEnvFile(fileName) {
@@ -61,7 +49,18 @@ function readEnvValue(fileEnv, ...keys) {
 }
 
 function validatePrompts(errors, details) {
-  for (const spec of PROMPT_SPECS) {
+  const promptSpecs = loadPromptManifest(root).map((item) => ({
+    path: `docs/prompts/${item.file}`,
+    required: Array.isArray(item.required_sections) ? item.required_sections : [],
+    id: item.id,
+  }));
+
+  if (promptSpecs.length === 0) {
+    errors.push("Prompt asset manifest is missing or empty: docs/prompts/prompt-assets.json");
+    return;
+  }
+
+  for (const spec of promptSpecs) {
     const absolute = path.join(root, spec.path);
     if (!fs.existsSync(absolute)) {
       errors.push(`Missing prompt asset: ${spec.path}`);
@@ -77,7 +76,7 @@ function validatePrompts(errors, details) {
         errors.push(`Prompt asset missing section "${marker}": ${spec.path}`);
       }
     }
-    details.prompts.push(spec.path);
+    details.prompts.push({ id: spec.id, path: spec.path });
   }
 }
 

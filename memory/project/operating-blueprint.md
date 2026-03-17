@@ -25,7 +25,8 @@ last_reviewed_at: 2026-03-16
 
 - 发布标准：
   - 明确 prompt 文档的真相源、版本、回退边界
-  - AI 调用链能区分哪些 prompt 适合人工维护，哪些可被校验覆盖
+  - 运行时代码与校验器共用同一份 prompt 注册表
+  - `pnpm validate:ai-output` 能覆盖 prompt 资产完整性与引用一致性
 - 关联任务：
   - `tasks/queue/task-011-anti-drift-docs-prompts-index.md`
 
@@ -33,6 +34,7 @@ last_reviewed_at: 2026-03-16
 
 - 发布标准：
   - 模块索引、函数索引和关键说明文档的维护方式清楚
+  - `code_index` 的生成边界和人工补充边界清楚
   - 不会因为引入防漂移机制而长出新的平行真相源
 - 关联任务：
   - `tasks/queue/task-011-anti-drift-docs-prompts-index.md`
@@ -41,6 +43,7 @@ last_reviewed_at: 2026-03-16
 
 - 发布标准：
   - 至少一类高频资产进入可执行的防漂移机制
+  - `docs/ASSET_MAINTENANCE.md` 可直接回答每类资产的真相源、维护方式和命令
   - 生成、校验、人工维护三类方式的进入条件与限制条件清楚
 - 关联任务：
   - `tasks/queue/task-011-anti-drift-docs-prompts-index.md`
@@ -51,9 +54,9 @@ last_reviewed_at: 2026-03-16
 
 ## 下一检查点
 
-- 明确 prompt、索引与关键说明文档的优先级与治理边界
-- 选定第一类要建立防漂移机制的资产
-- `task-011` 进入执行状态并具备可追踪分支
+- 生成资产维护矩阵
+- 建立 prompt 注册表并接到 AI 输出门禁
+- 明确 `code_index` 的生成与人工补充边界
 
 ## 证据边界
 

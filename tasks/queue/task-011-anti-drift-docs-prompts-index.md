@@ -1,5 +1,9 @@
 # 建设防漂移文档与索引资产
 
+## 短编号
+
+`t-011`
+
 ## 目标
 
 提升 prompt、索引和关键说明文档的防漂移能力，让高频知识资产更稳定、更可信、更适合长期被 AI 与人共同使用。
@@ -37,7 +41,7 @@
 
 ## 当前模式
 
-方案评审
+工程执行
 
 ## 分支
 
@@ -49,9 +53,9 @@
 
 ## 计划
 
-- 盘点最容易漂移的高频知识资产，并按维护方式分层
-- 为优先级最高的一类资产建立最小防漂移机制
-- 把真相源、维护方式和边界写回规则文档
+1. 生成一份资产维护矩阵，明确生成 / 校验 / 人工维护三分法。
+2. 为 prompt 资产建立单一注册表，并让运行时代码与校验器共用它。
+3. 把 `code_index` 的维护边界和命令写回规则文档与当前蓝图。
 
 ## 发布说明
 
@@ -72,13 +76,13 @@
 
 ## 状态
 
-todo
+doing
 
 ## 更新痕迹
 
-- 记忆：`no change: planning candidate only`
-- 索引：`no change: planning candidate only`
+- 记忆：`memory/project/current-state.md`, `memory/project/operating-blueprint.md`
+- 索引：`no change: no index file content change yet`
 - 路线图：`no change: current priority unchanged`
-- 文档：`tasks/queue/task-011-anti-drift-docs-prompts-index.md`
+- 文档：`docs/PROJECT_RULES.md`, `docs/AI_OPERATING_MODEL.md`, `docs/ASSET_MAINTENANCE.md`, `docs/prompts/prompt-assets.json`, `tasks/queue/task-011-anti-drift-docs-prompts-index.md`
 
 ## 复盘

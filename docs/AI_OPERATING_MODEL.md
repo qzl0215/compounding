@@ -79,6 +79,7 @@ related_docs:
 - `code_index/dependency-map.md` 给依赖方向
 - `code_index/function-index.json` 给粗粒度函数索引
 - `scripts/ai/build-context.ts` 负责把规则、架构、任务、模块和记忆压缩成最小上下文包
+- `docs/ASSET_MAINTENANCE.md` 给高频知识资产的维护方式矩阵，帮助区分哪些走生成、哪些走校验、哪些继续人工维护
 
 ## 记忆系统
 
@@ -147,6 +148,7 @@ related_docs:
 - 规范只保留最关键的三层：规则、工作流、AI operating model；其余优先压回 task / memory / index
 - 文档以 Markdown 为唯一真相源；知识库默认编辑正文层，高级模式才编辑完整 Markdown
 - prompt 文档是 AI 重构行为的可维护真相源，应支持预览、保存生效与上一版本回退
+- 高频知识资产先按 `generated / validated / manual` 三分法分类，再决定维护方式；不要在未分层前把所有文档一股脑推进生成式
 
 ## 证据边界
 

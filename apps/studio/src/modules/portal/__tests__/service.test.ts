@@ -8,10 +8,10 @@ describe("portal overview", () => {
     expect(overview.identity.oneLiner).toContain("AI-Native Repo");
     expect(overview.identity.mission).toContain("AI-Native Repo");
     expect(overview.identity.values.length).toBeGreaterThanOrEqual(3);
-    expect(overview.roadmap.currentPhase).toContain("建立分层验证体系");
-    expect(overview.roadmap.currentPriority).toContain("建立分层验证体系");
-    expect(overview.roadmap.nextMilestone).toContain("四层门禁");
-    expect(overview.blueprint.currentMilestone).toContain("建立分层验证体系");
+    expect(overview.roadmap.currentPhase).toContain("建设防漂移文档与索引资产");
+    expect(overview.roadmap.currentPriority).toContain("建设防漂移文档与索引资产");
+    expect(overview.roadmap.nextMilestone).toContain("prompt、索引和关键说明文档");
+    expect(overview.blueprint.currentMilestone).toContain("建设防漂移文档与索引资产");
     expect(overview.blueprint.goals.length).toBeGreaterThanOrEqual(3);
     expect(Array.isArray(overview.blueprint.doingTasks)).toBe(true);
     expect(overview.blueprint.nextCheckpoint.length).toBeGreaterThan(0);
