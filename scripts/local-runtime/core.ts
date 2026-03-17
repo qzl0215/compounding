@@ -1,7 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { execFileSync } = require("node:child_process");
-const { ensureLayout, layoutPaths, runtimeRoot } = require("../release/lib.ts");
+const { ensureLayout, layoutPaths, pendingDevRelease, readRegistry, runtimeRoot } = require("../release/lib.ts");
 
 const RUNTIME_PROFILE = process.env.AI_OS_RUNTIME_PROFILE || "prod";
 const DEFAULT_PORT = RUNTIME_PROFILE === "dev" ? "3001" : "3000";
@@ -41,7 +41,10 @@ function currentReleaseSnapshot() {
   }
 
   const releasePath = fs.realpathSync(currentLinkPath);
-  const releaseId = path.basename(releasePath);
+  const registry = readRegistry();
+  const logicalReleaseId =
+    RUNTIME_PROFILE === "dev" ? pendingDevRelease(registry)?.release_id || null : registry.active_release_id || null;
+  const releaseId = logicalReleaseId || path.basename(releasePath);
   const studioPath = path.join(releasePath, "apps", "studio");
   const buildIdPath = path.join(studioPath, ".next", "BUILD_ID");
   const nextBin = path.join(studioPath, "node_modules", "next", "dist", "bin", "next");

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import type { LocalRuntimeStatus, ReleaseRecord } from "../types";
+import { resolveReleaseActionRedirect, type ReleaseActionKind, type ReleaseActionResponse } from "../actions";
 
 type Props = {
   releases: ReleaseRecord[];
@@ -18,18 +19,30 @@ export function ReleaseDashboardPanel({ releases, activeReleaseId, pendingDevRel
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
-  const runAction = (url: string, payload: Record<string, string>) => {
+  const runAction = (kind: ReleaseActionKind, url: string, payload: Record<string, string>) => {
     startTransition(async () => {
-      setMessage("正在执行，请稍候…");
-      const response = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      const data = (await response.json()) as { message?: string };
-      setMessage(data.message ?? (response.ok ? "已完成。" : "执行失败。"));
-      if (response.ok) {
+      try {
+        setMessage("正在执行，请稍候…");
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = (await response.json()) as ReleaseActionResponse;
+        setMessage(data.message ?? (response.ok ? "已完成。" : "执行失败。"));
+        if (!response.ok) {
+          return;
+        }
+
+        const redirectTarget = resolveReleaseActionRedirect(kind, data, previewUrl, productionUrl);
+        if (redirectTarget && typeof window !== "undefined") {
+          window.location.assign(redirectTarget);
+          return;
+        }
+
         router.refresh();
+      } catch (error) {
+        setMessage(error instanceof Error ? error.message : "执行失败，请稍后重试。");
       }
     });
   };
@@ -41,7 +54,7 @@ export function ReleaseDashboardPanel({ releases, activeReleaseId, pendingDevRel
           type="button"
           className="rounded-full border border-accent/40 bg-accent/14 px-4 py-2 text-sm text-accent transition hover:bg-accent/20 disabled:cursor-not-allowed disabled:opacity-50"
           disabled={pending || Boolean(pendingDevRelease)}
-          onClick={() => runAction("/api/releases/dev", { ref: "HEAD" })}
+          onClick={() => runAction("create-dev", "/api/releases/dev", { ref: "HEAD" })}
         >
           生成 dev 预览
         </button>
@@ -51,7 +64,7 @@ export function ReleaseDashboardPanel({ releases, activeReleaseId, pendingDevRel
               type="button"
               className="rounded-full border border-emerald-400/40 bg-emerald-400/12 px-4 py-2 text-sm text-emerald-200 transition hover:bg-emerald-400/20 disabled:cursor-not-allowed disabled:opacity-50"
               disabled={pending}
-              onClick={() => runAction("/api/releases/dev/accept", { releaseId: pendingDevRelease.release_id })}
+              onClick={() => runAction("accept-dev", "/api/releases/dev/accept", { releaseId: pendingDevRelease.release_id })}
             >
               验收通过并发布到 main
             </button>
@@ -59,7 +72,7 @@ export function ReleaseDashboardPanel({ releases, activeReleaseId, pendingDevRel
               type="button"
               className="rounded-full border border-red-400/40 bg-red-400/12 px-4 py-2 text-sm text-red-200 transition hover:bg-red-400/20 disabled:cursor-not-allowed disabled:opacity-50"
               disabled={pending}
-              onClick={() => runAction("/api/releases/dev/reject", { releaseId: pendingDevRelease.release_id })}
+              onClick={() => runAction("reject-dev", "/api/releases/dev/reject", { releaseId: pendingDevRelease.release_id })}
             >
               驳回当前 dev
             </button>
@@ -110,7 +123,7 @@ export function ReleaseDashboardPanel({ releases, activeReleaseId, pendingDevRel
                     type="button"
                     className="rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-sm text-white/78 transition hover:border-accent/35 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                     disabled={pending || isActive}
-                    onClick={() => runAction("/api/releases/rollback", { releaseId: release.release_id })}
+                    onClick={() => runAction("rollback-prod", "/api/releases/rollback", { releaseId: release.release_id })}
                   >
                     回滚到此版本
                   </button>

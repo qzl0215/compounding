@@ -2,6 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
+import { resolveReleaseActionRedirect } from "../actions";
 import { getManagementAccessState, getReleaseDashboard, readReleaseRegistry } from "../service";
 import { RELEASE_VALIDATION_ORDER, VALIDATION_LAYERS } from "../validation";
 
@@ -101,5 +102,25 @@ describe("releases service", () => {
     expect(RELEASE_VALIDATION_ORDER).toEqual(["static", "build", "runtime", "ai-output"]);
     expect(VALIDATION_LAYERS).toHaveLength(4);
     expect(VALIDATION_LAYERS[0]?.commands[0]).toBe("pnpm validate:static");
+  });
+
+  it("redirects release actions to a stable environment after success", () => {
+    expect(
+      resolveReleaseActionRedirect(
+        "create-dev",
+        { links: { dev: "http://127.0.0.1:3001" } },
+        "http://127.0.0.1:3001",
+        "http://127.0.0.1:3000"
+      )
+    ).toBe("http://127.0.0.1:3001/releases");
+
+    expect(
+      resolveReleaseActionRedirect(
+        "accept-dev",
+        { links: { production: "http://127.0.0.1:3000" } },
+        "http://127.0.0.1:3001",
+        "http://127.0.0.1:3000"
+      )
+    ).toBe("http://127.0.0.1:3000/releases");
   });
 });
