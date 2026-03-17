@@ -8,7 +8,7 @@ import type { PropsWithChildren } from "react";
 import { cn } from "@/lib/classnames";
 
 const navigation = [
-  { href: "/", label: "首页", icon: LayoutDashboard },
+  { href: "/", label: "驾驶舱", icon: LayoutDashboard },
   { href: "/tasks", label: "任务", icon: ListTodo },
   { href: "/knowledge-base", label: "文档", icon: BookOpen },
   { href: "/releases", label: "发布", icon: Rocket }
@@ -26,8 +26,8 @@ export function AppShell({ children, runtimeChannel }: PropsWithChildren<{ runti
           <div className="mb-8 flex items-start justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.32em] text-accent">AI-Native Repo</p>
-              <h1 className="mt-3 font-mono text-2xl font-semibold text-white">指挥中枢</h1>
-              <p className="mt-2 text-sm text-white/65">像创业团队一样运转的 AI 操作系统</p>
+              <h1 className="mt-3 font-mono text-2xl font-semibold text-white">项目驾驶舱</h1>
+              <p className="mt-2 text-sm text-white/65">人类优先的统一项目窗口，详情页继续承接任务、文档与发布</p>
             </div>
             <div className="flex flex-col items-end gap-2">
               <Badge tone={runtimeChannel === "dev" ? "warning" : "accent"}>{runtimeChannel === "dev" ? "DEV" : "PROD"}</Badge>
@@ -65,6 +65,7 @@ export function AppShell({ children, runtimeChannel }: PropsWithChildren<{ runti
             <p className="text-xs uppercase tracking-[0.28em] text-white/45">默认法则</p>
             <ul className="mt-3 space-y-2 text-sm text-white/72">
               <li>AGENTS.md 是薄入口合约</li>
+              <li>首页先看主线，再下钻证据</li>
               <li>roadmap 定战略，蓝图拆战术</li>
               <li>task 负责执行边界</li>
               <li>memory 负责沉淀，index 负责导航</li>
@@ -75,7 +76,7 @@ export function AppShell({ children, runtimeChannel }: PropsWithChildren<{ runti
             </ul>
             <Link className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-accent" href="/knowledge-base">
               <BookOpen className="size-3.5" />
-              打开主文档入口
+              打开详情文档入口
             </Link>
           </div>
         </aside>

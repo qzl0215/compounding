@@ -1,16 +1,11 @@
+import React from "react";
 import Link from "next/link";
-import type { BlueprintGoal, OrgRoleCard, SystemCard, TaskSummary, WorkModeStep } from "../types";
-
-export function ActionPill({ href, label }: { href: string; label: string }) {
-  return (
-    <Link
-      className="rounded-full border border-accent/40 bg-accent/12 px-4 py-2 text-sm text-accent transition hover:bg-accent/18"
-      href={href}
-    >
-      {label}
-    </Link>
-  );
-}
+import type {
+  CockpitEvidenceGroup,
+  CockpitRiskItem,
+  CockpitRuntimeSignal,
+  TaskSummary,
+} from "../types";
 
 export function KeyStat({ title, value }: { title: string; value: string }) {
   return (
@@ -44,7 +39,7 @@ export function TaskFocusList({ title, tasks, href, empty }: { title: string; ta
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs uppercase tracking-[0.22em] text-white/38">{title}</p>
         <Link href={href} className="text-xs text-accent transition hover:text-white">
-          查看任务
+          查看任务详情
         </Link>
       </div>
       {tasks.length > 0 ? (
@@ -55,8 +50,14 @@ export function TaskFocusList({ title, tasks, href, empty }: { title: string; ta
               href={`/knowledge-base?path=${encodeURIComponent(task.path)}`}
               className="block rounded-2xl border border-white/8 bg-black/20 px-3 py-3 transition hover:border-accent/30"
             >
-              <p className="text-sm font-medium text-white">{task.title}</p>
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-medium text-white">{task.title}</p>
+                <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-white/62">
+                  {task.status}
+                </span>
+              </div>
               <p className="mt-2 text-sm leading-6 text-white/66">{task.goal}</p>
+              {task.updateTrace ? <p className="mt-2 text-xs text-white/42">{task.updateTrace}</p> : null}
             </Link>
           ))}
         </div>
@@ -67,94 +68,55 @@ export function TaskFocusList({ title, tasks, href, empty }: { title: string; ta
   );
 }
 
-export function BlueprintGoalCard({ goal }: { goal: BlueprintGoal }) {
-  return (
-    <article className="rounded-3xl border border-white/8 bg-white/[0.03] p-5">
-      <p className="text-sm font-semibold text-white">{goal.title}</p>
-      <div className="mt-4 space-y-4">
-        <div>
-          <p className="text-xs uppercase tracking-[0.22em] text-white/38">发布标准</p>
-          <ul className="mt-2 space-y-1.5 text-sm leading-6 text-white/72">
-            {goal.releaseStandards.map((item) => (
-              <li key={item}>- {item}</li>
-            ))}
-          </ul>
-        </div>
-        {goal.relatedTasks.length > 0 ? (
-          <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-black/20 px-3 py-3">
-            <div>
-              <p className="text-xs uppercase tracking-[0.22em] text-white/38">关联任务</p>
-              <p className="mt-1 text-sm text-white/70">共 {goal.relatedTasks.length} 项，详细信息进入任务页查看。</p>
-            </div>
-            <Link href="/tasks" className="text-xs uppercase tracking-[0.2em] text-accent transition hover:text-white">
-              查看任务
-            </Link>
-          </div>
-        ) : null}
-      </div>
-    </article>
-  );
-}
-
-export function RoleCardCompact({ role }: { role: OrgRoleCard }) {
-  return (
-    <article className="rounded-3xl border border-white/8 bg-white/[0.03] p-5">
-      <p className="text-xs uppercase tracking-[0.24em] text-accent">{role.name}</p>
-      <p className="mt-3 text-sm leading-6 text-white/78">{role.mission}</p>
-      {role.outputs.length > 0 ? (
-        <div className="mt-4">
-          <p className="text-xs uppercase tracking-[0.22em] text-white/38">核心产物</p>
-          <ul className="mt-2 space-y-1.5 text-sm leading-6 text-white/72">
-            {role.outputs.slice(0, 2).map((item) => (
-              <li key={item}>- {item}</li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-      <Link
-        href="/knowledge-base?path=docs/ORG_MODEL.md"
-        className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-accent transition hover:text-white"
-      >
-        查看职责
-      </Link>
-    </article>
-  );
-}
-
-export function WorkModeFlowNode({ step, index }: { step: WorkModeStep; index: number }) {
-  return (
-    <article className="rounded-3xl border border-white/8 bg-white/[0.03] p-5">
-      <div className="flex items-center gap-3">
-        <span
-          className={`inline-flex h-9 w-9 items-center justify-center rounded-full border text-sm font-medium ${
-            step.kind === "trigger"
-              ? "border-accent/35 bg-accent/10 text-accent"
-              : "border-white/12 bg-white/[0.05] text-white/78"
-          }`}
-        >
-          {index + 1}
-        </span>
-        <p className="text-sm font-semibold tracking-[0.08em] text-white">{step.name}</p>
-      </div>
-      <p className="mt-4 text-sm leading-6 text-white/74">{step.summary}</p>
-      <Link
-        href={step.href}
-        className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-accent transition hover:text-white"
-      >
-        查看详情
-      </Link>
-    </article>
-  );
-}
-
-export function LinkedSummaryCard({ item }: { item: SystemCard }) {
+export function RuntimeSignalCard({ signal }: { signal: CockpitRuntimeSignal }) {
   return (
     <Link
-      href={item.href}
-      className="rounded-3xl border border-white/8 bg-white/[0.03] p-5 transition hover:border-accent/30 hover:bg-white/[0.05]"
+      href={signal.href}
+      className="rounded-3xl border border-white/8 bg-white/[0.03] p-4 transition hover:border-accent/30 hover:bg-white/[0.05]"
     >
-      <p className="text-xs uppercase tracking-[0.24em] text-accent">{item.title}</p>
-      <p className="mt-3 text-sm leading-6 text-white/76">{item.summary}</p>
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-xs uppercase tracking-[0.22em] text-accent">{signal.label}</p>
+        <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-white/68">
+          {signal.status}
+        </span>
+      </div>
+      <p className="mt-3 text-sm leading-6 text-white/74">{signal.summary}</p>
     </Link>
+  );
+}
+
+export function RiskCard({ item }: { item: CockpitRiskItem }) {
+  const tone =
+    item.tone === "danger"
+      ? "border-red-400/20 bg-red-400/10"
+      : item.tone === "warning"
+        ? "border-amber-400/20 bg-amber-400/10"
+        : "border-emerald-400/20 bg-emerald-400/10";
+
+  return (
+    <Link href={item.href} className={`rounded-3xl border p-5 transition hover:border-accent/30 ${tone}`}>
+      <p className="text-xs uppercase tracking-[0.24em] text-white/72">{item.title}</p>
+      <p className="mt-3 text-sm leading-6 text-white">{item.summary}</p>
+    </Link>
+  );
+}
+
+export function EvidenceGroupCard({ group }: { group: CockpitEvidenceGroup }) {
+  return (
+    <article className="rounded-3xl border border-white/8 bg-white/[0.03] p-5">
+      <p className="text-xs uppercase tracking-[0.24em] text-accent">{group.title}</p>
+      <div className="mt-4 space-y-3">
+        {group.items.map((item) => (
+          <Link
+            key={`${group.title}-${item.title}`}
+            href={item.href}
+            className="block rounded-2xl border border-white/8 bg-black/20 px-3 py-3 transition hover:border-accent/30"
+          >
+            <p className="text-sm font-medium text-white">{item.title}</p>
+            <p className="mt-2 text-sm leading-6 text-white/66">{item.summary}</p>
+          </Link>
+        ))}
+      </div>
+    </article>
   );
 }

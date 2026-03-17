@@ -29,71 +29,67 @@ export type OverviewSnippet = {
   content: string;
 };
 
-export type CompanySnapshot = {
+export type CockpitIdentity = {
   oneLiner: string;
   mission: string;
-  vision: string;
-  values: string[];
   successDefinition: string;
   mustProtect: string[];
 };
 
-export type RoadmapSnapshot = {
+export type CockpitCurrentFocus = {
   currentPhase: string;
   currentPriority: string;
-  nextMilestone: string;
+  currentMilestone: string;
   successCriteria: string[];
 };
 
-export type BlueprintGoal = {
-  title: string;
-  releaseStandards: string[];
-  relatedTasks: string[];
+export type CockpitRuntimeSignal = {
+  label: string;
+  status: string;
+  summary: string;
+  href: string;
 };
 
-export type BlueprintBoard = {
-  currentMilestone: string;
-  currentPriority: string;
-  currentMainline: string;
+export type CockpitExecutionStatus = {
+  headline: string;
+  summary: string;
   doingTasks: TaskSummary[];
   blockedItems: string[];
-  goals: BlueprintGoal[];
   nextCheckpoint: string[];
+  runtimeSignals: CockpitRuntimeSignal[];
 };
 
-export type OrgRoleCard = {
-  name: string;
-  mission: string;
-  responsibilities: string[];
-  outputs: string[];
-  triggerMoments: string[];
-  antiPatterns: string[];
-};
+export type CockpitRiskTone = "stable" | "warning" | "danger";
 
-export type WorkModeStep = {
-  kind: "trigger" | "mode";
-  name: string;
+export type CockpitRiskItem = {
+  title: string;
   summary: string;
+  tone: CockpitRiskTone;
   href: string;
 };
 
-export type OrgRoleGroup = {
-  title: string;
-  roles: OrgRoleCard[];
+export type CockpitRiskBoard = {
+  factConflicts: string[];
+  frozenItems: string[];
+  items: CockpitRiskItem[];
 };
 
-export type SystemCard = {
+export type CockpitEvidenceLink = {
   title: string;
   summary: string;
   href: string;
 };
 
-export type PortalOverview = {
-  homeLinks: HomeEntryLink[];
-  identity: CompanySnapshot;
-  roadmap: RoadmapSnapshot;
-  blueprint: BlueprintBoard;
-  workModeFlow: WorkModeStep[];
-  org: OrgRoleGroup[];
-  knowledgeRisk: SystemCard[];
+export type CockpitEvidenceGroup = {
+  title: string;
+  items: CockpitEvidenceLink[];
 };
+
+export type ProjectCockpit = {
+  identity: CockpitIdentity;
+  currentFocus: CockpitCurrentFocus;
+  executionStatus: CockpitExecutionStatus;
+  riskBoard: CockpitRiskBoard;
+  evidenceLinks: CockpitEvidenceGroup[];
+};
+

@@ -49,15 +49,20 @@ related_docs:
 
 ## 本地运行时脚本
 
+- `scripts/local-runtime/check-preview.ts`
 - `scripts/local-runtime/check-prod.ts`
 - `scripts/local-runtime/core.ts`
 - `scripts/local-runtime/health.ts`
 - `scripts/local-runtime/lib.ts`
 - `scripts/local-runtime/process.ts`
+- `scripts/local-runtime/restart-preview.ts`
 - `scripts/local-runtime/restart-prod.ts`
+- `scripts/local-runtime/start-preview.ts`
 - `scripts/local-runtime/start-prod.ts`
+- `scripts/local-runtime/status-preview.ts`
 - `scripts/local-runtime/status-prod.ts`
 - `scripts/local-runtime/status.ts`
+- `scripts/local-runtime/stop-preview.ts`
 - `scripts/local-runtime/stop-prod.ts`
 
 ## 修改前先看

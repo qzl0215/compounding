@@ -1,7 +1,7 @@
 import { HomeDashboard } from "@/modules/portal/components/home-dashboard";
-import { getPortalOverview } from "@/modules/portal";
+import { getProjectCockpit } from "@/modules/portal";
 
 export default async function HomePage() {
-  const overview = await getPortalOverview();
+  const overview = await getProjectCockpit();
   return <HomeDashboard overview={overview} />;
 }

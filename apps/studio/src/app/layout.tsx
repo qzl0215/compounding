@@ -21,8 +21,8 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Compounding AI-Native Repo Portal",
-  description: "Read-only portal for AI-native rules, memory, tasks, and code index"
+  title: "Compounding Project Cockpit",
+  description: "Human-first project cockpit with task, document, and release detail workbenches"
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

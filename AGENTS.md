@@ -13,7 +13,7 @@ related_docs:
   - docs/AI_OPERATING_MODEL.md
   - memory/project/current-state.md
   - memory/project/roadmap.md
-last_reviewed_at: 2026-03-16
+last_reviewed_at: 2026-03-17
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 ## 硬规则
@@ -36,8 +36,8 @@ last_reviewed_at: 2026-03-16
 
 - 项目名称：Compounding AI Operating System
 - 项目一句话：把当前仓库升级成适合 AI 长期协作、任务驱动、可持续重构与自进化的 AI-Native Repo。
-- 当前优先级：把任务与发布关系升级为交付批次模型，让任务页默认展示收益、风险、状态、版本与可介入动作，同时保持 task 是执行边界、release 是验收与回滚边界。
-- 成功定义：执行者默认看任务页即可判断这次交付带来什么收益、存在哪些风险、是否待验收、挂在哪个版本，以及是否可以介入验收通过或回滚。
+- 当前优先级：把首页升级为人类优先的统一项目驾驶舱，让项目主线、推进状态、风险与证据入口在同一页对齐，并保持与 AI 读取的主源一致。
+- 成功定义：不会代码的产品、运营或负责人打开首页后，也能在 1 分钟内理解项目是什么、当前最重要的事、现在卡在哪、下一步该去哪里看；首页与 `AGENTS / roadmap / operating-blueprint / current-state / tasks / releases` 保持同源一致。
 - 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
 - 运行边界：server-only
 - 当前主线来源：`memory/project/roadmap.md`

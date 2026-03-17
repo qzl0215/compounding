@@ -57,6 +57,14 @@
   },
   {
     "module": "apps/studio/src/modules/docs",
+    "file": "apps/studio/src/modules/docs/ai-rewrite-prompts.ts",
+    "symbol": "resolvePromptFile",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/docs",
     "file": "apps/studio/src/modules/docs/ai-rewrite-provider.ts",
     "symbol": "loadProviderConfig",
     "kind": "function",
@@ -546,7 +554,7 @@
   {
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "buildRoadmapSnapshot",
+    "symbol": "buildCurrentFocus",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -554,7 +562,7 @@
   {
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "buildBlueprintBoard",
+    "symbol": "buildExecutionStatus",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -562,7 +570,15 @@
   {
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "buildKnowledgeRiskCards",
+    "symbol": "buildRiskBoard",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/builders.ts",
+    "symbol": "buildEvidenceLinks",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -578,7 +594,55 @@
   {
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/builders.ts",
+    "symbol": "toRuntimeSignal",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/builders.ts",
     "symbol": "summarizeTaskTrace",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/builders.ts",
+    "symbol": "toRuntimeRiskItem",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/builders.ts",
+    "symbol": "runtimeTone",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/builders.ts",
+    "symbol": "formatRuntimeStatus",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/builders.ts",
+    "symbol": "formatRuntimeSummary",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/builders.ts",
+    "symbol": "splitChineseList",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -602,14 +666,6 @@
   {
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/parsing.ts",
-    "symbol": "splitChineseList",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/parsing.ts",
     "symbol": "normalizeInline",
     "kind": "function",
     "language": "TypeScript",
@@ -617,32 +673,8 @@
   },
   {
     "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/parsing.ts",
-    "symbol": "previewSection",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/parsing.ts",
-    "symbol": "parseBlueprintGoals",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/parsing.ts",
-    "symbol": "parseOrgModel",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/service.ts",
-    "symbol": "getPortalOverview",
+    "symbol": "getProjectCockpit",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -674,6 +706,22 @@
   {
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/service.ts",
+    "symbol": "collectFactConflicts",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/service.ts",
+    "symbol": "hasMultipleValues",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/service.ts",
     "symbol": "entry",
     "kind": "function",
     "language": "TypeScript",
@@ -683,6 +731,14 @@
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/service.ts",
     "symbol": "toTaskEntry",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/actions.ts",
+    "symbol": "resolveReleaseActionRedirect",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -730,6 +786,38 @@
   {
     "module": "apps/studio/src/modules/releases",
     "file": "apps/studio/src/modules/releases/service.ts",
+    "symbol": "runCreateDevPreview",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/service.ts",
+    "symbol": "runCreateDevPreviewWithTasks",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/service.ts",
+    "symbol": "runAcceptDevRelease",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/service.ts",
+    "symbol": "runRejectDevRelease",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/service.ts",
     "symbol": "runDeployRelease",
     "kind": "function",
     "language": "TypeScript",
@@ -747,6 +835,22 @@
     "module": "apps/studio/src/modules/releases",
     "file": "apps/studio/src/modules/releases/service.ts",
     "symbol": "runReleaseScript",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/service.ts",
+    "symbol": "getChannelBaseUrl",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/service.ts",
+    "symbol": "normalizeReleaseRecord",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -779,6 +883,78 @@
     "module": "apps/studio/src/modules/releases",
     "file": "apps/studio/src/modules/releases/service.ts",
     "symbol": "isLocalOrPrivate",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/delivery.ts",
+    "symbol": "buildTaskDeliveryRows",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/delivery.ts",
+    "symbol": "buildTaskDeliveryRow",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/delivery.ts",
+    "symbol": "matchesTask",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/delivery.ts",
+    "symbol": "resolveDeliveryStatus",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/delivery.ts",
+    "symbol": "inferReleaseLabel",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/delivery.ts",
+    "symbol": "deliveryOrder",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/delivery.ts",
+    "symbol": "sortStamp",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/delivery.ts",
+    "symbol": "unique",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/delivery.ts",
+    "symbol": "sanitizeCommit",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -906,6 +1082,14 @@
   {
     "module": "apps/studio/src/modules/tasks",
     "file": "apps/studio/src/modules/tasks/parsing.ts",
+    "symbol": "parseLinkedReleases",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/parsing.ts",
     "symbol": "extractTraceValue",
     "kind": "function",
     "language": "TypeScript",
@@ -915,6 +1099,22 @@
     "module": "apps/studio/src/modules/tasks",
     "file": "apps/studio/src/modules/tasks/parsing.ts",
     "symbol": "normalizeTaskStatus",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/parsing.ts",
+    "symbol": "taskIdFromPath",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/parsing.ts",
+    "symbol": "deriveShortId",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -1426,6 +1626,14 @@
   {
     "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/renderers_org_docs.py",
+    "symbol": "render_work_modes",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/renderers_org_docs.py",
     "symbol": "render_org_model",
     "kind": "function",
     "language": "Python",
@@ -1779,6 +1987,22 @@
     "module": "scripts/local-runtime",
     "file": "scripts/local-runtime/process.ts",
     "symbol": "spawnLocalProduction",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/restart-preview.ts",
+    "symbol": "runScript",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "scripts/local-runtime",
+    "file": "scripts/local-runtime/restart-preview.ts",
+    "symbol": "main",
     "kind": "function",
     "language": "TypeScript",
     "exported": true

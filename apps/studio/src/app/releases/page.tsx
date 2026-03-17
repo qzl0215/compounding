@@ -44,8 +44,8 @@ export default async function ReleasesPage() {
             <p className="text-xs uppercase tracking-[0.28em] text-accent">发布管理</p>
             <h2 className="mt-3 text-3xl font-semibold">dev 预览验收与 main 生产切换</h2>
             <p className="mt-4 max-w-4xl text-white/68">
-              每次改动先生成待验收的 dev 预览；若已有未验收 dev，系统会先提醒继续验收。只有验收通过的 dev
-              才能晋升到 `main` 并切换本地生产。
+              这里是统一驾驶舱下的发布详情页。首页只摘要显示待验收版本和运行风险；需要判断是否发布、回滚或排查环境时，
+              再进入这里查看完整事实。
             </p>
             <dl className="mt-6 grid gap-4 md:grid-cols-4">
               <Meta title="运行根目录" value={dashboard.runtime_root} />

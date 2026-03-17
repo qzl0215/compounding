@@ -2,14 +2,16 @@ import { extractSection, listDocsUnder, readDoc } from "@/modules/docs";
 import { getReleaseDashboard } from "@/modules/releases/service";
 import { listTaskCards } from "@/modules/tasks";
 import {
-  buildBlueprintBoard,
+  buildCurrentFocus,
+  buildEvidenceLinks,
+  buildExecutionStatus,
   buildIdentitySnapshot,
-  buildKnowledgeRiskCards,
-  buildRoadmapSnapshot,
+  buildRiskBoard,
+  toRuntimeSignal,
   toTaskSummary,
 } from "./builders";
-import { normalizeInline, parseBlueprintGoals, parseBulletList, parseBulletMap, parseOrgModel, parseWorkModeFlow } from "./parsing";
-import type { HomeEntryLink, PortalOverview, SemanticEntry, SemanticEntryGroup } from "./types";
+import { normalizeInline, parseBulletList, parseBulletMap } from "./parsing";
+import type { HomeEntryLink, ProjectCockpit, SemanticEntry, SemanticEntryGroup } from "./types";
 
 export const DEFAULT_DOC_PATH = "AGENTS.md";
 
@@ -20,17 +22,12 @@ export const HOME_ENTRY_LINKS: HomeEntryLink[] = [
   { href: "/releases", label: "发布记录", scope: "release" },
 ];
 
-export async function getPortalOverview(): Promise<PortalOverview> {
-  const [agents, currentState, roadmap, blueprint, techDebt, moduleIndex, dependencyMap, orgModel, workModes, taskCards] = await Promise.all([
+export async function getProjectCockpit(): Promise<ProjectCockpit> {
+  const [agents, currentState, roadmap, blueprint, taskCards] = await Promise.all([
     readDoc("AGENTS.md"),
     readDoc("memory/project/current-state.md"),
     readDoc("memory/project/roadmap.md"),
     readDoc("memory/project/operating-blueprint.md"),
-    readDoc("memory/project/tech-debt.md"),
-    readDoc("code_index/module-index.md"),
-    readDoc("code_index/dependency-map.md"),
-    readDoc("docs/ORG_MODEL.md"),
-    readDoc("docs/WORK_MODES.md"),
     listTaskCards(),
   ]);
 
@@ -38,47 +35,47 @@ export async function getPortalOverview(): Promise<PortalOverview> {
   const agentsState = parseBulletMap(extractSection(agents.content, "current_state") ?? "");
   const projectSnapshot = parseBulletMap(extractSection(currentState.content, "project_snapshot") ?? "");
   const missionAndVision = parseBulletMap(extractSection(currentState.content, "mission_and_vision") ?? "");
-  const coreValues = parseBulletList(extractSection(currentState.content, "core_values") ?? "");
   const frozenItems = parseBulletList(extractSection(currentState.content, "frozen_items") ?? "");
   const roadmapPhase = normalizeInline(extractSection(roadmap.content, "current_phase") ?? projectSnapshot["当前阶段"] ?? "");
   const currentPriority = normalizeInline(extractSection(roadmap.content, "current_priority") ?? agentsState["当前优先级"] ?? "");
-  const nextMilestone = normalizeInline(extractSection(roadmap.content, "next_milestone") ?? "");
+  const currentMilestone = normalizeInline(extractSection(blueprint.content, "current_milestone") ?? roadmapPhase);
   const milestoneSuccessCriteria = parseBulletList(extractSection(roadmap.content, "milestone_success_criteria") ?? "");
-  const currentMilestone = normalizeInline(extractSection(blueprint.content, "current_milestone") ?? nextMilestone);
-  const blueprintGoals = parseBlueprintGoals(blueprint.content);
-  const nextCheckpoint = parseBulletList(extractSection(blueprint.content, "next_checkpoint") ?? "");
   const taskSummaries = taskCards.map(toTaskSummary);
   const doingTasks = taskSummaries.filter((task) => task.status === "进行中");
   const blockedItems = [
     ...parseBulletList(extractSection(blueprint.content, "current_blockers") ?? ""),
     ...taskSummaries.filter((task) => task.status === "阻塞中").map((task) => `${task.title}（${task.status}）`),
   ];
+  const nextCheckpoint = parseBulletList(extractSection(currentState.content, "next_checkpoint") ?? "");
+  const factConflicts = collectFactConflicts({
+    agentsPriority: agentsState["当前优先级"] ?? "",
+    roadmapPriority: currentPriority,
+    currentStatePriority: projectSnapshot["当前优先级"] ?? "",
+    roadmapPhase,
+    currentStatePhase: projectSnapshot["当前阶段"] ?? "",
+    blueprintMilestone: currentMilestone,
+  });
 
   return {
-    homeLinks: HOME_ENTRY_LINKS,
-    identity: buildIdentitySnapshot(agentsState, missionAndVision, coreValues),
-    roadmap: buildRoadmapSnapshot(roadmapPhase, currentPriority, nextMilestone, milestoneSuccessCriteria),
-    blueprint: buildBlueprintBoard(currentMilestone, currentPriority, blueprintGoals, doingTasks, blockedItems, nextCheckpoint),
-    workModeFlow: [
-      {
-        kind: "trigger",
-        name: "需求提出",
-        summary: "用户需求、问题或机会进入系统，触发后续工作模式链路。",
-        href: "/knowledge-base?path=AGENTS.md",
-      },
-      ...parseWorkModeFlow(workModes.content),
-    ],
-    org: parseOrgModel(orgModel.content),
-    knowledgeRisk: buildKnowledgeRiskCards(
-      moduleIndex.content,
-      dependencyMap.content,
-      releaseDashboard.active_release_id,
-      releaseDashboard.pending_dev_release?.release_id || null,
-      extractSection(techDebt.content, "active_debt") ?? techDebt.content,
+    identity: buildIdentitySnapshot(agentsState, missionAndVision),
+    currentFocus: buildCurrentFocus(roadmapPhase, currentPriority, currentMilestone, milestoneSuccessCriteria),
+    executionStatus: buildExecutionStatus(currentMilestone, doingTasks, blockedItems, nextCheckpoint, [
+      toRuntimeSignal("dev 预览", releaseDashboard.local_preview),
+      toRuntimeSignal("production", releaseDashboard.local_runtime),
+    ]),
+    riskBoard: buildRiskBoard(
+      factConflicts,
       frozenItems,
+      releaseDashboard.pending_dev_release?.release_id || null,
+      releaseDashboard.active_release_id,
+      releaseDashboard.local_preview,
+      releaseDashboard.local_runtime,
     ),
+    evidenceLinks: buildEvidenceLinks(),
   };
 }
+
+export const getPortalOverview = getProjectCockpit;
 
 export async function getSemanticEntryGroups(): Promise<SemanticEntryGroup[]> {
   const taskPaths = await listDocsUnder("tasks/queue");
@@ -142,6 +139,32 @@ export function formatSyncStatus(value: string) {
   return labels[value] ?? value;
 }
 
+function collectFactConflicts(values: {
+  agentsPriority: string;
+  roadmapPriority: string;
+  currentStatePriority: string;
+  roadmapPhase: string;
+  currentStatePhase: string;
+  blueprintMilestone: string;
+}) {
+  const conflicts: string[] = [];
+
+  if (hasMultipleValues([values.agentsPriority, values.roadmapPriority, values.currentStatePriority])) {
+    conflicts.push("当前优先级在 `AGENTS`、`roadmap` 与 `current-state` 之间不一致。");
+  }
+
+  if (hasMultipleValues([values.roadmapPhase, values.currentStatePhase, values.blueprintMilestone])) {
+    conflicts.push("当前阶段或里程碑在 `roadmap`、`current-state` 与 `operating-blueprint` 之间不一致。");
+  }
+
+  return conflicts;
+}
+
+function hasMultipleValues(values: string[]) {
+  const normalized = Array.from(new Set(values.map((value) => normalizeInline(value)).filter(Boolean)));
+  return normalized.length > 1;
+}
+
 function entry(label: string, path: string): SemanticEntry {
   return { label, path };
 }
@@ -150,3 +173,4 @@ function toTaskEntry(path: string) {
   const fileName = path.split("/").pop() ?? path;
   return entry(fileName, path);
 }
+

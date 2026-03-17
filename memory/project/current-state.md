@@ -4,13 +4,13 @@ doc_role: memory
 update_mode: manual
 owner_role: Foreman
 status: active
-last_reviewed_at: 2026-03-16
+last_reviewed_at: 2026-03-17
 source_of_truth: memory/project/roadmap.md
 related_docs:
   - AGENTS.md
   - memory/project/roadmap.md
   - memory/project/operating-blueprint.md
-  - tasks/queue/task-001-repo-refactor.md
+  - tasks/queue/task-018-home-unified-cockpit.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 当前状态
@@ -18,9 +18,9 @@ related_docs:
 ## 项目概览
 
 - 项目名称：Compounding AI Operating System
-- 当前阶段：任务与发布关系升级为交付批次模型
-- 当前优先级：把任务页改造成交付摘要表，并让 release 默认绑定 1 个主 task、可选少量辅助 task。
-- 成功定义：人默认看任务页就能判断这次交付的收益、风险、状态、版本与可介入动作，而不必先读工程明细。
+- 当前阶段：首页统一驾驶舱一期
+- 当前优先级：把首页升级为人类优先的统一项目驾驶舱，让项目主线、推进状态、风险与证据入口在同一页对齐，并保持与 AI 读取的主源一致。
+- 成功定义：不会代码的产品、运营或负责人打开首页后，也能在 1 分钟内理解项目是什么、当前最重要的事、现在卡在哪、下一步该去哪里看；首页摘要与详情页之间不发生事实漂移。
 - 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
 - 运行边界：server-only
 
@@ -37,10 +37,10 @@ related_docs:
 
 ## 当前焦点
 
-- 让 task 保持执行边界，同时让 release 成为清晰的验收与回滚边界
-- 让 `/tasks` 默认展示交付摘要，而不是继续偏向工程明细
-- 让 `/releases` 创建 dev 时显式绑定主 task，避免 release 与 task 再次漂移
-- 保持刚完成的知识资产防漂移机制继续稳定可用
+- 对齐 `AGENTS`、`roadmap`、`operating-blueprint`、`current-state` 的当前主线描述
+- 把首页从信息门户升级为 5 区块统一驾驶舱
+- 把任务与运行态信息翻译成产品/运营能快速理解的摘要
+- 保持详情页继续承接文档、任务和发布操作，不长出新的平行真相源
 
 ## 当前推荐校验顺序
 
@@ -59,9 +59,9 @@ related_docs:
 
 ## 下一检查点
 
-- 明确 release 主 task 与辅助 task 的数据模型
-- 确认任务页默认列只保留对人工最有价值的信息
-- 跑通 `dev` 预览创建、验收通过与按 task 回滚的链路
+- 确认首页 5 个区块的固定边界与证据落点
+- 完成统一驾驶舱快照接口与首页渲染测试
+- 保持 `/tasks`、`/knowledge-base`、`/releases` 与驾驶舱叙事一致
 - `pnpm build`
 - `pnpm test`
 - `python3 scripts/init_project_compounding.py audit --config bootstrap/project_brief.yaml --target .`

@@ -25,7 +25,7 @@ t-017
 
 ## 当前模式
 
-质量验收
+发布复盘
 
 
 ## 分支
@@ -85,7 +85,7 @@ t-017
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
@@ -95,3 +95,5 @@ doing
 - 文档：`tasks/queue/task-017-delivery-batch-model.md`
 
 ## 复盘
+
+- 当前改动已经并入 `main` 后，task 状态也必须同步进入 `done`，否则任务页与 task/Git 校验会继续出现漂移。

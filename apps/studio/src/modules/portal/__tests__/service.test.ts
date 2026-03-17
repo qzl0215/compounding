@@ -1,26 +1,25 @@
 import { describe, expect, it } from "vitest";
-import { getPortalOverview } from "../service";
+import { getProjectCockpit } from "../service";
 
-describe("portal overview", () => {
-  it("surfaces identity, roadmap, blueprint, org roles, and knowledge risk from markdown sources", async () => {
-    const overview = await getPortalOverview();
+describe("project cockpit", () => {
+  it("surfaces the unified cockpit snapshot from markdown sources and runtime state", async () => {
+    const overview = await getProjectCockpit();
 
     expect(overview.identity.oneLiner).toContain("AI-Native Repo");
     expect(overview.identity.mission).toContain("AI-Native Repo");
-    expect(overview.identity.values.length).toBeGreaterThanOrEqual(3);
-    expect(overview.roadmap.currentPhase).toContain("任务与发布关系升级为交付批次模型");
-    expect(overview.roadmap.currentPriority).toContain("交付批次");
-    expect(overview.roadmap.nextMilestone).toContain("任务页升级为高密度交付摘要表");
-    expect(overview.blueprint.currentMilestone).toContain("任务与发布关系升级为交付批次模型");
-    expect(overview.blueprint.goals.length).toBeGreaterThanOrEqual(3);
-    expect(Array.isArray(overview.blueprint.doingTasks)).toBe(true);
-    expect(overview.blueprint.nextCheckpoint.length).toBeGreaterThan(0);
-    expect(overview.workModeFlow.length).toBe(6);
-    expect(overview.workModeFlow[0]?.name).toBe("需求提出");
-    expect(overview.workModeFlow.some((mode) => mode.name.includes("战略澄清"))).toBe(true);
-    expect(overview.org.some((group) => group.title === "决策层")).toBe(true);
-    expect(overview.org.flatMap((group) => group.roles).some((role) => role.name.includes("总经办"))).toBe(true);
-    expect(overview.knowledgeRisk.some((item) => item.title === "发布与风险")).toBe(true);
-    expect(overview.knowledgeRisk.some((item) => item.title === "关键冻结项")).toBe(true);
+    expect(overview.currentFocus.currentPhase).toContain("首页统一驾驶舱一期");
+    expect(overview.currentFocus.currentPriority).toContain("统一项目驾驶舱");
+    expect(overview.currentFocus.currentMilestone).toContain("首页统一驾驶舱一期");
+    expect(overview.currentFocus.successCriteria.length).toBeGreaterThanOrEqual(3);
+    expect(Array.isArray(overview.executionStatus.doingTasks)).toBe(true);
+    expect(overview.executionStatus.nextCheckpoint.length).toBeGreaterThan(0);
+    expect(overview.executionStatus.runtimeSignals).toHaveLength(2);
+    expect(overview.executionStatus.runtimeSignals.some((signal) => signal.label === "production")).toBe(true);
+    expect(overview.riskBoard.factConflicts).toHaveLength(0);
+    expect(overview.riskBoard.items.some((item) => item.title === "待验收版本")).toBe(true);
+    expect(overview.riskBoard.items.some((item) => item.summary.includes("发布页"))).toBe(true);
+    expect(overview.evidenceLinks.map((group) => group.title)).toEqual(["主源文档", "详情工作台", "辅助理解"]);
+    expect(overview.evidenceLinks.flatMap((group) => group.items).some((item) => item.title === "AGENTS")).toBe(true);
+    expect(overview.evidenceLinks.flatMap((group) => group.items).some((item) => item.title === "发布详情")).toBe(true);
   });
 });
