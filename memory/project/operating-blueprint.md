@@ -17,46 +17,45 @@ last_reviewed_at: 2026-03-16
 
 ## 当前里程碑
 
-建设防漂移文档与索引资产
+强化运行态状态解释与告警体验
 
 ## 关键子目标
 
-### Prompt 资产防漂移
+### 运行态状态模型收口
 
 - 发布标准：
-  - 明确 prompt 文档的真相源、版本、回退边界
-  - 运行时代码与校验器共用同一份 prompt 注册表
-  - `pnpm validate:ai-output` 能覆盖 prompt 资产完整性与引用一致性
+  - 明确服务未启动、版本漂移、端口异常、状态失真的状态定义
+  - 页面、状态接口和运行时脚本对同一问题的命名一致
 - 关联任务：
-  - `tasks/queue/task-011-anti-drift-docs-prompts-index.md`
+  - `tasks/queue/task-012-runtime-status-ux-hardening.md`
 
-### 索引与关键说明文档边界
+### 页面告警与下一步动作
 
 - 发布标准：
-  - 模块索引、函数索引和关键说明文档的维护方式清楚
-  - `code_index` 的生成边界和人工补充边界清楚
-  - 不会因为引入防漂移机制而长出新的平行真相源
+  - `/releases` 能直接说明当前状态和下一步动作
+  - 首页风险区能压缩展示关键运行态风险
+  - 非技术用户无需读日志即可理解多数常见问题
 - 关联任务：
-  - `tasks/queue/task-011-anti-drift-docs-prompts-index.md`
+  - `tasks/queue/task-012-runtime-status-ux-hardening.md`
 
-### 生成 / 校验 / 人工维护三分法
+### 运行态解释与发布链一致
 
 - 发布标准：
-  - 至少一类高频资产进入可执行的防漂移机制
-  - `docs/ASSET_MAINTENANCE.md` 可直接回答每类资产的真相源、维护方式和命令
-  - 生成、校验、人工维护三类方式的进入条件与限制条件清楚
+  - `dev` 预览、production 与 release registry 的状态语义一致
+  - 页面状态不会与本地运行时脚本、release registry 再次分叉
+  - 告警语义能直接指向重启、重切换、回滚或继续修复等下一步动作
 - 关联任务：
-  - `tasks/queue/task-011-anti-drift-docs-prompts-index.md`
+  - `tasks/queue/task-012-runtime-status-ux-hardening.md`
 
 ## 当前阻塞
 
-- 当前无结构性阻塞；关键在于先选出最值得治理的一类资产，避免一上来把所有文档都推向生成式。
+- 当前无结构性阻塞；关键在于用最少的状态模型把最常见的运行态问题说清楚，而不是继续堆更多技术细节。
 
 ## 下一检查点
 
-- 生成资产维护矩阵
-- 建立 prompt 注册表并接到 AI 输出门禁
-- 明确 `code_index` 的生成与人工补充边界
+- 明确运行态状态模型与页面告警表达
+- 选出首页风险区与 `/releases` 的最佳分工
+- 让关键运行态问题都能直接指向下一步动作
 
 ## 证据边界
 

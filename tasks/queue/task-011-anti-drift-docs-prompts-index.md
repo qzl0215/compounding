@@ -41,7 +41,7 @@
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 ## 分支
 
@@ -76,7 +76,7 @@
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
@@ -86,3 +86,7 @@ doing
 - 文档：`docs/PROJECT_RULES.md`, `docs/AI_OPERATING_MODEL.md`, `docs/ASSET_MAINTENANCE.md`, `docs/prompts/prompt-assets.json`, `tasks/queue/task-011-anti-drift-docs-prompts-index.md`
 
 ## 复盘
+
+- 已建立资产维护矩阵，明确 `generated / validated / manual` 三分法。
+- prompt 资产已切到单一注册表，运行时代码与 AI 输出门禁共享同一份来源。
+- `code_index` 的生成边界与人工补充边界已写回主源，避免索引资产继续漂移。
