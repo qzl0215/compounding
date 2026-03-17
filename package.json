@@ -14,6 +14,7 @@
     "ai:scan-health": "node --experimental-strip-types scripts/ai/scan-code-health.ts",
     "ai:scan-health:strict": "node --experimental-strip-types scripts/ai/scan-code-health.ts --strict",
     "ai:generate-index": "node --experimental-strip-types scripts/ai/generate-module-index.ts",
+    "ai:generate-experience-index": "node --experimental-strip-types scripts/ai/generate-experience-index.ts",
     "ai:generate-assets": "node --experimental-strip-types scripts/ai/generate-asset-maintenance.ts",
     "ai:build-context": "node --experimental-strip-types scripts/ai/build-context.ts tasks/queue/task-002-ui-task-pm-and-doc-localization.md",
     "ai:create-task": "node --experimental-strip-types scripts/ai/create-task.ts",

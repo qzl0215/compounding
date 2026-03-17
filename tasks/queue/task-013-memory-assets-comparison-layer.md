@@ -35,9 +35,13 @@
 - `code_index/*`
 - `docs/AI_OPERATING_MODEL.md`
 
+## 短编号
+
+t-013
+
 ## 当前模式
 
-方案评审
+工程执行
 
 ## 分支
 
@@ -47,6 +51,18 @@
 
 `auto: branch HEAD`
 
+## 交付收益
+
+experience 可被快速横向扫，支持「重复出现 2 次以上」的升格判断；AI 可基于索引做模式识别，而不必逐篇读全文。
+
+## 交付风险
+
+若索引与 experience 正文不同步，会制造新的漂移；需在 experience 变更时记得重新生成。
+
+## 一句复盘
+
+选择 experience 作为第一类可比较资产，用 manifest 生成模式收口，不引入数据库。
+
 ## 计划
 
 - 盘点当前 memory 里最值得升级的沉淀类型
@@ -55,7 +71,7 @@
 
 ## 发布说明
 
-本任务当前仅入列，不触发运行态变化；正式实施时再评估发布影响。
+本任务新增 ADR-004、generate-experience-index 脚本与 experience-index.json；experience 变更后需运行 `pnpm ai:generate-experience-index`。
 
 ## 验收标准
 
@@ -72,13 +88,15 @@
 
 ## 状态
 
-todo
+doing
 
 ## 更新痕迹
 
-- 记忆：`no change: planning candidate only`
-- 索引：`no change: planning candidate only`
+- 记忆：`memory/decisions/ADR-004-experience-comparable-assets.md`, `memory/experience/README.md`
+- 索引：`no change: experience-index 独立于 code_index`
 - 路线图：`no change: current priority unchanged`
 - 文档：`tasks/queue/task-013-memory-assets-comparison-layer.md`
 
 ## 复盘
+
+- 经验索引让「先记忆再升格」的候选判断有数据支撑，而不靠人脑记忆。

@@ -1,0 +1,31 @@
+{
+  "generated_at": "2026-03-17T11:34:09.187Z",
+  "source_of_truth": "memory/experience/exp-*.md",
+  "source_script": "scripts/ai/generate-experience-index.ts",
+  "items": [
+    {
+      "id": "exp-001-thin-agents-entry",
+      "title": "保持 AGENTS 轻入口",
+      "decision": "把 AGENTS 收口成薄入口，只保留高频执行约束和必读清单。",
+      "reuse": "若未来再出现高频长文倾向，应优先压回 docs / memory，而不是继续加重 AGENTS。",
+      "related_docs": "AGENTS.md, docs/AI_OPERATING_MODEL.md",
+      "path": "memory/experience/exp-001-thin-agents-entry.md"
+    },
+    {
+      "id": "exp-002-memory-before-promotion",
+      "title": "先记忆，再升格",
+      "decision": "先写 memory，再验证，再决定是否升格。",
+      "reuse": "所有暂未稳定的经验都应该先进入 memory/experience。",
+      "related_docs": "memory/project/tech-debt.md, docs/PROJECT_RULES.md",
+      "path": "memory/experience/exp-002-memory-before-promotion.md"
+    },
+    {
+      "id": "exp-003-delete-legacy-ui-first",
+      "title": "先删除半活旧前台",
+      "decision": "优先删除半活前台，再谈新骨架。",
+      "reuse": "以后凡是退役前台，都应该先从构建入口清掉，再决定是否归档。",
+      "related_docs": "docs/REFACTOR_PLAN.md, memory/project/tech-debt.md",
+      "path": "memory/experience/exp-003-delete-legacy-ui-first.md"
+    }
+  ]
+}

@@ -26,4 +26,9 @@ related_docs:
 
 - 重复出现 2 次以上且无明显例外的经验，才能候选升格
 - 若现有规则已直接阻碍 roadmap 主线效率，可直接改规，但必须同步写 ADR
+
+## 可比较资产
+
+- `experience-index.json` 由 `pnpm ai:generate-experience-index` 生成，提取 id、title、decision、reuse、path
+- 供人和 AI 快速横向扫、比较、复盘；升格判断时可先看索引再决策
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->
