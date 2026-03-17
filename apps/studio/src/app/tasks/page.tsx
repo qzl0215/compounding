@@ -4,6 +4,8 @@ import { getReleaseDashboard } from "@/modules/releases";
 import { buildTaskDeliveryRows, listTaskCards } from "@/modules/tasks";
 import { DeliveryTable } from "@/modules/tasks/components/delivery-table";
 
+export const dynamic = "force-dynamic";
+
 export default async function TasksPage() {
   const releaseDashboard = getReleaseDashboard();
   const tasks = await listTaskCards();

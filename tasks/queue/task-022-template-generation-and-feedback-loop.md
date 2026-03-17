@@ -41,7 +41,7 @@ t-022
 
 ## 分支
 
-`codex/task-022-template-generation-and-feedback-loop`
+`codex/task-022-templates-and-feedback-loops`
 
 ## 最近提交
 
@@ -94,7 +94,7 @@ t-022
 
 ## 状态
 
-done
+doing
 
 ## 更新痕迹
 
