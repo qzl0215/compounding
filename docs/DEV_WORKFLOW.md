@@ -38,6 +38,69 @@ related_docs:
 12. 用户验收通过后，再晋升到 `main` 与本地生产
 13. 用 `pnpm prod:status`、`pnpm prod:check`、`/releases` 和生产首页链接完成最终验收
 
+## 分层验证顺序
+
+### 静态门禁
+
+- 推荐命令：`pnpm validate:static`
+- 推荐命令：
+  - `pnpm validate:static`
+  - `pnpm validate:static:strict`（用于继续收技术债）
+- 包含：
+  - `pnpm lint`
+  - `pnpm ai:scan-health`
+  - `pnpm ai:validate-trace`
+  - `pnpm ai:validate-task-git`
+- 何时跑：
+  - 每次代码改动后，进入 `dev` 预览前
+- 失败语义：
+  - 说明当前改动还不满足最基本的结构、命名、task 回写或代码风格要求
+- 下一步：
+  - 先修 task / lint / 扫描类问题，再进入构建门禁
+  - 若要继续压缩软上限文件和技术债，再补跑 `pnpm validate:static:strict`
+
+### 构建门禁
+
+- 推荐命令：`pnpm validate:build`
+- 包含：
+  - `pnpm test`
+  - `pnpm build`
+  - `pnpm bootstrap:audit`
+- 何时跑：
+  - 静态门禁通过后，生成 `dev` 预览前
+- 失败语义：
+  - 说明代码虽能通过静态检查，但在测试、构建或 scaffold / audit 层仍不稳定
+- 下一步：
+  - 先修测试、构建或 audit 失败，再重新跑构建门禁
+
+### 运行时门禁
+
+- 推荐命令：
+  - `pnpm preview:check`
+  - `pnpm prod:check`
+- 何时跑：
+  - `dev` 预览生成后
+  - production 切换后
+- 失败语义：
+  - 说明版本可能已准备完成，但服务没有真正健康在线，或当前运行态与 release 语义不一致
+- 下一步：
+  - 先看 `/releases`、runtime status 和端口状态，再决定是重启、重切换还是回滚
+
+### AI 输出门禁
+
+- 推荐命令：`pnpm validate:ai-output`
+- 包含：
+  - AI prompt 资产完整性检查
+  - AI 重构接口支撑文件检查
+  - provider 配置是否半残的检查
+- 何时跑：
+  - 修改 prompt、AI 文档重构链路、AI 文档接口时
+  - 准备发布这类改动时
+- 失败语义：
+  - 说明 AI 输出链路的输入资产或配置不值得信任
+- 下一步：
+  - 先补 prompt / 路由 / provider 资产，再进入发布链路
+
 ## 汇报契约
 
 - 默认回复结构：

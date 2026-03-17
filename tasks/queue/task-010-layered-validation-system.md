@@ -38,7 +38,7 @@
 
 ## 当前模式
 
-方案评审
+质量验收
 
 ## 分支
 
@@ -56,7 +56,7 @@
 
 ## 发布说明
 
-本任务当前仅入列，不触发运行态变化；正式实施时再评估发布影响。
+本任务会调整发布前推荐校验顺序、发布页提示与 package 校验命令；完成后需提供 dev 预览链接验收，再决定是否晋升到 main 与 production。
 
 ## 验收标准
 
@@ -73,13 +73,15 @@
 
 ## 状态
 
-todo
+doing
 
 ## 更新痕迹
 
 - 记忆：`no change: planning candidate only`
 - 索引：`no change: planning candidate only`
 - 路线图：`no change: current priority unchanged`
-- 文档：`tasks/queue/task-010-layered-validation-system.md`
+- 文档：`tasks/queue/task-010-layered-validation-system.md, AGENTS.md, docs/DEV_WORKFLOW.md, docs/AI_OPERATING_MODEL.md, docs/PROJECT_RULES.md, memory/project/current-state.md, apps/studio/src/app/releases/page.tsx`
 
 ## 复盘
+
+- 当前四层门禁已经可执行，但 `validate:static:strict` 仍会暴露 6 个已知软上限文件；这说明 strict 版本更适合作为治理推进器，而不是当前每次发布的默认硬阻断项。

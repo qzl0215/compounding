@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { getManagementAccessState, getReleaseDashboard } from "@/modules/releases";
 import type { LocalRuntimeStatus, LocalRuntimeStatusType } from "@/modules/releases";
 import { ReleaseDashboardPanel } from "@/modules/releases/components/release-dashboard-panel";
+import { VALIDATION_LAYERS } from "@/modules/releases/validation";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,7 @@ export default async function ReleasesPage() {
   const dashboard = getReleaseDashboard();
   const outline = [
     { id: "release-overview", label: "通道总览" },
+    { id: "validation-layers", label: "验证层级" },
     { id: "runtime-status", label: "运行态" },
     { id: "release-history", label: "版本台账" },
   ];
@@ -51,6 +53,44 @@ export default async function ReleasesPage() {
               <Meta title="dev 预览链接" value={dashboard.dev_preview_url} />
               <Meta title="生产验收链接" value={dashboard.production_url} />
             </dl>
+          </Card>
+        </section>
+        <section id="validation-layers">
+          <Card>
+            <p className="text-xs uppercase tracking-[0.28em] text-accent">分层验证</p>
+            <h2 className="mt-3 text-3xl font-semibold">发布前推荐先跑哪一层检查</h2>
+            <div className="mt-6 grid gap-4 xl:grid-cols-2">
+              {VALIDATION_LAYERS.map((layer) => (
+                <article key={layer.id} className="rounded-3xl border border-white/8 bg-white/[0.03] p-5">
+                  <p className="text-xs uppercase tracking-[0.22em] text-accent">{layer.title}</p>
+                  <p className="mt-3 text-sm text-white/72">{layer.summary}</p>
+                  <div className="mt-4 space-y-3 text-sm text-white/72">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.18em] text-white/42">推荐命令</p>
+                      <ul className="mt-2 space-y-2">
+                        {layer.commands.map((command) => (
+                          <li key={command} className="rounded-2xl border border-white/8 bg-black/20 px-3 py-2 font-mono text-xs text-white/78">
+                            {command}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.18em] text-white/42">何时跑</p>
+                      <p className="mt-2">{layer.runWhen}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.18em] text-white/42">失败说明</p>
+                      <p className="mt-2">{layer.failureMeaning}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.18em] text-white/42">下一步</p>
+                      <p className="mt-2">{layer.nextStep}</p>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
           </Card>
         </section>
         <section id="runtime-status">

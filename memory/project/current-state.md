@@ -42,6 +42,15 @@ related_docs:
 - 把 `/releases`、`/tasks` 与本地运行时状态解释对齐到同一套门禁层次
 - 保持新建立的 `dev preview → 验收 → main / production` 链路稳定可解释
 
+## 当前推荐校验顺序
+
+- 静态门禁：`pnpm validate:static`
+- 构建门禁：`pnpm validate:build`
+- 运行时门禁：
+  - `pnpm preview:check`
+  - `pnpm prod:check`
+- AI 输出门禁：`pnpm validate:ai-output`（仅在 prompt / AI 重构链路变动时进入）
+
 ## 关键冻结项
 
 - 不恢复旧 workflow 前台和重型多步骤表单

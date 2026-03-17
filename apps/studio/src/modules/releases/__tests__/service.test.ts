@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { getManagementAccessState, getReleaseDashboard, readReleaseRegistry } from "../service";
+import { RELEASE_VALIDATION_ORDER, VALIDATION_LAYERS } from "../validation";
 
 describe("releases service", () => {
   afterEach(() => {
@@ -94,5 +95,11 @@ describe("releases service", () => {
     expect(getReleaseDashboard().active_release?.release_id).toBe("rel-002");
     expect(getReleaseDashboard().pending_dev_release?.release_id).toBe("rel-003");
     expect(getReleaseDashboard().releases[0]?.release_id).toBe("rel-003");
+  });
+
+  it("exposes the fixed validation layer order", () => {
+    expect(RELEASE_VALIDATION_ORDER).toEqual(["static", "build", "runtime", "ai-output"]);
+    expect(VALIDATION_LAYERS).toHaveLength(4);
+    expect(VALIDATION_LAYERS[0]?.commands[0]).toBe("pnpm validate:static");
   });
 });
