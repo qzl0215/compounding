@@ -73,6 +73,7 @@ export async function getPortalOverview(): Promise<PortalOverview> {
       moduleIndex.content,
       dependencyMap.content,
       releaseDashboard.active_release_id,
+      releaseDashboard.pending_dev_release?.release_id || null,
       extractSection(techDebt.content, "active_debt") ?? techDebt.content,
       frozenItems,
     ),

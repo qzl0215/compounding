@@ -31,6 +31,7 @@ related_docs:
 
 - AI 默认围绕 `tasks/queue/*` 工作
 - 若任务不存在，先用 `scripts/ai/create-task.ts` 生成
+- 任何 repo-tracked 改动都必须同步更新 task；若没有 task 更新，校验器必须失败
 - 若 roadmap / operating-blueprint / 发布标准不清晰，先创建规划 task，再与用户共商
 - 任务是 scope 和验收边界，不是可有可无的备注
 - 任务的目标是让团队高效协作，而不是制造更多流程负担
@@ -85,6 +86,10 @@ related_docs:
 ## 生产直发
 
 - 生产发布以 `main` 为唯一主线
+- `dev` 是 preview channel，不是长期 git 主分支
+- 每轮可验收改动默认先生成 `dev` 预览链接
+- 若存在 `pending dev`，AI 必须先提醒用户验收上一个 `dev`
+- 验收通过后，AI 再触发晋升到 `main` 与本地生产，并再次提供生产验收链接
 - 版本构建在后台 release 目录完成
 - 线上切换只在构建和 smoke 成功后发生
 - 本地生产默认不自动拉起；只有手动执行 `pnpm prod:start` 才会让 `127.0.0.1:3000` 真正在线

@@ -3,17 +3,23 @@ const path = require("node:path");
 const { execFileSync } = require("node:child_process");
 const { ensureLayout, layoutPaths, runtimeRoot } = require("../release/lib.ts");
 
-const PROD_PORT = Number(process.env.AI_OS_LOCAL_PROD_PORT || "3000");
-const PROD_HOST = process.env.AI_OS_LOCAL_PROD_HOST || "127.0.0.1";
+const RUNTIME_PROFILE = process.env.AI_OS_RUNTIME_PROFILE || "prod";
+const DEFAULT_PORT = RUNTIME_PROFILE === "dev" ? "3001" : "3000";
+const PROD_PORT = Number(process.env.AI_OS_LOCAL_PORT || process.env.AI_OS_LOCAL_PROD_PORT || DEFAULT_PORT);
+const PROD_HOST = process.env.AI_OS_LOCAL_HOST || process.env.AI_OS_LOCAL_PROD_HOST || "127.0.0.1";
 const PROD_BASE_URL = `http://${PROD_HOST}:${PROD_PORT}`;
+const CURRENT_LINK_NAME = process.env.AI_OS_LOCAL_LINK_NAME || (RUNTIME_PROFILE === "dev" ? "preview-current" : "current");
+const STATE_PREFIX = process.env.AI_OS_LOCAL_STATE_PREFIX || (RUNTIME_PROFILE === "dev" ? "local-dev" : "local-prod");
+const PROFILE_LABEL = RUNTIME_PROFILE === "dev" ? "dev 预览" : "本地生产";
 
 function localRuntimePaths() {
   const layout = layoutPaths();
   return {
     ...layout,
-    pidPath: path.join(layout.sharedDir, "local-prod.pid"),
-    logPath: path.join(layout.sharedDir, "local-prod.log"),
-    statePath: path.join(layout.sharedDir, "local-prod.json"),
+    currentLinkPath: path.join(layout.root, CURRENT_LINK_NAME),
+    pidPath: path.join(layout.sharedDir, `${STATE_PREFIX}.pid`),
+    logPath: path.join(layout.sharedDir, `${STATE_PREFIX}.log`),
+    statePath: path.join(layout.sharedDir, `${STATE_PREFIX}.json`),
   };
 }
 
@@ -23,8 +29,8 @@ function ensureLocalRuntimeLayout() {
 }
 
 function currentReleaseSnapshot() {
-  const { currentLink } = ensureLocalRuntimeLayout();
-  if (!fs.existsSync(currentLink)) {
+  const { currentLinkPath } = ensureLocalRuntimeLayout();
+  if (!fs.existsSync(currentLinkPath)) {
     return {
       releaseId: null,
       releasePath: null,
@@ -34,7 +40,7 @@ function currentReleaseSnapshot() {
     };
   }
 
-  const releasePath = fs.realpathSync(currentLink);
+  const releasePath = fs.realpathSync(currentLinkPath);
   const releaseId = path.basename(releasePath);
   const studioPath = path.join(releasePath, "apps", "studio");
   const buildIdPath = path.join(studioPath, ".next", "BUILD_ID");
@@ -140,6 +146,9 @@ function readSharedEnv() {
 }
 
 module.exports = {
+  CURRENT_LINK_NAME,
+  PROFILE_LABEL,
+  RUNTIME_PROFILE,
   PROD_BASE_URL,
   PROD_HOST,
   PROD_PORT,

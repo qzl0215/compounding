@@ -8,5 +8,12 @@ export async function GET(request: Request) {
   if (!access.allowed) {
     return NextResponse.json({ ok: false, message: access.reason }, { status: 403 });
   }
-  return NextResponse.json({ ok: true, registry: readReleaseRegistry(), runtime: getLocalRuntimeStatus() });
+  return NextResponse.json({
+    ok: true,
+    registry: readReleaseRegistry(),
+    runtime: {
+      production: getLocalRuntimeStatus("prod"),
+      dev: getLocalRuntimeStatus("dev"),
+    },
+  });
 }

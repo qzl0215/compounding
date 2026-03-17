@@ -47,8 +47,10 @@ related_docs:
 
 ## 发布治理
 
-- `main` 是唯一生产主线，不再使用 `dev` 作为发布缓冲层
+- `main` 是唯一生产主线；`dev` 只是 preview channel，不是长期 git 主分支
 - 新 release 必须先在后台目录完成安装、构建与 smoke check，成功后才允许切换 `current`
+- 每轮可验收改动默认先生成 `dev` 预览；若已有未验收 `dev`，必须先验收或驳回上一个 `dev`
+- 只有验收通过的 `dev` 才能晋升到 `main` 与本地生产
 - 线上回滚以 release 切换为准，不以 `git reset` 为准
 - 发布失败不得影响当前线上版本；未切换前禁止覆盖现网目录
 

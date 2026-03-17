@@ -9,5 +9,9 @@ export async function GET(request: Request) {
     return NextResponse.json({ ok: false, message: access.reason }, { status: 403 });
   }
 
-  return NextResponse.json({ ok: true, runtime: getLocalRuntimeStatus() });
+  return NextResponse.json({
+    ok: true,
+    production: getLocalRuntimeStatus("prod"),
+    dev: getLocalRuntimeStatus("dev")
+  });
 }

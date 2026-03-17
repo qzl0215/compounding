@@ -1,4 +1,4 @@
-const { clearLocalState, detectLocalProdStatus, spawnLocalProduction, stopProcess, waitForExit, waitForHealthyRuntime } = require("./lib.ts");
+const { PROFILE_LABEL, clearLocalState, detectLocalProdStatus, spawnLocalProduction, stopProcess, waitForExit, waitForHealthyRuntime } = require("./lib.ts");
 
 async function main() {
   const status = detectLocalProdStatus();
@@ -9,7 +9,7 @@ async function main() {
   }
 
   if (status.status === "running") {
-    console.log(JSON.stringify({ ok: true, message: "本地生产已经在运行。", status }, null, 2));
+    console.log(JSON.stringify({ ok: true, message: `${PROFILE_LABEL}已经在运行。`, status }, null, 2));
     return;
   }
 
@@ -38,7 +38,7 @@ async function main() {
       JSON.stringify(
         {
           ok: false,
-          message: readiness.status.reason || "本地生产启动失败。",
+          message: readiness.status.reason || `${PROFILE_LABEL}启动失败。`,
           status: readiness.status,
           check: readiness.check,
         },
@@ -53,7 +53,7 @@ async function main() {
     JSON.stringify(
       {
         ok: true,
-        message: "本地生产已启动并通过健康检查。",
+        message: `${PROFILE_LABEL}已启动并通过健康检查。`,
         status: readiness.status,
         check: readiness.check,
       },
@@ -64,6 +64,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.log(JSON.stringify({ ok: false, message: error instanceof Error ? error.message : "本地生产启动失败。" }, null, 2));
+  console.log(JSON.stringify({ ok: false, message: error instanceof Error ? error.message : `${PROFILE_LABEL}启动失败。` }, null, 2));
   process.exit(1);
 });

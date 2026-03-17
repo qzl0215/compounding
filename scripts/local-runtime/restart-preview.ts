@@ -1,4 +1,9 @@
-const { PROFILE_LABEL, detectLocalProdStatus } = require("./lib.ts");
+process.env.AI_OS_RUNTIME_PROFILE = "dev";
+process.env.AI_OS_LOCAL_PORT = process.env.AI_OS_LOCAL_PORT || "3001";
+process.env.AI_OS_LOCAL_LINK_NAME = "preview-current";
+process.env.AI_OS_LOCAL_STATE_PREFIX = "local-dev";
+
+const { detectLocalProdStatus } = require("./lib.ts");
 
 async function runScript(script) {
   const { execFileSync } = require("node:child_process");
@@ -19,17 +24,19 @@ async function main() {
   }
 
   if (status.status === "stopped" || status.status === "stale_pid") {
-    console.log(JSON.stringify({ ok: true, message: `${PROFILE_LABEL}当前未运行，按约定不自动拉起。`, status }, null, 2));
+    console.log(JSON.stringify({ ok: true, message: "dev 预览当前未运行，将直接拉起。", status }, null, 2));
+    const started = await runScript("start-preview.ts");
+    console.log(JSON.stringify(started, null, 2));
     return;
   }
 
-  const stopped = await runScript("stop-prod.ts");
+  const stopped = await runScript("stop-preview.ts");
   if (!stopped.ok) {
     console.log(JSON.stringify(stopped, null, 2));
     process.exit(1);
   }
 
-  const started = await runScript("start-prod.ts");
+  const started = await runScript("start-preview.ts");
   if (!started.ok) {
     console.log(JSON.stringify(started, null, 2));
     process.exit(1);
@@ -39,7 +46,7 @@ async function main() {
     JSON.stringify(
       {
         ok: true,
-        message: `${PROFILE_LABEL}已按当前 release 最小重启。`,
+        message: "dev 预览已按当前 release 最小重启。",
         status: started.status,
         check: started.check,
       },
@@ -50,6 +57,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.log(JSON.stringify({ ok: false, message: error instanceof Error ? error.message : `${PROFILE_LABEL}重启失败。` }, null, 2));
+  console.log(JSON.stringify({ ok: false, message: error instanceof Error ? error.message : "dev 预览重启失败。" }, null, 2));
   process.exit(1);
 });

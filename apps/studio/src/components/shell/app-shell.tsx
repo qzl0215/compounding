@@ -14,7 +14,7 @@ const navigation = [
   { href: "/releases", label: "发布", icon: Rocket }
 ];
 
-export function AppShell({ children }: PropsWithChildren) {
+export function AppShell({ children, runtimeChannel }: PropsWithChildren<{ runtimeChannel: "dev" | "prod" }>) {
   const pathname = usePathname();
 
   return (
@@ -29,7 +29,10 @@ export function AppShell({ children }: PropsWithChildren) {
               <h1 className="mt-3 font-mono text-2xl font-semibold text-white">指挥中枢</h1>
               <p className="mt-2 text-sm text-white/65">像创业团队一样运转的 AI 操作系统</p>
             </div>
-            <Badge tone="accent">V4</Badge>
+            <div className="flex flex-col items-end gap-2">
+              <Badge tone={runtimeChannel === "dev" ? "warning" : "accent"}>{runtimeChannel === "dev" ? "DEV" : "PROD"}</Badge>
+              <Badge tone="accent">V4</Badge>
+            </div>
           </div>
           <nav className="space-y-2">
             {navigation.map(({ href, label, icon: Icon }) => {
@@ -66,8 +69,9 @@ export function AppShell({ children }: PropsWithChildren) {
               <li>task 负责执行边界</li>
               <li>memory 负责沉淀，index 负责导航</li>
               <li>改动前先做 preflight</li>
+              <li>每次改动都要更新 task</li>
+              <li>先 dev 预览，再验收发布</li>
               <li>main 是唯一生产主线</li>
-              <li>发布通过 current 软链切换</li>
             </ul>
             <Link className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-accent" href="/knowledge-base">
               <BookOpen className="size-3.5" />
@@ -81,12 +85,16 @@ export function AppShell({ children }: PropsWithChildren) {
   );
 }
 
-function Badge({ children, tone = "default" }: { children: string; tone?: "default" | "accent" }) {
+function Badge({ children, tone = "default" }: { children: string; tone?: "default" | "accent" | "warning" }) {
   return (
     <span
       className={cn(
         "rounded-full border px-3 py-1 text-[11px] uppercase tracking-[0.24em]",
-        tone === "accent" ? "border-accent/40 bg-accent/10 text-accent" : "border-white/15 bg-white/5 text-white/60"
+        tone === "accent"
+          ? "border-accent/40 bg-accent/10 text-accent"
+          : tone === "warning"
+            ? "border-amber-400/40 bg-amber-400/12 text-amber-200"
+            : "border-white/15 bg-white/5 text-white/60"
       )}
     >
       {children}

@@ -1,4 +1,14 @@
-const { ensureReleaseTag, markActive, readManifest, readRegistry, releaseReload, updateCurrentSymlink, upsertRelease, withReleaseLock } = require("./lib.ts");
+const {
+  ensureReleaseTag,
+  markActive,
+  productionBaseUrl,
+  readManifest,
+  readRegistry,
+  releaseReload,
+  updateChannelSymlink,
+  upsertRelease,
+  withReleaseLock,
+} = require("./lib.ts");
 
 function parseArg(name) {
   const index = process.argv.indexOf(name);
@@ -23,7 +33,7 @@ try {
     }
 
     const tag = ensureReleaseTag(`release-${releaseId}`, record.commit_sha);
-    updateCurrentSymlink(releaseId);
+    updateChannelSymlink(record.release_path, "prod");
     const reloadNote = releaseReload();
     markActive(releaseId);
     const updated = readRegistry().releases.find((item) => item.release_id === releaseId) || { ...record, tag };
@@ -37,6 +47,7 @@ try {
       ok: true,
       message: `Release ${releaseId} is now live.`,
       release: result.finalRelease,
+      links: { production: productionBaseUrl() },
       registry: result.registry,
     })
   );

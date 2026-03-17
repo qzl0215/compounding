@@ -1,4 +1,14 @@
-const { currentActiveRelease, markActive, readManifest, readRegistry, releaseReload, updateCurrentSymlink, upsertRelease, withReleaseLock } = require("./lib.ts");
+const {
+  currentActiveRelease,
+  markActive,
+  productionBaseUrl,
+  readManifest,
+  readRegistry,
+  releaseReload,
+  updateChannelSymlink,
+  upsertRelease,
+  withReleaseLock,
+} = require("./lib.ts");
 
 function parseArg(name) {
   const index = process.argv.indexOf(name);
@@ -23,7 +33,7 @@ try {
       throw new Error(`Release ${releaseId} has no release path.`);
     }
 
-    updateCurrentSymlink(releaseId);
+    updateChannelSymlink(target.release_path, "prod");
     const reloadNote = releaseReload();
     markActive(releaseId, previous?.release_id || null);
     const updated = readRegistry().releases.find((item) => item.release_id === releaseId) || target;
@@ -37,6 +47,7 @@ try {
       ok: true,
       message: `Rolled back to ${releaseId}.`,
       release: result.finalRelease,
+      links: { production: productionBaseUrl() },
       registry: result.registry,
     })
   );

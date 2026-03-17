@@ -9,6 +9,10 @@ function git(args) {
   return childProcess.execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
 }
 
+function currentBranch() {
+  return git(["branch", "--show-current"]);
+}
+
 function listChangedFiles() {
   const status = git(["status", "--short"]);
   if (status) {
@@ -85,10 +89,23 @@ function parseReferencedPaths(value) {
 }
 
 function validateTask(taskPath, changedFiles, errors) {
-  const trace = parseTrace(read(taskPath));
+  const content = read(taskPath);
+  const trace = parseTrace(content);
   if (!trace) {
     errors.push(`${taskPath}: 缺少“更新痕迹”区块。`);
     return;
+  }
+
+  const requiredSections = [
+    ["当前模式", extractSection(content, "current_mode", root)],
+    ["分支", extractSection(content, "branch", root)],
+    ["最近提交", extractSection(content, "recent_commit", root)],
+    ["状态", extractSection(content, "status", root)],
+  ];
+  for (const [label, value] of requiredSections) {
+    if (!String(value || "").trim()) {
+      errors.push(`${taskPath}: 缺少必填字段“${label}”。`);
+    }
   }
 
   for (const [label, value] of Object.entries(trace)) {
@@ -120,12 +137,24 @@ function main() {
 
   const changedTaskFiles = changedFiles.filter((file) => file.startsWith("tasks/queue/") && file.endsWith(".md"));
   const errors = [];
+  const activeBranch = currentBranch();
 
   if (changedTaskFiles.length === 0) {
     errors.push("存在 repo-tracked 改动，但没有任何 tasks/queue/*.md 变更。");
   }
 
   changedTaskFiles.forEach((taskPath) => validateTask(taskPath, changedFiles, errors));
+
+  if (activeBranch.startsWith("codex/") && changedTaskFiles.length > 0) {
+    const matchingBranchTask = changedTaskFiles.some((taskPath) => {
+      const content = read(taskPath);
+      const branch = String(extractSection(content, "branch", root) || "").replace(/`/g, "").trim();
+      return branch === activeBranch;
+    });
+    if (!matchingBranchTask) {
+      errors.push(`当前分支 ${activeBranch} 有代码改动，但本次变更的 task 中没有任何一个绑定到该分支。`);
+    }
+  }
 
   const ok = errors.length === 0;
   const payload = {

@@ -165,6 +165,7 @@ function validateTask(task, errors) {
 function main() {
   const taskFiles = listTaskFiles();
   const errors = [];
+  const activeBranch = currentBranch();
   const snapshots = taskFiles.map((taskPath) => {
     const task = parseTask(taskPath);
     validateTask(task, errors);
@@ -179,6 +180,15 @@ function main() {
       effective_commit: snapshot.effectiveCommit ? git(["rev-parse", "--short", snapshot.effectiveCommit]).output : "",
     };
   });
+
+  if (activeBranch.startsWith("codex/")) {
+    const activeTask = taskFiles
+      .map((taskPath) => parseTask(taskPath))
+      .find((task) => cleanValue(task.branch) === activeBranch);
+    if (!activeTask) {
+      errors.push(`当前分支 ${activeBranch} 没有对应的 task 绑定。`);
+    }
+  }
 
   const ok = errors.length === 0;
   const payload = { ok, tasks: snapshots, errors };

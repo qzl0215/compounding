@@ -1,4 +1,4 @@
-const { clearLocalState, detectLocalProdStatus, stopProcess, waitForExit } = require("./lib.ts");
+const { PROFILE_LABEL, clearLocalState, detectLocalProdStatus, stopProcess, waitForExit } = require("./lib.ts");
 
 async function main() {
   const status = detectLocalProdStatus();
@@ -9,7 +9,7 @@ async function main() {
       process.exit(1);
     }
     clearLocalState();
-    console.log(JSON.stringify({ ok: true, message: "本地生产本就未运行。", status }, null, 2));
+    console.log(JSON.stringify({ ok: true, message: `${PROFILE_LABEL}本就未运行。`, status }, null, 2));
     return;
   }
 
@@ -25,7 +25,7 @@ async function main() {
     JSON.stringify(
       {
         ok: true,
-        message: "本地生产已停止。",
+        message: `${PROFILE_LABEL}已停止。`,
         status: detectLocalProdStatus(),
       },
       null,
@@ -35,6 +35,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.log(JSON.stringify({ ok: false, message: error instanceof Error ? error.message : "本地生产停止失败。" }, null, 2));
+  console.log(JSON.stringify({ ok: false, message: error instanceof Error ? error.message : `${PROFILE_LABEL}停止失败。` }, null, 2));
   process.exit(1);
 });

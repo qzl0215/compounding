@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { PageOutline } from "@/components/page-outline";
 import { Card } from "@/components/ui/card";
+import { getReleaseDashboard } from "@/modules/releases";
 import { getTaskBoard, TASK_STATUS_LABELS } from "@/modules/tasks";
 import type { TaskCard, TaskGitState, TaskStatus } from "@/modules/tasks";
 
@@ -32,6 +33,7 @@ const MODE_TONE = "border-white/12 bg-white/[0.05] text-white/78";
 
 export default async function TasksPage() {
   const board = await getTaskBoard();
+  const releaseDashboard = getReleaseDashboard();
   const outline = [
     { id: "task-overview", label: "任务总览" },
     ...board.map((group) => ({ id: `task-${group.status}`, label: TASK_STATUS_LABELS[group.status] })),
@@ -48,6 +50,11 @@ export default async function TasksPage() {
               每次可合并改动绑定一个 task。task 负责定义目标、边界与验收，Git 负责展示当前分支、提交与是否已并入
               `main`。
             </p>
+            <div className="mt-5 rounded-3xl border border-white/8 bg-white/[0.03] p-4 text-sm text-white/72">
+              {releaseDashboard.pending_dev_release
+                ? `当前存在未验收 dev：${releaseDashboard.pending_dev_release.release_id}。请先验收上一个 dev，再继续出新预览。`
+                : "当前没有待验收 dev；完成一轮可验收改动后，应先生成 dev 预览链接。"}
+            </div>
           </Card>
         </section>
 

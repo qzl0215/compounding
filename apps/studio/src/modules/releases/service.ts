@@ -13,6 +13,7 @@ import type {
 
 const EMPTY_REGISTRY: ReleaseRegistry = {
   active_release_id: null,
+  pending_dev_release_id: null,
   updated_at: null,
   releases: []
 };
@@ -48,8 +49,11 @@ export function readReleaseRegistry(): ReleaseRegistry {
     const payload = JSON.parse(fs.readFileSync(registryPath, "utf8")) as ReleaseRegistry;
     return {
       active_release_id: payload.active_release_id ?? null,
+      pending_dev_release_id: payload.pending_dev_release_id ?? null,
       updated_at: payload.updated_at ?? null,
-      releases: Array.isArray(payload.releases) ? payload.releases : []
+      releases: Array.isArray(payload.releases)
+        ? payload.releases.map((release) => normalizeReleaseRecord(release))
+        : []
     };
   } catch {
     return EMPTY_REGISTRY;
@@ -62,29 +66,42 @@ export function getReleaseDashboard(): ReleaseDashboard {
     (right.cutover_at || right.created_at).localeCompare(left.cutover_at || left.created_at)
   );
   const activeRelease = releases.find((release) => release.release_id === registry.active_release_id) || null;
+  const pendingDevRelease =
+    releases.find((release) => release.release_id === registry.pending_dev_release_id) ||
+    releases.find((release) => release.channel === "dev" && release.acceptance_status === "pending") ||
+    null;
   return {
     runtime_root: getReleaseRuntimeRoot(),
     active_release_id: registry.active_release_id,
     active_release: activeRelease,
+    pending_dev_release: pendingDevRelease,
+    dev_preview_url: getChannelBaseUrl("dev"),
+    production_url: getChannelBaseUrl("prod"),
     releases,
     local_runtime: getLocalRuntimeStatus(),
+    local_preview: getLocalRuntimeStatus("dev"),
   };
 }
 
-export function getLocalRuntimeStatus(): LocalRuntimeStatus {
-  const scriptPath = path.join(getWorkspaceRoot(), "scripts", "local-runtime", "status-prod.ts");
+export function getLocalRuntimeStatus(profile: "prod" | "dev" = "prod"): LocalRuntimeStatus {
+  const scriptPath = path.join(
+    getWorkspaceRoot(),
+    "scripts",
+    "local-runtime",
+    profile === "dev" ? "status-preview.ts" : "status-prod.ts"
+  );
   if (!fs.existsSync(scriptPath)) {
     return {
       status: "stopped",
       running: false,
-      port: 3000,
+      port: profile === "dev" ? 3001 : 3000,
       pid: null,
       runtime_release_id: null,
       current_release_id: null,
       drift: false,
-      reason: "本地运行时脚本尚未安装。",
-      log_path: path.join(getReleaseRuntimeRoot(), "shared", "local-prod.log"),
-      state_path: path.join(getReleaseRuntimeRoot(), "shared", "local-prod.json"),
+      reason: profile === "dev" ? "dev 预览运行时脚本尚未安装。" : "本地运行时脚本尚未安装。",
+      log_path: path.join(getReleaseRuntimeRoot(), "shared", profile === "dev" ? "local-dev.log" : "local-prod.log"),
+      state_path: path.join(getReleaseRuntimeRoot(), "shared", profile === "dev" ? "local-dev.json" : "local-prod.json"),
     };
   }
 
@@ -110,20 +127,50 @@ export function getLocalRuntimeStatus(): LocalRuntimeStatus {
     return {
       status: "port_error",
       running: false,
-      port: 3000,
+      port: profile === "dev" ? 3001 : 3000,
       pid: null,
       runtime_release_id: null,
       current_release_id: null,
       drift: false,
       reason: error instanceof Error ? error.message : "无法读取本地运行时状态。",
-      log_path: path.join(getReleaseRuntimeRoot(), "shared", "local-prod.log"),
-      state_path: path.join(getReleaseRuntimeRoot(), "shared", "local-prod.json"),
+      log_path: path.join(getReleaseRuntimeRoot(), "shared", profile === "dev" ? "local-dev.log" : "local-prod.log"),
+      state_path: path.join(getReleaseRuntimeRoot(), "shared", profile === "dev" ? "local-dev.json" : "local-prod.json"),
     };
   }
 }
 
+export function runCreateDevPreview(ref = "HEAD"): ReleaseActionResult {
+  const prepare = runReleaseScript("prepare-release.ts", ["--ref", ref, "--channel", "dev"]);
+  return {
+    ok: prepare.ok,
+    message: prepare.message,
+    release: prepare.release,
+    registry: readReleaseRegistry()
+  };
+}
+
+export function runAcceptDevRelease(releaseId: string): ReleaseActionResult {
+  const promoted = runReleaseScript("accept-dev-release.ts", ["--release", releaseId]);
+  return {
+    ok: promoted.ok,
+    message: promoted.message,
+    release: promoted.release,
+    registry: readReleaseRegistry()
+  };
+}
+
+export function runRejectDevRelease(releaseId: string): ReleaseActionResult {
+  const rejected = runReleaseScript("reject-dev-release.ts", ["--release", releaseId]);
+  return {
+    ok: rejected.ok,
+    message: rejected.message,
+    release: rejected.release,
+    registry: readReleaseRegistry()
+  };
+}
+
 export function runDeployRelease(ref = "main"): ReleaseActionResult {
-  const prepare = runReleaseScript("prepare-release.ts", ["--ref", ref]);
+  const prepare = runReleaseScript("prepare-release.ts", ["--ref", ref, "--channel", "prod"]);
   const prepared = prepare.release;
   if (!prepare.ok || !prepared || prepared.build_result !== "passed" || prepared.smoke_result !== "passed") {
     return {
@@ -168,6 +215,28 @@ function runReleaseScript(scriptName: string, args: string[]): ReleaseActionResu
       message: error instanceof Error ? error.message : "Release command failed."
     };
   }
+}
+
+function getChannelBaseUrl(channel: "dev" | "prod") {
+  if (channel === "dev") {
+    const host = process.env.AI_OS_LOCAL_PREVIEW_HOST || "127.0.0.1";
+    const port = process.env.AI_OS_LOCAL_PREVIEW_PORT || "3001";
+    return `http://${host}:${port}`;
+  }
+  const host = process.env.AI_OS_LOCAL_PROD_HOST || process.env.AI_OS_LOCAL_HOST || "127.0.0.1";
+  const port = process.env.AI_OS_LOCAL_PROD_PORT || process.env.AI_OS_LOCAL_PORT || "3000";
+  return `http://${host}:${port}`;
+}
+
+function normalizeReleaseRecord(release: ReleaseRecord): ReleaseRecord {
+  return {
+    ...release,
+    channel: release.channel === "dev" ? "dev" : "prod",
+    acceptance_status: release.acceptance_status || (release.status === "failed" ? "rejected" : release.channel === "dev" ? "pending" : "accepted"),
+    preview_url: release.preview_url || (release.channel === "dev" ? getChannelBaseUrl("dev") : null),
+    promoted_to_main_at: release.promoted_to_main_at ?? null,
+    promoted_from_dev_release_id: release.promoted_from_dev_release_id ?? null,
+  };
 }
 
 function readHeader(headersLike: HeaderBag, name: string) {

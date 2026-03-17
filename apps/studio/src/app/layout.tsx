@@ -26,10 +26,11 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const runtimeChannel = process.env.AI_OS_RUNTIME_PROFILE === "dev" ? "dev" : "prod";
   return (
     <html lang="zh-CN">
       <body className={`${sans.className} ${display.variable} ${mono.variable}`}>
-        <AppShell>{children}</AppShell>
+        <AppShell runtimeChannel={runtimeChannel}>{children}</AppShell>
       </body>
     </html>
   );

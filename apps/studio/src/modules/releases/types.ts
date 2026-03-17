@@ -1,11 +1,18 @@
-export type ReleaseStatus = "prepared" | "active" | "superseded" | "failed" | "rolled_back";
+export type ReleaseStatus = "prepared" | "preview" | "active" | "superseded" | "failed" | "rolled_back" | "rejected";
 export type ReleaseResult = "pending" | "passed" | "failed";
+export type ReleaseChannel = "dev" | "prod";
+export type AcceptanceStatus = "pending" | "accepted" | "rejected";
 
 export type ReleaseRecord = {
   release_id: string;
   commit_sha: string;
   tag: string | null;
   source_ref: string;
+  channel: ReleaseChannel;
+  acceptance_status: AcceptanceStatus;
+  preview_url: string | null;
+  promoted_to_main_at: string | null;
+  promoted_from_dev_release_id: string | null;
   created_at: string;
   status: ReleaseStatus;
   build_result: ReleaseResult;
@@ -19,6 +26,7 @@ export type ReleaseRecord = {
 
 export type ReleaseRegistry = {
   active_release_id: string | null;
+  pending_dev_release_id: string | null;
   updated_at: string | null;
   releases: ReleaseRecord[];
 };
@@ -53,8 +61,12 @@ export type ReleaseDashboard = {
   runtime_root: string;
   active_release_id: string | null;
   active_release: ReleaseRecord | null;
+  pending_dev_release: ReleaseRecord | null;
+  dev_preview_url: string;
+  production_url: string;
   releases: ReleaseRecord[];
   local_runtime: LocalRuntimeStatus;
+  local_preview: LocalRuntimeStatus;
 };
 
 export type ReleaseActionResult = {

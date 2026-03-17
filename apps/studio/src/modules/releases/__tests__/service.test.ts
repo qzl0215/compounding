@@ -25,6 +25,7 @@ describe("releases service", () => {
       JSON.stringify(
         {
           active_release_id: "rel-002",
+          pending_dev_release_id: "rel-003",
           updated_at: "2026-03-15T10:00:00Z",
           releases: [
             {
@@ -47,6 +48,11 @@ describe("releases service", () => {
               commit_sha: "2222222",
               tag: "release-rel-002",
               source_ref: "main",
+              channel: "prod",
+              acceptance_status: "accepted",
+              preview_url: null,
+              promoted_to_main_at: null,
+              promoted_from_dev_release_id: null,
               created_at: "2026-03-15T10:00:00Z",
               status: "active",
               build_result: "passed",
@@ -56,6 +62,26 @@ describe("releases service", () => {
               release_path: "/tmp/rel-002",
               change_summary: ["2222222 second"],
               notes: ["reload skipped"]
+            },
+            {
+              release_id: "rel-003",
+              commit_sha: "3333333",
+              tag: null,
+              source_ref: "codex/task-014-dev-preview-channel",
+              channel: "dev",
+              acceptance_status: "pending",
+              preview_url: "http://127.0.0.1:3001",
+              promoted_to_main_at: null,
+              promoted_from_dev_release_id: null,
+              created_at: "2026-03-15T10:10:00Z",
+              status: "preview",
+              build_result: "passed",
+              smoke_result: "passed",
+              cutover_at: null,
+              rollback_from: null,
+              release_path: "/tmp/rel-003",
+              change_summary: ["3333333 preview"],
+              notes: []
             }
           ]
         },
@@ -66,6 +92,7 @@ describe("releases service", () => {
 
     expect(readReleaseRegistry().active_release_id).toBe("rel-002");
     expect(getReleaseDashboard().active_release?.release_id).toBe("rel-002");
-    expect(getReleaseDashboard().releases[0]?.release_id).toBe("rel-002");
+    expect(getReleaseDashboard().pending_dev_release?.release_id).toBe("rel-003");
+    expect(getReleaseDashboard().releases[0]?.release_id).toBe("rel-003");
   });
 });

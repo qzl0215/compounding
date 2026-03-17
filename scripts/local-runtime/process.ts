@@ -1,7 +1,19 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { spawn } = require("node:child_process");
-const { PROD_HOST, PROD_PORT, clearLocalState, currentReleaseSnapshot, ensureLocalRuntimeLayout, pidAlive, readSharedEnv, runtimeRoot, writeLocalState } = require("./core.ts");
+const {
+  PROD_HOST,
+  PROD_PORT,
+  PROFILE_LABEL,
+  RUNTIME_PROFILE,
+  clearLocalState,
+  currentReleaseSnapshot,
+  ensureLocalRuntimeLayout,
+  pidAlive,
+  readSharedEnv,
+  runtimeRoot,
+  writeLocalState,
+} = require("./core.ts");
 
 async function sleep(ms) {
   await new Promise((resolve) => setTimeout(resolve, ms));
@@ -28,10 +40,10 @@ async function waitForExit(pid, timeoutMs = 8000) {
 function spawnLocalProduction() {
   const current = currentReleaseSnapshot();
   if (!current.releasePath || !current.studioPath || !current.nextBin) {
-    throw new Error("Current release is missing or incomplete. Run release prepare/switch before starting production.");
+    throw new Error(`当前${PROFILE_LABEL}缺少可运行的 release。请先准备并切换对应 release。`);
   }
   if (!current.buildId) {
-    throw new Error("Current release has no BUILD_ID. Build the release before starting production.");
+    throw new Error(`当前${PROFILE_LABEL} release 缺少 BUILD_ID，无法启动。`);
   }
 
   const { logPath } = ensureLocalRuntimeLayout();
@@ -41,6 +53,8 @@ function spawnLocalProduction() {
     ...readSharedEnv(),
     PORT: String(PROD_PORT),
     HOSTNAME: PROD_HOST,
+    AI_OS_RUNTIME_PROFILE: RUNTIME_PROFILE,
+    AI_OS_RUNTIME_LABEL: PROFILE_LABEL,
     AI_OS_WORKSPACE_ROOT: path.resolve(process.cwd()),
     AI_OS_RELEASE_ROOT: runtimeRoot(),
   };
@@ -60,6 +74,7 @@ function spawnLocalProduction() {
       port: PROD_PORT,
       host: PROD_HOST,
       started_at: new Date().toISOString(),
+      runtime_profile: RUNTIME_PROFILE,
       runtime_release_id: current.releaseId,
       cwd: current.studioPath,
       log_path: logPath,

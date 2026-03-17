@@ -19,7 +19,8 @@ related_docs:
 
 - `main` 是唯一生产主线
 - 本地短分支仍可用于临时开发，但发布动作只认 `main`
-- 不再使用 `dev` 作为发布缓冲层
+- `dev` 是 preview channel，不是长期 git 主分支
+- 同一时间只允许一个待验收 `dev`
 
 ## 标准流程
 
@@ -31,11 +32,11 @@ related_docs:
 6. 运行 `python3 scripts/pre_mutation_check.py`
 7. 完成最小可验证改动
 8. 更新 `task / memory / code_index / docs`
-9. 完成 review，并让改动进入 `main`
-10. 运行 `node --experimental-strip-types scripts/release/prepare-release.ts --ref main`
-11. 构建与 smoke 通过后，再运行 `node --experimental-strip-types scripts/release/switch-release.ts --release <release-id>`
-12. 首次或已停止时，手动运行 `pnpm prod:start`
-13. 用 `pnpm prod:status`、`pnpm prod:check` 或 `/releases` 确认真正在线
+9. 运行 `node --experimental-strip-types scripts/ai/validate-change-trace.ts` 与 `node --experimental-strip-types scripts/ai/validate-task-git-link.ts`
+10. 先生成 `dev` 预览：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`
+11. 若已有未验收 `dev`，先提醒用户验收上一个 `dev`
+12. 用户验收通过后，再晋升到 `main` 与本地生产
+13. 用 `pnpm prod:status`、`pnpm prod:check`、`/releases` 和生产首页链接完成最终验收
 
 ## 汇报契约
 
@@ -53,6 +54,7 @@ related_docs:
 
 - 每个结构性改动必须绑定 `tasks/queue/*`
 - 默认先更新 task，再改代码；改完后补齐更新痕迹和必要回写
+- 任何 repo-tracked 改动若没有 task 文件变更，视为硬失败
 - 每个 task 至少包含 目标 / 为什么 / 范围 / 范围外 / 约束 / 关联模块 / 当前模式 / 分支 / 最近提交 / 计划 / 发布说明 / 验收标准 / 风险 / 状态 / 更新痕迹 / 复盘
 - 修改结束后要同步更新任务状态和验收结果
 - 每个 task 对应一条短分支；进入 `main` 后，任务状态与 Git 状态必须一致
@@ -79,6 +81,10 @@ related_docs:
 ## 发布规则
 
 - 新版本必须先在后台 release 目录完成准备，再切换 `current`
+- `dev` 预览链接默认指向本地 `3001` 端口，production 默认指向本地 `3000` 端口
+- 创建 `dev` 预览成功后，必须提供 `dev` 验收链接
+- 验收通过后，必须再次提供 production 验收链接
+- 页面与聊天都能触发验收动作，但 release registry 是唯一真相源
 - 切换失败前不得影响当前线上版本
 - 回滚通过 `scripts/release/rollback-release.ts` 或本机/内网发布管理页执行
 - 发布和回滚动作必须串行执行，release lock 未释放前不得触发第二个动作

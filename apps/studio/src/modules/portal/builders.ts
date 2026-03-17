@@ -54,6 +54,7 @@ export function buildKnowledgeRiskCards(
   moduleIndexContent: string,
   dependencyMapContent: string,
   activeReleaseId: string | null,
+  pendingDevReleaseId: string | null,
   techDebtContent: string,
   frozenItems: string[],
 ): SystemCard[] {
@@ -80,9 +81,11 @@ export function buildKnowledgeRiskCards(
     },
     {
       title: "发布与风险",
-      summary: activeReleaseId
-        ? `当前激活版本为 ${activeReleaseId}；${previewSection(techDebtContent, 1)}`
-        : `当前尚未形成活跃 release；${previewSection(techDebtContent, 1)}`,
+      summary: pendingDevReleaseId
+        ? `当前存在待验收 dev：${pendingDevReleaseId}；请先完成 dev 验收，再决定是否晋升到 main。`
+        : activeReleaseId
+          ? `当前激活版本为 ${activeReleaseId}；${previewSection(techDebtContent, 1)}`
+          : `当前尚未形成活跃 release；${previewSection(techDebtContent, 1)}`,
       href: "/releases",
     },
   ];

@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { PageOutline } from "@/components/page-outline";
 import { Card } from "@/components/ui/card";
 import { getManagementAccessState, getReleaseDashboard } from "@/modules/releases";
-import type { LocalRuntimeStatusType } from "@/modules/releases";
+import type { LocalRuntimeStatus, LocalRuntimeStatusType } from "@/modules/releases";
 import { ReleaseDashboardPanel } from "@/modules/releases/components/release-dashboard-panel";
 
 export const dynamic = "force-dynamic";
@@ -25,7 +25,7 @@ export default async function ReleasesPage() {
 
   const dashboard = getReleaseDashboard();
   const outline = [
-    { id: "release-overview", label: "发布模型" },
+    { id: "release-overview", label: "通道总览" },
     { id: "runtime-status", label: "运行态" },
     { id: "release-history", label: "版本台账" },
   ];
@@ -36,33 +36,42 @@ export default async function ReleasesPage() {
         <section id="release-overview">
           <Card>
             <p className="text-xs uppercase tracking-[0.28em] text-accent">发布管理</p>
-            <h2 className="mt-3 text-3xl font-semibold">main 直发生产与可回滚版本台账</h2>
+            <h2 className="mt-3 text-3xl font-semibold">dev 预览验收与 main 生产切换</h2>
             <p className="mt-4 max-w-4xl text-white/68">
-              新版本会先在后台 release 目录完成依赖安装、构建和最小 smoke check，成功后才会切换 `current`
-              软链；如果切坏，可以直接在这里回滚到任一健康版本。
+              每次改动先生成待验收的 dev 预览；若已有未验收 dev，系统会先提醒继续验收。只有验收通过的 dev
+              才能晋升到 `main` 并切换本地生产。
             </p>
-            <dl className="mt-6 grid gap-4 md:grid-cols-3">
+            <dl className="mt-6 grid gap-4 md:grid-cols-4">
               <Meta title="运行根目录" value={dashboard.runtime_root} />
-              <Meta title="当前激活版本" value={dashboard.active_release_id || "尚未切换任何 release"} />
+              <Meta title="待验收 dev" value={dashboard.pending_dev_release?.release_id || "当前没有待验收 dev"} />
+              <Meta title="生产激活版本" value={dashboard.active_release_id || "尚未切换任何 release"} />
               <Meta title="历史版本数" value={String(dashboard.releases.length)} />
+            </dl>
+            <dl className="mt-4 grid gap-4 md:grid-cols-2">
+              <Meta title="dev 预览链接" value={dashboard.dev_preview_url} />
+              <Meta title="生产验收链接" value={dashboard.production_url} />
             </dl>
           </Card>
         </section>
         <section id="runtime-status">
           <Card>
             <p className="text-xs uppercase tracking-[0.28em] text-accent">本地运行态</p>
-            <h2 className="mt-3 text-3xl font-semibold">3000 端口的真实状态</h2>
-            <p className="mt-4 max-w-4xl text-white/68">{dashboard.local_runtime.reason}</p>
-            <dl className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              <Meta title="运行状态" value={formatRuntimeStatus(dashboard.local_runtime.status)} />
-              <Meta title="监听端口" value={String(dashboard.local_runtime.port)} />
-              <Meta title="运行版本" value={dashboard.local_runtime.runtime_release_id || "未启动"} />
-              <Meta title="current 指向" value={dashboard.local_runtime.current_release_id || "未切换 release"} />
-            </dl>
+            <h2 className="mt-3 text-3xl font-semibold">dev 与 production 的真实运行状态</h2>
+            <div className="mt-6 grid gap-4 xl:grid-cols-2">
+              <RuntimeCard title="dev 预览" runtime={dashboard.local_preview} />
+              <RuntimeCard title="production" runtime={dashboard.local_runtime} />
+            </div>
           </Card>
         </section>
         <section id="release-history">
-          <ReleaseDashboardPanel activeReleaseId={dashboard.active_release_id} releases={dashboard.releases} runtimeStatus={dashboard.local_runtime} />
+          <ReleaseDashboardPanel
+            activeReleaseId={dashboard.active_release_id}
+            pendingDevRelease={dashboard.pending_dev_release}
+            productionUrl={dashboard.production_url}
+            previewUrl={dashboard.dev_preview_url}
+            releases={dashboard.releases}
+            runtimeStatus={dashboard.local_runtime}
+          />
         </section>
       </div>
       <PageOutline items={outline} />
@@ -87,6 +96,21 @@ function Meta({ title, value }: { title: string; value: string }) {
     <div className="rounded-3xl border border-white/8 bg-white/[0.03] p-4">
       <p className="text-xs uppercase tracking-[0.22em] text-white/42">{title}</p>
       <p className="mt-3 break-all text-sm text-white/78">{value}</p>
+    </div>
+  );
+}
+
+function RuntimeCard({ title, runtime }: { title: string; runtime: LocalRuntimeStatus }) {
+  return (
+    <div className="rounded-3xl border border-white/8 bg-white/[0.03] p-5">
+      <p className="text-xs uppercase tracking-[0.22em] text-accent">{title}</p>
+      <p className="mt-3 text-sm text-white/68">{runtime.reason}</p>
+      <dl className="mt-4 grid gap-3 md:grid-cols-2">
+        <Meta title="运行状态" value={formatRuntimeStatus(runtime.status)} />
+        <Meta title="监听端口" value={String(runtime.port)} />
+        <Meta title="运行版本" value={runtime.runtime_release_id || "未启动"} />
+        <Meta title="软链指向" value={runtime.current_release_id || "未切换 release"} />
+      </dl>
     </div>
   );
 }

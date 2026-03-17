@@ -18,7 +18,11 @@ const filled = template
   .replace("## 当前模式\n", "## 当前模式\n\n方案评审\n\n")
   .replace("## 分支\n", `## 分支\n\n\`${suggestedBranch}\`\n\n`)
   .replace("## 最近提交\n", "## 最近提交\n\n`auto: branch HEAD`\n\n")
-  .replace("## 状态\n", "## 状态\n\ntodo\n");
+  .replace("## 状态\n", "## 状态\n\ntodo\n")
+  .replace("- 记忆：", "- 记忆：`no change: task created only`")
+  .replace("- 索引：", "- 索引：`no change: task created only`")
+  .replace("- 路线图：", "- 路线图：`no change: current priority unchanged`")
+  .replace("- 文档：", `- 文档：\`tasks/queue/${taskId}.md\``);
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, filled);
 console.log(outputPath);

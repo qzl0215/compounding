@@ -1,4 +1,4 @@
-const { PROD_PORT, currentReleaseSnapshot, ensureLocalRuntimeLayout, listPortListener, pidAlive, readLocalState } = require("./core.ts");
+const { PROD_PORT, PROFILE_LABEL, currentReleaseSnapshot, ensureLocalRuntimeLayout, listPortListener, pidAlive, readLocalState } = require("./core.ts");
 
 function managedListenerMatches(state, listener) {
   return Boolean(state?.pid && listener?.pid && Number(state.pid) === Number(listener.pid));
@@ -37,7 +37,7 @@ function detectLocalProdStatus() {
       runtime_release_id: null,
       current_release_id: currentReleaseId,
       drift: false,
-      reason: "本地生产未启动。",
+        reason: `${PROFILE_LABEL}未启动。`,
       log_path: paths.logPath,
       state_path: paths.statePath,
     };
@@ -52,7 +52,7 @@ function detectLocalProdStatus() {
       runtime_release_id: runtimeReleaseId,
       current_release_id: currentReleaseId,
       drift,
-      reason: `记录的 PID ${state.pid} 已失效。`,
+        reason: `${PROFILE_LABEL}记录的 PID ${state.pid} 已失效。`,
       log_path: state.log_path || paths.logPath,
       state_path: paths.statePath,
     };
@@ -67,7 +67,7 @@ function detectLocalProdStatus() {
       runtime_release_id: runtimeReleaseId,
       current_release_id: currentReleaseId,
       drift,
-      reason: `PID ${state.pid} 仍存活，但 ${PROD_PORT} 端口没有监听。`,
+        reason: `${PROFILE_LABEL}的 PID ${state.pid} 仍存活，但 ${PROD_PORT} 端口没有监听。`,
       log_path: state.log_path || paths.logPath,
       state_path: paths.statePath,
     };
@@ -97,7 +97,7 @@ function detectLocalProdStatus() {
       runtime_release_id: runtimeReleaseId,
       current_release_id: currentReleaseId,
       drift: true,
-      reason: `运行中的版本 ${runtimeReleaseId} 与 current 指向的版本 ${currentReleaseId} 不一致。`,
+        reason: `${PROFILE_LABEL}运行中的版本 ${runtimeReleaseId} 与当前软链指向的版本 ${currentReleaseId} 不一致。`,
       log_path: state.log_path || paths.logPath,
       state_path: paths.statePath,
     };
@@ -111,7 +111,7 @@ function detectLocalProdStatus() {
     runtime_release_id: runtimeReleaseId,
     current_release_id: currentReleaseId,
     drift: false,
-    reason: `本地生产正在运行，监听 127.0.0.1:${PROD_PORT}。`,
+      reason: `${PROFILE_LABEL}正在运行，监听 127.0.0.1:${PROD_PORT}。`,
     log_path: state.log_path || paths.logPath,
     state_path: paths.statePath,
   };

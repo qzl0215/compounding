@@ -1,2 +1,23 @@
-export { getManagementAccessState, getLocalRuntimeStatus, getReleaseDashboard, getReleaseRuntimeRoot, readReleaseRegistry, runDeployRelease, runRollbackRelease } from "./service";
-export type { LocalRuntimeStatus, LocalRuntimeStatusType, ManagementAccessState, ReleaseActionResult, ReleaseDashboard, ReleaseRecord, ReleaseRegistry } from "./types";
+export {
+  getManagementAccessState,
+  getLocalRuntimeStatus,
+  getReleaseDashboard,
+  getReleaseRuntimeRoot,
+  readReleaseRegistry,
+  runAcceptDevRelease,
+  runCreateDevPreview,
+  runDeployRelease,
+  runRejectDevRelease,
+  runRollbackRelease
+} from "./service";
+export type {
+  AcceptanceStatus,
+  LocalRuntimeStatus,
+  LocalRuntimeStatusType,
+  ManagementAccessState,
+  ReleaseActionResult,
+  ReleaseChannel,
+  ReleaseDashboard,
+  ReleaseRecord,
+  ReleaseRegistry
+} from "./types";

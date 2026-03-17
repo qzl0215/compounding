@@ -18,6 +18,7 @@ function layoutPaths() {
     releasesDir: path.join(root, "releases"),
     sharedDir: path.join(root, "shared"),
     currentLink: path.join(root, "current"),
+    previewCurrentLink: path.join(root, "preview-current"),
     registryPath: path.join(root, "registry.json"),
     sharedEnvPath: path.join(root, "shared", "portal.env"),
     lockPath: path.join(root, "release.lock"),
@@ -46,7 +47,7 @@ function bootstrapSharedEnv(sharedEnvPath) {
 }
 
 function emptyRegistry() {
-  return { active_release_id: null, updated_at: null, releases: [] };
+  return { active_release_id: null, pending_dev_release_id: null, updated_at: null, releases: [] };
 }
 
 function readRegistry() {
@@ -55,7 +56,13 @@ function readRegistry() {
     return emptyRegistry();
   }
   try {
-    return JSON.parse(fs.readFileSync(registryPath, "utf8"));
+    const raw = JSON.parse(fs.readFileSync(registryPath, "utf8"));
+    return {
+      active_release_id: raw.active_release_id ?? null,
+      pending_dev_release_id: raw.pending_dev_release_id ?? null,
+      updated_at: raw.updated_at ?? null,
+      releases: Array.isArray(raw.releases) ? raw.releases.map(normalizeReleaseRecord) : [],
+    };
   } catch {
     return emptyRegistry();
   }
@@ -80,7 +87,7 @@ function readManifest(releaseId) {
   if (!fs.existsSync(file)) {
     throw new Error(`Unknown release: ${releaseId}`);
   }
-  return JSON.parse(fs.readFileSync(file, "utf8"));
+  return normalizeReleaseRecord(JSON.parse(fs.readFileSync(file, "utf8")));
 }
 
 function run(command, args, cwd = workspaceRoot()) {
@@ -99,9 +106,9 @@ function resolveCommit(ref) {
   return git(["rev-parse", ref]);
 }
 
-function releaseIdFor(commitSha) {
+function releaseIdFor(commitSha, channel = "prod") {
   const stamp = new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 14);
-  return `${stamp}-${commitSha.slice(0, 7)}`;
+  return `${stamp}-${commitSha.slice(0, 7)}-${channel}`;
 }
 
 function changeSummary(fromSha, toSha) {
@@ -128,31 +135,37 @@ function releaseReload() {
   return releaseReloadImpl(workspaceRoot(), run);
 }
 
-function updateCurrentSymlink(releaseId) {
-  const { releasesDir, currentLink } = ensureLayout();
-  const target = path.join(releasesDir, releaseId);
-  const temp = `${currentLink}.next`;
+function updateChannelSymlink(target, channel = "prod") {
+  const { currentLink, previewCurrentLink } = ensureLayout();
+  const linkPath = channel === "dev" ? previewCurrentLink : currentLink;
+  const temp = `${linkPath}.next`;
   fs.rmSync(temp, { force: true, recursive: true });
   fs.symlinkSync(target, temp, "dir");
   try {
-    fs.renameSync(temp, currentLink);
+    fs.renameSync(temp, linkPath);
   } catch {
-    fs.rmSync(currentLink, { force: true, recursive: true });
-    fs.renameSync(temp, currentLink);
+    fs.rmSync(linkPath, { force: true, recursive: true });
+    fs.renameSync(temp, linkPath);
   }
   return target;
 }
 
+function clearChannelSymlink(channel = "dev") {
+  const { currentLink, previewCurrentLink } = ensureLayout();
+  fs.rmSync(channel === "dev" ? previewCurrentLink : currentLink, { force: true, recursive: true });
+}
+
 function upsertRelease(record) {
   const registry = readRegistry();
-  const existingIndex = registry.releases.findIndex((item) => item.release_id === record.release_id);
+  const normalizedRecord = normalizeReleaseRecord(record);
+  const existingIndex = registry.releases.findIndex((item) => item.release_id === normalizedRecord.release_id);
   if (existingIndex >= 0) {
-    registry.releases[existingIndex] = record;
+    registry.releases[existingIndex] = normalizedRecord;
   } else {
-    registry.releases.push(record);
+    registry.releases.push(normalizedRecord);
   }
   writeRegistry(registry);
-  writeManifest(record);
+  writeManifest(normalizedRecord);
   return registry;
 }
 
@@ -164,12 +177,14 @@ function markActive(releaseId, rollbackFrom = null) {
     if (item.release_id === releaseId) {
       return {
         ...item,
+        channel: "prod",
+        acceptance_status: "accepted",
         status: "active",
         cutover_at: now,
         rollback_from: rollbackFrom,
       };
     }
-    if (item.status === "active") {
+    if (item.channel === "prod" && item.status === "active") {
       return { ...item, status: rollbackFrom ? "rolled_back" : "superseded", rollback_from: null };
     }
     return item;
@@ -182,6 +197,59 @@ function markActive(releaseId, rollbackFrom = null) {
 function currentActiveRelease(registry = readRegistry()) {
   return registry.releases.find((item) => item.release_id === registry.active_release_id) || null;
 }
+
+function pendingDevRelease(registry = readRegistry()) {
+  const direct = registry.pending_dev_release_id
+    ? registry.releases.find((item) => item.release_id === registry.pending_dev_release_id)
+    : null;
+  if (direct) {
+    return direct;
+  }
+  return (
+    registry.releases
+      .filter((item) => item.channel === "dev" && item.acceptance_status === "pending")
+      .sort((left, right) => right.created_at.localeCompare(left.created_at))[0] || null
+  );
+}
+
+function setPendingDevRelease(releaseId) {
+  const registry = readRegistry();
+  registry.pending_dev_release_id = releaseId;
+  writeRegistry(registry);
+  return registry;
+}
+
+function clearPendingDevRelease() {
+  const registry = readRegistry();
+  registry.pending_dev_release_id = null;
+  writeRegistry(registry);
+  return registry;
+}
+
+function previewBaseUrl() {
+  const host = process.env.AI_OS_LOCAL_PREVIEW_HOST || "127.0.0.1";
+  const port = process.env.AI_OS_LOCAL_PREVIEW_PORT || "3001";
+  return `http://${host}:${port}`;
+}
+
+function productionBaseUrl() {
+  const host = process.env.AI_OS_LOCAL_PROD_HOST || process.env.AI_OS_LOCAL_HOST || "127.0.0.1";
+  const port = process.env.AI_OS_LOCAL_PROD_PORT || process.env.AI_OS_LOCAL_PORT || "3000";
+  return `http://${host}:${port}`;
+}
+
+function normalizeReleaseRecord(record) {
+  const normalized = { ...record };
+  normalized.channel = normalized.channel === "dev" ? "dev" : "prod";
+  normalized.acceptance_status =
+    normalized.acceptance_status ||
+    (normalized.channel === "dev" ? (normalized.status === "failed" ? "rejected" : "pending") : "accepted");
+  normalized.preview_url = normalized.preview_url || (normalized.channel === "dev" ? previewBaseUrl() : null);
+  normalized.promoted_to_main_at = normalized.promoted_to_main_at || null;
+  normalized.promoted_from_dev_release_id = normalized.promoted_from_dev_release_id || null;
+  return normalized;
+}
+
 function withReleaseLock(callback) {
   const { lockPath } = ensureLayout();
   let descriptor;
@@ -204,8 +272,11 @@ function withReleaseLock(callback) {
     fs.rmSync(lockPath, { force: true });
   }
 }
+
 module.exports = {
   changeSummary,
+  clearChannelSymlink,
+  clearPendingDevRelease,
   currentActiveRelease,
   emptyRegistry,
   ensureLayout,
@@ -214,6 +285,9 @@ module.exports = {
   layoutPaths,
   manifestPath,
   markActive,
+  pendingDevRelease,
+  previewBaseUrl,
+  productionBaseUrl,
   readManifest,
   readRegistry,
   releaseIdFor,
@@ -221,7 +295,8 @@ module.exports = {
   resolveCommit,
   run,
   runtimeRoot,
-  updateCurrentSymlink,
+  setPendingDevRelease,
+  updateChannelSymlink,
   upsertRelease,
   withReleaseLock,
   writeManifest,
