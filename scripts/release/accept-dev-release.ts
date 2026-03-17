@@ -75,8 +75,8 @@ try {
 
     upsertRelease(prodRecord);
     updateChannelSymlink(pending.release_path, "prod");
-    const reloadNote = releaseReload();
     markActive(prodReleaseId);
+    const reloadNote = releaseReload();
     const activeRecord = readRegistry().releases.find((item) => item.release_id === prodReleaseId) || prodRecord;
     upsertRelease({ ...activeRecord, notes: [...activeRecord.notes, reloadNote] });
 
