@@ -30,6 +30,7 @@
     "validate:pre-landing": "node scripts/ai/pre-landing-checklist.js",
     "validate:fix-first": "node scripts/ai/fix-first-orchestrator.js",
     "validate:diff-aware-qa": "node scripts/ai/diff-aware-qa-orchestrator.js",
+    "validate:template-feedback": "node scripts/ai/template-feedback-orchestrator.js",
     "validate:release": "pnpm validate:static && pnpm validate:build",
     "release:prepare": "node --experimental-strip-types scripts/release/prepare-release.ts --ref main",
     "release:switch": "node --experimental-strip-types scripts/release/switch-release.ts",
