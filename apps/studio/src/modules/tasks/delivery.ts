@@ -32,11 +32,12 @@ function buildTaskDeliveryRow(task: TaskCard, releases: ReleaseRecord[]): TaskDe
   const latestProd = prodReleases[0] ?? null;
   const rollbackCandidate = prodReleases.find((release) => release.release_id !== activeProd?.release_id) ?? null;
   const deliveryStatus = resolveDeliveryStatus(task, pendingDev, activeProd, latestProd);
+  const inferredReleaseLabel = inferReleaseLabel(task, pendingDev, activeProd, latestProd);
 
   return {
     ...task,
     deliveryStatus,
-    versionLabel: pendingDev?.release_id || activeProd?.release_id || latestProd?.release_id || task.primaryRelease || "未生成",
+    versionLabel: inferredReleaseLabel,
     acceptReleaseId: pendingDev?.primary_task_id === task.id ? pendingDev.release_id : null,
     rollbackReleaseId: rollbackCandidate?.release_id || null,
     linkedTaskIds: associated.flatMap((release) => release.linked_task_ids).filter(unique),
@@ -69,13 +70,42 @@ function resolveDeliveryStatus(
   if (task.status === "done" && latestProd?.status === "rolled_back") {
     return "rolled_back";
   }
-  if (task.status === "done" && (activeProd || latestProd)) {
+  if (task.status === "done" && (activeProd || latestProd || task.git.state === "merged")) {
     return "released";
   }
   if (task.status === "doing") {
     return "in_progress";
   }
   return "not_started";
+}
+
+function inferReleaseLabel(
+  task: TaskCard,
+  pendingDev: ReleaseRecord | null,
+  activeProd: ReleaseRecord | null,
+  latestProd: ReleaseRecord | null,
+) {
+  if (pendingDev?.release_id) {
+    return pendingDev.release_id;
+  }
+  if (activeProd?.release_id) {
+    return activeProd.release_id;
+  }
+  if (latestProd?.release_id) {
+    return latestProd.release_id;
+  }
+  if (task.primaryRelease && task.primaryRelease !== "未生成") {
+    return task.primaryRelease;
+  }
+  const linkedRelease = task.linkedReleases.find((value) => Boolean(value) && value !== "无");
+  if (linkedRelease) {
+    return linkedRelease;
+  }
+  const commit = sanitizeCommit(task.git.recentCommit || task.recentCommit);
+  if (task.status === "done" && task.git.state === "merged" && commit) {
+    return `main@${commit}`;
+  }
+  return "未生成";
 }
 
 function deliveryOrder(status: TaskDeliveryStatus) {

@@ -66,6 +66,7 @@ t-017
 ## 发布说明
 
 本任务先生成 `dev` 预览供人工验收；只有验收通过后，才会晋升到 `main` 与本地 production。
+当前 `dev` 迭代已根据验收反馈继续修正两点：历史已完成任务的交付状态映射，以及首页对子任务明细路径的平铺展示。
 
 ## 验收标准
 
@@ -79,6 +80,8 @@ t-017
 - 过度强调 release 维度，可能削弱 task 作为执行边界的作用
 - 若任务页动作过多，容易和发布页职责重叠
 - 若旧任务缺少交付摘要字段，列表可能出现大量低质量占位信息
+- 若历史 release 缺少显式 task 关联，已完成任务容易被误判为“待开始”
+- 首页若继续平铺原始任务路径，会破坏经营驾驶舱的密度与可读性
 
 ## 状态
 
@@ -86,9 +89,9 @@ doing
 
 ## 更新痕迹
 
-- 记忆：`memory/project/current-state.md`, `memory/project/operating-blueprint.md`
+- 记忆：`no change: current feedback loop only fixes delivery status mapping and homepage density`
 - 索引：`no change: no index impact yet`
-- 路线图：`memory/project/roadmap.md`
-- 文档：`AGENTS.md`, `docs/PROJECT_RULES.md`, `docs/DEV_WORKFLOW.md`, `docs/AI_OPERATING_MODEL.md`, `tasks/templates/task-template.md`, `tasks/queue/task-017-delivery-batch-model.md`
+- 路线图：`no change: current priority unchanged`
+- 文档：`tasks/queue/task-017-delivery-batch-model.md`
 
 ## 复盘

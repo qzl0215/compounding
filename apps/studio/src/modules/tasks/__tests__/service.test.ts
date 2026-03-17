@@ -71,4 +71,14 @@ describe("tasks service", () => {
     expect(row?.acceptReleaseId).toBe("rel-011-dev");
     expect(row?.versionLabel).toBe("rel-011-dev");
   });
+
+  it("treats merged historical tasks as released even when old release records lack explicit task links", async () => {
+    const tasks = await listTaskCards();
+    const releasedTask = tasks.find((task) => task.id === "task-009-ai-work-modes-productization");
+    expect(releasedTask).toBeTruthy();
+
+    const row = buildTaskDeliveryRows([releasedTask!], [])[0];
+    expect(row?.deliveryStatus).toBe("released");
+    expect(row?.versionLabel).toContain("main@");
+  });
 });

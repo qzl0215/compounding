@@ -81,15 +81,14 @@ export function BlueprintGoalCard({ goal }: { goal: BlueprintGoal }) {
           </ul>
         </div>
         {goal.relatedTasks.length > 0 ? (
-          <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-white/38">关联任务</p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {goal.relatedTasks.map((taskPath) => (
-                <span key={taskPath} className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-xs text-white/66">
-                  {taskPath}
-                </span>
-              ))}
+          <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-black/20 px-3 py-3">
+            <div>
+              <p className="text-xs uppercase tracking-[0.22em] text-white/38">关联任务</p>
+              <p className="mt-1 text-sm text-white/70">共 {goal.relatedTasks.length} 项，详细信息进入任务页查看。</p>
             </div>
+            <Link href="/tasks" className="text-xs uppercase tracking-[0.2em] text-accent transition hover:text-white">
+              查看任务
+            </Link>
           </div>
         ) : null}
       </div>
