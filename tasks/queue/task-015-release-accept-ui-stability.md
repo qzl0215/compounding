@@ -36,7 +36,7 @@
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 ## 分支
 
@@ -70,13 +70,17 @@
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
 - 记忆：no change: incident-level fix only
 - 索引：no change: no index impact
-- 路线图：no change: current priority unchanged
+- 路线图：memory/project/roadmap.md, memory/project/operating-blueprint.md, memory/project/current-state.md, AGENTS.md
 - 文档：tasks/queue/task-015-release-accept-ui-stability.md
 
 ## 复盘
+
+- 前端异常的直接根因是发布页动作缺少 `try/catch`，并且在会被关闭的 `dev` 预览页里执行 `router.refresh()`。
+- 运行态漂移的根因是 `accept-dev-release` 先重启 production，再更新 active release；重启后的状态文件因此写入了旧的 logical release id。
+- 修复后，`accept/reject` 成功会直接跳转到稳定页面，production 运行态会先 `markActive` 再重启，`prod:check` 已恢复通过。
