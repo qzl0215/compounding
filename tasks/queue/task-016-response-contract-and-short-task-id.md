@@ -42,7 +42,7 @@
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 ## 分支
 
@@ -76,13 +76,15 @@
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
 - 记忆：no change: collaboration rule update only
 - 索引：no change: no index impact
 - 路线图：no change: current priority unchanged
-- 文档：tasks/queue/task-016-response-contract-and-short-task-id.md
+- 文档：`AGENTS.md`, `docs/AI_OPERATING_MODEL.md`, `docs/DEV_WORKFLOW.md`, `tasks/templates/task-template.md`, `tasks/queue/task-016-response-contract-and-short-task-id.md`
 
 ## 复盘
+
+- 已把默认验收说明、任务摘要先于方案、`t-xxx` 短编号固化进主源、工作流和任务模板，后续无需再依赖口头约定。
