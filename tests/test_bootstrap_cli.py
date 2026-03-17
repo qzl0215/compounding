@@ -232,6 +232,63 @@ class BootstrapCliTests(unittest.TestCase):
         self.assertEqual(payload["model"], "ark-model")
         self.assertEqual(payload["base_url"], "https://volcano.example/v1")
 
+    def test_release_lib_write_manifest_creates_parent_directory(self) -> None:
+        script = """
+const fs = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
+const runtimeRoot = fs.mkdtempSync(path.join(os.tmpdir(), "compounding-release-"));
+process.env.AI_OS_RELEASE_ROOT = runtimeRoot;
+const { writeManifest, readManifest } = require("./scripts/release/lib.ts");
+const record = {
+  release_id: "sample-dev-release",
+  commit_sha: "abc1234",
+  source_ref: "HEAD",
+  channel: "dev",
+  acceptance_status: "pending",
+  preview_url: "http://127.0.0.1:3001",
+  promoted_to_main_at: null,
+  promoted_from_dev_release_id: null,
+  created_at: "2026-03-17T00:00:00.000Z",
+  status: "preview",
+  build_result: "passed",
+  smoke_result: "passed",
+  cutover_at: null,
+  rollback_from: null,
+  release_path: "/tmp/sample",
+  change_summary: [],
+  notes: []
+};
+writeManifest(record);
+const manifest = readManifest(record.release_id);
+console.log(JSON.stringify({ ok: manifest.release_id === record.release_id && fs.existsSync(path.join(runtimeRoot, "releases", record.release_id, "release-manifest.json")) }));
+"""
+        completed = subprocess.run(
+            ["node", "--experimental-strip-types", "-e", script],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        payload = json.loads(completed.stdout)
+        self.assertTrue(payload["ok"])
+
+    def test_local_runtime_lib_exports_profile_label(self) -> None:
+        script = """
+process.env.AI_OS_RUNTIME_PROFILE = "dev";
+const runtime = require("./scripts/local-runtime/lib.ts");
+console.log(JSON.stringify({ profileLabel: runtime.PROFILE_LABEL || null }));
+"""
+        completed = subprocess.run(
+            ["node", "--experimental-strip-types", "-e", script],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        payload = json.loads(completed.stdout)
+        self.assertEqual(payload["profileLabel"], "dev 预览")
+
 
 if __name__ == "__main__":
     unittest.main()

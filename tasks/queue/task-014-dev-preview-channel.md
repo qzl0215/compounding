@@ -40,7 +40,7 @@
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 ## 分支
 
@@ -48,7 +48,7 @@
 
 ## 最近提交
 
-`auto: branch HEAD`
+`main HEAD`
 
 ## 计划
 
@@ -76,13 +76,16 @@
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
 - 记忆：`memory/project/current-state.md`
 - 索引：`no change: no index impact`
 - 路线图：`memory/project/roadmap.md`
-- 文档：`tasks/queue/task-014-dev-preview-channel.md, AGENTS.md, docs/DEV_WORKFLOW.md, docs/AI_OPERATING_MODEL.md, docs/PROJECT_RULES.md`
+- 文档：`tasks/queue/task-014-dev-preview-channel.md, AGENTS.md, docs/DEV_WORKFLOW.md, docs/AI_OPERATING_MODEL.md, docs/PROJECT_RULES.md, memory/project/current-state.md, memory/project/roadmap.md, memory/project/operating-blueprint.md`
 
 ## 复盘
+
+- 这轮真正暴露了两个运行时细节 bug：一是 release manifest 写入前未确保目录存在，二是 preview runtime 复用 prod 启动链时漏导出 `PROFILE_LABEL`。两者都不会在纯文档或纯页面审阅阶段暴露，必须通过真实 `dev preview → 验收 → 发布到 main` 链路才能抓到。
+- 以后涉及 release/runtime 改动，不能只跑 `build/test`，还要实际走一遍 `prepare dev → check preview → accept dev → prod:check`。

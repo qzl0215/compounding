@@ -17,44 +17,43 @@ last_reviewed_at: 2026-03-16
 
 ## 当前里程碑
 
-建立 dev 预览与验收发布链
+建立分层验证体系
 
 ## 关键子目标
 
-### dev 通道与验收状态
+### 静态门禁边界
 
 - 发布标准：
-  - release registry 明确支持 `dev / prod` 双通道
-  - 待验收 `dev` 至少包含 `pending / accepted / rejected` 语义
+  - 能明确列出 lint、task trace、task/Git 绑定、代码健康扫描等静态检查
+  - 执行者知道哪些检查必须在本地先过
 - 关联任务：
-  - `tasks/queue/task-014-dev-preview-channel.md`
+  - `tasks/queue/task-010-layered-validation-system.md`
 
-### task 硬门禁
+### 构建与运行时门禁
 
 - 发布标准：
-  - 任何 repo-tracked 改动若未更新 task，会被脚本门禁拦下
-  - task / Git / 当前分支关系可被明确校验
+  - 能区分 build / audit / preview health / production health 的层次边界
+  - 失败时能说明是构建问题还是运行时问题
 - 关联任务：
-  - `tasks/queue/task-014-dev-preview-channel.md`
+  - `tasks/queue/task-010-layered-validation-system.md`
 
-### 验收链接与页面提醒
+### AI 输出门禁与推荐顺序
 
 - 发布标准：
-  - dev 预览生成后会默认给出验收链接
-  - 验收通过后会再次给出 production 验收链接
-  - `/releases` 与 `/tasks` 都能解释当前是否存在未验收 dev
+  - 明确 AI 输出相关检查何时进入链路、为什么进入、失败后怎么处理
+  - `DEV_WORKFLOW` 给出统一推荐校验顺序
 - 关联任务：
-  - `tasks/queue/task-014-dev-preview-channel.md`
+  - `tasks/queue/task-010-layered-validation-system.md`
 
 ## 当前阻塞
 
-- 当前无结构性阻塞；关键在于把 dev 预览链路做成真正代码化状态，而不是只写口头约定。
+- 当前无结构性阻塞；关键在于把现有门禁盘点清楚，并避免把验证层次继续混写成一团。
 
 ## 下一检查点
 
-- dev 预览能生成待验收链接，且同一时间只允许一个 pending dev
-- 验收通过后，能晋升到 `main` 与本地生产
-- `task-014` 的执行状态、分支和最近提交可追踪
+- 明确四层门禁各自包含哪些检查与失败语义
+- `/releases`、`/tasks` 与当前发布链路能映射到统一门禁分层
+- `task-010` 进入执行状态并具备可追踪分支
 
 ## 证据边界
 

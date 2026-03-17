@@ -18,9 +18,9 @@ related_docs:
 ## 项目概览
 
 - 项目名称：Compounding AI Operating System
-- 当前阶段：建立 dev 预览与验收发布链
-- 当前优先级：把“先 task、后 dev 预览、验收通过后再发 main 与生产”的习惯同时写入文档、脚本门禁与发布页面。
-- 成功定义：每次改动都必须更新 task；每轮可验收改动都会先给出 dev 预览链接；若存在未验收 dev，系统会先提醒；验收通过后能晋升到 `main` 与本地生产，并再次给出生产验收链接。
+- 当前阶段：建立分层验证体系
+- 当前优先级：建立分层验证体系，把现有检查收口成静态、构建、运行时与 AI 输出四层门禁，并明确发布前推荐校验顺序。
+- 成功定义：执行者能快速判断当前该跑哪一层检查；发布链路中的关键门禁顺序、失败语义和下一步动作都清楚可解释。
 - 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
 - 运行边界：server-only
 
@@ -37,10 +37,10 @@ related_docs:
 
 ## 当前焦点
 
-- 建立 `dev / prod` 双通道 release registry，并明确 pending / accepted / rejected 语义
-- 强化 task 更新门禁，确保任何 repo-tracked 改动都必须回写 task
-- 让 `/releases`、`/tasks` 与首页风险区都能解释“当前是否存在未验收 dev”
-- 把页面和聊天统一到同一套验收/晋升真相源
+- 把现有检查划分为静态、构建、运行时与 AI 输出四层门禁
+- 明确发布前推荐校验顺序，让执行者知道先跑什么、失败后下一步是什么
+- 把 `/releases`、`/tasks` 与本地运行时状态解释对齐到同一套门禁层次
+- 保持新建立的 `dev preview → 验收 → main / production` 链路稳定可解释
 
 ## 关键冻结项
 
@@ -50,10 +50,10 @@ related_docs:
 
 ## 下一检查点
 
-- 定义静态、构建、运行时与 AI 输出四层验证边界
-- `docs/DEV_WORKFLOW.md` 明确推荐校验顺序与失败语义
-- 发布前门禁能按层次解释“先跑什么、为什么失败、下一步做什么”
 - `task-010` 进入执行入口并具备可追踪分支
+- 明确定义静态、构建、运行时与 AI 输出四层验证边界
+- `docs/DEV_WORKFLOW.md` 给出发布前推荐校验顺序与失败语义
+- 发布前门禁能按层次解释“先跑什么、为什么失败、下一步做什么”
 - `pnpm build`
 - `pnpm test`
 - `python3 scripts/init_project_compounding.py audit --config bootstrap/project_brief.yaml --target .`

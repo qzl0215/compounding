@@ -17,30 +17,29 @@ related_docs:
 
 ## 当前阶段
 
-建立 dev 预览与验收发布链
+建立分层验证体系
 
 ## 下个里程碑
 
-把“先 task、后 dev 预览、验收通过后再发 main 与生产”的习惯同时写入文档、脚本门禁与发布页面。
+把现有检查收口成静态、构建、运行时与 AI 输出四层门禁，并明确发布前推荐校验顺序。
 
 ## 里程碑成功标准
 
-- 任意 repo-tracked 改动若未更新 task，会被脚本门禁直接拦下
-- 每轮可验收改动默认先给出 dev 预览链接
-- 若存在未验收 dev，系统会明确提醒并阻止继续出新 pending dev
-- dev 验收通过后，能晋升到 `main` 与本地生产，并再次提供生产验收链接
-- `AGENTS`、`DEV_WORKFLOW`、`AI_OPERATING_MODEL`、发布页对 dev / prod 双通道语义保持一致
+- 执行者能一眼区分静态、构建、运行时与 AI 输出四层门禁
+- 发布前推荐校验顺序明确，失败语义与下一步动作可解释
+- `/releases`、`/tasks` 与本地运行时状态能对齐到同一套门禁分层
+- `AGENTS`、`DEV_WORKFLOW`、`AI_OPERATING_MODEL` 对推荐校验顺序与边界语义保持一致
 
 ## 当前优先级
 
-把“先 task、后 dev 预览、验收通过后再发 main 与生产”的习惯同时写入文档、脚本门禁与发布页面。
+建立分层验证体系，把现有检查收口成静态、构建、运行时与 AI 输出四层门禁，并明确发布前推荐校验顺序。
 
 ## 当前执行待办
 
-- [ ] 扩展 release registry，支持 `dev / prod` 通道与 pending / accepted / rejected 语义
-- [ ] 强化 task 更新门禁，确保任何 repo-tracked 改动都必须回写 task
-- [ ] 更新发布页、任务页与首页风险区，让未验收 dev 可被直接解释
-- [ ] 把 `AGENTS`、`DEV_WORKFLOW`、`AI_OPERATING_MODEL` 与页面提示统一到同一套验收链路
+- [ ] 盘点现有检查，划分静态、构建、运行时与 AI 输出四层边界
+- [ ] 在 `docs/DEV_WORKFLOW.md` 中明确推荐校验顺序与失败语义
+- [ ] 让 `/releases`、`/tasks` 与本地运行时状态页都能对齐到统一的门禁分层
+- [ ] 为下一轮 task-010 准备最小实现边界与验收标准
 
 ## 证据边界
 

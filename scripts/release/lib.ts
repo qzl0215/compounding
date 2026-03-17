@@ -79,7 +79,9 @@ function manifestPath(releaseId) {
 }
 
 function writeManifest(record) {
-  fs.writeFileSync(manifestPath(record.release_id), JSON.stringify(record, null, 2) + "\n");
+  const file = manifestPath(record.release_id);
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, JSON.stringify(record, null, 2) + "\n");
 }
 
 function readManifest(releaseId) {
