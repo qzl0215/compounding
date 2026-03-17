@@ -8,6 +8,11 @@ export type ReleaseRecord = {
   commit_sha: string;
   tag: string | null;
   source_ref: string;
+  primary_task_id: string | null;
+  linked_task_ids: string[];
+  delivery_summary: string | null;
+  delivery_benefit: string | null;
+  delivery_risks: string | null;
   channel: ReleaseChannel;
   acceptance_status: AcceptanceStatus;
   preview_url: string | null;
@@ -67,6 +72,11 @@ export type ReleaseDashboard = {
   releases: ReleaseRecord[];
   local_runtime: LocalRuntimeStatus;
   local_preview: LocalRuntimeStatus;
+};
+
+export type ReleaseTaskOption = {
+  id: string;
+  label: string;
 };
 
 export type ReleaseActionResult = {

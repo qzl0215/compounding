@@ -2,6 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { execFileSync } = require("node:child_process");
 const { releaseReload: releaseReloadImpl } = require("./reload.ts");
+const { extractSection, stripMarkdown } = require("../ai/lib/markdown-sections.ts");
 
 function workspaceRoot() {
   return process.cwd();
@@ -137,6 +138,54 @@ function releaseReload() {
   return releaseReloadImpl(workspaceRoot(), run);
 }
 
+function taskQueueDir() {
+  return path.join(workspaceRoot(), "tasks", "queue");
+}
+
+function taskPathForId(taskId) {
+  const normalized = String(taskId || "").replace(/\.md$/, "").trim();
+  return normalized ? path.join(taskQueueDir(), `${normalized}.md`) : "";
+}
+
+function parseTaskIdList(value) {
+  if (!value) {
+    return [];
+  }
+  return String(value)
+    .split(/[，,、]/)
+    .map((item) => item.trim().replace(/\.md$/, ""))
+    .filter(Boolean)
+    .filter((item, index, values) => values.indexOf(item) === index);
+}
+
+function readTaskDeliveryMetadata(taskId) {
+  const file = taskPathForId(taskId);
+  if (!file || !fs.existsSync(file)) {
+    throw new Error(`Unknown task: ${taskId}`);
+  }
+  const content = fs.readFileSync(file, "utf8");
+  const shortId = stripMarkdown(extractSection(content, "short_id", workspaceRoot()) || taskId);
+  const titleMatch = content.match(/^#\s+(.+)$/m);
+  const title = titleMatch ? titleMatch[1].trim() : taskId;
+  const benefit = firstMeaningfulLine(extractSection(content, "delivery_benefit", workspaceRoot()) || extractSection(content, "goal", workspaceRoot()) || "");
+  const risk = firstMeaningfulLine(extractSection(content, "delivery_risk", workspaceRoot()) || extractSection(content, "risks", workspaceRoot()) || "");
+  return {
+    id: taskId,
+    short_id: shortId,
+    title,
+    delivery_summary: `${shortId} ${title}`.trim(),
+    delivery_benefit: benefit || null,
+    delivery_risks: risk || null,
+  };
+}
+
+function firstMeaningfulLine(value) {
+  return String(value || "")
+    .split(/\r?\n/)
+    .map((line) => stripMarkdown(line).replace(/^[-*]\s*/, "").trim())
+    .find(Boolean) || "";
+}
+
 function updateChannelSymlink(target, channel = "prod") {
   const { currentLink, previewCurrentLink } = ensureLayout();
   const linkPath = channel === "dev" ? previewCurrentLink : currentLink;
@@ -242,6 +291,11 @@ function productionBaseUrl() {
 
 function normalizeReleaseRecord(record) {
   const normalized = { ...record };
+  normalized.primary_task_id = normalized.primary_task_id || null;
+  normalized.linked_task_ids = Array.isArray(normalized.linked_task_ids) ? normalized.linked_task_ids : [];
+  normalized.delivery_summary = normalized.delivery_summary || null;
+  normalized.delivery_benefit = normalized.delivery_benefit || null;
+  normalized.delivery_risks = normalized.delivery_risks || null;
   normalized.channel = normalized.channel === "dev" ? "dev" : "prod";
   normalized.acceptance_status =
     normalized.acceptance_status ||
@@ -289,6 +343,8 @@ module.exports = {
   markActive,
   pendingDevRelease,
   previewBaseUrl,
+  parseTaskIdList,
+  readTaskDeliveryMetadata,
   productionBaseUrl,
   readManifest,
   readRegistry,

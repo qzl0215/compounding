@@ -6,6 +6,7 @@ export {
   readReleaseRegistry,
   runAcceptDevRelease,
   runCreateDevPreview,
+  runCreateDevPreviewWithTasks,
   runDeployRelease,
   runRejectDevRelease,
   runRollbackRelease
@@ -19,5 +20,6 @@ export type {
   ReleaseChannel,
   ReleaseDashboard,
   ReleaseRecord,
-  ReleaseRegistry
+  ReleaseRegistry,
+  ReleaseTaskOption,
 } from "./types";

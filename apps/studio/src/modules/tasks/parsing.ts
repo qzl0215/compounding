@@ -2,14 +2,22 @@ import { extractFirstHeading, extractSection, stripMarkdown } from "@/modules/do
 import type { TaskCard, TaskUpdateTrace, TaskStatus } from "./types";
 
 export function parseTaskCard(path: string, content: string): Omit<TaskCard, "git"> {
+  const id = taskIdFromPath(path);
   return {
+    id,
     path,
+    shortId: stripMarkdown(extractSection(content, "short_id") ?? deriveShortId(id)),
     title: extractFirstHeading(content) ?? path.split("/").pop() ?? path,
     goal: stripMarkdown(extractSection(content, "goal") ?? "当前任务尚未填写目标。"),
     status: normalizeTaskStatus(stripMarkdown(extractSection(content, "status") ?? "todo")),
     currentMode: stripMarkdown(extractSection(content, "current_mode") ?? ""),
     branch: stripMarkdown(extractSection(content, "branch") ?? ""),
     recentCommit: stripMarkdown(extractSection(content, "recent_commit") ?? ""),
+    deliveryBenefit: stripMarkdown(extractSection(content, "delivery_benefit") ?? extractSection(content, "goal") ?? ""),
+    deliveryRisk: stripMarkdown(extractSection(content, "delivery_risk") ?? extractSection(content, "risks") ?? ""),
+    deliveryRetro: stripMarkdown(extractSection(content, "delivery_retro") ?? extractSection(content, "retrospective") ?? "未复盘"),
+    primaryRelease: stripMarkdown(extractSection(content, "primary_release") ?? "未生成"),
+    linkedReleases: parseLinkedReleases(content),
     relatedModules: parseRelatedModules(content),
     updateTrace: parseUpdateTrace(content),
   };
@@ -34,6 +42,15 @@ function parseUpdateTrace(content: string): TaskUpdateTrace {
     roadmap: extractTraceValue(raw, "路线图"),
     docs: extractTraceValue(raw, "文档"),
   };
+}
+
+function parseLinkedReleases(content: string) {
+  const raw = extractSection(content, "linked_releases") ?? "";
+  return raw
+    .split(/\r?\n/)
+    .map((line) => line.replace(/^-\s*/, "").replace(/`/g, "").trim())
+    .filter(Boolean)
+    .filter((value) => value !== "无");
 }
 
 function extractTraceValue(raw: string, label: string) {
@@ -75,4 +92,13 @@ function normalizeTaskStatus(value: string): TaskStatus {
     return normalized as TaskStatus;
   }
   return "todo";
+}
+
+function taskIdFromPath(path: string) {
+  return path.split("/").pop()?.replace(/\.md$/, "") ?? path;
+}
+
+function deriveShortId(taskId: string) {
+  const match = taskId.match(/^task-(\d+)/);
+  return match ? `t-${match[1]}` : taskId;
 }

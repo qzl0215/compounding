@@ -5,6 +5,7 @@ import { getManagementAccessState, getReleaseDashboard } from "@/modules/release
 import type { LocalRuntimeStatus, LocalRuntimeStatusType } from "@/modules/releases";
 import { ReleaseDashboardPanel } from "@/modules/releases/components/release-dashboard-panel";
 import { VALIDATION_LAYERS } from "@/modules/releases/validation";
+import { listTaskCards } from "@/modules/tasks";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +26,9 @@ export default async function ReleasesPage() {
   }
 
   const dashboard = getReleaseDashboard();
+  const taskOptions = (await listTaskCards())
+    .filter((task) => task.status !== "done")
+    .map((task) => ({ id: task.id, label: `${task.shortId || task.id} ${task.title}`.trim() }));
   const outline = [
     { id: "release-overview", label: "通道总览" },
     { id: "validation-layers", label: "验证层级" },
@@ -111,6 +115,7 @@ export default async function ReleasesPage() {
             previewUrl={dashboard.dev_preview_url}
             releases={dashboard.releases}
             runtimeStatus={dashboard.local_runtime}
+            taskOptions={taskOptions}
           />
         </section>
       </div>

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import type { LocalRuntimeStatus, ReleaseRecord } from "../types";
+import type { LocalRuntimeStatus, ReleaseRecord, ReleaseTaskOption } from "../types";
 import { resolveReleaseActionRedirect, type ReleaseActionKind, type ReleaseActionResponse } from "../actions";
 
 type Props = {
@@ -12,14 +12,25 @@ type Props = {
   previewUrl: string;
   productionUrl: string;
   runtimeStatus: LocalRuntimeStatus;
+  taskOptions: ReleaseTaskOption[];
 };
 
-export function ReleaseDashboardPanel({ releases, activeReleaseId, pendingDevRelease, previewUrl, productionUrl, runtimeStatus }: Props) {
+export function ReleaseDashboardPanel({
+  releases,
+  activeReleaseId,
+  pendingDevRelease,
+  previewUrl,
+  productionUrl,
+  runtimeStatus,
+  taskOptions,
+}: Props) {
   const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const [primaryTaskId, setPrimaryTaskId] = useState(taskOptions[0]?.id || "");
+  const [linkedTaskIds, setLinkedTaskIds] = useState<string[]>([]);
 
-  const runAction = (kind: ReleaseActionKind, url: string, payload: Record<string, string>) => {
+  const runAction = (kind: ReleaseActionKind, url: string, payload: Record<string, unknown>) => {
     startTransition(async () => {
       try {
         setMessage("正在执行，请稍候…");
@@ -47,14 +58,61 @@ export function ReleaseDashboardPanel({ releases, activeReleaseId, pendingDevRel
     });
   };
 
+  const createDevPayload = {
+    ref: "HEAD",
+    primaryTaskId,
+    linkedTaskIds,
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-3">
+        <label className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-white/72">
+          <span>主 task</span>
+          <select
+            className="bg-transparent text-white outline-none"
+            disabled={pending || Boolean(pendingDevRelease)}
+            value={primaryTaskId}
+            onChange={(event) => setPrimaryTaskId(event.target.value)}
+          >
+            <option value="">请选择</option>
+            {taskOptions.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-white/72">
+          <span>辅助 task</span>
+          <select
+            multiple
+            className="min-h-16 bg-transparent text-white outline-none"
+            disabled={pending || Boolean(pendingDevRelease)}
+            value={linkedTaskIds}
+            onChange={(event) =>
+              setLinkedTaskIds(
+                Array.from(event.target.selectedOptions)
+                  .map((option) => option.value)
+                  .filter((value) => value !== primaryTaskId)
+                  .slice(0, 2)
+              )
+            }
+          >
+            {taskOptions
+              .filter((option) => option.id !== primaryTaskId)
+              .map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.label}
+                </option>
+              ))}
+          </select>
+        </label>
         <button
           type="button"
           className="rounded-full border border-accent/40 bg-accent/14 px-4 py-2 text-sm text-accent transition hover:bg-accent/20 disabled:cursor-not-allowed disabled:opacity-50"
-          disabled={pending || Boolean(pendingDevRelease)}
-          onClick={() => runAction("create-dev", "/api/releases/dev", { ref: "HEAD" })}
+          disabled={pending || Boolean(pendingDevRelease) || !primaryTaskId}
+          onClick={() => runAction("create-dev", "/api/releases/dev", createDevPayload)}
         >
           生成 dev 预览
         </button>
@@ -92,6 +150,7 @@ export function ReleaseDashboardPanel({ releases, activeReleaseId, pendingDevRel
               ? `当前待验收版本为 ${pendingDevRelease.release_id}。请先验收这个 dev，再决定是否发布到 main。`
               : "当前没有待验收 dev，可以继续生成新的预览。"}
           </p>
+          {pendingDevRelease?.delivery_summary ? <p className="mt-3 text-sm text-white/62">交付摘要：{pendingDevRelease.delivery_summary}</p> : null}
           <p className="mt-3 text-xs text-white/52">预览链接：{previewUrl}</p>
         </article>
         <article className="rounded-3xl border border-white/8 bg-white/[0.03] p-5">
@@ -133,10 +192,32 @@ export function ReleaseDashboardPanel({ releases, activeReleaseId, pendingDevRel
               <dl className="mt-4 grid gap-3 text-sm text-white/72 md:grid-cols-2 xl:grid-cols-4">
                 <Meta title="通道" value={release.channel === "dev" ? "dev 预览" : "production"} />
                 <Meta title="来源分支" value={release.source_ref} />
+                <Meta title="主 task" value={release.primary_task_id || "未绑定"} />
                 <Meta title="构建结果" value={release.build_result} />
                 <Meta title="验收状态" value={formatAcceptance(release.acceptance_status)} />
                 <Meta title="切换时间" value={release.cutover_at || release.promoted_to_main_at || "未切换"} />
               </dl>
+
+              {release.delivery_summary || release.delivery_benefit || release.delivery_risks ? (
+                <div className="mt-4 grid gap-3 text-sm text-white/72 md:grid-cols-3">
+                  <Meta title="交付摘要" value={release.delivery_summary || "未记录"} />
+                  <Meta title="交付收益" value={release.delivery_benefit || "未记录"} />
+                  <Meta title="交付风险" value={release.delivery_risks || "未记录"} />
+                </div>
+              ) : null}
+
+              {release.linked_task_ids.length > 0 ? (
+                <div className="mt-4">
+                  <p className="text-xs uppercase tracking-[0.24em] text-accent">辅助 task</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {release.linked_task_ids.map((taskId) => (
+                      <span key={taskId} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-white/66">
+                        {taskId}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
 
               {release.change_summary.length > 0 ? (
                 <div className="mt-4">

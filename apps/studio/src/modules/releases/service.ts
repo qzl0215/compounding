@@ -140,7 +140,18 @@ export function getLocalRuntimeStatus(profile: "prod" | "dev" = "prod"): LocalRu
 }
 
 export function runCreateDevPreview(ref = "HEAD"): ReleaseActionResult {
-  const prepare = runReleaseScript("prepare-release.ts", ["--ref", ref, "--channel", "dev"]);
+  return runCreateDevPreviewWithTasks(ref, null, []);
+}
+
+export function runCreateDevPreviewWithTasks(ref = "HEAD", primaryTaskId: string | null, linkedTaskIds: string[] = []): ReleaseActionResult {
+  const args = ["--ref", ref, "--channel", "dev"];
+  if (primaryTaskId) {
+    args.push("--primary-task", primaryTaskId);
+  }
+  if (linkedTaskIds.length > 0) {
+    args.push("--linked-tasks", linkedTaskIds.join(","));
+  }
+  const prepare = runReleaseScript("prepare-release.ts", args);
   return {
     ok: prepare.ok,
     message: prepare.message,
@@ -231,6 +242,11 @@ function getChannelBaseUrl(channel: "dev" | "prod") {
 function normalizeReleaseRecord(release: ReleaseRecord): ReleaseRecord {
   return {
     ...release,
+    primary_task_id: release.primary_task_id ?? null,
+    linked_task_ids: Array.isArray(release.linked_task_ids) ? release.linked_task_ids : [],
+    delivery_summary: release.delivery_summary ?? null,
+    delivery_benefit: release.delivery_benefit ?? null,
+    delivery_risks: release.delivery_risks ?? null,
     channel: release.channel === "dev" ? "dev" : "prod",
     acceptance_status: release.acceptance_status || (release.status === "failed" ? "rejected" : release.channel === "dev" ? "pending" : "accepted"),
     preview_url: release.preview_url || (release.channel === "dev" ? getChannelBaseUrl("dev") : null),

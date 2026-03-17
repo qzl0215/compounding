@@ -6,9 +6,11 @@ const {
   currentActiveRelease,
   ensureLayout,
   git,
+  parseTaskIdList,
   pendingDevRelease,
   previewBaseUrl,
   productionBaseUrl,
+  readTaskDeliveryMetadata,
   releaseIdFor,
   resolveCommit,
   setPendingDevRelease,
@@ -27,6 +29,8 @@ function parseArg(name, fallback = null) {
 
 const ref = parseArg("--ref", "HEAD");
 const channel = parseArg("--channel", "prod");
+const primaryTaskId = parseArg("--primary-task", null);
+const linkedTaskIds = parseTaskIdList(parseArg("--linked-tasks", ""));
 
 function runNodeScript(scriptPath) {
   return JSON.parse(
@@ -71,6 +75,12 @@ function main() {
             release: existingPending,
           };
         }
+        if (!primaryTaskId) {
+          return {
+            ok: false,
+            message: "生成 dev 预览前必须指定主 task。",
+          };
+        }
       }
 
       const commitSha = resolveCommit(ref);
@@ -79,6 +89,8 @@ function main() {
       const current = currentActiveRelease();
       const summary = changeSummary(current?.commit_sha || null, commitSha);
       const notes = [];
+      const taskMeta = primaryTaskId ? readTaskDeliveryMetadata(primaryTaskId) : null;
+      const normalizedLinkedTaskIds = linkedTaskIds.filter((taskId) => taskId !== primaryTaskId).slice(0, 2);
 
       git(["worktree", "add", "--detach", releasePath, commitSha]);
       try {
@@ -103,6 +115,11 @@ function main() {
           commit_sha: commitSha,
           tag: null,
           source_ref: ref,
+          primary_task_id: taskMeta?.id || null,
+          linked_task_ids: normalizedLinkedTaskIds,
+          delivery_summary: taskMeta?.delivery_summary || null,
+          delivery_benefit: taskMeta?.delivery_benefit || null,
+          delivery_risks: taskMeta?.delivery_risks || null,
           channel,
           acceptance_status: channel === "dev" ? "pending" : "accepted",
           preview_url: channel === "dev" ? previewBaseUrl() : null,
@@ -147,6 +164,11 @@ function main() {
           commit_sha,
           tag: null,
           source_ref: ref,
+          primary_task_id: primaryTaskId || null,
+          linked_task_ids: linkedTaskIds.filter((taskId) => taskId !== primaryTaskId).slice(0, 2),
+          delivery_summary: null,
+          delivery_benefit: null,
+          delivery_risks: null,
           channel,
           acceptance_status: channel === "dev" ? "rejected" : "accepted",
           preview_url: channel === "dev" ? previewBaseUrl() : null,
@@ -180,6 +202,11 @@ function main() {
       commit_sha: "unresolved",
       tag: null,
       source_ref: ref,
+      primary_task_id: primaryTaskId || null,
+      linked_task_ids: linkedTaskIds.filter((taskId) => taskId !== primaryTaskId).slice(0, 2),
+      delivery_summary: null,
+      delivery_benefit: null,
+      delivery_risks: null,
       channel,
       acceptance_status: channel === "dev" ? "rejected" : "accepted",
       preview_url: channel === "dev" ? previewBaseUrl() : null,

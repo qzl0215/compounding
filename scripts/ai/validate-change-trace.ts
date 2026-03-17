@@ -100,6 +100,9 @@ function validateTask(taskPath, changedFiles, errors) {
     ["当前模式", extractSection(content, "current_mode", root)],
     ["分支", extractSection(content, "branch", root)],
     ["最近提交", extractSection(content, "recent_commit", root)],
+    ["交付收益", extractSection(content, "delivery_benefit", root)],
+    ["交付风险", extractSection(content, "delivery_risk", root)],
+    ["一句复盘", extractSection(content, "delivery_retro", root)],
     ["状态", extractSection(content, "status", root)],
   ];
   for (const [label, value] of requiredSections) {

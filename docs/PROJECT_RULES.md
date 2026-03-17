@@ -48,6 +48,7 @@ related_docs:
 ## 发布治理
 
 - `main` 是唯一生产主线；`dev` 只是 preview channel，不是长期 git 主分支
+- task 是执行边界，release 是验收与回滚边界；默认采用“1 个主 task / 1 次发布”，允许少量辅助 task 跟随
 - 新 release 必须先在后台目录完成安装、构建与 smoke check，成功后才允许切换 `current`
 - 每轮可验收改动默认先生成 `dev` 预览；若已有未验收 `dev`，必须先验收或驳回上一个 `dev`
 - 只有验收通过的 `dev` 才能晋升到 `main` 与本地生产
