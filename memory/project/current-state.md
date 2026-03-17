@@ -10,7 +10,7 @@ related_docs:
   - AGENTS.md
   - memory/project/roadmap.md
   - memory/project/operating-blueprint.md
-  - tasks/queue/task-018-home-unified-cockpit.md
+  - tasks/queue/task-019-gstack-practices-milestone.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 当前状态
@@ -18,9 +18,9 @@ related_docs:
 ## 项目概览
 
 - 项目名称：Compounding AI Operating System
-- 当前阶段：首页统一驾驶舱一期
-- 当前优先级：把首页升级为人类优先的统一项目驾驶舱，让项目主线、推进状态、风险与证据入口在同一页对齐，并保持与 AI 读取的主源一致。
-- 成功定义：不会代码的产品、运营或负责人打开首页后，也能在 1 分钟内理解项目是什么、当前最重要的事、现在卡在哪、下一步该去哪里看；首页摘要与详情页之间不发生事实漂移。
+- 当前阶段：gstack 高价值实践七项落地里程碑
+- 当前优先级：把“7 个高价值实践”转成可持续推进的任务批次，建立从规则、任务、验证到经验沉淀的闭环。
+- 成功定义：7 个实践全部有对应任务与验收证据；高频执行链路默认按模式化协作运行，且 task / memory / docs / code_index 不发生事实漂移。
 - 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
 - 运行边界：server-only
 
@@ -37,10 +37,11 @@ related_docs:
 
 ## 当前焦点
 
-- 对齐 `AGENTS`、`roadmap`、`operating-blueprint`、`current-state` 的当前主线描述
-- 把首页从信息门户升级为 5 区块统一驾驶舱
-- 把任务与运行态信息翻译成产品/运营能快速理解的摘要
-- 保持详情页继续承接文档、任务和发布操作，不长出新的平行真相源
+- 建立 3 种高频协作模式并绑定任务状态驱动
+- 为高频链路接入统一 preamble 与提问契约
+- 把分层验证和 diff-aware QA 绑定现有门禁入口
+- 在 review / ship 落地 Fix-First 分流规则并持续收敛
+- 落地模板生成防漂移与工具体验反馈闭环
 
 ## 当前推荐校验顺序
 
@@ -56,12 +57,13 @@ related_docs:
 - 不恢复旧 workflow 前台和重型多步骤表单
 - 不把 task 演化成审批流或重型工单系统
 - 不新增平行读模型或后台数据库
+- 不以一次大改替代批次推进与逐步验收
 
 ## 下一检查点
 
-- 确认首页 5 个区块的固定边界与证据落点
-- 完成统一驾驶舱快照接口与首页渲染测试
-- 保持 `/tasks`、`/knowledge-base`、`/releases` 与驾驶舱叙事一致
+- 完成 `t-019` 编排并推进 `t-020`、`t-021`、`t-022`、`t-023`、`t-024` 进入执行
+- 输出 7 个实践点的“当前完成度 / 风险 / 下一动作”看板快照
+- 完成首批高 ROI 子任务并通过统一门禁链路
 - `pnpm build`
 - `pnpm test`
 - `python3 scripts/init_project_compounding.py audit --config bootstrap/project_brief.yaml --target .`

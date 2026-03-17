@@ -5,41 +5,45 @@ update_mode: manual
 owner_role: Foreman
 status: active
 last_reviewed_at: 2026-03-17
-source_of_truth: tasks/queue/task-018-home-unified-cockpit.md
+source_of_truth: tasks/queue/task-019-gstack-practices-milestone.md
 related_docs:
   - AGENTS.md
   - memory/project/current-state.md
   - memory/project/operating-blueprint.md
-  - tasks/queue/task-018-home-unified-cockpit.md
+  - tasks/queue/task-019-gstack-practices-milestone.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 路线图
 
 ## 当前阶段
 
-首页统一驾驶舱一期
+gstack 高价值实践七项落地里程碑
 
 ## 下个里程碑
 
-把当前首页升级为人类优先的统一项目驾驶舱，让项目主线、推进状态、关键风险与证据入口在同一页对齐。
+把 gstack 中最值得吸收的 7 个实践（模式化协作、统一 preamble、分层验证、diff-aware QA、Fix-First 分流、模板生成防漂移、工具体验反馈闭环）落地到本仓库，并形成可持续拆解推进机制直至全部达成。
 
 ## 里程碑成功标准
 
-- 首页固定呈现“项目是什么 / 现在最重要的事 / 推进状态 / 风险与待决策 / 深入入口”5 个区块
-- 首页摘要全部来自现有主源，并能下钻到 task、memory、docs 或 `/releases`
-- 任务与运行态摘要默认使用产品/运营可理解的话术，而不是直接暴露工程细节
-- `/tasks`、`/knowledge-base`、`/releases` 继续作为详情工作台，不长出新的平行真相源
+- 建立并固化 3 个高频协作模式（Plan / Execute / QA-Review），每个模式都有固定输入、输出和退出条件
+- 所有高频模式接入统一 preamble（上下文重置、任务绑定、提问契约、会话约束）
+- 验证链路显式分层为静态 / 构建 / 运行时 / AI 输出，并落地到统一执行入口
+- QA 默认支持 diff-aware 策略，能够依据改动范围生成可追踪测试结论与健康摘要
+- Review/Ship 流程落地 Fix-First（AUTO-FIX vs ASK）分流，减少无效往返
+- 至少 1 类关键文档资产切换为模板生成并建立一致性校验，避免文档与实现漂移
+- 建立工具体验反馈闭环，将可复用改进沉淀到 `memory/experience/*` 并可晋升
 
 ## 当前优先级
 
-把首页升级为人类优先的统一项目驾驶舱，让项目主线、推进状态、风险与证据入口在同一页对齐，并保持与 AI 读取的主源一致。
+围绕 7 个高价值实践建立“里程碑 -> 子目标 -> task 批次 -> 验收门禁”推进链路，先完成规则与任务编排，再按批次持续实现。
 
 ## 当前执行待办
 
-- [ ] 对齐 `AGENTS`、`roadmap`、`operating-blueprint`、`current-state` 的当前主线描述
-- [ ] 为首页新增统一驾驶舱快照模型，统一抽取任务、运行态与证据入口
-- [ ] 把首页收口成 5 个固定区块，并让状态翻译面向产品/运营负责人
-- [ ] 明确首页与 `/tasks`、`/knowledge-base`、`/releases` 的驾驶舱 / 详情页边界
+- [x] 创建并启动 `t-019`，把 7 个实践拆为可独立验收的任务批次
+- [x] 建立首批子任务 `t-020`、`t-021`、`t-022` 对应高 ROI 三项基础能力
+- [x] 补齐子任务 `t-023`（diff-aware QA 与健康评分）、`t-024`（pre-landing checklist 与分流）
+- [ ] 把分层验证与 diff-aware QA 绑定到现有门禁命令，输出统一可读结论
+- [ ] 建立工具体验反馈闭环，并规定何时写入 `memory/experience/*` 与何时晋升
 
 ## 证据边界
 

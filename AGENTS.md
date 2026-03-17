@@ -36,8 +36,8 @@ last_reviewed_at: 2026-03-17
 
 - 项目名称：Compounding AI Operating System
 - 项目一句话：把当前仓库升级成适合 AI 长期协作、任务驱动、可持续重构与自进化的 AI-Native Repo。
-- 当前优先级：把首页升级为人类优先的统一项目驾驶舱，让项目主线、推进状态、风险与证据入口在同一页对齐，并保持与 AI 读取的主源一致。
-- 成功定义：不会代码的产品、运营或负责人打开首页后，也能在 1 分钟内理解项目是什么、当前最重要的事、现在卡在哪、下一步该去哪里看；首页与 `AGENTS / roadmap / operating-blueprint / current-state / tasks / releases` 保持同源一致。
+- 当前优先级：把 gstack 最值得吸收的 7 个高价值实践落地为本仓库的下一里程碑目标，并按任务批次持续拆解推进直至全部达成。
+- 成功定义：7 个实践均绑定任务与验收证据，且在 `AGENTS / roadmap / operating-blueprint / current-state / tasks / releases` 之间保持同源一致，不产生平行规则体系。
 - 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
 - 运行边界：server-only
 - 当前主线来源：`memory/project/roadmap.md`

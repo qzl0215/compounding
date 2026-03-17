@@ -9,7 +9,7 @@ related_docs:
   - AGENTS.md
   - memory/project/roadmap.md
   - memory/project/current-state.md
-  - tasks/queue/task-018-home-unified-cockpit.md
+  - tasks/queue/task-019-gstack-practices-milestone.md
 last_reviewed_at: 2026-03-17
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
@@ -17,46 +17,66 @@ last_reviewed_at: 2026-03-17
 
 ## 当前里程碑
 
-首页统一驾驶舱一期
+gstack 高价值实践七项落地里程碑
 
 ## 关键子目标
 
-### 首页信息架构收口
+### 子目标 1：模式化协作骨架（Plan / Execute / QA-Review）
 
 - 发布标准：
-  - 首页固定收口为 5 个区块，而不是继续并列堆更多模块
-  - 首页优先回答“项目是什么、现在最重要的事、现在卡在哪、下一步去哪看”
-  - 首页不是营销页，也不是文件树入口，而是统一驾驶舱
+  - 3 个模式的输入、输出、退出条件在主源中明确且可执行
+  - 模式切换不依赖口头约定，默认由 task 状态驱动
 - 关联任务：
-  - `tasks/queue/task-018-home-unified-cockpit.md`
+  - `tasks/queue/task-019-gstack-practices-milestone.md`
+  - `tasks/queue/task-020-collaboration-modes-and-preamble.md`
 
-### 统一快照与证据落点
+### 子目标 2：统一 preamble 与提问契约
 
 - 发布标准：
-  - `portal` 提供统一驾驶舱快照接口，从现有 Markdown 与 release runtime 抽取事实
-  - 首页所有摘要都带证据落点，能下钻到 task、memory、docs 或 `/releases`
-  - 首页只做人类友好的投影，不新建后台状态表或平行真相源
+  - 高频执行链路在进入动作前执行统一 preamble
+  - 上下文重置、任务绑定、提问格式、证据边界在 preamble 中固定
 - 关联任务：
-  - `tasks/queue/task-018-home-unified-cockpit.md`
+  - `tasks/queue/task-019-gstack-practices-milestone.md`
+  - `tasks/queue/task-020-collaboration-modes-and-preamble.md`
 
-### 详情工作台边界稳定
+### 子目标 3：分层验证与 diff-aware QA
 
 - 发布标准：
-  - `/tasks`、`/knowledge-base`、`/releases` 继续承接详情阅读与现有操作
-  - 首页只做浏览与导航，不新增聊天面板或执行按钮
-  - 详情页文案与命名统一到“驾驶舱下钻页”语境，不重做核心能力
+  - 静态 / 构建 / 运行时 / AI 输出门禁在同一执行面收口
+  - QA 默认以改动范围优先，提供健康评分与证据落点
 - 关联任务：
-  - `tasks/queue/task-018-home-unified-cockpit.md`
+  - `tasks/queue/task-019-gstack-practices-milestone.md`
+  - `tasks/queue/task-021-fix-first-and-layered-gates.md`
+  - `tasks/queue/task-023-diff-aware-qa-and-health-score.md`
+
+### 子目标 4：Fix-First 分流与自动修复优先
+
+- 发布标准：
+  - review / ship 场景区分 AUTO-FIX 与 ASK，并有明确分流边界
+  - 对可机械修复项优先自动收敛，减少反复对话
+- 关联任务：
+  - `tasks/queue/task-019-gstack-practices-milestone.md`
+  - `tasks/queue/task-021-fix-first-and-layered-gates.md`
+  - `tasks/queue/task-024-pre-landing-checklist-and-routing.md`
+
+### 子目标 5：模板生成防漂移与反馈闭环
+
+- 发布标准：
+  - 至少 1 类关键资产改为“模板 + 生成 + 校验”链路
+  - 工具体验问题可沉淀为结构化反馈并回写经验层
+- 关联任务：
+  - `tasks/queue/task-019-gstack-practices-milestone.md`
+  - `tasks/queue/task-022-template-generation-and-feedback-loop.md`
 
 ## 当前阻塞
 
-- 当前无结构性阻塞；关键在于先对齐主源，再升级首页，否则驾驶舱会把现有文档冲突直接放大给用户。
+- 当前无结构性阻塞；核心风险在于一次性改造过大导致节奏失控，需按批次滚动验收。
 
 ## 下一检查点
 
-- 对齐 `AGENTS / roadmap / operating-blueprint / current-state` 的当前主线
-- 完成统一驾驶舱快照接口与首页 5 区块重构
-- 验证首页能把任务与运行态翻译成产品/运营可读的话术
+- 完成 `t-019` 拆解并建立首批执行任务
+- 首批实现至少覆盖 3 个高 ROI 实践点并通过门禁
+- 验证任务、规则、记忆资产在一次迭代内保持同源一致
 
 ## 证据边界
 
