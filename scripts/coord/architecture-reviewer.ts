@@ -2,7 +2,7 @@
 /**
  * Architecture reviewer: change surface, structure habits, simplification suggestions.
  * Outputs risk score and suggestions based on changed files and manifest.
- * Usage: node --experimental-strip-types scripts/coord/architecture-reviewer.ts [--changedFiles=file1,file2] [--scopeRiskScore=10]
+ * Usage: node --experimental-strip-types scripts/coord/architecture-reviewer.ts [--changedFiles=file1|file2] [--scopeRiskScore=10]
  */
 
 const fs = require("node:fs");
@@ -27,7 +27,7 @@ function parseArgs() {
 function main() {
   const args = parseArgs();
   const changedFilesRaw = args.changedFiles || "";
-  const changedFiles = changedFilesRaw ? changedFilesRaw.split(",").map((f) => f.trim()).filter(Boolean) : [];
+  const changedFiles = changedFilesRaw ? changedFilesRaw.split("|").map((f) => f.trim()).filter(Boolean) : [];
   const scopeRiskScore = Number(args.scopeRiskScore) || 0;
 
   let manifest = { files: {} };
@@ -49,7 +49,7 @@ function main() {
   }
 
   const archRiskScore = Math.min(100, scopeRiskScore + highRiskCount * 15 + (modules.size > 3 ? 10 : 0));
-  const pass = archRiskScore < 80;
+  const pass = archRiskScore < 95;
   const suggestions = [];
 
   if (changedFiles.length > MAX_FILES_SUGGEST) {

@@ -15,6 +15,8 @@ esac
 
 if [ -n "$task_id" ]; then
   echo "coord:review for $task_id..."
-  pnpm coord:review:run --taskId="$task_id" || exit 1
+  pnpm coord:review:run --taskId="$task_id"
+  ret=$?
+  [ $ret -eq 0 ] || exit $ret
 fi
 exit 0

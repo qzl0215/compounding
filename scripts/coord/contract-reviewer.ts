@@ -2,7 +2,7 @@
 /**
  * Contract reviewer: interface/type/route/schema contract checks.
  * Runs lint when changed files require contract_reviewer per manifest.
- * Usage: node --experimental-strip-types scripts/coord/contract-reviewer.ts [--changedFiles=file1,file2]
+ * Usage: node --experimental-strip-types scripts/coord/contract-reviewer.ts [--changedFiles=file1|file2]
  */
 
 const fs = require("node:fs");
@@ -27,7 +27,7 @@ function parseArgs() {
 function main() {
   const args = parseArgs();
   const changedFilesRaw = args.changedFiles || "";
-  const changedFiles = changedFilesRaw ? changedFilesRaw.split(",").map((f) => f.trim()).filter(Boolean) : [];
+  const changedFiles = changedFilesRaw ? changedFilesRaw.split("|").map((f) => f.trim()).filter(Boolean) : [];
 
   if (changedFiles.length === 0) {
     console.log(JSON.stringify({ name: "contract_reviewer", pass: true, summary: "No changed files.", raw: {} }, null, 2));

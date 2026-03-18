@@ -66,7 +66,7 @@ function runLockReviewer(taskId, changedFiles) {
 }
 
 function runContractReviewer(changedFiles) {
-  const filesArg = changedFiles.length ? `--changedFiles=${changedFiles.join(",")}` : "";
+  const filesArg = changedFiles.length ? `--changedFiles=${changedFiles.join("|")}` : "";
   const result = spawnSync(
     "node",
     ["--experimental-strip-types", "scripts/coord/contract-reviewer.ts", filesArg].filter(Boolean),
@@ -82,7 +82,7 @@ function runContractReviewer(changedFiles) {
 
 function runArchitectureReviewer(changedFiles, scopeRiskScore) {
   const args = ["--experimental-strip-types", "scripts/coord/architecture-reviewer.ts"];
-  if (changedFiles.length) args.push(`--changedFiles=${changedFiles.join(",")}`);
+  if (changedFiles.length) args.push(`--changedFiles=${changedFiles.join("|")}`);
   if (scopeRiskScore != null) args.push(`--scopeRiskScore=${scopeRiskScore}`);
   const result = spawnSync("node", args, { cwd: ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
   try {
