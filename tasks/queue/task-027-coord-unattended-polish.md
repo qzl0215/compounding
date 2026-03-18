@@ -39,7 +39,7 @@ Phase 2 已完善 auto-review 与 merge gate，但人工介入时仍缺少界面
 
 ## 当前模式
 
-工程执行
+质量验收
 
 ## 分支
 
@@ -77,7 +77,7 @@ Phase 2 已完善 auto-review 与 merge gate，但人工介入时仍缺少界面
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
