@@ -279,13 +279,13 @@ function clearPendingDevRelease() {
 
 function previewBaseUrl() {
   const host = process.env.AI_OS_LOCAL_PREVIEW_HOST || "127.0.0.1";
-  const port = process.env.AI_OS_LOCAL_PREVIEW_PORT || "3001";
+  const port = process.env.AI_OS_LOCAL_PREVIEW_PORT || "3011";
   return `http://${host}:${port}`;
 }
 
 function productionBaseUrl() {
   const host = process.env.AI_OS_LOCAL_PROD_HOST || process.env.AI_OS_LOCAL_HOST || "127.0.0.1";
-  const port = process.env.AI_OS_LOCAL_PROD_PORT || process.env.AI_OS_LOCAL_PORT || "3000";
+  const port = process.env.AI_OS_LOCAL_PROD_PORT || process.env.AI_OS_LOCAL_PORT || "3010";
   return `http://${host}:${port}`;
 }
 

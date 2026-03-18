@@ -246,7 +246,7 @@ const record = {
   source_ref: "HEAD",
   channel: "dev",
   acceptance_status: "pending",
-  preview_url: "http://127.0.0.1:3001",
+  preview_url: "http://127.0.0.1:3011",
   promoted_to_main_at: null,
   promoted_from_dev_release_id: null,
   created_at: "2026-03-17T00:00:00.000Z",

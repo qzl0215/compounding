@@ -94,7 +94,7 @@ export function getLocalRuntimeStatus(profile: "prod" | "dev" = "prod"): LocalRu
     return {
       status: "stopped",
       running: false,
-      port: profile === "dev" ? 3001 : 3000,
+      port: profile === "dev" ? 3011 : 3010,
       pid: null,
       runtime_release_id: null,
       current_release_id: null,
@@ -127,7 +127,7 @@ export function getLocalRuntimeStatus(profile: "prod" | "dev" = "prod"): LocalRu
     return {
       status: "port_error",
       running: false,
-      port: profile === "dev" ? 3001 : 3000,
+      port: profile === "dev" ? 3011 : 3010,
       pid: null,
       runtime_release_id: null,
       current_release_id: null,
@@ -231,11 +231,11 @@ function runReleaseScript(scriptName: string, args: string[]): ReleaseActionResu
 function getChannelBaseUrl(channel: "dev" | "prod") {
   if (channel === "dev") {
     const host = process.env.AI_OS_LOCAL_PREVIEW_HOST || "127.0.0.1";
-    const port = process.env.AI_OS_LOCAL_PREVIEW_PORT || "3001";
+    const port = process.env.AI_OS_LOCAL_PREVIEW_PORT || "3011";
     return `http://${host}:${port}`;
   }
   const host = process.env.AI_OS_LOCAL_PROD_HOST || process.env.AI_OS_LOCAL_HOST || "127.0.0.1";
-  const port = process.env.AI_OS_LOCAL_PROD_PORT || process.env.AI_OS_LOCAL_PORT || "3000";
+  const port = process.env.AI_OS_LOCAL_PROD_PORT || process.env.AI_OS_LOCAL_PORT || "3010";
   return `http://${host}:${port}`;
 }
 

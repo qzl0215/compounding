@@ -156,7 +156,7 @@ related_docs:
 - 每轮 release 默认绑定 1 个主 task，可选 0-2 个辅助 task
 - task 是执行边界，release 是验收与回滚边界；不得把二者机械等同
 - 新版本必须先在后台 release 目录完成准备，再切换 `current`
-- `dev` 预览链接默认指向本地 `3001` 端口，production 默认指向本地 `3000` 端口
+- `dev` 预览链接默认指向本地 `3011` 端口，production 默认指向本地 `3010` 端口
 - 生成 `dev` 预览前，必须显式指定主 task
 - 创建 `dev` 预览成功后，必须提供 `dev` 验收链接
 - 验收通过后，必须再次提供 production 验收链接

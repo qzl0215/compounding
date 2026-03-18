@@ -72,7 +72,7 @@ describe("releases service", () => {
               source_ref: "codex/task-014-dev-preview-channel",
               channel: "dev",
               acceptance_status: "pending",
-              preview_url: "http://127.0.0.1:3001",
+              preview_url: "http://127.0.0.1:3011",
               promoted_to_main_at: null,
               promoted_from_dev_release_id: null,
               created_at: "2026-03-15T10:10:00Z",
@@ -108,19 +108,19 @@ describe("releases service", () => {
     expect(
       resolveReleaseActionRedirect(
         "create-dev",
-        { links: { dev: "http://127.0.0.1:3001" } },
-        "http://127.0.0.1:3001",
-        "http://127.0.0.1:3000"
+        { links: { dev: "http://127.0.0.1:3011" } },
+        "http://127.0.0.1:3011",
+        "http://127.0.0.1:3010"
       )
-    ).toBe("http://127.0.0.1:3001/releases");
+    ).toBe("http://127.0.0.1:3011/releases");
 
     expect(
       resolveReleaseActionRedirect(
         "accept-dev",
-        { links: { production: "http://127.0.0.1:3000" } },
-        "http://127.0.0.1:3001",
-        "http://127.0.0.1:3000"
+        { links: { production: "http://127.0.0.1:3010" } },
+        "http://127.0.0.1:3011",
+        "http://127.0.0.1:3010"
       )
-    ).toBe("http://127.0.0.1:3000/releases");
+    ).toBe("http://127.0.0.1:3010/releases");
   });
 });

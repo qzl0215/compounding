@@ -4,7 +4,7 @@ const { execFileSync } = require("node:child_process");
 const { ensureLayout, layoutPaths, pendingDevRelease, readRegistry, runtimeRoot } = require("../release/lib.ts");
 
 const RUNTIME_PROFILE = process.env.AI_OS_RUNTIME_PROFILE || "prod";
-const DEFAULT_PORT = RUNTIME_PROFILE === "dev" ? "3001" : "3000";
+const DEFAULT_PORT = RUNTIME_PROFILE === "dev" ? "3011" : "3010";
 const PROD_PORT = Number(process.env.AI_OS_LOCAL_PORT || process.env.AI_OS_LOCAL_PROD_PORT || DEFAULT_PORT);
 const PROD_HOST = process.env.AI_OS_LOCAL_HOST || process.env.AI_OS_LOCAL_PROD_HOST || "127.0.0.1";
 const PROD_BASE_URL = `http://${PROD_HOST}:${PROD_PORT}`;

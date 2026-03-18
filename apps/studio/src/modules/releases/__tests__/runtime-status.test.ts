@@ -29,7 +29,7 @@ describe("runtime status explanation", () => {
     const exp = getRuntimeStatusExplanation("running", "production", {
       status: "running",
       running: true,
-      port: 3000,
+      port: 3010,
       pid: 123,
       runtime_release_id: "20260317-abc-prod",
       current_release_id: "20260317-abc-prod",
