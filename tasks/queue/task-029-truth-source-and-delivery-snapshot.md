@@ -44,7 +44,7 @@ t-029
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 ## 分支
 
@@ -52,7 +52,7 @@ t-029
 
 ## 最近提交
 
-`auto: branch HEAD`
+`7fe44ef`
 
 ## 交付收益
 
@@ -68,11 +68,11 @@ t-029
 
 ## 主发布版本
 
-未生成
+`20260318190450-7fe44ef-prod`
 
 ## 关联发布版本
 
-无
+`20260318185730-7fe44ef-dev`
 
 ## 计划
 
@@ -98,13 +98,15 @@ t-029
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
 - 记忆：`memory/project/current-state.md`
-- 索引：`code_index/function-index.json`
+- 索引：`no change: this closeout only updates task and current-state`
 - 路线图：`no change: current priority unchanged`
 - 文档：`tasks/queue/task-029-truth-source-and-delivery-snapshot.md`
 
 ## 复盘
+
+`roadmap` / `current-state` / `DeliverySnapshot` 的边界收口后，首页、任务页、发布页的事实口径一致了。

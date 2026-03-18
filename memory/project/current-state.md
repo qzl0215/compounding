@@ -47,7 +47,7 @@ related_docs:
 - [x] 完成 gstack 七项实践里程碑（t-019~t-024）
 - [x] 落地 Multi-Agent Coordination Layer（t-025/t-026/t-027）
 - [x] 推进真相源收口与交付快照统一（t-028）
-- [ ] 收口 `roadmap` 与 `current-state` 的职责边界，并继续收敛交付快照
+- [x] 收口 `roadmap` 与 `current-state` 的职责边界，并继续收敛交付快照（t-029）
 
 ## 当前推荐校验顺序
 
