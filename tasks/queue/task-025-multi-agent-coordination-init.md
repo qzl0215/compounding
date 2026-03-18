@@ -51,15 +51,15 @@ t-025
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 ## 分支
 
-`codex/task-025-multi-agent-coordination-init`
+`main (legacy direct release)`
 
 ## 最近提交
 
-`2bf6d69`（含 t-027 merge）
+`fbe8034`
 
 ## 交付收益
 
@@ -103,7 +103,7 @@ t-025
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 

@@ -43,7 +43,7 @@ Phase 2 已完善 auto-review 与 merge gate，但人工介入时仍缺少界面
 
 ## 分支
 
-`codex/task-025-multi-agent-coordination-init`
+`main (legacy direct release)`
 
 ## 最近提交
 
