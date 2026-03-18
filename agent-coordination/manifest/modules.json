@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Modules Configuration",
+  "description": "模块 → criticality / owner_hint / preferred_validation",
+  "version": "1.0.0",
+  "modules": {
+    "project-rules": {
+      "criticality": "core",
+      "owner_hint": "Foreman",
+      "preferred_validation": "contract_check"
+    },
+    "agent-coordination": {
+      "criticality": "high",
+      "owner_hint": "Architect",
+      "preferred_validation": "scope_reviewer"
+    },
+    "apps/studio": {
+      "criticality": "high",
+      "owner_hint": "Builder",
+      "preferred_validation": "ui_preview"
+    },
+    "scripts/ai": {
+      "criticality": "high",
+      "owner_hint": "Builder",
+      "preferred_validation": "integration_test"
+    },
+    "scripts/release": {
+      "criticality": "core",
+      "owner_hint": "Foreman",
+      "preferred_validation": "contract_check"
+    }
+  }
+}

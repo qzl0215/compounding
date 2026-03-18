@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Escalation Policy",
+  "description": "何时升级为 human decision",
+  "version": "1.0.0",
+  "triggers": [
+    {
+      "id": "core_file_conflict",
+      "condition": "修改 core 文件且被其他 task 锁定",
+      "action": "escalate_to_human"
+    },
+    {
+      "id": "merge_confidence_low",
+      "condition": "merge_confidence_score < 0.6",
+      "action": "escalate_to_human"
+    },
+    {
+      "id": "scope_violation",
+      "condition": "修改未声明的 core/high_conflict 文件",
+      "action": "block_and_retry"
+    }
+  ]
+}

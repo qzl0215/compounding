@@ -1,0 +1,1402 @@
+{
+  "generated_at": "2026-03-18T07:12:59.125Z",
+  "report_only": false,
+  "total_files": 268,
+  "by_risk": {
+    "core": 18,
+    "high_conflict": 59,
+    "normal": 191,
+    "generated": 0,
+    "test_only": 0,
+    "docs_only": 0
+  },
+  "by_source": {
+    "hard_rule": 10,
+    "heuristic": 258,
+    "override": 0
+  },
+  "high_risk_files": [
+    {
+      "path": ".github/workflows/main-release-guard.yml",
+      "risk_level": "core"
+    },
+    {
+      "path": "AGENTS.md",
+      "risk_level": "core"
+    },
+    {
+      "path": "apps/studio/eslint.config.mjs",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/next.config.ts",
+      "risk_level": "core"
+    },
+    {
+      "path": "apps/studio/postcss.config.mjs",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/app/api/docs/ai-rewrite/route.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/app/api/docs/prompt-history/route.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/app/api/docs/route.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/app/api/releases/deploy/route.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/app/api/releases/dev/accept/route.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/app/api/releases/dev/reject/route.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/app/api/releases/dev/route.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/app/api/releases/rollback/route.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/app/api/releases/route.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/app/api/releases/runtime-status/route.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/app/globals.css",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/app/knowledge-base/page.tsx",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/app/layout.tsx",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/app/page.tsx",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/app/releases/page.tsx",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/app/tasks/page.tsx",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/docs/ai-rewrite-types.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/docs/components/doc-viewer-types.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/docs/index.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/docs/module.md",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/docs/types.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/git-health/index.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/git-health/module.md",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/git-health/types.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/portal/index.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/portal/module.md",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/portal/types.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/releases/index.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/releases/module.md",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/releases/types.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/tasks/index.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/tasks/module.md",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/tasks/types.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/tailwind.config.ts",
+      "risk_level": "core"
+    },
+    {
+      "path": "apps/studio/tsconfig.json",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/vitest.config.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "bootstrap/project_brief.yaml",
+      "risk_level": "core"
+    },
+    {
+      "path": "bootstrap/schemas/project_bootstrap.schema.json",
+      "risk_level": "core"
+    },
+    {
+      "path": "bootstrap/schemas/project_brief.schema.json",
+      "risk_level": "core"
+    },
+    {
+      "path": "package.json",
+      "risk_level": "core"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "risk_level": "core"
+    },
+    {
+      "path": "scripts/ai/build-context.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/collaboration-mode-integration.js",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/collaboration-mode-manager.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/create-task.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/diff-aware-qa-orchestrator.js",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/fix-first-orchestrator.js",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/generate-asset-maintenance.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/generate-experience-index.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/generate-module-index.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/lib/knowledge-assets.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/lib/markdown-sections.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/pre-landing-checklist.js",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/scan-code-health.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/task-mode-integration.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/template-feedback-orchestrator.js",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/unified-preamble.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/validate-ai-output.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/validate-change-trace.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/validate-knowledge-assets.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/validate-task-git-link.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/compounding_bootstrap/config_resolution.py",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/compounding_bootstrap/module.md",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/release/accept-dev-release.ts",
+      "risk_level": "core"
+    },
+    {
+      "path": "scripts/release/lib.ts",
+      "risk_level": "core"
+    },
+    {
+      "path": "scripts/release/prepare-release.ts",
+      "risk_level": "core"
+    },
+    {
+      "path": "scripts/release/reject-dev-release.ts",
+      "risk_level": "core"
+    },
+    {
+      "path": "scripts/release/reload.ts",
+      "risk_level": "core"
+    },
+    {
+      "path": "scripts/release/rollback-release.ts",
+      "risk_level": "core"
+    },
+    {
+      "path": "scripts/release/summarize-release.ts",
+      "risk_level": "core"
+    },
+    {
+      "path": "scripts/release/switch-release.ts",
+      "risk_level": "core"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "risk_level": "core"
+    }
+  ],
+  "entries": {
+    ".DS_Store": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    ".env": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    ".github/pull_request_template.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    ".github/workflows/main-release-guard.yml": {
+      "risk_level": "core",
+      "source": "hard_rule"
+    },
+    ".gitignore": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    ".pytest_cache/.gitignore": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    ".pytest_cache/CACHEDIR.TAG": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    ".pytest_cache/README.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    ".pytest_cache/v/cache/lastfailed": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    ".pytest_cache/v/cache/nodeids": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "AGENTS.md": {
+      "risk_level": "core",
+      "source": "hard_rule"
+    },
+    "README.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/eslint.config.mjs": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/next-env.d.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/next.config.ts": {
+      "risk_level": "core",
+      "source": "hard_rule"
+    },
+    "apps/studio/package.json": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/postcss.config.mjs": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/app/api/docs/ai-rewrite/route.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/app/api/docs/prompt-history/route.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/app/api/docs/route.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/app/api/releases/deploy/route.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/app/api/releases/dev/accept/route.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/app/api/releases/dev/reject/route.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/app/api/releases/dev/route.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/app/api/releases/rollback/route.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/app/api/releases/route.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/app/api/releases/runtime-status/route.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/app/globals.css": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/app/knowledge-base/page.tsx": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/app/layout.tsx": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/app/page.tsx": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/app/releases/page.tsx": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/app/tasks/page.tsx": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/components/page-outline.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/components/shell/app-shell.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/components/ui/badge.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/components/ui/card.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/lib/classnames.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/lib/workspace.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/__tests__/ai-rewrite-prompts.test.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/__tests__/content.test.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/__tests__/editor-model.test.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/__tests__/repository.test.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/ai-rewrite-client.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/ai-rewrite-context.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/ai-rewrite-prompts.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/ai-rewrite-provider.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/ai-rewrite-types.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/ai-rewrite.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/components/ai-rewrite-panel-sections.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/components/ai-rewrite-panel.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/components/doc-tree.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/components/doc-viewer-toolbar.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/components/doc-viewer-types.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/components/doc-viewer.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/components/markdown-content.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/components/rich-doc-editor.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/content.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/editor-model.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/index.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/module.md": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/repository.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/sections.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/docs/types.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/git-health/__tests__/service.test.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/git-health/index.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/git-health/module.md": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/git-health/service.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/git-health/types.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/portal/__tests__/home-dashboard.test.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/portal/__tests__/service.test.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/portal/builders.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/portal/components/home-dashboard.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/portal/components/home-fragments.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/portal/index.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/portal/module.md": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/portal/parsing.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/portal/service.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/portal/types.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/releases/__tests__/runtime-status.test.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/releases/__tests__/service.test.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/releases/actions.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/releases/components/release-dashboard-panel.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/releases/index.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/releases/module.md": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/releases/runtime-status.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/releases/service.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/releases/types.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/releases/validation.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/tasks/__tests__/service.test.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/tasks/components/delivery-table.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/tasks/delivery.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/tasks/git.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/tasks/index.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/tasks/module.md": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/tasks/parsing.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/tasks/service.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/tasks/types.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/tailwind.config.ts": {
+      "risk_level": "core",
+      "source": "hard_rule"
+    },
+    "apps/studio/tsconfig.json": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/vitest.config.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/vitest.setup.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "bootstrap/canonical_hardening.json": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "bootstrap/heading_aliases.json": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "bootstrap/managed_blocks/complexity_appendix.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "bootstrap/managed_blocks/evidence_boundary.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "bootstrap/managed_blocks/fixed_report_structure.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "bootstrap/project_bootstrap.yaml": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "bootstrap/project_brief.yaml": {
+      "risk_level": "core",
+      "source": "hard_rule"
+    },
+    "bootstrap/schemas/project_bootstrap.schema.json": {
+      "risk_level": "core",
+      "source": "hard_rule"
+    },
+    "bootstrap/schemas/project_brief.schema.json": {
+      "risk_level": "core",
+      "source": "hard_rule"
+    },
+    "bootstrap/templates/document_manifest.json": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "bootstrap/templates/foreman_bootstrap.md.tmpl": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "code_index/dependency-map.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "code_index/function-index.json": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "code_index/module-index.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "deploy/nginx/compounding-portal.conf": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "deploy/systemd/compounding-portal.service": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "deploy/systemd/foreman-quant-review.service": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "deploy/systemd/foreman-quant-review.timer": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "docs/AI_OPERATING_MODEL.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "docs/ARCHITECTURE.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "docs/ASSET_MAINTENANCE.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "docs/DEV_WORKFLOW.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "docs/ORG_MODEL.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "docs/PROJECT_RULES.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "docs/REFACTOR_PLAN.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "docs/UIUX_CURRENT_PACKAGE.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "docs/WORK_MODES.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "docs/prompts/ai-doc-clarify-user.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "docs/prompts/ai-doc-rewrite-system.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "docs/prompts/ai-doc-rewrite-user.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "docs/prompts/prompt-assets.json": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/architecture/system-overview.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/decisions/ADR-001-ai-native-repo-skeleton.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/decisions/ADR-002-thin-agents-entry-contract.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/decisions/ADR-003-no-new-giant-utils.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/decisions/ADR-004-experience-comparable-assets.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/experience/README.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/experience/exp-001-thin-agents-entry.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/experience/exp-002-memory-before-promotion.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/experience/exp-003-delete-legacy-ui-first.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/experience/experience-index.json": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/feedback/feedback-diff-aware-qa-orchestrator-2026-03-17T14-47-25-275Z.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/project/current-state.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/project/operating-blueprint.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/project/roadmap.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/project/tech-debt.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "package.json": {
+      "risk_level": "core",
+      "source": "hard_rule"
+    },
+    "pnpm-lock.yaml": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "pnpm-workspace.yaml": {
+      "risk_level": "core",
+      "source": "hard_rule"
+    },
+    "scripts/__init__.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/ai/build-context.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/collaboration-mode-integration.js": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/collaboration-mode-manager.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/create-task.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/diff-aware-qa-orchestrator.js": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/fix-first-orchestrator.js": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/generate-asset-maintenance.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/generate-experience-index.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/generate-module-index.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/lib/knowledge-assets.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/lib/markdown-sections.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/pre-landing-checklist.js": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/scan-code-health.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/task-mode-integration.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/template-feedback-orchestrator.js": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/unified-preamble.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/validate-ai-output.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/validate-change-trace.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/validate-knowledge-assets.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/validate-task-git-link.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/audit_project_compounding.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/check_evidence_boundary.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/__init__.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/audit.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/catalog.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/config_resolution.py": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/defaults.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/document_renderers.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/engine.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/managed_blocks.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/module.md": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/proposal_engine.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/proposal_generation.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/proposal_support.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/renderers_base_docs.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/renderers_docs.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/renderers_experience_docs.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/renderers_index.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/renderers_memory.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/renderers_org_docs.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/renderers_refactor_docs.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/renderers_system_docs.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/repo_scan.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/scaffold.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/scaffold_assets.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/compounding_bootstrap/yaml_io.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/coord/check.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/coord/decision.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/coord/lib/manifest.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/coord/lib/risk.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/coord/lib/task-meta.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/coord/lock.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/coord/review.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/coord/scan.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/coord/scope-guard.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/coord/task.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/foreman_quant_review.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/init_project_compounding.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/local-runtime/check-preview.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/local-runtime/check-prod.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/local-runtime/core.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/local-runtime/health.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/local-runtime/lib.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/local-runtime/process.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/local-runtime/restart-preview.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/local-runtime/restart-prod.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/local-runtime/start-preview.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/local-runtime/start-prod.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/local-runtime/status-preview.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/local-runtime/status-prod.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/local-runtime/status.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/local-runtime/stop-preview.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/local-runtime/stop-prod.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/pre_mutation_check.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/release/accept-dev-release.ts": {
+      "risk_level": "core",
+      "source": "heuristic"
+    },
+    "scripts/release/lib.ts": {
+      "risk_level": "core",
+      "source": "heuristic"
+    },
+    "scripts/release/prepare-release.ts": {
+      "risk_level": "core",
+      "source": "heuristic"
+    },
+    "scripts/release/reject-dev-release.ts": {
+      "risk_level": "core",
+      "source": "heuristic"
+    },
+    "scripts/release/reload.ts": {
+      "risk_level": "core",
+      "source": "heuristic"
+    },
+    "scripts/release/rollback-release.ts": {
+      "risk_level": "core",
+      "source": "heuristic"
+    },
+    "scripts/release/summarize-release.ts": {
+      "risk_level": "core",
+      "source": "heuristic"
+    },
+    "scripts/release/switch-release.ts": {
+      "risk_level": "core",
+      "source": "heuristic"
+    },
+    "scripts/render_bootstrap_diff.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/run_foreman_quant_review.sh": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/server_truth_ledger.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/archive/.gitkeep": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-001-repo-refactor.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-002-ui-task-pm-and-doc-localization.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-003-homepage-company-org-model.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-004-dashboard-and-cognition-architecture.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-005-professional-dashboard-editing.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-007-local-prod-runtime-stability.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-008-current-uiux-package.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-009-ai-work-modes-productization.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-010-layered-validation-system.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-011-anti-drift-docs-prompts-index.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-012-runtime-status-ux-hardening.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-013-memory-assets-comparison-layer.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-014-dev-preview-channel.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-015-release-accept-ui-stability.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-016-response-contract-and-short-task-id.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-017-delivery-batch-model.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-018-home-unified-cockpit.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-019-gstack-practices-milestone.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-020-collaboration-modes-and-preamble.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-021-fix-first-and-layered-gates.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-022-template-generation-and-feedback-loop.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-023-diff-aware-qa-and-health-score.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-024-pre-landing-checklist-and-routing.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-025-multi-agent-coordination-init.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-026-coord-auto-review-enhance.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-027-coord-unattended-polish.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/templates/task-template.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tests/test_bootstrap_cli.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tsconfig.base.json": {
+      "risk_level": "core",
+      "source": "hard_rule"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Execution Modes",
+  "description": "direct_edit / patch_only / advisory_only 规则",
+  "version": "1.0.0",
+  "modes": {
+    "direct_edit": {
+      "description": "可直接修改目标文件",
+      "allowed_for": ["normal", "high_conflict"],
+      "requires_lock_for": ["core", "high_conflict"]
+    },
+    "patch_only": {
+      "description": "只产出建议 patch / 可应用 diff",
+      "fallback_when": "locked core/high_conflict 且非主写手"
+    },
+    "advisory_only": {
+      "description": "只做分析、建议、摘要、评估",
+      "fallback_when": "风险过高且无法形成足够自动合并信心"
+    }
+  }
+}

@@ -43,6 +43,19 @@
     "prod:start": "node --experimental-strip-types scripts/local-runtime/start-prod.ts",
     "prod:stop": "node --experimental-strip-types scripts/local-runtime/stop-prod.ts",
     "prod:status": "node --experimental-strip-types scripts/local-runtime/status-prod.ts",
-    "prod:check": "node --experimental-strip-types scripts/local-runtime/check-prod.ts"
+    "prod:check": "node --experimental-strip-types scripts/local-runtime/check-prod.ts",
+    "coord:manifest:rebuild": "node --experimental-strip-types scripts/coord/scan.ts",
+    "coord:manifest:report": "node --experimental-strip-types scripts/coord/scan.ts --report-only",
+    "coord:task:create": "node --experimental-strip-types scripts/coord/task.ts create",
+    "coord:task:start": "node --experimental-strip-types scripts/coord/task.ts start",
+    "coord:task:handoff": "node --experimental-strip-types scripts/coord/task.ts handoff",
+    "coord:task:merge": "node --experimental-strip-types scripts/coord/task.ts merge",
+    "coord:lock:acquire": "node --experimental-strip-types scripts/coord/lock.ts acquire",
+    "coord:lock:release": "node --experimental-strip-types scripts/coord/lock.ts release",
+    "coord:lock:status": "node --experimental-strip-types scripts/coord/lock.ts status",
+    "coord:check:pre-task": "node --experimental-strip-types scripts/coord/check.ts pre-task",
+    "coord:check:scope": "node --experimental-strip-types scripts/coord/scope-guard.ts",
+    "coord:review:run": "node --experimental-strip-types scripts/coord/review.ts",
+    "coord:decision:build": "node --experimental-strip-types scripts/coord/decision.ts"
   }
 }

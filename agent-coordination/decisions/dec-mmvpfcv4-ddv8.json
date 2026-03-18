@@ -1,0 +1,43 @@
+{
+  "decision_id": "dec-mmvpfcv4-ddv8",
+  "related_tasks": [],
+  "decision_type": "merge_choice",
+  "options": [
+    {
+      "option_id": "A",
+      "title": "自动合并",
+      "summary": "当前改动通过所有 reviewer，建议自动合并到 dev。",
+      "user_visible_impact": "改动将进入 dev 预览。",
+      "benefits": [
+        "无需人工介入",
+        "快速流转"
+      ],
+      "risks": [
+        "若有遗漏需后续修复"
+      ],
+      "scope": "当前 task 声明范围",
+      "rollback_cost": "low",
+      "confidence": 0.9,
+      "recommended": true
+    },
+    {
+      "option_id": "B",
+      "title": "暂不合并",
+      "summary": "暂不合并，继续完善后再提交。",
+      "user_visible_impact": "改动保留在分支，不进入 dev。",
+      "benefits": [
+        "可继续修改",
+        "无发布风险"
+      ],
+      "risks": [
+        "延迟交付"
+      ],
+      "scope": "无",
+      "rollback_cost": "none",
+      "confidence": 1,
+      "recommended": false
+    }
+  ],
+  "required_human_input": "请选择 A / B",
+  "generated_at": "2026-03-18T07:12:59.872Z"
+}

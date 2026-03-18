@@ -11,3 +11,4 @@ __pycache__
 output/**
 !output/.gitkeep
 !output/**/.gitkeep
+agent-coordination/locks/.lock-registry.lock

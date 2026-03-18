@@ -13,7 +13,7 @@ related_docs:
   - docs/AI_OPERATING_MODEL.md
   - memory/project/current-state.md
   - memory/project/roadmap.md
-last_reviewed_at: 2026-03-17
+last_reviewed_at: 2026-03-18
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 ## 硬规则
@@ -36,8 +36,8 @@ last_reviewed_at: 2026-03-17
 
 - 项目名称：Compounding AI Operating System
 - 项目一句话：把当前仓库升级成适合 AI 长期协作、任务驱动、可持续重构与自进化的 AI-Native Repo。
-- 当前优先级：把 gstack 最值得吸收的 7 个高价值实践落地为本仓库的下一里程碑目标，并按任务批次持续拆解推进直至全部达成。
-- 成功定义：7 个实践均绑定任务与验收证据，且在 `AGENTS / roadmap / operating-blueprint / current-state / tasks / releases` 之间保持同源一致，不产生平行规则体系。
+- 当前优先级：把多 Agent 协作系统（Autonomous Multi-Agent Coordination Layer）落地为本仓库的下一里程碑目标，初始化 agent-coordination 目录、manifest 扫描器、lock registry、pre-task check、scope guard、review 骨架与 decision card 生成器。
+- 成功定义：多 Agent 可安全并行协作、任务边界可见、文件风险可追踪、锁状态机器可读、范围越界可阻断、高风险决策可收敛为可读决策卡片。
 - 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
 - 运行边界：server-only
 - 当前主线来源：`memory/project/roadmap.md`

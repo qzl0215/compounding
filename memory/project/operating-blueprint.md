@@ -9,75 +9,72 @@ related_docs:
   - AGENTS.md
   - memory/project/roadmap.md
   - memory/project/current-state.md
-  - tasks/queue/task-019-gstack-practices-milestone.md
-last_reviewed_at: 2026-03-17
+  - tasks/queue/task-025-multi-agent-coordination-init.md
+last_reviewed_at: 2026-03-18
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 运营蓝图
 
 ## 当前里程碑
 
-gstack 高价值实践七项落地里程碑
+多 Agent 协作系统（Autonomous Multi-Agent Coordination Layer）
 
 ## 关键子目标
 
-### 子目标 1：模式化协作骨架（Plan / Execute / QA-Review）
+### 子目标 1：Agent Coordination 目录骨架与数据模型（Phase 0）
 
 - 发布标准：
-  - 3 个模式的输入、输出、退出条件在主源中明确且可执行
-  - 模式切换不依赖口头约定，默认由 task 状态驱动
+  - agent-coordination/manifest、tasks、locks、policies、reports、decisions 目录存在
+  - risk-rules.json、overrides.json、execution-modes.json、escalation-policy.json、merge-policy.json 骨架就绪
 - 关联任务：
-  - `tasks/queue/task-019-gstack-practices-milestone.md`
-  - `tasks/queue/task-020-collaboration-modes-and-preamble.md`
+  - `tasks/queue/task-025-multi-agent-coordination-init.md`
 
-### 子目标 2：统一 preamble 与提问契约
+### 子目标 2：项目扫描与风险地图（Phase 1）
 
 - 发布标准：
-  - 高频执行链路在进入动作前执行统一 preamble
-  - 上下文重置、任务绑定、提问格式、证据边界在 preamble 中固定
+  - scan.ts 可生成 manifest.json（按 hard rule + heuristic）
+  - 支持 overrides.json 人工降级
+  - 输出初版风险报告到 agent-coordination/reports/
 - 关联任务：
-  - `tasks/queue/task-019-gstack-practices-milestone.md`
-  - `tasks/queue/task-020-collaboration-modes-and-preamble.md`
+  - `tasks/queue/task-025-multi-agent-coordination-init.md`
 
-### 子目标 3：分层验证与 diff-aware QA
+### 子目标 3：Lock Registry 与 Pre-Task Check（Phase 1）
 
 - 发布标准：
-  - 静态 / 构建 / 运行时 / AI 输出门禁在同一执行面收口
-  - QA 默认以改动范围优先，提供健康评分与证据落点
+  - lock.ts 支持 acquire/release/status，持久化 lock-registry.json
+  - check.ts 支持 pre-task check（preflight + lock check + task companion 创建）
 - 关联任务：
-  - `tasks/queue/task-019-gstack-practices-milestone.md`
-  - `tasks/queue/task-021-fix-first-and-layered-gates.md`
-  - `tasks/queue/task-023-diff-aware-qa-and-health-score.md`
+  - `tasks/queue/task-025-multi-agent-coordination-init.md`
 
-### 子目标 4：Fix-First 分流与自动修复优先
+### 子目标 4：Scope Guard 与 Auto-Review 骨架（Phase 1）
 
 - 发布标准：
-  - review / ship 场景区分 AUTO-FIX 与 ASK，并有明确分流边界
-  - 对可机械修复项优先自动收敛，减少反复对话
+  - scope-guard.ts 可比较 planned_files vs actual git diff，输出 JSON
+  - review.ts 可输出 scope/lock/test reviewer 的 JSON 聚合结果
 - 关联任务：
-  - `tasks/queue/task-019-gstack-practices-milestone.md`
-  - `tasks/queue/task-021-fix-first-and-layered-gates.md`
-  - `tasks/queue/task-024-pre-landing-checklist-and-routing.md`
+  - `tasks/queue/task-025-multi-agent-coordination-init.md`
 
-### 子目标 5：模板生成防漂移与反馈闭环
+### 子目标 5：Decision Card 与命令入口（Phase 1）
 
 - 发布标准：
-  - 至少 1 类关键资产改为“模板 + 生成 + 校验”链路
-  - 工具体验问题可沉淀为结构化反馈并回写经验层
+  - decision.ts 可生成 decision card JSON 到 agent-coordination/decisions/
+  - package.json 已注册所有 coord:* 命令
 - 关联任务：
-  - `tasks/queue/task-019-gstack-practices-milestone.md`
-  - `tasks/queue/task-022-template-generation-and-feedback-loop.md`
+  - `tasks/queue/task-025-multi-agent-coordination-init.md`
 
 ## 当前阻塞
 
-- 当前无结构性阻塞；核心风险在于一次性改造过大导致节奏失控，需按批次滚动验收。
+- 无结构性阻塞；核心风险在于 coordination 层与现有 task/release 的同步约定需清晰。
 
 ## 下一检查点
 
-- [x] 完成 `t-019` 拆解并建立首批执行任务
-- [x] 首批实现至少覆盖 3 个高 ROI 实践点并通过门禁
-- [x] 验证任务、规则、记忆资产在一次迭代内保持同源一致
-- [ ] 开启下一阶段里程碑并持续迭代 AI-Native OS## 证据边界
+- [x] 完成 gstack 七项实践里程碑（t-019~t-024）
+- [x] 注册 t-025 并更新 roadmap / operating-blueprint / current-state
+- [ ] 落地 agent-coordination 目录骨架与 JSON schema
+- [ ] 实现 scan.ts / lock.ts / check.ts / scope-guard.ts / review.ts / decision.ts
+- [ ] 注册 coord:* 命令及 t-026、t-027 子任务骨架
+
+## 证据边界
 
 - 本地离线证据：
 - 服务器真实证据：

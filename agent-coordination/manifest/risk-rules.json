@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Risk Rules",
+  "description": "启发式规则定义，区分 hard rule 与 heuristic rule",
+  "version": "1.0.0",
+  "hard_rules": {
+    "description": "直接归 core 规则，匹配即设为 core 风险等级",
+    "patterns": [
+      "AGENTS.md",
+      "package.json",
+      "pnpm-workspace.yaml",
+      "tsconfig*.json",
+      ".github/workflows/*.yml",
+      "apps/studio/next.config.ts",
+      "apps/studio/tailwind.config.ts",
+      "bootstrap/project_brief.yaml",
+      "bootstrap/schemas/*.json"
+    ]
+  },
+  "heuristic_rules": {
+    "description": "综合评分规则，按路径特征加权",
+    "rules": [
+      {
+        "id": "types_schema",
+        "pattern": "types\\.ts|schema|routes|config|index\\.ts|module\\.md",
+        "weight": 2,
+        "risk_bias": "high_conflict"
+      },
+      {
+        "id": "test_only",
+        "pattern": "__tests__",
+        "risk_level": "test_only"
+      },
+      {
+        "id": "docs_only",
+        "pattern": "memory/|docs/",
+        "risk_level": "docs_only"
+      },
+      {
+        "id": "generated",
+        "pattern": "output/|code_index/",
+        "risk_level": "generated",
+        "exclude": ["*.md"]
+      },
+      {
+        "id": "ui_main",
+        "pattern": "apps/studio/src/app/",
+        "weight": 2,
+        "risk_bias": "high_conflict",
+        "ui_surface_flag": true
+      },
+      {
+        "id": "release_core",
+        "pattern": "scripts/release/",
+        "weight": 3,
+        "risk_bias": "core"
+      },
+      {
+        "id": "ai_core",
+        "pattern": "scripts/ai/",
+        "weight": 2,
+        "risk_bias": "high_conflict"
+      }
+    ]
+  },
+  "risk_levels": ["core", "high_conflict", "normal", "generated", "test_only", "docs_only"]
+}

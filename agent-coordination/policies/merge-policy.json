@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Merge Policy",
+  "description": "低/中/高风险的自动合并门槛",
+  "version": "1.0.0",
+  "thresholds": {
+    "low_risk": {
+      "auto_merge_confidence": 0.7,
+      "min_reviewers": 1
+    },
+    "medium_risk": {
+      "auto_merge_confidence": 0.85,
+      "min_reviewers": 2
+    },
+    "high_risk": {
+      "auto_merge_confidence": 1.0,
+      "min_reviewers": 3,
+      "default_action": "escalate_to_human"
+    }
+  }
+}

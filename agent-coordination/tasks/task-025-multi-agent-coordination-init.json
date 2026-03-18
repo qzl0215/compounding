@@ -1,0 +1,28 @@
+{
+  "task_id": "t-025",
+  "title": "初始化 Autonomous Multi-Agent Coordination Layer，落地 agent-coordination 目录骨架、manifes",
+  "goal": "初始化 Autonomous Multi-Agent Coordination Layer，落地 agent-coordination 目录骨架、manifest 扫描器、lock registry、pre-task check、scope guard、review 骨架与 decision card 生成器，为多 Agent 并行协作提供最小闭环。",
+  "owner_agent": "default",
+  "base_branch": "dev",
+  "branch_name": "codex/task-025-multi-agent-coordination-init",
+  "planned_files": [
+    "AGENTS.md",
+    "memory/project/roadmap.md",
+    "memory/project/operating-blueprint.md",
+    "memory/project/current-state.md",
+    "agent-coordination/",
+    "scripts/coord/",
+    "package.json",
+    "tasks/queue/task-025-multi-agent-coordination-init.md",
+    "tasks/queue/task-026-coord-auto-review-enhance.md",
+    "tasks/queue/task-027-coord-unattended-polish.md"
+  ],
+  "planned_modules": [],
+  "risk_assessment": "medium",
+  "execution_mode": "direct_edit",
+  "status": "active",
+  "human_decision_needed": false,
+  "human_decision_reason": null,
+  "ui_validation_required": false,
+  "summary_artifacts": []
+}

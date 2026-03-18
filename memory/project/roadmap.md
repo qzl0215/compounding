@@ -5,46 +5,47 @@ update_mode: manual
 owner_role: Foreman
 status: active
 last_reviewed_at: 2026-03-17
-source_of_truth: tasks/queue/task-019-gstack-practices-milestone.md
+source_of_truth: tasks/queue/task-025-multi-agent-coordination-init.md
 related_docs:
   - AGENTS.md
   - memory/project/current-state.md
   - memory/project/operating-blueprint.md
-  - tasks/queue/task-019-gstack-practices-milestone.md
+  - tasks/queue/task-025-multi-agent-coordination-init.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 路线图
 
 ## 当前阶段
 
-gstack 高价值实践七项落地里程碑
+多 Agent 协作系统（Autonomous Multi-Agent Coordination Layer）
 
 ## 下个里程碑
 
-把 gstack 中最值得吸收的 7 个实践（模式化协作、统一 preamble、分层验证、diff-aware QA、Fix-First 分流、模板生成防漂移、工具体验反馈闭环）落地到本仓库，并形成可持续拆解推进机制直至全部达成。
+初始化 Autonomous Multi-Agent Delivery Framework，使多个 Agent 可在同一仓库中安全并行协作，默认无人值守，仅在高风险决策时生成可读 decision card 供人二选一/三选一。
 
 ## 里程碑成功标准
 
-- 建立并固化 3 个高频协作模式（Plan / Execute / QA-Review），每个模式都有固定输入、输出和退出条件
-- 所有高频模式接入统一 preamble（上下文重置、任务绑定、提问契约、会话约束）
-- 验证链路显式分层为静态 / 构建 / 运行时 / AI 输出，并落地到统一执行入口
-- QA 默认支持 diff-aware 策略，能够依据改动范围生成可追踪测试结论与健康摘要
-- Review/Ship 流程落地 Fix-First（AUTO-FIX vs ASK）分流，减少无效往返
-- 至少 1 类关键文档资产切换为模板生成并建立一致性校验，避免文档与实现漂移
-- 建立工具体验反馈闭环，将可复用改进沉淀到 `memory/experience/*` 并可晋升
+- 落地 agent-coordination 目录骨架与 manifest / lock / task companion / decision 数据模型
+- 项目扫描器可生成文件级风险地图（core / high_conflict / normal 等）
+- 任务级文件锁可 acquire/release，lock-registry 机器可读
+- pre-task check 含 preflight + lock check + task companion 创建
+- scope guard 可比较 planned_files vs actual git diff
+- auto-review 骨架可输出 scope/lock/test 的 JSON 聚合结果
+- decision card 生成器可将高风险决策收敛为 2-3 个可选项
+- 所有 coord:* 命令已注册并可用
 
 ## 当前优先级
 
-围绕 7 个高价值实践建立“里程碑 -> 子目标 -> task 批次 -> 验收门禁”推进链路，先完成规则与任务编排，再按批次持续实现。
+围绕 Phase 0+1 建立“manifest 扫描 -> lock registry -> pre-task check -> scope guard -> review 骨架 -> decision card”最小闭环，先跑通 coord 命令链，再进入 Phase 2 自动化增强。
 
 ## 当前执行待办
 
-- [x] 创建并启动 `t-019`，把 7 个实践拆为可独立验收的任务批次
-- [x] 建立首批子任务 `t-020`、`t-021`、`t-022` 对应高 ROI 三项基础能力
-- [x] 补齐子任务 `t-023`（diff-aware QA 与健康评分）、`t-024`（pre-landing checklist 与分流）
-- [x] 把分层验证与 diff-aware QA 绑定到现有门禁命令，输出统一可读结论
-- [x] 建立工具体验反馈闭环，并规定何时写入 `memory/experience/*` 与何时晋升
-- [ ] 启动下一阶段里程碑：AI-Native 协作深度演进
+- [x] 完成 gstack 七项实践里程碑（t-019~t-024）
+- [x] 注册新里程碑任务 `t-025`（Multi-Agent Coordination Init）
+- [ ] 落地 agent-coordination 目录骨架与 JSON schema
+- [ ] 实现 scan.ts / lock.ts / check.ts / scope-guard.ts / review.ts / decision.ts
+- [ ] 在 package.json 注册 coord:* 命令
+- [ ] 注册 t-026（Phase 2）、t-027（Phase 3）子任务骨架
 
 ## 证据边界
 

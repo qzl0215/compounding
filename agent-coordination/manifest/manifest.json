@@ -1,0 +1,2322 @@
+{
+  "generated_at": "2026-03-18T07:12:59.125Z",
+  "version": "1.0.0",
+  "files": {
+    ".DS_Store": {
+      "module": ".DS_Store",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    ".env": {
+      "module": ".env",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    ".github/pull_request_template.md": {
+      "module": ".github",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    ".github/workflows/main-release-guard.yml": {
+      "module": ".github",
+      "risk_level": "core",
+      "lock_policy": "hard",
+      "execution_mode_hint": "patch_only",
+      "required_checks": [
+        "scope_reviewer",
+        "contract_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    ".gitignore": {
+      "module": ".gitignore",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    ".pytest_cache/.gitignore": {
+      "module": ".pytest_cache",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    ".pytest_cache/CACHEDIR.TAG": {
+      "module": ".pytest_cache",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    ".pytest_cache/README.md": {
+      "module": ".pytest_cache",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    ".pytest_cache/v/cache/lastfailed": {
+      "module": ".pytest_cache",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    ".pytest_cache/v/cache/nodeids": {
+      "module": ".pytest_cache",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "AGENTS.md": {
+      "module": "AGENTS.md",
+      "risk_level": "core",
+      "lock_policy": "hard",
+      "execution_mode_hint": "patch_only",
+      "required_checks": [
+        "scope_reviewer",
+        "contract_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "README.md": {
+      "module": "README.md",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/eslint.config.mjs": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/next-env.d.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/next.config.ts": {
+      "module": "apps/studio",
+      "risk_level": "core",
+      "lock_policy": "hard",
+      "execution_mode_hint": "patch_only",
+      "required_checks": [
+        "scope_reviewer",
+        "contract_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/package.json": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/postcss.config.mjs": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/app/api/docs/ai-rewrite/route.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": true
+    },
+    "apps/studio/src/app/api/docs/prompt-history/route.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": true
+    },
+    "apps/studio/src/app/api/docs/route.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": true
+    },
+    "apps/studio/src/app/api/releases/deploy/route.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": true
+    },
+    "apps/studio/src/app/api/releases/dev/accept/route.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": true
+    },
+    "apps/studio/src/app/api/releases/dev/reject/route.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": true
+    },
+    "apps/studio/src/app/api/releases/dev/route.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": true
+    },
+    "apps/studio/src/app/api/releases/rollback/route.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": true
+    },
+    "apps/studio/src/app/api/releases/route.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": true
+    },
+    "apps/studio/src/app/api/releases/runtime-status/route.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": true
+    },
+    "apps/studio/src/app/globals.css": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": true
+    },
+    "apps/studio/src/app/knowledge-base/page.tsx": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": true
+    },
+    "apps/studio/src/app/layout.tsx": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": true
+    },
+    "apps/studio/src/app/page.tsx": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": true
+    },
+    "apps/studio/src/app/releases/page.tsx": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": true
+    },
+    "apps/studio/src/app/tasks/page.tsx": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": true
+    },
+    "apps/studio/src/components/page-outline.tsx": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/components/shell/app-shell.tsx": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/components/ui/badge.tsx": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/components/ui/card.tsx": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/lib/classnames.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/lib/workspace.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/__tests__/ai-rewrite-prompts.test.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/__tests__/content.test.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/__tests__/editor-model.test.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/__tests__/repository.test.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/ai-rewrite-client.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/ai-rewrite-context.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/ai-rewrite-prompts.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/ai-rewrite-provider.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/ai-rewrite-types.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/ai-rewrite.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/components/ai-rewrite-panel-sections.tsx": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/components/ai-rewrite-panel.tsx": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/components/doc-tree.tsx": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/components/doc-viewer-toolbar.tsx": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/components/doc-viewer-types.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/components/doc-viewer.tsx": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/components/markdown-content.tsx": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/components/rich-doc-editor.tsx": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/content.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/editor-model.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/index.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/module.md": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/repository.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/sections.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/docs/types.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/git-health/__tests__/service.test.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/git-health/index.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/git-health/module.md": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/git-health/service.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/git-health/types.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/portal/__tests__/home-dashboard.test.tsx": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/portal/__tests__/service.test.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/portal/builders.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/portal/components/home-dashboard.tsx": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/portal/components/home-fragments.tsx": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/portal/index.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/portal/module.md": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/portal/parsing.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/portal/service.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/portal/types.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/releases/__tests__/runtime-status.test.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/releases/__tests__/service.test.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/releases/actions.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/releases/components/release-dashboard-panel.tsx": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/releases/index.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/releases/module.md": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/releases/runtime-status.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/releases/service.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/releases/types.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/releases/validation.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/tasks/__tests__/service.test.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/tasks/components/delivery-table.tsx": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/tasks/delivery.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/tasks/git.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/tasks/index.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/tasks/module.md": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/tasks/parsing.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/tasks/service.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/tasks/types.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/tailwind.config.ts": {
+      "module": "apps/studio",
+      "risk_level": "core",
+      "lock_policy": "hard",
+      "execution_mode_hint": "patch_only",
+      "required_checks": [
+        "scope_reviewer",
+        "contract_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/tsconfig.json": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/vitest.config.ts": {
+      "module": "apps/studio",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "apps/studio/vitest.setup.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "bootstrap/canonical_hardening.json": {
+      "module": "bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "bootstrap/heading_aliases.json": {
+      "module": "bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "bootstrap/managed_blocks/complexity_appendix.md": {
+      "module": "bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "bootstrap/managed_blocks/evidence_boundary.md": {
+      "module": "bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "bootstrap/managed_blocks/fixed_report_structure.md": {
+      "module": "bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "bootstrap/project_bootstrap.yaml": {
+      "module": "bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "bootstrap/project_brief.yaml": {
+      "module": "bootstrap",
+      "risk_level": "core",
+      "lock_policy": "hard",
+      "execution_mode_hint": "patch_only",
+      "required_checks": [
+        "scope_reviewer",
+        "contract_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "bootstrap/schemas/project_bootstrap.schema.json": {
+      "module": "bootstrap",
+      "risk_level": "core",
+      "lock_policy": "hard",
+      "execution_mode_hint": "patch_only",
+      "required_checks": [
+        "scope_reviewer",
+        "contract_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "bootstrap/schemas/project_brief.schema.json": {
+      "module": "bootstrap",
+      "risk_level": "core",
+      "lock_policy": "hard",
+      "execution_mode_hint": "patch_only",
+      "required_checks": [
+        "scope_reviewer",
+        "contract_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "bootstrap/templates/document_manifest.json": {
+      "module": "bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "bootstrap/templates/foreman_bootstrap.md.tmpl": {
+      "module": "bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "code_index/dependency-map.md": {
+      "module": "code_index",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "code_index/function-index.json": {
+      "module": "code_index",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "code_index/module-index.md": {
+      "module": "code_index",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "deploy/nginx/compounding-portal.conf": {
+      "module": "deploy",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "deploy/systemd/compounding-portal.service": {
+      "module": "deploy",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "deploy/systemd/foreman-quant-review.service": {
+      "module": "deploy",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "deploy/systemd/foreman-quant-review.timer": {
+      "module": "deploy",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "docs/AI_OPERATING_MODEL.md": {
+      "module": "docs",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "docs/ARCHITECTURE.md": {
+      "module": "docs",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "docs/ASSET_MAINTENANCE.md": {
+      "module": "docs",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "docs/DEV_WORKFLOW.md": {
+      "module": "docs",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "docs/ORG_MODEL.md": {
+      "module": "docs",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "docs/PROJECT_RULES.md": {
+      "module": "docs",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "docs/REFACTOR_PLAN.md": {
+      "module": "docs",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "docs/UIUX_CURRENT_PACKAGE.md": {
+      "module": "docs",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "docs/WORK_MODES.md": {
+      "module": "docs",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "docs/prompts/ai-doc-clarify-user.md": {
+      "module": "docs",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "docs/prompts/ai-doc-rewrite-system.md": {
+      "module": "docs",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "docs/prompts/ai-doc-rewrite-user.md": {
+      "module": "docs",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "docs/prompts/prompt-assets.json": {
+      "module": "docs",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "memory/architecture/system-overview.md": {
+      "module": "memory",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "memory/decisions/ADR-001-ai-native-repo-skeleton.md": {
+      "module": "memory",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "memory/decisions/ADR-002-thin-agents-entry-contract.md": {
+      "module": "memory",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "memory/decisions/ADR-003-no-new-giant-utils.md": {
+      "module": "memory",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "memory/decisions/ADR-004-experience-comparable-assets.md": {
+      "module": "memory",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "memory/experience/README.md": {
+      "module": "memory",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "memory/experience/exp-001-thin-agents-entry.md": {
+      "module": "memory",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "memory/experience/exp-002-memory-before-promotion.md": {
+      "module": "memory",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "memory/experience/exp-003-delete-legacy-ui-first.md": {
+      "module": "memory",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "memory/experience/experience-index.json": {
+      "module": "memory",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "memory/feedback/feedback-diff-aware-qa-orchestrator-2026-03-17T14-47-25-275Z.md": {
+      "module": "memory",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "memory/project/current-state.md": {
+      "module": "memory",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "memory/project/operating-blueprint.md": {
+      "module": "memory",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "memory/project/roadmap.md": {
+      "module": "memory",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "memory/project/tech-debt.md": {
+      "module": "memory",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "package.json": {
+      "module": "package.json",
+      "risk_level": "core",
+      "lock_policy": "hard",
+      "execution_mode_hint": "patch_only",
+      "required_checks": [
+        "scope_reviewer",
+        "contract_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "pnpm-lock.yaml": {
+      "module": "pnpm-lock.yaml",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "pnpm-workspace.yaml": {
+      "module": "pnpm-workspace.yaml",
+      "risk_level": "core",
+      "lock_policy": "hard",
+      "execution_mode_hint": "patch_only",
+      "required_checks": [
+        "scope_reviewer",
+        "contract_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/__init__.py": {
+      "module": "scripts/__init__.py",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/build-context.ts": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/collaboration-mode-integration.js": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/collaboration-mode-manager.ts": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/create-task.ts": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/diff-aware-qa-orchestrator.js": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/fix-first-orchestrator.js": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/generate-asset-maintenance.ts": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/generate-experience-index.ts": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/generate-module-index.ts": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/lib/knowledge-assets.ts": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/lib/markdown-sections.ts": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/pre-landing-checklist.js": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/scan-code-health.ts": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/task-mode-integration.ts": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/template-feedback-orchestrator.js": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/unified-preamble.ts": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/validate-ai-output.ts": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/validate-change-trace.ts": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/validate-knowledge-assets.ts": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/validate-task-git-link.ts": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/audit_project_compounding.py": {
+      "module": "scripts/audit_project_compounding.py",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/check_evidence_boundary.py": {
+      "module": "scripts/check_evidence_boundary.py",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/__init__.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/audit.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/catalog.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/config_resolution.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/defaults.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/document_renderers.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/engine.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/managed_blocks.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/module.md": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/proposal_engine.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/proposal_generation.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/proposal_support.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/renderers_base_docs.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/renderers_docs.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/renderers_experience_docs.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/renderers_index.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/renderers_memory.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/renderers_org_docs.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/renderers_refactor_docs.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/renderers_system_docs.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/repo_scan.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/scaffold.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/scaffold_assets.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/compounding_bootstrap/yaml_io.py": {
+      "module": "scripts/compounding_bootstrap",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/coord/check.ts": {
+      "module": "scripts/coord",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/coord/decision.ts": {
+      "module": "scripts/coord",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/coord/lib/manifest.ts": {
+      "module": "scripts/coord",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/coord/lib/risk.ts": {
+      "module": "scripts/coord",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/coord/lib/task-meta.ts": {
+      "module": "scripts/coord",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/coord/lock.ts": {
+      "module": "scripts/coord",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/coord/review.ts": {
+      "module": "scripts/coord",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/coord/scan.ts": {
+      "module": "scripts/coord",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/coord/scope-guard.ts": {
+      "module": "scripts/coord",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/coord/task.ts": {
+      "module": "scripts/coord",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/foreman_quant_review.py": {
+      "module": "scripts/foreman_quant_review.py",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/init_project_compounding.py": {
+      "module": "scripts/init_project_compounding.py",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/local-runtime/check-preview.ts": {
+      "module": "scripts/local-runtime",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/local-runtime/check-prod.ts": {
+      "module": "scripts/local-runtime",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/local-runtime/core.ts": {
+      "module": "scripts/local-runtime",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/local-runtime/health.ts": {
+      "module": "scripts/local-runtime",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/local-runtime/lib.ts": {
+      "module": "scripts/local-runtime",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/local-runtime/process.ts": {
+      "module": "scripts/local-runtime",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/local-runtime/restart-preview.ts": {
+      "module": "scripts/local-runtime",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/local-runtime/restart-prod.ts": {
+      "module": "scripts/local-runtime",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/local-runtime/start-preview.ts": {
+      "module": "scripts/local-runtime",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/local-runtime/start-prod.ts": {
+      "module": "scripts/local-runtime",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/local-runtime/status-preview.ts": {
+      "module": "scripts/local-runtime",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/local-runtime/status-prod.ts": {
+      "module": "scripts/local-runtime",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/local-runtime/status.ts": {
+      "module": "scripts/local-runtime",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/local-runtime/stop-preview.ts": {
+      "module": "scripts/local-runtime",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/local-runtime/stop-prod.ts": {
+      "module": "scripts/local-runtime",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/pre_mutation_check.py": {
+      "module": "scripts/pre_mutation_check.py",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/release/accept-dev-release.ts": {
+      "module": "scripts/release",
+      "risk_level": "core",
+      "lock_policy": "hard",
+      "execution_mode_hint": "patch_only",
+      "required_checks": [
+        "scope_reviewer",
+        "contract_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/release/lib.ts": {
+      "module": "scripts/release",
+      "risk_level": "core",
+      "lock_policy": "hard",
+      "execution_mode_hint": "patch_only",
+      "required_checks": [
+        "scope_reviewer",
+        "contract_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/release/prepare-release.ts": {
+      "module": "scripts/release",
+      "risk_level": "core",
+      "lock_policy": "hard",
+      "execution_mode_hint": "patch_only",
+      "required_checks": [
+        "scope_reviewer",
+        "contract_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/release/reject-dev-release.ts": {
+      "module": "scripts/release",
+      "risk_level": "core",
+      "lock_policy": "hard",
+      "execution_mode_hint": "patch_only",
+      "required_checks": [
+        "scope_reviewer",
+        "contract_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/release/reload.ts": {
+      "module": "scripts/release",
+      "risk_level": "core",
+      "lock_policy": "hard",
+      "execution_mode_hint": "patch_only",
+      "required_checks": [
+        "scope_reviewer",
+        "contract_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/release/rollback-release.ts": {
+      "module": "scripts/release",
+      "risk_level": "core",
+      "lock_policy": "hard",
+      "execution_mode_hint": "patch_only",
+      "required_checks": [
+        "scope_reviewer",
+        "contract_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/release/summarize-release.ts": {
+      "module": "scripts/release",
+      "risk_level": "core",
+      "lock_policy": "hard",
+      "execution_mode_hint": "patch_only",
+      "required_checks": [
+        "scope_reviewer",
+        "contract_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/release/switch-release.ts": {
+      "module": "scripts/release",
+      "risk_level": "core",
+      "lock_policy": "hard",
+      "execution_mode_hint": "patch_only",
+      "required_checks": [
+        "scope_reviewer",
+        "contract_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/render_bootstrap_diff.py": {
+      "module": "scripts/render_bootstrap_diff.py",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/run_foreman_quant_review.sh": {
+      "module": "scripts/run_foreman_quant_review.sh",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "scripts/server_truth_ledger.py": {
+      "module": "scripts/server_truth_ledger.py",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/archive/.gitkeep": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-001-repo-refactor.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-002-ui-task-pm-and-doc-localization.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-003-homepage-company-org-model.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-004-dashboard-and-cognition-architecture.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-005-professional-dashboard-editing.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-007-local-prod-runtime-stability.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-008-current-uiux-package.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-009-ai-work-modes-productization.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-010-layered-validation-system.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-011-anti-drift-docs-prompts-index.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-012-runtime-status-ux-hardening.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-013-memory-assets-comparison-layer.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-014-dev-preview-channel.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-015-release-accept-ui-stability.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-016-response-contract-and-short-task-id.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-017-delivery-batch-model.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-018-home-unified-cockpit.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-019-gstack-practices-milestone.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-020-collaboration-modes-and-preamble.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-021-fix-first-and-layered-gates.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-022-template-generation-and-feedback-loop.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-023-diff-aware-qa-and-health-score.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-024-pre-landing-checklist-and-routing.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-025-multi-agent-coordination-init.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-026-coord-auto-review-enhance.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-027-coord-unattended-polish.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/templates/task-template.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tests/test_bootstrap_cli.py": {
+      "module": "tests",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tsconfig.base.json": {
+      "module": "tsconfig.base.json",
+      "risk_level": "core",
+      "lock_policy": "hard",
+      "execution_mode_hint": "patch_only",
+      "required_checks": [
+        "scope_reviewer",
+        "contract_reviewer"
+      ],
+      "ui_surface_flag": false
+    }
+  }
+}

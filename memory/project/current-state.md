@@ -10,7 +10,7 @@ related_docs:
   - AGENTS.md
   - memory/project/roadmap.md
   - memory/project/operating-blueprint.md
-  - tasks/queue/task-019-gstack-practices-milestone.md
+  - tasks/queue/task-025-multi-agent-coordination-init.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 当前状态
@@ -18,10 +18,9 @@ related_docs:
 ## 项目概览
 
 - 项目名称：Compounding AI Operating System
-- 当前阶段：gstack 高价值实践七项落地里程碑 - 已完成交付
-- 当前发布：20260318064632-565e8de-prod (Active)
-- 当前优先级：开启下一阶段里程碑并持续迭代 AI-Native OS，深化 diff-aware QA 与 自动修复闭环。
-- 成功定义：7 个实践全部有对应任务与验收证据；高频执行链路默认按模式化协作运行，且 task / memory / docs / code_index 不发生事实漂移。
+- 当前阶段：多 Agent 协作系统（Autonomous Multi-Agent Coordination Layer）
+- 当前优先级：落地 agent-coordination 目录骨架、manifest 扫描器、lock registry、pre-task check、scope guard、review 骨架与 decision card 生成器。
+- 成功定义：多 Agent 可安全并行协作、任务边界可见、文件风险可追踪、锁状态机器可读、范围越界可阻断、高风险决策可收敛为可读决策卡片。
 - 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
 - 运行边界：server-only
 
@@ -38,13 +37,12 @@ related_docs:
 
 ## 当前焦点
 
-- [x] 建立 3 种高频协作模式并绑定任务状态驱动
-- [x] 为高频链路接入统一 preamble 与提问契约
-- [x] 把分层验证和 diff-aware QA 绑定现有门禁入口
-- [x] 在 review / ship 落地 Fix-First 分流规则并持续收敛
-- [x] 落地模板生成防漂移与工具体验反馈闭环
-- [x] 完成里程碑 t-019~t-024 的验收与生产发布 (20260318064632-565e8de-prod)
-- [ ] 开启下一阶段里程碑：深度自动化修复与多任务并发编排框架
+- [x] 完成 gstack 七项实践里程碑（t-019~t-024）
+- [x] 注册新里程碑 t-025（Multi-Agent Coordination Init）
+- [ ] 落地 agent-coordination 目录骨架与 JSON schema
+- [ ] 实现 scan.ts / lock.ts / check.ts / scope-guard.ts / review.ts / decision.ts
+- [ ] 在 package.json 注册 coord:* 命令
+- [ ] 注册 t-026（Phase 2）、t-027（Phase 3）子任务骨架
 
 ## 当前推荐校验顺序
 
@@ -54,6 +52,7 @@ related_docs:
   - `pnpm preview:check`
   - `pnpm prod:check`
 - AI 输出门禁：`pnpm validate:ai-output`（仅在 prompt / AI 重构链路变动时进入）
+- 多 Agent 协调：`pnpm coord:check:pre-task`（在 task 变更前执行）
 
 ## 关键冻结项
 
@@ -64,8 +63,9 @@ related_docs:
 
 ## 下一检查点
 
-- 完成 `t-019`~`t-024` 的最终发布复盘与 SOP 归档
-- 规划下一里程碑任务（如：自动化修复闭环、经验库智能检索、多任务并行编排等）
+- 完成 agent-coordination 目录骨架与 risk-rules.json、overrides.json、policies 等 JSON
+- 实现 scripts/coord 下所有脚本
+- 注册 coord:* 命令
 - 保持 `pnpm validate:release` 持续绿色通过
 
 ## 证据边界
