@@ -46,20 +46,30 @@ function runPreflight() {
   }
 }
 
+function isPlanned(plannedFiles, target) {
+  if (!plannedFiles || !plannedFiles.length) return false;
+  if (plannedFiles.includes(target)) return true;
+  return plannedFiles.some((p) => p.endsWith("/") && target.startsWith(p));
+}
+
 function checkLocks(taskId, plannedFiles) {
-  if (!fs.existsSync(LOCK_REGISTRY_PATH)) return { ok: true, conflicts: [] };
+  if (!fs.existsSync(LOCK_REGISTRY_PATH)) return { ok: true, conflicts: [], suggested_execution_mode: null };
   const reg = JSON.parse(fs.readFileSync(LOCK_REGISTRY_PATH, "utf8"));
   const active = (reg.locks || []).filter((l) => l.status === "active");
   const conflicts = [];
   for (const lock of active) {
     if (lock.owner_task_id === taskId) continue;
     if (plannedFiles && plannedFiles.length && lock.target_type === "file") {
-      if (plannedFiles.includes(lock.target)) {
+      if (isPlanned(plannedFiles, lock.target)) {
         conflicts.push({ lock_id: lock.lock_id, target: lock.target, owner_task_id: lock.owner_task_id });
       }
     }
   }
-  return { ok: conflicts.length === 0, conflicts };
+  return {
+    ok: conflicts.length === 0,
+    conflicts,
+    suggested_execution_mode: conflicts.length > 0 ? "patch_only" : null,
+  };
 }
 
 function preTask(args) {
@@ -86,7 +96,13 @@ function preTask(args) {
 
   const lockCheck = checkLocks(taskId, compResult.companion.planned_files);
   if (!lockCheck.ok) {
-    const out = { ok: false, step: "lock_check", conflicts: lockCheck.conflicts };
+    const out = {
+      ok: false,
+      step: "lock_check",
+      conflicts: lockCheck.conflicts,
+      suggested_execution_mode: lockCheck.suggested_execution_mode,
+      reason: "锁冲突时按 execution-modes 自动降级为 patch_only，仅产出建议 patch 不直接落文件",
+    };
     console.log(JSON.stringify(out, null, 2));
     process.exit(1);
   }

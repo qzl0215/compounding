@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "UI Artifact Format",
+  "description": "UI 验收产物格式与落点约定，供 decision card 引用",
+  "version": "1.0.0",
+  "fields": {
+    "ui_preview_url": {
+      "type": "string",
+      "description": "预览链接，如 http://127.0.0.1:3001 或 dev 预览 URL",
+      "example": "http://127.0.0.1:3001"
+    },
+    "screenshot_path": {
+      "type": "string",
+      "description": "截图相对路径，落于 agent-coordination/reports/screenshots/",
+      "example": "agent-coordination/reports/screenshots/dec-xxx-page.png"
+    },
+    "key_pages": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "关键页面路径，供人工验收",
+      "example": ["/", "/tasks", "/releases"]
+    }
+  },
+  "output_dir": "agent-coordination/reports/screenshots/"
+}

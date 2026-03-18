@@ -76,6 +76,8 @@ function acquire(args) {
         ok: false,
         error: "Target already locked",
         conflict: { owner_task_id: conflict.owner_task_id, owner_agent: conflict.owner_agent },
+        suggested_execution_mode: "patch_only",
+        reason: "locked core/high_conflict 且非主写手，按 execution-modes 降级为 patch_only",
       };
     }
 

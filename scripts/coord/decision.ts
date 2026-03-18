@@ -65,6 +65,11 @@ function main() {
     } catch (_) {}
   }
 
+  const ui_preview_url = args.ui_preview_url || null;
+  const screenshot_path = args.screenshot_path || null;
+  const diff_summary = args.diff_summary || null;
+  const key_pages = args.key_pages ? String(args.key_pages).split(",").map((s) => s.trim()).filter(Boolean) : null;
+
   const decision = {
     decision_id: generateDecisionId(),
     related_tasks: taskId ? [taskId] : [],
@@ -72,6 +77,10 @@ function main() {
     options,
     required_human_input: `请选择 ${options.map((o) => o.option_id).join(" / ")}`,
     generated_at: new Date().toISOString(),
+    ...(ui_preview_url && { ui_preview_url }),
+    ...(screenshot_path && { screenshot_path }),
+    ...(diff_summary && { diff_summary }),
+    ...(key_pages && key_pages.length && { key_pages }),
   };
 
   fs.mkdirSync(DECISIONS_DIR, { recursive: true });

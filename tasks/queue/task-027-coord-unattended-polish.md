@@ -31,16 +31,19 @@ Phase 2 已完善 auto-review 与 merge gate，但人工介入时仍缺少界面
 ## 关联模块
 
 - `agent-coordination/decisions/`
+- `agent-coordination/policies/ui-artifact-format.json`
 - `scripts/coord/decision.ts`
-- `scripts/coord/review.ts`
+- `scripts/coord/diff-summary.ts`
+- `scripts/coord/lock.ts`
+- `scripts/coord/check.ts`
 
 ## 当前模式
 
-方案评审
+工程执行
 
 ## 分支
 
-`待分配`
+`codex/task-027-coord-unattended-polish`
 
 ## 最近提交
 
@@ -74,15 +77,15 @@ Phase 2 已完善 auto-review 与 merge gate，但人工介入时仍缺少界面
 
 ## 状态
 
-todo
+doing
 
 ## 更新痕迹
 
-- 记忆：`no change: task created only`
-- 索引：`no change: task created only`
-- 路线图：`memory/project/roadmap.md`
-- 文档：`tasks/queue/task-027-coord-unattended-polish.md`
+- 记忆：`no change: 本轮仅 coord 脚本与策略`
+- 索引：`no change: 本轮新增 diff-summary 与 ui-artifact-format`
+- 路线图：`no change: 当前主线不变`
+- 文档：`tasks/queue/task-027-coord-unattended-polish.md`, `agent-coordination/policies/ui-artifact-format.json`, `scripts/coord/decision.ts`, `scripts/coord/diff-summary.ts`, `scripts/coord/lock.ts`, `scripts/coord/check.ts`, `package.json`, `.gitignore`
 
 ## 一句复盘
 
-（待完成）
+完成 Phase 3 无人值守完善：UI 验收产物格式、decision card 支持 ui_preview_url/screenshot_path/key_pages、差异摘要生成器、锁冲突时执行模式自动降级为 patch_only。

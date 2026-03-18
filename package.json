@@ -56,6 +56,7 @@
     "coord:check:pre-task": "node --experimental-strip-types scripts/coord/check.ts pre-task",
     "coord:check:scope": "node --experimental-strip-types scripts/coord/scope-guard.ts",
     "coord:review:run": "node --experimental-strip-types scripts/coord/review.ts",
-    "coord:decision:build": "node --experimental-strip-types scripts/coord/decision.ts"
+    "coord:decision:build": "node --experimental-strip-types scripts/coord/decision.ts",
+    "coord:diff-summary": "node --experimental-strip-types scripts/coord/diff-summary.ts"
   }
 }
