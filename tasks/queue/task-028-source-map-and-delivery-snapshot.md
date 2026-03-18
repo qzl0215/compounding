@@ -48,7 +48,7 @@ t-028
 
 ## 最近提交
 
-`auto: branch HEAD`
+`16ba8d9 feat: unify delivery snapshot and shrink agents`
 
 ## 交付收益
 
@@ -64,7 +64,7 @@ t-028
 
 ## 主发布版本
 
-未生成
+`20260318182923-16ba8d9-prod`
 
 ## 关联发布版本
 
