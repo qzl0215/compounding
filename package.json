@@ -57,6 +57,7 @@
     "coord:check:scope": "node --experimental-strip-types scripts/coord/scope-guard.ts",
     "coord:review:run": "node --experimental-strip-types scripts/coord/review.ts",
     "coord:decision:build": "node --experimental-strip-types scripts/coord/decision.ts",
-    "coord:diff-summary": "node --experimental-strip-types scripts/coord/diff-summary.ts"
+    "coord:diff-summary": "node --experimental-strip-types scripts/coord/diff-summary.ts",
+    "coord:hook:install": "cp scripts/coord/pre-push-review.sh .git/hooks/pre-push && chmod +x .git/hooks/pre-push"
   }
 }

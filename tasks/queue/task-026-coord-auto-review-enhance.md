@@ -34,15 +34,19 @@ Phase 1 已落地 scope/lock/test reviewer 骨架，但缺少 contract、archite
 
 - `agent-coordination/`
 - `scripts/coord/review.ts`
+- `scripts/coord/contract-reviewer.ts`
+- `scripts/coord/architecture-reviewer.ts`
+- `scripts/coord/pre-push-review.sh`
+- `tasks/queue/task-026-coord-auto-review-enhance.md`
 - `scripts/ai/validate-*`
 
 ## 当前模式
 
-方案评审
+工程执行
 
 ## 分支
 
-`待分配`
+`codex/task-026-coord-auto-review-enhance`
 
 ## 最近提交
 
@@ -76,14 +80,14 @@ merge gate 过于保守会阻塞合理合并；过于激进会放行有风险改
 
 ## 状态
 
-todo
+doing
 
 ## 更新痕迹
 
-- 记忆：`no change: task created only`
-- 索引：`no change: task created only`
-- 路线图：`memory/project/roadmap.md`
-- 文档：`tasks/queue/task-026-coord-auto-review-enhance.md`
+- 记忆：`no change: 本轮仅 coord 脚本`
+- 索引：`no change: 本轮新增 contract/architecture reviewer`
+- 路线图：`no change: 当前主线不变`
+- 文档：`tasks/queue/task-026-coord-auto-review-enhance.md`, `scripts/coord/review.ts`, `scripts/coord/contract-reviewer.ts`, `scripts/coord/architecture-reviewer.ts`, `scripts/coord/pre-push-review.sh`, `package.json`
 
 ## 一句复盘
 
