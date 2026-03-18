@@ -18,8 +18,9 @@ related_docs:
 ## 项目概览
 
 - 项目名称：Compounding AI Operating System
-- 当前阶段：gstack 高价值实践七项落地里程碑
-- 当前优先级：把“7 个高价值实践”转成可持续推进的任务批次，建立从规则、任务、验证到经验沉淀的闭环。
+- 当前阶段：gstack 高价值实践七项落地里程碑 - 已完成交付
+- 当前发布：20260318064632-565e8de-prod (Active)
+- 当前优先级：开启下一阶段里程碑并持续迭代 AI-Native OS，深化 diff-aware QA 与 自动修复闭环。
 - 成功定义：7 个实践全部有对应任务与验收证据；高频执行链路默认按模式化协作运行，且 task / memory / docs / code_index 不发生事实漂移。
 - 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
 - 运行边界：server-only
@@ -42,7 +43,8 @@ related_docs:
 - [x] 把分层验证和 diff-aware QA 绑定现有门禁入口
 - [x] 在 review / ship 落地 Fix-First 分流规则并持续收敛
 - [x] 落地模板生成防漂移与工具体验反馈闭环
-- [ ] 开启下一阶段里程碑并持续迭代 AI-Native OS
+- [x] 完成里程碑 t-019~t-024 的验收与生产发布 (20260318064632-565e8de-prod)
+- [ ] 开启下一阶段里程碑：深度自动化修复与多任务并发编排框架
 
 ## 当前推荐校验顺序
 
@@ -62,12 +64,9 @@ related_docs:
 
 ## 下一检查点
 
-- 完成 `t-019` 编排并推进 `t-020`、`t-021`、`t-022`、`t-023`、`t-024` 进入执行
-- 输出 7 个实践点的“当前完成度 / 风险 / 下一动作”看板快照
-- 完成首批高 ROI 子任务并通过统一门禁链路
-- `pnpm build`
-- `pnpm test`
-- `python3 scripts/init_project_compounding.py audit --config bootstrap/project_brief.yaml --target .`
+- 完成 `t-019`~`t-024` 的最终发布复盘与 SOP 归档
+- 规划下一里程碑任务（如：自动化修复闭环、经验库智能检索、多任务并行编排等）
+- 保持 `pnpm validate:release` 持续绿色通过
 
 ## 证据边界
 

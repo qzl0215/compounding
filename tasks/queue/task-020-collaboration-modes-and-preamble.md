@@ -96,6 +96,10 @@ t-020
 
 done
 
+## Release ID
+
+20260318064632-565e8de-prod
+
 ## 更新痕迹
 
 - 记忆：`memory/project/operating-blueprint.md`
