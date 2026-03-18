@@ -13,6 +13,10 @@ export const TASK_STATUS_LABELS: Record<TaskStatus, string> = {
 
 export async function getTaskBoard(): Promise<TaskGroup[]> {
   const taskCards = await listTaskCards();
+  return groupTaskCardsByStatus(taskCards);
+}
+
+export function groupTaskCardsByStatus(taskCards: TaskCard[]): TaskGroup[] {
   return TASK_STATUS_ORDER.map((status) => ({
     status,
     label: TASK_STATUS_LABELS[status],

@@ -1,11 +1,11 @@
 import { headers } from "next/headers";
 import { PageOutline } from "@/components/page-outline";
 import { Card } from "@/components/ui/card";
-import { getManagementAccessState, getReleaseDashboard, getRuntimeStatusExplanation } from "@/modules/releases";
+import { getDeliverySnapshot } from "@/modules/delivery";
+import { getManagementAccessState, getRuntimeStatusExplanation } from "@/modules/releases";
 import type { LocalRuntimeStatus } from "@/modules/releases";
 import { ReleaseDashboardPanel } from "@/modules/releases/components/release-dashboard-panel";
 import { VALIDATION_LAYERS } from "@/modules/releases/validation";
-import { listTaskCards } from "@/modules/tasks";
 
 export const dynamic = "force-dynamic";
 
@@ -25,8 +25,9 @@ export default async function ReleasesPage() {
     );
   }
 
-  const dashboard = getReleaseDashboard();
-  const taskOptions = (await listTaskCards())
+  const snapshot = await getDeliverySnapshot();
+  const dashboard = snapshot.releaseDashboard;
+  const taskOptions = snapshot.taskCards
     .filter((task) => task.status !== "done")
     .map((task) => ({ id: task.id, label: `${task.shortId || task.id} ${task.title}`.trim() }));
   const outline = [

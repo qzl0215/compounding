@@ -11,9 +11,10 @@ related_docs:
   - docs/WORK_MODES.md
   - docs/DEV_WORKFLOW.md
   - docs/AI_OPERATING_MODEL.md
+  - docs/ASSET_MAINTENANCE.md
   - memory/project/current-state.md
   - memory/project/roadmap.md
-last_reviewed_at: 2026-03-18
+last_reviewed_at: 2026-03-19
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 ## 硬规则
@@ -32,25 +33,18 @@ last_reviewed_at: 2026-03-18
 - 生产发布只认 `main`；`dev` 只是 preview channel，不是长期 git 主分支；回滚通过 release 切换完成，不通过 `git reset` 改写线上状态。
 - 组织角色只是稳定职责镜头，不是官僚部门；组织设计并入总经办，不单列 HR。
 
-## 当前状态
+## 真相源地图
 
-- 项目名称：Compounding AI Operating System
-- 项目一句话：把当前仓库升级成适合 AI 长期协作、任务驱动、可持续重构与自进化的 AI-Native Repo。
-- 当前优先级：把多 Agent 协作系统（Autonomous Multi-Agent Coordination Layer）落地为本仓库的下一里程碑目标，初始化 agent-coordination 目录、manifest 扫描器、lock registry、pre-task check、scope guard、review 骨架与 decision card 生成器。
-- 成功定义：多 Agent 可安全并行协作、任务边界可见、文件风险可追踪、锁状态机器可读、范围越界可阻断、高风险决策可收敛为可读决策卡片。
-- 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
-- 运行边界：server-only
-- 当前主线来源：`memory/project/roadmap.md`
-- 当前战术蓝图来源：`memory/project/operating-blueprint.md`
-- 当前任务入口：`tasks/queue/*.md`，优先处理 `doing` 状态任务，并校验 task/Git 一致性
-
-## 工作模式摘要
-
-- 战略澄清：当 roadmap、蓝图或发布标准不清时进入；关键产物是更新后的 `roadmap / operating-blueprint` 与规划 task。
-- 方案评审：当需求已澄清、准备动手时进入；关键产物是方案结论、范围、验收标准与 task 约束。
-- 工程执行：当 task 与方案边界已明确时进入；关键产物是代码改动、回写结果与可审查提交。
-- 质量验收：当实现完成、准备交付时进入；关键产物是通过/不通过结论、风险说明与 task 状态建议。
-- 发布复盘：当结果已通过验收时进入；关键产物是 `main` 合并、release 切换/回滚结果与经验沉淀。
+- 战略真相：`memory/project/roadmap.md`
+- 运营快照：`memory/project/current-state.md`
+- 战术蓝图：`memory/project/operating-blueprint.md`
+- 角色定义：`docs/ORG_MODEL.md`
+- 工作模式：`docs/WORK_MODES.md`
+- 工作流：`docs/DEV_WORKFLOW.md`
+- AI 行为：`docs/AI_OPERATING_MODEL.md`
+- 代码导航：`code_index/*`
+- 任务入口：`tasks/queue/*.md`
+- 高频知识资产：`docs/ASSET_MAINTENANCE.md`
 
 ## 默认回复格式
 
@@ -86,40 +80,17 @@ last_reviewed_at: 2026-03-18
 - `dev` 验收通过后，才允许晋升到 `main` 与本地生产，并再次提供生产环境验收链接。
 - release 默认绑定 1 个主 task，可附带少量辅助 task；task 是执行边界，release 是验收与回滚边界。
 
-## 必读文档
-
-- `docs/PROJECT_RULES.md`
-- `docs/ARCHITECTURE.md`
-- `docs/ORG_MODEL.md`
-- `docs/WORK_MODES.md`
-- `docs/DEV_WORKFLOW.md`
-- `docs/AI_OPERATING_MODEL.md`
-- 当前任务文件
-
 ## 工作顺序
 
 1. 先读 `AGENTS.md`
 2. 再读 `docs/PROJECT_RULES.md` 和 `docs/ARCHITECTURE.md`
-3. 再读 `memory/project/roadmap.md` 与 `memory/project/operating-blueprint.md`
+3. 再读 `memory/project/roadmap.md` 与 `memory/project/current-state.md`
 4. 若规划不清，先创建规划 task 并与用户对齐
 5. 再读当前任务、相关 `module.md`、`code_index/*` 与必要记忆
 6. 运行 `python3 scripts/pre_mutation_check.py`
 7. 只构建最小必要上下文后再改代码
 8. 改动后更新 task / memory / code_index / docs
 9. 进入 `main` 后再准备 release 与 cutover
-
-## 按需补读
-
-- 代码治理、命名、体量限制：`docs/PROJECT_RULES.md`
-- 系统结构、模块边界、依赖方向：`docs/ARCHITECTURE.md`
-- worktree / task / PR / reporting：`docs/DEV_WORKFLOW.md`
-- AI 标准工作流、上下文和记忆回写：`docs/AI_OPERATING_MODEL.md`
-- 高频知识资产的维护方式：`docs/ASSET_MAINTENANCE.md`
-- 组织架构、角色职责、组织设计：`docs/ORG_MODEL.md`
-- 工作模式、输入输出与进入退出条件：`docs/WORK_MODES.md`
-- 系统状态、roadmap、运营蓝图、技术债：`memory/project/*`
-- 经验和 ADR：`memory/experience/*`、`memory/decisions/*`
-- 模块和函数导航：`code_index/*`
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->
 
 ## 人工备注

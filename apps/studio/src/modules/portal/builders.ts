@@ -17,8 +17,8 @@ export function buildIdentitySnapshot(
   missionAndVision: Record<string, string>,
 ): CockpitIdentity {
   return {
-    oneLiner: agentsState["项目一句话"] ?? "项目一句话尚未写入主源。",
-    mission: missionAndVision["使命"] || "使命尚未定义。",
+    oneLiner: agentsState["项目一句话"] ?? missionAndVision["使命"] ?? "项目一句话尚未写入主源。",
+    mission: missionAndVision["使命"] || agentsState["使命"] || "使命尚未定义。",
     successDefinition: agentsState["成功定义"] ?? "成功定义尚未写入主源。",
     mustProtect: splitChineseList(agentsState["必须保护"] ?? ""),
   };
@@ -213,4 +213,3 @@ function splitChineseList(value: string) {
     .map((item) => item.trim())
     .filter(Boolean);
 }
-

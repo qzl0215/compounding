@@ -1,15 +1,14 @@
 import { PageOutline } from "@/components/page-outline";
 import { Card } from "@/components/ui/card";
-import { getReleaseDashboard } from "@/modules/releases";
-import { buildTaskDeliveryRows, listTaskCards } from "@/modules/tasks";
+import { getDeliverySnapshot } from "@/modules/delivery";
 import { DeliveryTable } from "@/modules/tasks/components/delivery-table";
 
 export const dynamic = "force-dynamic";
 
 export default async function TasksPage() {
-  const releaseDashboard = getReleaseDashboard();
-  const tasks = await listTaskCards();
-  const rows = buildTaskDeliveryRows(tasks, releaseDashboard.releases);
+  const snapshot = await getDeliverySnapshot();
+  const releaseDashboard = snapshot.releaseDashboard;
+  const rows = snapshot.taskRows;
   const outline = [{ id: "task-overview", label: "任务总览" }, { id: "task-delivery-table", label: "交付摘要表" }];
 
   return (

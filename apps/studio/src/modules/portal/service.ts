@@ -1,6 +1,5 @@
 import { extractSection, listDocsUnder, readDoc } from "@/modules/docs";
-import { getReleaseDashboard } from "@/modules/releases/service";
-import { listTaskCards } from "@/modules/tasks";
+import { getDeliverySnapshot } from "@/modules/delivery";
 import {
   buildCurrentFocus,
   buildEvidenceLinks,
@@ -23,15 +22,15 @@ export const HOME_ENTRY_LINKS: HomeEntryLink[] = [
 ];
 
 export async function getProjectCockpit(): Promise<ProjectCockpit> {
-  const [agents, currentState, roadmap, blueprint, taskCards] = await Promise.all([
+  const [agents, currentState, roadmap, blueprint, deliverySnapshot] = await Promise.all([
     readDoc("AGENTS.md"),
     readDoc("memory/project/current-state.md"),
     readDoc("memory/project/roadmap.md"),
     readDoc("memory/project/operating-blueprint.md"),
-    listTaskCards(),
+    getDeliverySnapshot(),
   ]);
 
-  const releaseDashboard = getReleaseDashboard();
+  const releaseDashboard = deliverySnapshot.releaseDashboard;
   const agentsState = parseBulletMap(extractSection(agents.content, "current_state") ?? "");
   const projectSnapshot = parseBulletMap(extractSection(currentState.content, "project_snapshot") ?? "");
   const missionAndVision = parseBulletMap(extractSection(currentState.content, "mission_and_vision") ?? "");
@@ -40,7 +39,7 @@ export async function getProjectCockpit(): Promise<ProjectCockpit> {
   const currentPriority = normalizeInline(extractSection(roadmap.content, "current_priority") ?? agentsState["当前优先级"] ?? "");
   const currentMilestone = normalizeInline(extractSection(blueprint.content, "current_milestone") ?? roadmapPhase);
   const milestoneSuccessCriteria = parseBulletList(extractSection(roadmap.content, "milestone_success_criteria") ?? "");
-  const taskSummaries = taskCards.map(toTaskSummary);
+  const taskSummaries = deliverySnapshot.taskCards.map(toTaskSummary);
   const doingTasks = taskSummaries.filter((task) => task.status === "进行中");
   const blockedItems = [
     ...parseBulletList(extractSection(blueprint.content, "current_blockers") ?? ""),
@@ -173,4 +172,3 @@ function toTaskEntry(path: string) {
   const fileName = path.split("/").pop() ?? path;
   return entry(fileName, path);
 }
-

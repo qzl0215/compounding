@@ -16,6 +16,7 @@ related_docs:
 
 ## 前端模块
 
+- `apps/studio/src/modules/delivery`
 - `apps/studio/src/modules/docs`
 - `apps/studio/src/modules/git-health`
 - `apps/studio/src/modules/portal`

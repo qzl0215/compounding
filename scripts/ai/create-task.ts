@@ -20,7 +20,6 @@ const filled = template
   .replace("## 为什么\n", `## 为什么\n\n${why}\n\n`)
   .replace("## 当前模式\n", "## 当前模式\n\n方案评审\n\n")
   .replace("## 分支\n", `## 分支\n\n\`${suggestedBranch}\`\n\n`)
-  .replace("## 最近提交\n", "## 最近提交\n\n`auto: branch HEAD`\n\n")
   .replace("## 交付收益\n", "## 交付收益\n\n待补充：说明这次交付完成后的直接收益。\n\n")
   .replace("## 交付风险\n", "## 交付风险\n\n待补充：说明当前最需要防范的发布或回归风险。\n\n")
   .replace("## 一句复盘\n", "## 一句复盘\n\n未复盘\n\n")

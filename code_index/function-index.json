@@ -1,5 +1,13 @@
 [
   {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/service.ts",
+    "symbol": "getDeliverySnapshot",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
     "module": "apps/studio/src/modules/docs",
     "file": "apps/studio/src/modules/docs/ai-rewrite-client.ts",
     "symbol": "requestClarify",
@@ -618,30 +626,6 @@
   {
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "runtimeTone",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "formatRuntimeStatus",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "formatRuntimeSummary",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/builders.ts",
     "symbol": "splitChineseList",
     "kind": "function",
     "language": "TypeScript",
@@ -739,6 +723,14 @@
     "module": "apps/studio/src/modules/releases",
     "file": "apps/studio/src/modules/releases/actions.ts",
     "symbol": "resolveReleaseActionRedirect",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/runtime-status.ts",
+    "symbol": "getRuntimeStatusExplanation",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -1123,6 +1115,14 @@
     "module": "apps/studio/src/modules/tasks",
     "file": "apps/studio/src/modules/tasks/service.ts",
     "symbol": "getTaskBoard",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/service.ts",
+    "symbol": "groupTaskCardsByStatus",
     "kind": "function",
     "language": "TypeScript",
     "exported": true

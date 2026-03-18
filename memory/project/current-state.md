@@ -4,7 +4,7 @@ doc_role: memory
 update_mode: manual
 owner_role: Foreman
 status: active
-last_reviewed_at: 2026-03-17
+last_reviewed_at: 2026-03-19
 source_of_truth: memory/project/roadmap.md
 related_docs:
   - AGENTS.md
@@ -45,6 +45,7 @@ related_docs:
 
 - [x] 完成 gstack 七项实践里程碑（t-019~t-024）
 - [x] 落地 Multi-Agent Coordination Layer（t-025/t-026/t-027）
+- [x] 推进真相源收口与交付快照统一（t-028）
 
 ## 当前推荐校验顺序
 
