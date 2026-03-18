@@ -33,6 +33,7 @@ Phase 1 已落地 scope/lock/test reviewer 骨架，但缺少 contract、archite
 ## 关联模块
 
 - `agent-coordination/`
+- `package.json`
 - `scripts/coord/review.ts`
 - `scripts/coord/contract-reviewer.ts`
 - `scripts/coord/architecture-reviewer.ts`
