@@ -47,7 +47,7 @@ Phase 2 已完善 auto-review 与 merge gate，但人工介入时仍缺少界面
 
 ## 最近提交
 
-`auto: branch HEAD`
+`b1b6263`（含 .gitignore 忽略 task companion）
 
 ## 交付收益
 
