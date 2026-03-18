@@ -5,6 +5,7 @@ coverage
 .DS_Store
 .env
 .env.local
+.compounding-runtime/
 *.pyc
 __pycache__
 output/**
