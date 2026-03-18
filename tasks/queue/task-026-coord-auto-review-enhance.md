@@ -43,15 +43,15 @@ Phase 1 已落地 scope/lock/test reviewer 骨架，但缺少 contract、archite
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 ## 分支
 
-`codex/task-026-coord-auto-review-enhance`
+`main (legacy direct release)`
 
 ## 最近提交
 
-`6288996`
+`fa3a72b`
 
 ## 交付收益
 
@@ -81,7 +81,7 @@ merge gate 过于保守会阻塞合理合并；过于激进会放行有风险改
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
@@ -92,4 +92,4 @@ doing
 
 ## 一句复盘
 
-（待完成）
+完成 Phase 2 auto-review 增强：contract/architecture reviewer、merge gate escalate_to_human、pre-push hook；三项修复（arch 阈值 95、管道分隔符、保留 exit code）。
