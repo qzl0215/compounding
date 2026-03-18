@@ -59,7 +59,7 @@ t-025
 
 ## 最近提交
 
-`d054fca`
+`2bf6d69`（含 t-027 merge）
 
 ## 交付收益
 
@@ -107,10 +107,10 @@ doing
 
 ## 更新痕迹
 
-- 记忆：`memory/project/roadmap.md`, `memory/project/operating-blueprint.md`, `memory/project/current-state.md`
-- 索引：`agent-coordination/`, `scripts/coord/`, `code_index/module-index.md`
-- 路线图：`memory/project/roadmap.md`
-- 文档：`AGENTS.md`, `package.json`, `tasks/queue/task-025-multi-agent-coordination-init.md`, `tasks/queue/task-026-coord-auto-review-enhance.md`, `tasks/queue/task-027-coord-unattended-polish.md`
+- 记忆：`no change: 本轮仅 task 更新`
+- 索引：`no change: 本轮仅 task 更新`
+- 路线图：`no change: 本轮仅 task 更新`
+- 文档：`tasks/queue/task-025-multi-agent-coordination-init.md`, `tasks/queue/task-027-coord-unattended-polish.md`
 
 ## 一句复盘
 

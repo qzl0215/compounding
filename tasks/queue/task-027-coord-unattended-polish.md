@@ -43,11 +43,11 @@ Phase 2 已完善 auto-review 与 merge gate，但人工介入时仍缺少界面
 
 ## 分支
 
-`codex/task-027-coord-unattended-polish`
+`codex/task-025-multi-agent-coordination-init`
 
 ## 最近提交
 
-`2335a21`（含 .gitignore 忽略 task companion）
+`2bf6d69`
 
 ## 交付收益
 
