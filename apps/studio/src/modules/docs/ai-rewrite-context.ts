@@ -33,16 +33,18 @@ export async function buildRewriteContext(args: {
   const nextMilestone = stripMarkdown(extractSection(roadmap.content, "next_milestone") ?? "");
   const blueprintGoals = stripMarkdown(extractSection(blueprint.content, "key_sub_goals") ?? "");
   const projectSnapshot = stripMarkdown(extractSection(currentState.content, "project_snapshot") ?? "");
-  const missionVision = stripMarkdown(extractSection(currentState.content, "使命与愿景") ?? "");
+  const currentFocus = stripMarkdown(extractSection(currentState.content, "current_focus") ?? "");
+  const missionVision = stripMarkdown(extractSection(currentState.content, "mission_and_vision") ?? "");
+  const frozenItems = stripMarkdown(extractSection(currentState.content, "frozen_items") ?? "");
 
   return {
     project: {
-      one_liner: missionVision || projectSnapshot,
+      one_liner: missionVision || currentFocus || projectSnapshot,
       current_priority: currentPriority,
       current_phase: currentPhase,
       next_milestone: nextMilestone,
       operating_blueprint_summary: blueprintGoals,
-      must_protect: projectSnapshot,
+      must_protect: frozenItems,
     },
     document: {
       path: args.path,

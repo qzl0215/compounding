@@ -13,14 +13,15 @@ import type {
 } from "./types";
 
 export function buildIdentitySnapshot(
-  agentsState: Record<string, string>,
   missionAndVision: Record<string, string>,
+  successDefinition: string,
+  mustProtect: string[],
 ): CockpitIdentity {
   return {
-    oneLiner: agentsState["项目一句话"] ?? missionAndVision["使命"] ?? "项目一句话尚未写入主源。",
-    mission: missionAndVision["使命"] || agentsState["使命"] || "使命尚未定义。",
-    successDefinition: agentsState["成功定义"] ?? "成功定义尚未写入主源。",
-    mustProtect: splitChineseList(agentsState["必须保护"] ?? ""),
+    oneLiner: missionAndVision["使命"] ?? "项目一句话尚未写入主源。",
+    mission: missionAndVision["使命"] || "使命尚未定义。",
+    successDefinition: successDefinition || "成功定义尚未定义。",
+    mustProtect,
   };
 }
 
@@ -108,8 +109,8 @@ export function buildEvidenceLinks(): CockpitEvidenceGroup[] {
           href: "/knowledge-base?path=memory/project/operating-blueprint.md",
         },
         {
-          title: "当前状态",
-          summary: "回答这轮项目当前焦点、冻结项和最近检查点。",
+          title: "运营快照",
+          summary: "回答当前运营焦点、冻结项和最近检查点。",
           href: "/knowledge-base?path=memory/project/current-state.md",
         },
       ],
@@ -204,12 +205,4 @@ function toRuntimeRiskItem(label: string, runtime: LocalRuntimeStatus): CockpitR
     tone: exp.tone,
     href: "/releases#runtime-status",
   };
-}
-
-
-function splitChineseList(value: string) {
-  return value
-    .split(/[，,、]/)
-    .map((item) => item.trim())
-    .filter(Boolean);
 }

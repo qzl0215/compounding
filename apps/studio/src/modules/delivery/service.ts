@@ -1,5 +1,5 @@
 import { getReleaseDashboard } from "@/modules/releases";
-import { buildTaskDeliveryRows, groupTaskCardsByStatus, listTaskCards } from "@/modules/tasks";
+import { buildTaskDeliveryRows, listTaskCards } from "@/modules/tasks";
 import type { DeliverySnapshot } from "./types";
 
 export async function getDeliverySnapshot(): Promise<DeliverySnapshot> {
@@ -7,7 +7,6 @@ export async function getDeliverySnapshot(): Promise<DeliverySnapshot> {
 
   return {
     taskCards,
-    taskGroups: groupTaskCardsByStatus(taskCards),
     taskRows: buildTaskDeliveryRows(taskCards, releaseDashboard.releases),
     releaseDashboard,
   };

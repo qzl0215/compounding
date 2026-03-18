@@ -5,7 +5,7 @@ update_mode: manual
 owner_role: Foreman
 status: active
 last_reviewed_at: 2026-03-19
-source_of_truth: memory/project/roadmap.md
+source_of_truth: memory/project/current-state.md
 related_docs:
   - AGENTS.md
   - memory/project/roadmap.md
@@ -18,11 +18,8 @@ related_docs:
 ## 项目概览
 
 - 项目名称：Compounding AI Operating System
-- 当前阶段：多 Agent 协作系统（Autonomous Multi-Agent Coordination Layer）
-- 当前优先级：多 Agent 协作系统 Phase 0~3 已落地（t-025/t-026/t-027），下一阶段待定。
-- 成功定义：多 Agent 可安全并行协作、任务边界可见、文件风险可追踪、锁状态机器可读、范围越界可阻断、高风险决策可收敛为可读决策卡片。
-- 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
-- 运行边界：server-only
+- 战略真相请看 `memory/project/roadmap.md`
+- 这里仅记录当前运营快照、冻结项和运行边界
 
 ## 使命与愿景
 
@@ -41,11 +38,16 @@ related_docs:
 - dev 预览默认端口：`3011`
 - `main` 已更新不等于本地生产自动在线；需要手动拉起本地常驻进程
 
+## 运行边界
+
+- server-only
+
 ## 当前焦点
 
 - [x] 完成 gstack 七项实践里程碑（t-019~t-024）
 - [x] 落地 Multi-Agent Coordination Layer（t-025/t-026/t-027）
 - [x] 推进真相源收口与交付快照统一（t-028）
+- [ ] 收口 `roadmap` 与 `current-state` 的职责边界，并继续收敛交付快照
 
 ## 当前推荐校验顺序
 
@@ -66,7 +68,7 @@ related_docs:
 
 ## 下一检查点
 
-- 确定下一里程碑方向
+- 保持运营快照与战略真相分工清楚
 - 保持 `pnpm validate:release` 持续绿色通过
 
 ## 证据边界

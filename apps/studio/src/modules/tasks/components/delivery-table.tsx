@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Fragment, useMemo, useState, useTransition, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { resolveReleaseActionRedirect, type ReleaseActionKind, type ReleaseActionResponse } from "@/modules/releases/actions";
+import { executeReleaseAction, type ReleaseActionKind } from "@/modules/releases/action-client";
 import { TASK_DELIVERY_LABELS } from "../delivery";
 import type { TaskDeliveryRow, TaskDeliveryStatus } from "../types";
 
@@ -46,17 +46,18 @@ export function DeliveryTable({ rows, previewUrl, productionUrl }: Props) {
     startTransition(async () => {
       try {
         setMessage("正在执行，请稍候…");
-        const response = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+        const result = await executeReleaseAction({
+          kind,
+          url,
+          payload,
+          previewUrl,
+          productionUrl,
         });
-        const data = (await response.json()) as ReleaseActionResponse;
-        setMessage(data.message ?? (response.ok ? "已完成。" : "执行失败。"));
-        if (!response.ok) {
+        setMessage(result.message);
+        if (!result.ok) {
           return;
         }
-        const redirectTarget = resolveReleaseActionRedirect(kind, data, previewUrl, productionUrl);
+        const redirectTarget = result.redirectTarget;
         if (redirectTarget && typeof window !== "undefined") {
           window.location.assign(redirectTarget);
           return;

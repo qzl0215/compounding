@@ -625,14 +625,6 @@
   },
   {
     "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "splitChineseList",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/parsing.ts",
     "symbol": "parseBulletMap",
     "kind": "function",
@@ -715,6 +707,14 @@
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/service.ts",
     "symbol": "toTaskEntry",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/action-client.ts",
+    "symbol": "executeReleaseAction",
     "kind": "function",
     "language": "TypeScript",
     "exported": true

@@ -79,18 +79,6 @@ last_reviewed_at: 2026-03-19
 - 每轮可验收改动默认先生成 `dev` 预览；若已有未验收 `dev`，先提醒用户验收上一个 `dev`。
 - `dev` 验收通过后，才允许晋升到 `main` 与本地生产，并再次提供生产环境验收链接。
 - release 默认绑定 1 个主 task，可附带少量辅助 task；task 是执行边界，release 是验收与回滚边界。
-
-## 工作顺序
-
-1. 先读 `AGENTS.md`
-2. 再读 `docs/PROJECT_RULES.md` 和 `docs/ARCHITECTURE.md`
-3. 再读 `memory/project/roadmap.md` 与 `memory/project/current-state.md`
-4. 若规划不清，先创建规划 task 并与用户对齐
-5. 再读当前任务、相关 `module.md`、`code_index/*` 与必要记忆
-6. 运行 `python3 scripts/pre_mutation_check.py`
-7. 只构建最小必要上下文后再改代码
-8. 改动后更新 task / memory / code_index / docs
-9. 进入 `main` 后再准备 release 与 cutover
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->
 
 ## 人工备注

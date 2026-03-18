@@ -22,8 +22,7 @@ export const HOME_ENTRY_LINKS: HomeEntryLink[] = [
 ];
 
 export async function getProjectCockpit(): Promise<ProjectCockpit> {
-  const [agents, currentState, roadmap, blueprint, deliverySnapshot] = await Promise.all([
-    readDoc("AGENTS.md"),
+  const [currentState, roadmap, blueprint, deliverySnapshot] = await Promise.all([
     readDoc("memory/project/current-state.md"),
     readDoc("memory/project/roadmap.md"),
     readDoc("memory/project/operating-blueprint.md"),
@@ -31,14 +30,13 @@ export async function getProjectCockpit(): Promise<ProjectCockpit> {
   ]);
 
   const releaseDashboard = deliverySnapshot.releaseDashboard;
-  const agentsState = parseBulletMap(extractSection(agents.content, "current_state") ?? "");
-  const projectSnapshot = parseBulletMap(extractSection(currentState.content, "project_snapshot") ?? "");
   const missionAndVision = parseBulletMap(extractSection(currentState.content, "mission_and_vision") ?? "");
   const frozenItems = parseBulletList(extractSection(currentState.content, "frozen_items") ?? "");
-  const roadmapPhase = normalizeInline(extractSection(roadmap.content, "current_phase") ?? projectSnapshot["当前阶段"] ?? "");
-  const currentPriority = normalizeInline(extractSection(roadmap.content, "current_priority") ?? agentsState["当前优先级"] ?? "");
+  const roadmapPhase = normalizeInline(extractSection(roadmap.content, "current_phase") ?? "");
+  const currentPriority = normalizeInline(extractSection(roadmap.content, "current_priority") ?? "");
   const currentMilestone = normalizeInline(extractSection(blueprint.content, "current_milestone") ?? roadmapPhase);
   const milestoneSuccessCriteria = parseBulletList(extractSection(roadmap.content, "milestone_success_criteria") ?? "");
+  const successDefinition = milestoneSuccessCriteria.slice(0, 2).join("；");
   const taskSummaries = deliverySnapshot.taskCards.map(toTaskSummary);
   const doingTasks = taskSummaries.filter((task) => task.status === "进行中");
   const blockedItems = [
@@ -46,17 +44,10 @@ export async function getProjectCockpit(): Promise<ProjectCockpit> {
     ...taskSummaries.filter((task) => task.status === "阻塞中").map((task) => `${task.title}（${task.status}）`),
   ];
   const nextCheckpoint = parseBulletList(extractSection(currentState.content, "next_checkpoint") ?? "");
-  const factConflicts = collectFactConflicts({
-    agentsPriority: agentsState["当前优先级"] ?? "",
-    roadmapPriority: currentPriority,
-    currentStatePriority: projectSnapshot["当前优先级"] ?? "",
-    roadmapPhase,
-    currentStatePhase: projectSnapshot["当前阶段"] ?? "",
-    blueprintMilestone: currentMilestone,
-  });
+  const factConflicts = collectFactConflicts(roadmapPhase, currentMilestone);
 
   return {
-    identity: buildIdentitySnapshot(agentsState, missionAndVision),
+    identity: buildIdentitySnapshot(missionAndVision, successDefinition, frozenItems),
     currentFocus: buildCurrentFocus(roadmapPhase, currentPriority, currentMilestone, milestoneSuccessCriteria),
     executionStatus: buildExecutionStatus(currentMilestone, doingTasks, blockedItems, nextCheckpoint, [
       toRuntimeSignal("dev 预览", releaseDashboard.local_preview),
@@ -81,7 +72,7 @@ export async function getSemanticEntryGroups(): Promise<SemanticEntryGroup[]> {
   return [
     {
       title: "使命与方向",
-      items: [entry("AGENTS 入口", "AGENTS.md"), entry("当前状态", "memory/project/current-state.md"), entry("项目规则", "docs/PROJECT_RULES.md")],
+      items: [entry("AGENTS 入口", "AGENTS.md"), entry("运营快照", "memory/project/current-state.md"), entry("项目规则", "docs/PROJECT_RULES.md")],
     },
     {
       title: "路线图与蓝图",
@@ -138,22 +129,11 @@ export function formatSyncStatus(value: string) {
   return labels[value] ?? value;
 }
 
-function collectFactConflicts(values: {
-  agentsPriority: string;
-  roadmapPriority: string;
-  currentStatePriority: string;
-  roadmapPhase: string;
-  currentStatePhase: string;
-  blueprintMilestone: string;
-}) {
+function collectFactConflicts(roadmapPhase: string, blueprintMilestone: string) {
   const conflicts: string[] = [];
 
-  if (hasMultipleValues([values.agentsPriority, values.roadmapPriority, values.currentStatePriority])) {
-    conflicts.push("当前优先级在 `AGENTS`、`roadmap` 与 `current-state` 之间不一致。");
-  }
-
-  if (hasMultipleValues([values.roadmapPhase, values.currentStatePhase, values.blueprintMilestone])) {
-    conflicts.push("当前阶段或里程碑在 `roadmap`、`current-state` 与 `operating-blueprint` 之间不一致。");
+  if (hasMultipleValues([roadmapPhase, blueprintMilestone])) {
+    conflicts.push("当前阶段或里程碑在 `roadmap` 与 `operating-blueprint` 之间不一致。");
   }
 
   return conflicts;

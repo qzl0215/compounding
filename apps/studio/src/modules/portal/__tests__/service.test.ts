@@ -15,8 +15,7 @@ describe("project cockpit", () => {
     expect(overview.executionStatus.nextCheckpoint.length).toBeGreaterThan(0);
     expect(overview.executionStatus.runtimeSignals).toHaveLength(2);
     expect(overview.executionStatus.runtimeSignals.some((signal) => signal.label === "production")).toBe(true);
-    expect(overview.riskBoard.factConflicts.length).toBeGreaterThanOrEqual(1);
-    expect(overview.riskBoard.factConflicts.some((item) => item.includes("当前优先级"))).toBe(true);
+    expect(overview.riskBoard.factConflicts).toHaveLength(0);
     expect(overview.riskBoard.items.some((item) => item.title === "待验收版本")).toBe(true);
     expect(overview.riskBoard.items.some((item) => item.summary.includes("发布页"))).toBe(true);
     expect(overview.evidenceLinks.map((group) => group.title)).toEqual(["主源文档", "详情工作台", "辅助理解"]);

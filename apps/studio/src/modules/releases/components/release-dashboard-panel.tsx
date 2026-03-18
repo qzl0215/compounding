@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { getRuntimeStatusExplanation } from "../runtime-status";
 import type { LocalRuntimeStatus, ReleaseRecord, ReleaseTaskOption } from "../types";
-import { resolveReleaseActionRedirect, type ReleaseActionKind, type ReleaseActionResponse } from "../actions";
+import { executeReleaseAction, type ReleaseActionKind } from "../action-client";
 
 type Props = {
   releases: ReleaseRecord[];
@@ -35,23 +35,22 @@ export function ReleaseDashboardPanel({
     startTransition(async () => {
       try {
         setMessage("正在执行，请稍候…");
-        const response = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+        const result = await executeReleaseAction({
+          kind,
+          url,
+          payload,
+          previewUrl,
+          productionUrl,
         });
-        const data = (await response.json()) as ReleaseActionResponse;
-        setMessage(data.message ?? (response.ok ? "已完成。" : "执行失败。"));
-        if (!response.ok) {
+        setMessage(result.message);
+        if (!result.ok) {
           return;
         }
-
-        const redirectTarget = resolveReleaseActionRedirect(kind, data, previewUrl, productionUrl);
+        const redirectTarget = result.redirectTarget;
         if (redirectTarget && typeof window !== "undefined") {
           window.location.assign(redirectTarget);
           return;
         }
-
         router.refresh();
       } catch (error) {
         setMessage(error instanceof Error ? error.message : "执行失败，请稍后重试。");
@@ -285,4 +284,3 @@ function formatAcceptance(status: ReleaseRecord["acceptance_status"]) {
   };
   return labels[status];
 }
-

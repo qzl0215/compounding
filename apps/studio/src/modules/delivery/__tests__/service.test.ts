@@ -7,7 +7,6 @@ describe("delivery snapshot", () => {
 
     expect(snapshot.taskCards.length).toBeGreaterThan(0);
     expect(snapshot.taskRows).toHaveLength(snapshot.taskCards.length);
-    expect(snapshot.taskGroups.map((group) => group.status)).toEqual(["todo", "doing", "blocked", "done"]);
     expect(snapshot.releaseDashboard.releases.length).toBeGreaterThan(0);
     expect(snapshot.releaseDashboard.active_release_id || snapshot.releaseDashboard.pending_dev_release || snapshot.releaseDashboard.local_runtime).toBeTruthy();
   });
