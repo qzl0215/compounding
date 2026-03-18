@@ -36,16 +36,15 @@ related_docs:
 
 ## 当前优先级
 
-围绕 Phase 0+1 建立“manifest 扫描 -> lock registry -> pre-task check -> scope guard -> review 骨架 -> decision card”最小闭环，先跑通 coord 命令链，再进入 Phase 2 自动化增强。
+多 Agent 协作系统 Phase 0~3 已落地（t-025/t-026/t-027），coord 命令链与 pre-push hook 可用；下一阶段待定。
 
 ## 当前执行待办
 
 - [x] 完成 gstack 七项实践里程碑（t-019~t-024）
 - [x] 注册新里程碑任务 `t-025`（Multi-Agent Coordination Init）
-- [ ] 落地 agent-coordination 目录骨架与 JSON schema
-- [ ] 实现 scan.ts / lock.ts / check.ts / scope-guard.ts / review.ts / decision.ts
-- [ ] 在 package.json 注册 coord:* 命令
-- [ ] 注册 t-026（Phase 2）、t-027（Phase 3）子任务骨架
+- [x] 落地 agent-coordination 目录骨架与 coord 命令链（t-025）
+- [x] Phase 2 auto-review 增强：contract/architecture reviewer、merge gate、pre-push hook（t-026）
+- [x] Phase 3 无人值守完善：UI 产物格式、差异摘要、执行模式降级（t-027）
 
 ## 证据边界
 

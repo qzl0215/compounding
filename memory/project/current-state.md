@@ -19,7 +19,7 @@ related_docs:
 
 - 项目名称：Compounding AI Operating System
 - 当前阶段：多 Agent 协作系统（Autonomous Multi-Agent Coordination Layer）
-- 当前优先级：落地 agent-coordination 目录骨架、manifest 扫描器、lock registry、pre-task check、scope guard、review 骨架与 decision card 生成器。
+- 当前优先级：多 Agent 协作系统 Phase 0~3 已落地（t-025/t-026/t-027），下一阶段待定。
 - 成功定义：多 Agent 可安全并行协作、任务边界可见、文件风险可追踪、锁状态机器可读、范围越界可阻断、高风险决策可收敛为可读决策卡片。
 - 必须保护：AGENTS.md 是唯一主源，Git 文件即真相，关键改动先 review 再写入，不引入平行规则体系，发布失败不影响当前线上版本
 - 运行边界：server-only
@@ -38,11 +38,7 @@ related_docs:
 ## 当前焦点
 
 - [x] 完成 gstack 七项实践里程碑（t-019~t-024）
-- [x] 注册新里程碑 t-025（Multi-Agent Coordination Init）
-- [ ] 落地 agent-coordination 目录骨架与 JSON schema
-- [ ] 实现 scan.ts / lock.ts / check.ts / scope-guard.ts / review.ts / decision.ts
-- [ ] 在 package.json 注册 coord:* 命令
-- [ ] 注册 t-026（Phase 2）、t-027（Phase 3）子任务骨架
+- [x] 落地 Multi-Agent Coordination Layer（t-025/t-026/t-027）
 
 ## 当前推荐校验顺序
 
@@ -63,9 +59,7 @@ related_docs:
 
 ## 下一检查点
 
-- 完成 agent-coordination 目录骨架与 risk-rules.json、overrides.json、policies 等 JSON
-- 实现 scripts/coord 下所有脚本
-- 注册 coord:* 命令
+- 确定下一里程碑方向
 - 保持 `pnpm validate:release` 持续绿色通过
 
 ## 证据边界

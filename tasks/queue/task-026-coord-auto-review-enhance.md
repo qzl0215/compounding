@@ -85,10 +85,10 @@ done
 
 ## 更新痕迹
 
-- 记忆：`no change: 本轮仅 coord 脚本`
-- 索引：`no change: 本轮新增 contract/architecture reviewer`
-- 路线图：`no change: 当前主线不变`
-- 文档：`tasks/queue/task-026-coord-auto-review-enhance.md`, `scripts/coord/review.ts`, `scripts/coord/contract-reviewer.ts`, `scripts/coord/architecture-reviewer.ts`, `scripts/coord/pre-push-review.sh`, `package.json`
+- 记忆：`memory/project/roadmap.md`, `memory/project/current-state.md`
+- 索引：`no change: 本轮仅 memory`
+- 路线图：`memory/project/roadmap.md`
+- 文档：`tasks/queue/task-026-coord-auto-review-enhance.md`, `memory/project/roadmap.md`, `memory/project/current-state.md`
 
 ## 一句复盘
 
