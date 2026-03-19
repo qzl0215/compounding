@@ -50,7 +50,7 @@ t-033
 
 ## 最近提交
 
-`2a426e9 feat: harden pre-task safety guardrails`
+`8ea2a08 docs: clarify pre-task gate worktree requirement`
 
 ## 交付收益
 
