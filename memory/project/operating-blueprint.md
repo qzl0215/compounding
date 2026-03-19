@@ -17,62 +17,51 @@ last_reviewed_at: 2026-03-18
 
 ## 当前里程碑
 
-多 Agent 协作系统（Autonomous Multi-Agent Coordination Layer）
+gstack 吸收对齐矩阵与引入边界（t-030）
 
 ## 关键子目标
 
-### 子目标 1：Agent Coordination 目录骨架与数据模型（Phase 0）
+### 子目标 1：产出唯一对齐矩阵
 
 - 发布标准：
-  - agent-coordination/manifest、tasks、locks、policies、reports、decisions 目录存在
-  - risk-rules.json、overrides.json、execution-modes.json、escalation-policy.json、merge-policy.json 骨架就绪
+  - `memory/experience/gstack-alignment.md` 完整回答每项能力解决什么问题、当前是否已有、最小落点在哪里、为什么值得或不值得
+  - 明确区分 `直接吸收 / 改造后吸收 / 明确不吸收`
 - 关联任务：
-  - `tasks/queue/task-025-multi-agent-coordination-init.md`
+  - `tasks/queue/task-030-gstack-alignment-and-adoption-boundary.md`
 
-### 子目标 2：项目扫描与风险地图（Phase 1）
+### 子目标 2：固定工作模式入口收口边界
 
 - 发布标准：
-  - scan.ts 可生成 manifest.json（按 hard rule + heuristic）
-  - 支持 overrides.json 人工降级
-  - 输出初版风险报告到 agent-coordination/reports/
+  - `t-031` 已定义为只收口工作模式入口与 runbook
+  - 不重写角色系统，不新增平行 UI
 - 关联任务：
-  - `tasks/queue/task-025-multi-agent-coordination-init.md`
+  - `tasks/queue/task-031-work-mode-entry-and-runbook.md`
 
-### 子目标 3：Lock Registry 与 Pre-Task Check（Phase 1）
+### 子目标 3：固定差异感知 QA / Review / Retro 边界
 
 - 发布标准：
-  - lock.ts 支持 acquire/release/status，持久化 lock-registry.json
-  - check.ts 支持 pre-task check（preflight + lock check + task companion 创建）
+  - `t-032` 只引入 diff-aware 检查建议与结构化产物
+  - 不引入外部评估平台，不把所有改动升级为重回归
 - 关联任务：
-  - `tasks/queue/task-025-multi-agent-coordination-init.md`
+  - `tasks/queue/task-032-diff-aware-qa-review-retro.md`
 
-### 子目标 4：Scope Guard 与 Auto-Review 骨架（Phase 1）
+### 子目标 4：固定预任务安全护栏边界
 
 - 发布标准：
-  - scope-guard.ts 可比较 planned_files vs actual git diff，输出 JSON
-  - review.ts 可输出 scope/lock/test reviewer 的 JSON 聚合结果
+  - `t-033` 只补 pre-task gate、scope guard 与高风险决策收口
+  - 不引入浏览器 daemon、Bun 原生运行时或 Claude 客户端绑定能力
 - 关联任务：
-  - `tasks/queue/task-025-multi-agent-coordination-init.md`
-
-### 子目标 5：Decision Card 与命令入口（Phase 1）
-
-- 发布标准：
-  - decision.ts 可生成 decision card JSON 到 agent-coordination/decisions/
-  - package.json 已注册所有 coord:* 命令
-- 关联任务：
-  - `tasks/queue/task-025-multi-agent-coordination-init.md`
+  - `tasks/queue/task-033-pre-task-safety-guardrails.md`
 
 ## 当前阻塞
 
-- 无结构性阻塞；核心风险在于 coordination 层与现有 task/release 的同步约定需清晰。
+- 无结构性阻塞；核心风险在于若对齐矩阵写得不够硬，后续仍会把浏览器基础设施与流程门禁能力混在一起继续讨论。
 
 ## 下一检查点
 
-- [x] 完成 gstack 七项实践里程碑（t-019~t-024）
-- [x] 注册 t-025 并更新 roadmap / operating-blueprint / current-state
-- [ ] 落地 agent-coordination 目录骨架与 JSON schema
-- [ ] 实现 scan.ts / lock.ts / check.ts / scope-guard.ts / review.ts / decision.ts
-- [ ] 注册 coord:* 命令及 t-026、t-027 子任务骨架
+- [ ] 产出 `memory/experience/gstack-alignment.md`
+- [ ] 创建并对齐 `t-031`、`t-032`、`t-033`
+- [ ] 用这份矩阵与用户确认下一轮只吸收流程、门禁和交付产物层能力
 
 ## 证据边界
 

@@ -44,7 +44,7 @@ export async function getProjectCockpit(): Promise<ProjectCockpit> {
     ...taskSummaries.filter((task) => task.status === "阻塞中").map((task) => `${task.title}（${task.status}）`),
   ];
   const nextCheckpoint = parseBulletList(extractSection(currentState.content, "next_checkpoint") ?? "");
-  const factConflicts = collectFactConflicts(roadmapPhase, currentMilestone);
+  const factConflicts: string[] = [];
 
   return {
     identity: buildIdentitySnapshot(missionAndVision, successDefinition, frozenItems),
@@ -127,21 +127,6 @@ export function formatSyncStatus(value: string) {
     up_to_date: "已同步",
   };
   return labels[value] ?? value;
-}
-
-function collectFactConflicts(roadmapPhase: string, blueprintMilestone: string) {
-  const conflicts: string[] = [];
-
-  if (hasMultipleValues([roadmapPhase, blueprintMilestone])) {
-    conflicts.push("当前阶段或里程碑在 `roadmap` 与 `operating-blueprint` 之间不一致。");
-  }
-
-  return conflicts;
-}
-
-function hasMultipleValues(values: string[]) {
-  const normalized = Array.from(new Set(values.map((value) => normalizeInline(value)).filter(Boolean)));
-  return normalized.length > 1;
 }
 
 function entry(label: string, path: string): SemanticEntry {

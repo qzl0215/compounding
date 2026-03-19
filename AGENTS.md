@@ -20,6 +20,7 @@ last_reviewed_at: 2026-03-19
 ## 硬规则
 
 - `AGENTS.md` 是仓库内唯一高频执行主源；长文规则落在 `docs/*`，状态和经验落在 `memory/*`。
+- 任何改动前必须先读 `docs/PROJECT_RULES.md` 与 `docs/ARCHITECTURE.md`，再进入对应工作流文档。
 - 默认先做只读盘点，再做最小可验证改动。
 - 默认先做高 ROI 动作，不做过度工程和抽象炫技。
 - 任何结构性改动都必须绑定任务、更新相关记忆，并在进入 `main` 前完成 review。
