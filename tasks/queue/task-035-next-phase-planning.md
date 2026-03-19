@@ -112,7 +112,7 @@ doing
 ## 更新痕迹
 
 - 记忆：`memory/project/current-state.md, memory/project/operating-blueprint.md, memory/experience/exp-006-delivery-framework-phase-one-boundary.md`
-- 索引：`no change: planning and task creation only`
+- 索引：`memory/experience/experience-index.json`
 - 路线图：`memory/project/roadmap.md`
 - 文档：`tasks/queue/task-035-next-phase-planning.md, tasks/queue/task-036-delivery-framework-phase-one.md`
 

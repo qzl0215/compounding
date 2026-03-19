@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-19T13:33:20.588Z",
+  "generated_at": "2026-03-19T17:11:42.114Z",
   "source_of_truth": "memory/experience/exp-*.md",
   "source_script": "scripts/ai/generate-experience-index.ts",
   "items": [
@@ -42,6 +42,14 @@
       "reuse": "以后再做 review、retro 或 ship log 时，先问它是不是由 diff 和风险驱动的派生产物",
       "related_docs": "tasks/queue/task-032-diff-aware-qa-review-retro.md, docs/DEV_WORKFLOW.md, docs/AI_OPERATING_MODEL.md, apps/studio/src/modules/delivery/diff-aware.ts",
       "path": "memory/experience/exp-005-diff-aware-qa-review-retro.md"
+    },
+    {
+      "id": "exp-006-delivery-framework-phase-one-boundary",
+      "title": "Delivery Framework Phase 1 边界",
+      "decision": "Autonomous Multi-Agent Delivery Framework 的第一阶段，固定为：",
+      "reuse": "当系统已经具备多条零散脚本链时，下一阶段最值得做的通常不是新平台，而是把现有骨架收成闭环",
+      "related_docs": "memory/project/roadmap.md, memory/project/operating-blueprint.md, tasks/queue/task-035-next-phase-planning.md, tasks/queue/task-036-delivery-framework-phase-one.md",
+      "path": "memory/experience/exp-006-delivery-framework-phase-one-boundary.md"
     }
   ]
 }
