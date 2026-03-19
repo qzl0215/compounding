@@ -61,7 +61,7 @@ t-036
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 
 ## 分支
@@ -85,17 +85,17 @@ t-036
 
 ## 一句复盘
 
-未复盘
+companion-driven delivery contract 已完成最小闭环，create / pre-task / handoff / review / release handoff 现在共享同一份机器可读上下文。
 
 
 ## 主发布版本
 
-未生成
+20260319212150-1130740-prod
 
 
 ## 关联发布版本
 
-无
+20260319211440-1130740-dev
 
 
 ## 计划
@@ -106,7 +106,7 @@ t-036
 
 ## 发布说明
 
-本任务当前在短分支开发中；待 companion lifecycle 闭环完成后进入 `dev` 预览验收。
+本任务已验收并随 `main` 与本地 production 生效；当前 companion lifecycle 已进入闭环收口状态。
 
 ## 验收标准
 
@@ -121,7 +121,7 @@ t-036
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
