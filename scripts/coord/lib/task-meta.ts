@@ -45,6 +45,10 @@ function parseTaskToCompanion(taskId, content) {
   const modules = (related.match(/`([^`]+)`/g) || []).map((m) => m.replace(/`/g, ""));
 
   const plannedFiles = modules.filter((m) => m.includes("/") || /\.(md|ts|tsx|js|json|yaml|yml)$/.test(m));
+  const taskFile = getTaskPath(taskId);
+  if (taskFile && !plannedFiles.includes(taskFile)) {
+    plannedFiles.unshift(taskFile);
+  }
   const plannedModules = modules.filter((m) => !plannedFiles.includes(m));
 
   return {

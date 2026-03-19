@@ -32,13 +32,17 @@ t-033
 
 ## 关联模块
 
+- `AGENTS.md`
+- `docs/DEV_WORKFLOW.md`
 - `agent-coordination/*`
 - `scripts/ai/*`
+- `scripts/coord/check.ts`
+- `scripts/coord/lib/task-meta.ts`
 - `docs/AI_OPERATING_MODEL.md`
 
 ## 当前模式
 
-方案评审
+工程执行
 
 ## 分支
 
@@ -91,13 +95,13 @@ t-033
 
 ## 状态
 
-todo
+doing
 
 ## 更新痕迹
 
-- 记忆：`no change: planning candidate only`
-- 索引：`no change: planning candidate only`
+- 记忆：`no change: scope limited to task gate, docs, and coord scripts`
+- 索引：`no change: current scope only`
 - 路线图：`no change: current priority unchanged`
-- 文档：`tasks/queue/task-033-pre-task-safety-guardrails.md`
+- 文档：`tasks/queue/task-033-pre-task-safety-guardrails.md, scripts/coord/check.ts, scripts/coord/lib/task-meta.ts, docs/DEV_WORKFLOW.md, docs/AI_OPERATING_MODEL.md, AGENTS.md`
 
 ## 复盘
