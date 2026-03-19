@@ -156,7 +156,7 @@ DOC_META = {
         "doc_role": "memory",
         "update_mode": "manual",
         "owner_role": "Foreman",
-        "source_of_truth": "memory/project/roadmap.md",
+        "source_of_truth": "memory/project/current-state.md",
         "related_docs": [AGENTS_SOURCE, "memory/project/roadmap.md", "memory/project/operating-blueprint.md", "tasks/queue/task-001-repo-refactor.md"],
     },
     "memory/project/operating-blueprint.md": {
@@ -180,7 +180,7 @@ DOC_META = {
         "doc_role": "planning",
         "update_mode": "manual",
         "owner_role": "Foreman",
-        "source_of_truth": "tasks/queue/task-001-repo-refactor.md",
+        "source_of_truth": "memory/project/roadmap.md",
         "related_docs": [AGENTS_SOURCE, "memory/project/current-state.md", "memory/project/operating-blueprint.md", "tasks/queue/task-001-repo-refactor.md"],
     },
     "memory/experience/README.md": {

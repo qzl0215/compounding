@@ -37,7 +37,7 @@ export async function getProjectCockpit(): Promise<ProjectCockpit> {
   const currentMilestone = normalizeInline(extractSection(blueprint.content, "current_milestone") ?? roadmapPhase);
   const milestoneSuccessCriteria = parseBulletList(extractSection(roadmap.content, "milestone_success_criteria") ?? "");
   const successDefinition = milestoneSuccessCriteria.slice(0, 2).join("；");
-  const taskSummaries = deliverySnapshot.taskCards.map(toTaskSummary);
+  const taskSummaries = deliverySnapshot.taskRows.map(toTaskSummary);
   const doingTasks = taskSummaries.filter((task) => task.status === "进行中");
   const blockedItems = [
     ...parseBulletList(extractSection(blueprint.content, "current_blockers") ?? ""),

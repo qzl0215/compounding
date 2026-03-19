@@ -28,9 +28,7 @@ export default async function ReleasesPage() {
 
   const snapshot = await getDeliverySnapshot();
   const dashboard = snapshot.releaseDashboard;
-  const taskOptions = snapshot.taskCards
-    .filter((task) => task.status !== "done")
-    .map((task) => ({ id: task.id, label: `${task.shortId || task.id} ${task.title}`.trim() }));
+  const taskOptions = snapshot.taskOptions;
   const outline = [
     { id: "release-overview", label: "通道总览" },
     { id: "diff-aware-artifacts", label: "差异感知产物" },

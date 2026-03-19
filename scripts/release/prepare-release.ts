@@ -9,12 +9,13 @@ const {
   parseTaskIdList,
   pendingDevRelease,
   previewBaseUrl,
-  productionBaseUrl,
-  readTaskDeliveryMetadata,
-  releaseIdFor,
-  resolveCommit,
-  setPendingDevRelease,
-  updateChannelSymlink,
+    productionBaseUrl,
+    readTaskDeliveryMetadata,
+    releaseIdFor,
+    resolveCanonicalTaskIds,
+    resolveCommit,
+    setPendingDevRelease,
+    updateChannelSymlink,
   upsertRelease,
   withReleaseLock,
 } = require("./lib.ts");
@@ -90,7 +91,9 @@ function main() {
       const summary = changeSummary(current?.commit_sha || null, commitSha);
       const notes = [];
       const taskMeta = primaryTaskId ? readTaskDeliveryMetadata(primaryTaskId) : null;
-      const normalizedLinkedTaskIds = linkedTaskIds.filter((taskId) => taskId !== primaryTaskId).slice(0, 2);
+      const normalizedLinkedTaskIds = resolveCanonicalTaskIds(linkedTaskIds)
+        .filter((taskId) => taskId !== taskMeta?.id)
+        .slice(0, 2);
 
       git(["worktree", "add", "--detach", releasePath, commitSha]);
       try {
@@ -164,8 +167,8 @@ function main() {
           commit_sha,
           tag: null,
           source_ref: ref,
-          primary_task_id: primaryTaskId || null,
-          linked_task_ids: linkedTaskIds.filter((taskId) => taskId !== primaryTaskId).slice(0, 2),
+          primary_task_id: taskMeta?.id || null,
+          linked_task_ids: normalizedLinkedTaskIds,
           delivery_summary: null,
           delivery_benefit: null,
           delivery_risks: null,

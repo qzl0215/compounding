@@ -52,6 +52,7 @@ related_docs:
 - [x] 推进 `t-031`：把规划链、执行链、交付链收口成清晰的工作模式入口与 runbook，并已发布到 main 与本地生产
 - [x] 推进 `t-032`：差异感知 QA / Review / Retro 产物，并已发布到 main 与本地生产
 - [x] 完成 `t-033`：补齐 pre-task 安全护栏，并已发布到 main 与本地生产
+- [ ] 推进 `t-034`：收口 task resolver、release cutover、roadmap frontmatter 与交付快照展示层
 
 ## 当前推荐校验顺序
 
@@ -74,6 +75,7 @@ related_docs:
 
 - [x] 完成 `t-032` 的差异感知 QA / Review / Retro 产物
 - [x] 完成 `t-033` 的预任务安全护栏补全
+- 完成 `t-034` 的高 ROI 收敛修复
 - 创建下一阶段规划 task，决定是继续加固协作层，还是进入 Autonomous Multi-Agent Delivery Framework 的首个实现任务
 - 保持运营快照与战略真相分工清楚
 - 保持 `pnpm validate:release` 持续绿色通过
@@ -82,5 +84,5 @@ related_docs:
 
 - 本地离线证据：`pnpm lint`、`pnpm test`、`pnpm build`、`scripts/ai/validate-change-trace.ts`、`scripts/ai/validate-task-git-link.ts`
 - 服务器真实证据：本地生产 active release 以 `/releases` 页面与 release registry 为准
-- 当前结论适用边界：t-033 已完成并发布，当前进入下一阶段规划前的短暂收口窗口
+- 当前结论适用边界：t-033 已完成并发布；当前进入 `t-034` 的高 ROI 收敛修复窗口，再进入下一阶段规划
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

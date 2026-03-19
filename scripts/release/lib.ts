@@ -3,6 +3,7 @@ const path = require("node:path");
 const { execFileSync } = require("node:child_process");
 const { releaseReload: releaseReloadImpl } = require("./reload.ts");
 const { extractSection, stripMarkdown } = require("../ai/lib/markdown-sections.ts");
+const { resolveTaskId, resolveTaskRecord } = require("../ai/lib/task-resolver.ts");
 
 function workspaceRoot() {
   return process.cwd();
@@ -138,15 +139,6 @@ function releaseReload() {
   return releaseReloadImpl(workspaceRoot(), run);
 }
 
-function taskQueueDir() {
-  return path.join(workspaceRoot(), "tasks", "queue");
-}
-
-function taskPathForId(taskId) {
-  const normalized = String(taskId || "").replace(/\.md$/, "").trim();
-  return normalized ? path.join(taskQueueDir(), `${normalized}.md`) : "";
-}
-
 function parseTaskIdList(value) {
   if (!value) {
     return [];
@@ -159,24 +151,29 @@ function parseTaskIdList(value) {
 }
 
 function readTaskDeliveryMetadata(taskId) {
-  const file = taskPathForId(taskId);
-  if (!file || !fs.existsSync(file)) {
+  const record = resolveTaskRecord(taskId, workspaceRoot());
+  if (!record) {
     throw new Error(`Unknown task: ${taskId}`);
   }
+  const file = path.join(workspaceRoot(), record.path);
   const content = fs.readFileSync(file, "utf8");
-  const shortId = stripMarkdown(extractSection(content, "short_id", workspaceRoot()) || taskId);
-  const titleMatch = content.match(/^#\s+(.+)$/m);
-  const title = titleMatch ? titleMatch[1].trim() : taskId;
+  const shortId = stripMarkdown(extractSection(content, "short_id", workspaceRoot()) || record.shortId);
+  const title = record.title;
   const benefit = firstMeaningfulLine(extractSection(content, "delivery_benefit", workspaceRoot()) || extractSection(content, "goal", workspaceRoot()) || "");
   const risk = firstMeaningfulLine(extractSection(content, "delivery_risk", workspaceRoot()) || extractSection(content, "risks", workspaceRoot()) || "");
   return {
-    id: taskId,
+    id: record.id,
+    path: record.path,
     short_id: shortId,
     title,
     delivery_summary: `${shortId} ${title}`.trim(),
     delivery_benefit: benefit || null,
     delivery_risks: risk || null,
   };
+}
+
+function resolveCanonicalTaskIds(taskIds) {
+  return Array.from(new Set((taskIds || []).map((taskId) => resolveTaskId(taskId, workspaceRoot())).filter(Boolean)));
 }
 
 function firstMeaningfulLine(value) {
@@ -344,6 +341,7 @@ module.exports = {
   pendingDevRelease,
   previewBaseUrl,
   parseTaskIdList,
+  resolveCanonicalTaskIds,
   readTaskDeliveryMetadata,
   productionBaseUrl,
   readManifest,

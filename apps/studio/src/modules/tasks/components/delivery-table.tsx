@@ -126,7 +126,6 @@ export function DeliveryTable({ rows, previewUrl, productionUrl }: Props) {
                             onClick={() => setExpanded((current) => ({ ...current, [row.id]: !current[row.id] }))}
                           >
                             <p className="font-medium text-white">{`${row.shortId || row.id} ${row.title}`.trim()}</p>
-                            <p className="text-xs text-white/45">{row.path}</p>
                           </button>
                         </Cell>
                         <Cell className="min-w-[240px] text-white/76">
@@ -191,6 +190,7 @@ export function DeliveryTable({ rows, previewUrl, productionUrl }: Props) {
                           <td colSpan={7} className="bg-white/[0.03] px-4 py-4">
                             <div className="grid gap-4 lg:grid-cols-3 text-sm text-white/68">
                               <DetailBlock title="工程明细">
+                                <p>任务路径：{row.path}</p>
                                 <p>当前模式：{row.currentMode || "未标注"}</p>
                                 <p>分支：{row.branch || "未绑定"}</p>
                                 <p>最近提交：{row.git.recentCommit || row.recentCommit || "pending"}</p>

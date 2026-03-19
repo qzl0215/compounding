@@ -52,6 +52,14 @@ class BootstrapCliTests(unittest.TestCase):
         self.assertTrue((self.target / "scripts" / "ai" / "scan-code-health.ts").exists())
         self.assertTrue((self.target / "output" / "bootstrap" / "project_bootstrap.resolved.yaml").exists())
 
+    def test_scaffold_sets_self_owned_truth_for_roadmap_and_current_state(self) -> None:
+        scaffold(self.brief_path, self.target)
+        roadmap = (self.target / "memory" / "project" / "roadmap.md").read_text(encoding="utf8")
+        current_state = (self.target / "memory" / "project" / "current-state.md").read_text(encoding="utf8")
+
+        self.assertIn("source_of_truth: memory/project/roadmap.md", roadmap)
+        self.assertIn("source_of_truth: memory/project/current-state.md", current_state)
+
     def test_scaffold_preserves_manual_notes(self) -> None:
         scaffold(self.brief_path, self.target)
         doc_path = self.target / AGENTS_PATH
@@ -272,6 +280,22 @@ console.log(JSON.stringify({ ok: manifest.release_id === record.release_id && fs
         )
         payload = json.loads(completed.stdout)
         self.assertTrue(payload["ok"])
+
+    def test_release_lib_resolves_short_task_id(self) -> None:
+        script = """
+const { readTaskDeliveryMetadata } = require("./scripts/release/lib.ts");
+console.log(JSON.stringify(readTaskDeliveryMetadata("t-001")));
+"""
+        completed = subprocess.run(
+            ["node", "--experimental-strip-types", "-e", script],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        payload = json.loads(completed.stdout)
+        self.assertEqual(payload["id"], "task-001-repo-refactor")
+        self.assertEqual(payload["short_id"], "t-001")
 
     def test_local_runtime_lib_exports_profile_label(self) -> None:
         script = """

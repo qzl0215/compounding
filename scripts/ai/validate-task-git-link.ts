@@ -2,10 +2,9 @@ const fs = require("node:fs");
 const path = require("node:path");
 const childProcess = require("node:child_process");
 const { extractSection, stripMarkdown } = require("./lib/markdown-sections.ts");
+const { listTaskRecords } = require("./lib/task-resolver.ts");
 
 const root = process.cwd();
-const queueDir = path.join(root, "tasks", "queue");
-
 function git(args) {
   try {
     return {
@@ -24,17 +23,12 @@ function read(relPath) {
   return fs.readFileSync(path.join(root, relPath), "utf8");
 }
 
-function listTaskFiles() {
-  return fs
-    .readdirSync(queueDir)
-    .filter((name) => name.endsWith(".md"))
-    .sort()
-    .map((name) => path.posix.join("tasks/queue", name));
-}
-
-function parseTask(pathname) {
+function parseTask(record) {
+  const pathname = record.path;
   const content = read(pathname);
   return {
+    id: record.id,
+    shortId: record.shortId,
     path: pathname,
     status: normalizeStatus(stripMarkdown(extractSection(content, "status", root) || "")),
     currentMode: cleanValue(stripMarkdown(extractSection(content, "current_mode", root) || "")),
@@ -163,14 +157,16 @@ function validateTask(task, errors) {
 }
 
 function main() {
-  const taskFiles = listTaskFiles();
+  const taskRecords = listTaskRecords(root);
   const errors = [];
   const activeBranch = currentBranch();
-  const snapshots = taskFiles.map((taskPath) => {
-    const task = parseTask(taskPath);
+  const snapshots = taskRecords.map((record) => {
+    const task = parseTask(record);
     validateTask(task, errors);
     const snapshot = getTaskGitSnapshot(task);
     return {
+      id: task.id,
+      short_id: task.shortId,
       path: task.path,
       status: task.status,
       current_mode: task.currentMode,
@@ -182,8 +178,8 @@ function main() {
   });
 
   if (activeBranch.startsWith("codex/")) {
-    const activeTask = taskFiles
-      .map((taskPath) => parseTask(taskPath))
+    const activeTask = taskRecords
+      .map((record) => parseTask(record))
       .find((task) => cleanValue(task.branch) === activeBranch);
     if (!activeTask) {
       errors.push(`当前分支 ${activeBranch} 没有对应的 task 绑定。`);

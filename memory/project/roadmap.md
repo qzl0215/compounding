@@ -5,7 +5,7 @@ update_mode: manual
 owner_role: Foreman
 status: active
 last_reviewed_at: 2026-03-19
-source_of_truth: tasks/queue/task-025-multi-agent-coordination-init.md
+source_of_truth: memory/project/roadmap.md
 related_docs:
   - AGENTS.md
   - memory/project/current-state.md
@@ -36,7 +36,7 @@ related_docs:
 
 ## 当前优先级
 
-多 Agent 协作系统 Phase 0~4 已落地（t-025~t-027、t-030~t-033）。当前优先级从执行阶段切换为下一阶段规划：先创建规划 task，决定是继续加固协作层，还是进入 Autonomous Multi-Agent Delivery Framework 的首个实现任务；不引入浏览器 daemon、Bun 原生运行时或 Claude 专属生态。
+先完成 `t-034` 的高 ROI 收敛修复，把 task 解析、release cutover、roadmap frontmatter 与交付读模型的口径拉平，再进入下一阶段规划；不引入浏览器 daemon、Bun 原生运行时或 Claude 专属生态。
 
 ## 当前执行待办
 
@@ -49,6 +49,7 @@ related_docs:
 - [x] 推进 `t-031`：收口工作模式入口与 runbook
 - [x] 推进 `t-032`：差异感知 QA / Review / Retro 产物
 - [x] 完成 `t-033`：补齐 pre-task 安全护栏
+- [ ] 完成 `t-034`：统一 task resolver、修复 release cutover 时序、继续收口交付快照与任务表展示
 - [ ] 创建下一阶段规划 task，明确 Delivery Framework 的首个实现边界
 
 ## 证据边界

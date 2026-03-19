@@ -5,10 +5,12 @@ const {
   readManifest,
   readRegistry,
   releaseReload,
+  run,
   updateChannelSymlink,
   upsertRelease,
   withReleaseLock,
 } = require("./lib.ts");
+const { stabilizeLocalProdRuntime } = require("./prod-runtime-stability.ts");
 
 function parseArg(name) {
   const index = process.argv.indexOf(name);
@@ -26,21 +28,22 @@ if (!releaseId) {
 }
 
 try {
-  const result = withReleaseLock(() => {
-    const record = readManifest(releaseId);
-    if (record.build_result !== "passed" || record.smoke_result !== "passed") {
-      throw new Error(`Release ${releaseId} is not healthy enough for cutover.`);
-    }
+    const result = withReleaseLock(() => {
+      const record = readManifest(releaseId);
+      if (record.build_result !== "passed" || record.smoke_result !== "passed") {
+        throw new Error(`Release ${releaseId} is not healthy enough for cutover.`);
+      }
 
-    const tag = ensureReleaseTag(`release-${releaseId}`, record.commit_sha);
-    updateChannelSymlink(record.release_path, "prod");
-    const reloadNote = releaseReload();
-    markActive(releaseId);
-    const updated = readRegistry().releases.find((item) => item.release_id === releaseId) || { ...record, tag };
-    const finalRelease = { ...updated, tag, notes: [...updated.notes, reloadNote] };
-    upsertRelease(finalRelease);
-    return { registry: readRegistry(), finalRelease };
-  });
+      const tag = ensureReleaseTag(`release-${releaseId}`, record.commit_sha);
+      updateChannelSymlink(record.release_path, "prod");
+      markActive(releaseId);
+      const reloadNote = releaseReload();
+      const stabilityNote = stabilizeLocalProdRuntime(process.cwd(), run, releaseId);
+      const updated = readRegistry().releases.find((item) => item.release_id === releaseId) || { ...record, tag };
+      const finalRelease = { ...updated, tag, notes: [...updated.notes, reloadNote, stabilityNote].filter(Boolean) };
+      upsertRelease(finalRelease);
+      return { registry: readRegistry(), finalRelease };
+    });
 
   console.log(
     JSON.stringify({

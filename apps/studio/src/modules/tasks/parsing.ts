@@ -1,4 +1,5 @@
 import { extractFirstHeading, extractSection, stripMarkdown } from "@/modules/docs";
+import { deriveShortId, taskIdFromPath } from "../../../../../shared/task-identity";
 import type { TaskCard, TaskUpdateTrace, TaskStatus } from "./types";
 
 export function parseTaskCard(path: string, content: string): Omit<TaskCard, "git"> {
@@ -92,13 +93,4 @@ function normalizeTaskStatus(value: string): TaskStatus {
     return normalized as TaskStatus;
   }
   return "todo";
-}
-
-function taskIdFromPath(path: string) {
-  return path.split("/").pop()?.replace(/\.md$/, "") ?? path;
-}
-
-function deriveShortId(taskId: string) {
-  const match = taskId.match(/^task-(\d+)/);
-  return match ? `t-${match[1]}` : taskId;
 }

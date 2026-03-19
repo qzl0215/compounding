@@ -11,11 +11,13 @@ const {
   readRegistry,
   releaseIdFor,
   releaseReload,
+  run,
   setPendingDevRelease,
   updateChannelSymlink,
   upsertRelease,
   withReleaseLock,
 } = require("./lib.ts");
+const { stabilizeLocalProdRuntime } = require("./prod-runtime-stability.ts");
 
 function parseArg(name) {
   const index = process.argv.indexOf(name);
@@ -77,8 +79,9 @@ try {
     updateChannelSymlink(pending.release_path, "prod");
     markActive(prodReleaseId);
     const reloadNote = releaseReload();
+    const stabilityNote = stabilizeLocalProdRuntime(process.cwd(), run, prodReleaseId);
     const activeRecord = readRegistry().releases.find((item) => item.release_id === prodReleaseId) || prodRecord;
-    upsertRelease({ ...activeRecord, notes: [...activeRecord.notes, reloadNote] });
+    upsertRelease({ ...activeRecord, notes: [...activeRecord.notes, reloadNote, stabilityNote].filter(Boolean) });
 
     const acceptedDevRecord = {
       ...pending,
