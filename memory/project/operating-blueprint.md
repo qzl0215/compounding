@@ -17,7 +17,7 @@ last_reviewed_at: 2026-03-20
 
 ## 当前里程碑
 
-Delivery Framework Phase 1 已完成，下一阶段待定，当前聚焦 `t-037` 首页决策板收口
+Delivery Framework Phase 1 已完成，下一阶段待定，当前聚焦 `t-037` 首页决策板收口与首屏信息压缩
 
 ## 关键子目标
 

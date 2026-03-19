@@ -50,7 +50,7 @@ t-037
 
 ## 当前模式
 
-质量验收
+发布复盘
 
 ## 分支
 
@@ -58,7 +58,7 @@ t-037
 
 ## 最近提交
 
-`auto: branch HEAD`
+`e1dc00f`
 
 ## 交付收益
 
@@ -88,7 +88,7 @@ t-037
 
 ## 发布说明
 
-本任务当前处于实现与验收之间的收口阶段；首页已改为决策板布局，后续需生成 dev 预览并完成验收后再进入发布收口。
+本任务已并入 main，首页已改为决策板布局；后续只需完成发布链收口并补齐主发布版本记录。
 
 ## 验收标准
 
@@ -104,7 +104,7 @@ t-037
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
@@ -114,3 +114,5 @@ doing
 - 文档：`tasks/queue/task-037-homepage-decision-board.md, apps/studio/src/modules/portal/components/home-dashboard.tsx, apps/studio/src/modules/portal/__tests__/home-dashboard.test.tsx, apps/studio/src/modules/portal/__tests__/service.test.tsx`
 
 ## 复盘
+
+- 首页已收口为决策板，后续只保留判断局面和下钻入口所需的最小信息。
