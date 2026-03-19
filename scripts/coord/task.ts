@@ -5,8 +5,8 @@
  */
 
 const { spawnSync } = require("node:child_process");
-const path = require("node:path");
 const { ensureCompanion } = require("./lib/task-meta.ts");
+const { recordCreated, recordHandoff } = require("./lib/companion-lifecycle.ts");
 
 const ROOT = process.cwd();
 
@@ -39,7 +39,13 @@ function create(args) {
     process.exit(1);
   }
   const outPath = (result.stdout || "").trim();
-  console.log(JSON.stringify({ ok: true, task_file: outPath }));
+  const companionResult = ensureCompanion(id);
+  if (!companionResult.ok) {
+    console.error(JSON.stringify({ ok: false, error: companionResult.error }));
+    process.exit(1);
+  }
+  recordCreated(id, { source: "coord:task:create" });
+  console.log(JSON.stringify({ ok: true, task_file: outPath, companion_path: require("./lib/task-meta.ts").getCompanionPath(id) }));
 }
 
 function start(args) {
@@ -72,7 +78,20 @@ function handoff(args) {
     console.error(JSON.stringify({ ok: false, error: comp.error }));
     process.exit(1);
   }
-  console.log(JSON.stringify({ ok: true, message: "Task handoff ready. Run coord:review:run to validate.", companion: comp.companion }));
+  const branchName = spawnSync("git", ["branch", "--show-current"], { cwd: ROOT, encoding: "utf8" }).stdout.trim();
+  const gitHead = spawnSync("git", ["rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8" }).stdout.trim();
+  const recorded = recordHandoff(taskId, {
+    source: "coord:task:handoff",
+    branch_name: branchName || comp.companion.branch_name,
+    git_head: gitHead || null,
+  });
+  console.log(
+    JSON.stringify({
+      ok: true,
+      message: "Task handoff ready. Run coord:review:run to validate.",
+      companion: recorded.ok ? recorded.companion : comp.companion,
+    })
+  );
 }
 
 function merge(args) {
@@ -86,11 +105,13 @@ function merge(args) {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
   });
-  if (result.status !== 0) {
-    console.error(result.stdout || result.stderr);
-    process.exit(1);
+  const stdout = result.stdout || "";
+  if (stdout) {
+    console.log(stdout.trim());
+  } else if (result.stderr) {
+    console.error(result.stderr.trim());
   }
-  console.log(JSON.stringify({ ok: true, message: "Review passed. Proceed with release:prepare for dev merge." }));
+  process.exit(result.status || 0);
 }
 
 const { cmd, args } = parseArgs();

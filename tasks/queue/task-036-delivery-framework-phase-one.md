@@ -21,6 +21,7 @@ t-036
 - 打通 `coord:task:create / start / handoff / merge` 对 companion 的生命周期回写
 - 让 pre-task、review、diff-aware 与 release handoff 能共享同一份任务伴随体上下文
 - 输出最小闭环：创建任务 -> pre-task -> handoff -> review -> release handoff
+- 允许为这轮闭环补最小文档、主线快照与脚本级回归测试
 
 ## 范围外
 
@@ -36,20 +37,31 @@ t-036
 
 ## 关联模块
 
-- `agent-coordination/tasks/*`
-- `agent-coordination/manifest/*`
-- `agent-coordination/reports/*`
+- `agent-coordination/tasks/`
+- `agent-coordination/manifest/`
+- `agent-coordination/reports/`
 - `scripts/coord/task.ts`
 - `scripts/coord/check.ts`
 - `scripts/coord/review.ts`
 - `scripts/coord/diff-summary.ts`
 - `scripts/coord/lib/task-meta.ts`
-- `scripts/release/*`
+- `scripts/coord/lib/companion-lifecycle.ts`
+- `scripts/release/lib.ts`
+- `scripts/release/prepare-release.ts`
+- `scripts/release/accept-dev-release.ts`
+- `scripts/release/switch-release.ts`
+- `docs/DEV_WORKFLOW.md`
+- `docs/AI_OPERATING_MODEL.md`
+- `memory/project/current-state.md`
+- `memory/project/operating-blueprint.md`
+- `memory/project/roadmap.md`
+- `apps/studio/src/modules/portal/__tests__/service.test.ts`
+- `tests/test_coord_cli.py`
 - `tasks/queue/task-036-delivery-framework-phase-one.md`
 
 ## 当前模式
 
-方案评审
+工程执行
 
 
 ## 分支
@@ -94,7 +106,7 @@ t-036
 
 ## 发布说明
 
-本任务尚未开始执行；待 `t-035` 发布后再进入分支开发与 `dev` 预览。
+本任务当前在短分支开发中；待 companion lifecycle 闭环完成后进入 `dev` 预览验收。
 
 ## 验收标准
 
@@ -109,13 +121,13 @@ t-036
 
 ## 状态
 
-todo
+doing
 
 ## 更新痕迹
 
-- 记忆：`no change: planned next implementation task only`
-- 索引：`no change: planned next implementation task only`
+- 记忆：`memory/project/current-state.md`, `memory/project/operating-blueprint.md`
+- 索引：`no change: companion contract implementation does not alter generated index boundaries yet`
 - 路线图：`memory/project/roadmap.md`
-- 文档：`tasks/queue/task-036-delivery-framework-phase-one.md`
+- 文档：`tasks/queue/task-036-delivery-framework-phase-one.md`, `docs/DEV_WORKFLOW.md`, `docs/AI_OPERATING_MODEL.md`
 
 ## 复盘

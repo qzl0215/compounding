@@ -8,7 +8,7 @@ describe("project cockpit", () => {
     expect(overview.identity.oneLiner).toContain("AI-Native Repo");
     expect(overview.identity.mission).toContain("AI-Native Repo");
     expect(overview.currentFocus.currentPhase).toContain("Autonomous Multi-Agent Delivery Framework");
-    expect(overview.currentFocus.currentPriority).toContain("t-035");
+    expect(overview.currentFocus.currentPriority).toContain("t-036");
     expect(overview.currentFocus.currentMilestone).toContain("Delivery Framework Phase 1");
     expect(overview.currentFocus.successCriteria.length).toBeGreaterThanOrEqual(3);
     expect(Array.isArray(overview.executionStatus.doingTasks)).toBe(true);

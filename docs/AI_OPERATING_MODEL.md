@@ -39,6 +39,7 @@ related_docs:
 - 任务在对话中默认使用“中文任务摘要 + 短编号”表达；短编号固定为 `t-xxx`
 - 任务页默认优先展示交付摘要，而不是工程明细；工程信息在需要时再展开
 - 每个 task 动手前默认先跑 `coord:check:pre-task`，它会同时检查任务 companion、scope guard、运行态和锁状态；高风险时会产出决策卡
+- 当前 Delivery Framework Phase 1 默认把 task companion 视为 machine-readable delivery contract；`create / start / handoff / merge / release handoff` 应围绕同一份 companion 回写，不再各自拼接临时上下文
 
 ## 默认沟通契约
 

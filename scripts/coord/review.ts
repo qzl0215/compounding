@@ -8,6 +8,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 const { loadManifest } = require("./lib/manifest.ts");
+const { recordReviewResult } = require("./lib/companion-lifecycle.ts");
 
 const ROOT = process.cwd();
 const LOCK_REGISTRY_PATH = path.join(ROOT, "agent-coordination", "locks", "lock-registry.json");
@@ -116,6 +117,23 @@ function runTestReviewer() {
   };
 }
 
+function runDiffSummary(taskId) {
+  const args = ["--experimental-strip-types", "scripts/coord/diff-summary.ts", "--refA=main", "--refB=HEAD"];
+  if (taskId) {
+    args.push(`--taskId=${taskId}`);
+  }
+  const result = spawnSync("node", args, {
+    cwd: ROOT,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  try {
+    return JSON.parse(result.stdout || "{}");
+  } catch {
+    return null;
+  }
+}
+
 function loadMergePolicy() {
   if (!fs.existsSync(MERGE_POLICY_PATH)) return null;
   return JSON.parse(fs.readFileSync(MERGE_POLICY_PATH, "utf8"));
@@ -178,6 +196,7 @@ function main() {
   const contractResult = runContractReviewer(changedFiles);
   const archResult = runArchitectureReviewer(changedFiles, scopeResult.scope_risk_score);
   const testResult = runTestReviewer();
+  const diffSummary = runDiffSummary(taskId);
 
   const reviewers = [scopeResult, lockResult, contractResult, archResult, testResult];
   const allPass = reviewers.every((r) => r.pass);
@@ -194,8 +213,13 @@ function main() {
     generated_at: new Date().toISOString(),
     task_id: taskId || null,
     reviewers,
+    diff_summary: diffSummary,
     ...mergeOut,
   };
+
+  if (taskId) {
+    recordReviewResult(taskId, output);
+  }
 
   console.log(JSON.stringify(output, null, 2));
   if (!allPass) process.exit(1);

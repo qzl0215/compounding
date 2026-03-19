@@ -4,6 +4,7 @@ const { execFileSync } = require("node:child_process");
 const { releaseReload: releaseReloadImpl } = require("./reload.ts");
 const { extractSection, stripMarkdown } = require("../ai/lib/markdown-sections.ts");
 const { resolveTaskId, resolveTaskRecord } = require("../ai/lib/task-resolver.ts");
+const { readCompanionReleaseContext } = require("../coord/lib/task-meta.ts");
 
 function workspaceRoot() {
   return process.cwd();
@@ -161,14 +162,15 @@ function readTaskDeliveryMetadata(taskId) {
   const title = record.title;
   const benefit = firstMeaningfulLine(extractSection(content, "delivery_benefit", workspaceRoot()) || extractSection(content, "goal", workspaceRoot()) || "");
   const risk = firstMeaningfulLine(extractSection(content, "delivery_risk", workspaceRoot()) || extractSection(content, "risks", workspaceRoot()) || "");
+  const companionContext = readCompanionReleaseContext(record.id);
   return {
     id: record.id,
     path: record.path,
     short_id: shortId,
     title,
-    delivery_summary: `${shortId} ${title}`.trim(),
-    delivery_benefit: benefit || null,
-    delivery_risks: risk || null,
+    delivery_summary: companionContext?.delivery_summary || `${shortId} ${title}`.trim(),
+    delivery_benefit: companionContext?.delivery_benefit || benefit || null,
+    delivery_risks: companionContext?.delivery_risks || risk || null,
   };
 }
 

@@ -31,6 +31,7 @@ related_docs:
   - scope guard
   - 运行态状态
   - file/module 锁状态
+- `pre-task` 的检查结果会回写到任务 companion 的 `pre_task` 生命周期，不再只停留在终端输出
 - 若发现工作区未清理、运行态异常、scope 越界或锁冲突，`pre-task` 会输出决策卡，不直接让任务静默开工
 - 决策卡只收口高风险选择，不替代正常的 runbook 和门禁链
 
@@ -59,11 +60,17 @@ related_docs:
 - 触发：实现已完成，准备验收、发布或回滚。
 - 最小动作：
   1. 先跑 `node --experimental-strip-types scripts/ai/validate-change-trace.ts` 与 `node --experimental-strip-types scripts/ai/validate-task-git-link.ts`。
-  2. 再按 release 流程准备 `dev` 预览：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`。
+2. 再按 release 流程准备 `dev` 预览：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`。
   3. 如果已有未验收 `dev`，先提醒用户验收上一个 `dev`。
   4. 用户验收通过后，再晋升到 `main` 与本地生产。
   5. 最后用 `pnpm prod:status`、`pnpm prod:check` 和 `/releases` 完成生产验收。
 - 输出：`dev` / production 验收链接、release 切换结果、复盘结论。
+- companion contract 在这一链路中承担 machine-readable delivery contract：
+  - `coord:task:create` 初始化 companion
+  - `coord:task:start` 写回 `pre_task`
+  - `coord:task:handoff` 写回 `handoff`
+  - `coord:task:merge` 通过 review 写回 `review`
+  - release prepare / accept / switch 写回 `release_handoff`
 
 ### 模式契约
 

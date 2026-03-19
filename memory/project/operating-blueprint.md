@@ -17,7 +17,7 @@ last_reviewed_at: 2026-03-20
 
 ## 当前里程碑
 
-Delivery Framework Phase 1 实现准备
+Delivery Framework Phase 1 实现中
 
 ## 关键子目标
 
@@ -56,12 +56,13 @@ Delivery Framework Phase 1 实现准备
 - [x] 完成 `t-033` 的预任务安全护栏补全
 - [x] 完成 `t-034` 的高 ROI 收敛修复
 - [x] 完成 `t-035` 的边界规划与主线切换
-- [ ] 启动 `t-036` 的 companion contract 实现
+- [x] 启动 `t-036` 的 companion contract 实现
 - [ ] 让 review 与 release handoff 直接消费 companion 输出，而不是再次人工拼接
+- [ ] 让 create / pre-task / handoff / merge 对同一份 companion 生命周期回写一致
 
 ## 证据边界
 
 - 本地离线证据：`t-035` 规划文档、`t-036` 任务定义、`memory/experience/exp-006-delivery-framework-phase-one-boundary.md`
 - 服务器真实证据：本地生产 active release 与 `/releases` 页面应显示 `t-035` 已完成
-- 当前结论适用边界：当前里程碑已从“边界定义”切到 “Phase 1 实现准备”，下一步围绕 `t-036` 的 companion-driven delivery contract 落地
+- 当前结论适用边界：当前里程碑已从“边界定义”切到 “Phase 1 实现中”，当前围绕 `t-036` 的 companion-driven delivery contract 做最小闭环落地
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

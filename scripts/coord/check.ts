@@ -6,8 +6,9 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
-const { execFileSync, spawnSync } = require("node:child_process");
+const { spawnSync } = require("node:child_process");
 const { ensureCompanion } = require("./lib/task-meta.ts");
+const { recordPreTaskResult } = require("./lib/companion-lifecycle.ts");
 
 const ROOT = process.cwd();
 const PREFLIGHT_OUTPUT = path.join(ROOT, "output", "agent_session", "latest_pre_mutation_check.json");
@@ -367,6 +368,7 @@ function preTask(args) {
       decision_card: decisionCard,
       reason: "pre-task gate detected runtime, scope, or lock blockers. See decision_card for human choice.",
     };
+    recordPreTaskResult(taskId, out);
     console.log(JSON.stringify(out, null, 2));
     process.exit(1);
   }
@@ -381,6 +383,7 @@ function preTask(args) {
     scope_check: scopeCheck,
     lock_check: { ok: true, conflicts: [], suggested_execution_mode: null },
   };
+  recordPreTaskResult(taskId, output);
   console.log(JSON.stringify(output, null, 2));
 }
 

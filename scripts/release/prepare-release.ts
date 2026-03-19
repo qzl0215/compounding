@@ -1,6 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const childProcess = require("node:child_process");
+const { recordReleaseHandoff } = require("../coord/lib/companion-lifecycle.ts");
 const {
   changeSummary,
   currentActiveRelease,
@@ -140,6 +141,23 @@ function main() {
         };
 
         upsertRelease(prepared);
+        if (taskMeta?.id) {
+          recordReleaseHandoff(taskMeta.id, {
+            source: "release:prepare",
+            channel,
+            release_id: releaseId,
+            acceptance_status: prepared.acceptance_status,
+            release_path: releasePath,
+            commit_sha: commitSha,
+            preview_url: prepared.preview_url,
+            delivery_summary: prepared.delivery_summary,
+            delivery_benefit: prepared.delivery_benefit,
+            delivery_risks: prepared.delivery_risks,
+            linked_task_ids: normalizedLinkedTaskIds,
+            change_summary: summary,
+            status: prepared.status,
+          });
+        }
         if (!smokePassed) {
           return { ok: false, message: `Release ${releaseId} failed before cutover.`, release: prepared };
         }

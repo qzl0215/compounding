@@ -1,4 +1,5 @@
 const childProcess = require("node:child_process");
+const { recordReleaseHandoff } = require("../coord/lib/companion-lifecycle.ts");
 const {
   clearChannelSymlink,
   clearPendingDevRelease,
@@ -93,6 +94,24 @@ try {
     upsertRelease(acceptedDevRecord);
     clearPendingDevRelease();
     clearChannelSymlink("dev");
+    if (pending.primary_task_id) {
+      recordReleaseHandoff(pending.primary_task_id, {
+        source: "release:accept-dev",
+        channel: "prod",
+        release_id: prodReleaseId,
+        acceptance_status: "accepted",
+        release_path: pending.release_path,
+        commit_sha: pending.commit_sha,
+        production_url: productionBaseUrl(),
+        promoted_from_dev_release_id: pending.release_id,
+        delivery_summary: prodRecord.delivery_summary,
+        delivery_benefit: prodRecord.delivery_benefit,
+        delivery_risks: prodRecord.delivery_risks,
+        linked_task_ids: pending.linked_task_ids,
+        change_summary: pending.change_summary,
+        status: "active",
+      });
+    }
     const stopPreviewScript = require("node:path").join(process.cwd(), "scripts", "local-runtime", "stop-preview.ts");
     try {
       childProcess.execFileSync("node", ["--experimental-strip-types", stopPreviewScript], {

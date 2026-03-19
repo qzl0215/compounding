@@ -10,6 +10,7 @@ const {
   upsertRelease,
   withReleaseLock,
 } = require("./lib.ts");
+const { recordReleaseHandoff } = require("../coord/lib/companion-lifecycle.ts");
 const { stabilizeLocalProdRuntime } = require("./prod-runtime-stability.ts");
 
 function parseArg(name) {
@@ -42,6 +43,23 @@ try {
       const updated = readRegistry().releases.find((item) => item.release_id === releaseId) || { ...record, tag };
       const finalRelease = { ...updated, tag, notes: [...updated.notes, reloadNote, stabilityNote].filter(Boolean) };
       upsertRelease(finalRelease);
+      if (record.primary_task_id) {
+        recordReleaseHandoff(record.primary_task_id, {
+          source: "release:switch",
+          channel: "prod",
+          release_id: releaseId,
+          acceptance_status: "accepted",
+          release_path: record.release_path,
+          commit_sha: record.commit_sha,
+          production_url: productionBaseUrl(),
+          delivery_summary: finalRelease.delivery_summary,
+          delivery_benefit: finalRelease.delivery_benefit,
+          delivery_risks: finalRelease.delivery_risks,
+          linked_task_ids: record.linked_task_ids,
+          change_summary: finalRelease.change_summary,
+          status: "active",
+        });
+      }
       return { registry: readRegistry(), finalRelease };
     });
 
