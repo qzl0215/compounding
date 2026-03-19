@@ -52,7 +52,7 @@ t-034
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 
 ## 分支
@@ -76,17 +76,17 @@ t-034
 
 ## 一句复盘
 
-未复盘
+统一了短编号与脚本口径，补齐了 production cutover 闭环，并继续压缩交付读模型与任务主表的冗余展示。
 
 
 ## 主发布版本
 
-未生成
+`20260319162635-06a067e-prod`
 
 
 ## 关联发布版本
 
-无
+`20260319160614-06a067e-dev`
 
 
 ## 计划
@@ -115,7 +115,7 @@ t-034
 - 这轮改动横跨脚本、页面、记忆主源，回写不完整会再次制造漂移
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
@@ -125,3 +125,7 @@ doing
 - 文档：`tasks/queue/task-034-high-roi-convergence-fixes.md, memory/project/current-state.md, memory/project/roadmap.md, memory/project/operating-blueprint.md`
 
 ## 复盘
+
+- 统一 task resolver 后，`t-xxx`、文件基名与完整路径终于不再双口径。
+- `release:prepare` 的根脚本硬编码 `--ref main` 是一个真实高频误用点，这轮顺手收掉后预览链路才真正闭环。
+- cutover 现在会先更新 active release，再 reload / stabilize，本地 production 不再依赖额外手动 restart 才收敛。
