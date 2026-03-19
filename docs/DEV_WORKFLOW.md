@@ -26,11 +26,12 @@ related_docs:
 
 - 每个 task 真正开始动手前，默认先跑 `coord:check:pre-task`
 - `pre-task` 默认同时检查：
+  - 工作区是否干净
   - 任务 companion
   - scope guard
   - 运行态状态
   - file/module 锁状态
-- 若发现运行态异常、scope 越界或锁冲突，`pre-task` 会输出决策卡，不直接让任务静默开工
+- 若发现工作区未清理、运行态异常、scope 越界或锁冲突，`pre-task` 会输出决策卡，不直接让任务静默开工
 - 决策卡只收口高风险选择，不替代正常的 runbook 和门禁链
 
 ## 高频工作链 runbook

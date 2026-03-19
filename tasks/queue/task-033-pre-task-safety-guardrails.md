@@ -50,7 +50,7 @@ t-033
 
 ## 最近提交
 
-`auto: branch HEAD`
+`2a426e9 feat: harden pre-task safety guardrails`
 
 ## 交付收益
 
