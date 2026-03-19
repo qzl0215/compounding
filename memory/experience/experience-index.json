@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-17T11:34:09.187Z",
+  "generated_at": "2026-03-19T13:33:20.588Z",
   "source_of_truth": "memory/experience/exp-*.md",
   "source_script": "scripts/ai/generate-experience-index.ts",
   "items": [
@@ -26,6 +26,22 @@
       "reuse": "以后凡是退役前台，都应该先从构建入口清掉，再决定是否归档。",
       "related_docs": "docs/REFACTOR_PLAN.md, memory/project/tech-debt.md",
       "path": "memory/experience/exp-003-delete-legacy-ui-first.md"
+    },
+    {
+      "id": "exp-004-gstack-alignment-boundary",
+      "title": "gstack 对齐矩阵与引入边界",
+      "decision": "当前阶段只优先吸收 gstack 的流程、门禁和交付产物思路，不引入它的浏览器基础设施与 Claude 专属生态。",
+      "reuse": "以后再研究外部 AI 开发框架时，先做对齐矩阵，再决定吸收，不再直接把对方实现形态搬进本仓库",
+      "related_docs": "memory/project/roadmap.md, docs/AI_OPERATING_MODEL.md, tasks/queue/task-030-gstack-alignment-and-adoption-boundary.md",
+      "path": "memory/experience/exp-004-gstack-alignment-boundary.md"
+    },
+    {
+      "id": "exp-005-diff-aware-qa-review-retro",
+      "title": "差异感知 QA / Review / Retro 产物",
+      "decision": "把 QA / Review / Retro 产物统一成一份轻量派生快照，基于当前 diff、风险和现有门禁层生成：",
+      "reuse": "以后再做 review、retro 或 ship log 时，先问它是不是由 diff 和风险驱动的派生产物",
+      "related_docs": "tasks/queue/task-032-diff-aware-qa-review-retro.md, docs/DEV_WORKFLOW.md, docs/AI_OPERATING_MODEL.md, apps/studio/src/modules/delivery/diff-aware.ts",
+      "path": "memory/experience/exp-005-diff-aware-qa-review-retro.md"
     }
   ]
 }

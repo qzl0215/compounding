@@ -9,7 +9,7 @@ describe("project cockpit", () => {
     expect(overview.identity.mission).toContain("AI-Native Repo");
     expect(overview.currentFocus.currentPhase).toContain("多 Agent 协作系统");
     expect(overview.currentFocus.currentPriority).toContain("Phase 0~3 已落地");
-    expect(overview.currentFocus.currentMilestone).toContain("工作模式入口与 runbook 收口");
+    expect(overview.currentFocus.currentMilestone).toContain("差异感知 QA / Review / Retro 产物");
     expect(overview.currentFocus.successCriteria.length).toBeGreaterThanOrEqual(3);
     expect(Array.isArray(overview.executionStatus.doingTasks)).toBe(true);
     expect(overview.executionStatus.nextCheckpoint.length).toBeGreaterThan(0);

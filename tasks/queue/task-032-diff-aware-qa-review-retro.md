@@ -37,7 +37,7 @@ t-032
 
 ## 当前模式
 
-方案评审
+工程执行
 
 ## 分支
 
@@ -75,7 +75,7 @@ t-032
 
 ## 发布说明
 
-本任务是 `t-030` 之后的候选实现任务，当前仅入列，不进入执行。
+本任务当前正在实现，完成后会先生成 `dev` 预览，再由用户验收后进入 `main` 与生产。
 
 ## 验收标准
 
@@ -90,13 +90,17 @@ t-032
 
 ## 状态
 
-todo
+doing
 
 ## 更新痕迹
 
-- 记忆：`no change: planning candidate only`
-- 索引：`no change: planning candidate only`
+- 记忆：`memory/experience/exp-005-diff-aware-qa-review-retro.md`
+- 索引：`memory/experience/experience-index.json`
 - 路线图：`no change: current priority unchanged`
 - 文档：`tasks/queue/task-032-diff-aware-qa-review-retro.md`
+- 文档：`apps/studio/src/modules/delivery/diff-aware.ts, apps/studio/src/modules/delivery/components/diff-aware-panel.tsx, apps/studio/src/modules/delivery/service.ts, apps/studio/src/modules/delivery/types.ts`
+- 文档：`apps/studio/src/app/tasks/page.tsx, apps/studio/src/app/releases/page.tsx, apps/studio/src/modules/portal/builders.ts`
+- 文档：`scripts/ai/diff-aware-qa-orchestrator.js, apps/studio/src/modules/delivery/__tests__/diff-aware.test.ts, apps/studio/src/modules/delivery/__tests__/service.test.ts`
+- 文档：`apps/studio/src/modules/tasks/module.md, apps/studio/src/modules/releases/module.md`
 
 ## 复盘

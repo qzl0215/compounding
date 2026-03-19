@@ -124,6 +124,11 @@ export function buildEvidenceLinks(): CockpitEvidenceGroup[] {
           href: "/tasks",
         },
         {
+          title: "差异感知产物",
+          summary: "查看当前改动对应的 QA / Review / Retro 摘要。",
+          href: "/releases#diff-aware-artifacts",
+        },
+        {
           title: "文档详情",
           summary: "下钻到规则、架构、记忆、prompt 和 task 原文。",
           href: "/knowledge-base",

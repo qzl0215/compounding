@@ -1,5 +1,6 @@
 import { getReleaseDashboard } from "@/modules/releases";
 import { buildTaskDeliveryRows, listTaskCards } from "@/modules/tasks";
+import { collectDiffAwareArtifact } from "./diff-aware";
 import type { DeliverySnapshot } from "./types";
 
 export async function getDeliverySnapshot(): Promise<DeliverySnapshot> {
@@ -9,5 +10,6 @@ export async function getDeliverySnapshot(): Promise<DeliverySnapshot> {
     taskCards,
     taskRows: buildTaskDeliveryRows(taskCards, releaseDashboard.releases),
     releaseDashboard,
+    diffAware: collectDiffAwareArtifact(),
   };
 }

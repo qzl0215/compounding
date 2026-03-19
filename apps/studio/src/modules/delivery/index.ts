@@ -1,2 +1,3 @@
 export { getDeliverySnapshot } from "./service";
-export type { DeliverySnapshot } from "./types";
+export { buildDiffAwareArtifactFromFiles, collectDiffAwareArtifact } from "./diff-aware";
+export type { DeliverySnapshot, DiffAwareArtifact, DiffAwareCategory, DiffAwareCheckLayer } from "./types";

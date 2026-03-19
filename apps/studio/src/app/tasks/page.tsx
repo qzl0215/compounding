@@ -1,6 +1,7 @@
 import { PageOutline } from "@/components/page-outline";
 import { Card } from "@/components/ui/card";
 import { getDeliverySnapshot } from "@/modules/delivery";
+import { DiffAwarePanel } from "@/modules/delivery/components/diff-aware-panel";
 import { DeliveryTable } from "@/modules/tasks/components/delivery-table";
 
 export const dynamic = "force-dynamic";
@@ -9,7 +10,11 @@ export default async function TasksPage() {
   const snapshot = await getDeliverySnapshot();
   const releaseDashboard = snapshot.releaseDashboard;
   const rows = snapshot.taskRows;
-  const outline = [{ id: "task-overview", label: "任务总览" }, { id: "task-delivery-table", label: "交付摘要表" }];
+  const outline = [
+    { id: "task-overview", label: "任务总览" },
+    { id: "task-diff-aware", label: "差异感知产物" },
+    { id: "task-delivery-table", label: "交付摘要表" },
+  ];
 
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_260px]">
@@ -26,6 +31,18 @@ export default async function TasksPage() {
               {releaseDashboard.pending_dev_release
                 ? `当前存在未验收 dev：${releaseDashboard.pending_dev_release.release_id}。请先验收上一个 dev，再继续出新预览。`
                 : "当前没有待验收 dev；完成一轮可验收改动后，应先生成 dev 预览链接。"}
+            </div>
+          </Card>
+        </section>
+        <section id="task-diff-aware">
+          <Card>
+            <p className="text-xs uppercase tracking-[0.28em] text-accent">差异感知 QA / Review / Retro</p>
+            <h3 className="mt-2 text-2xl font-semibold">根据当前 diff 给出最小验证与复盘线索</h3>
+            <p className="mt-4 max-w-4xl text-white/68">
+              这里不新增一套评估平台，只把当前改动的范围、风险、建议检查和复盘线索收拢成同一份派生摘要，方便先看再决定是否介入。
+            </p>
+            <div className="mt-5">
+              <DiffAwarePanel artifact={snapshot.diffAware} variant="compact" />
             </div>
           </Card>
         </section>

@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { PageOutline } from "@/components/page-outline";
 import { Card } from "@/components/ui/card";
 import { getDeliverySnapshot } from "@/modules/delivery";
+import { DiffAwarePanel } from "@/modules/delivery/components/diff-aware-panel";
 import { getManagementAccessState, getRuntimeStatusExplanation } from "@/modules/releases";
 import type { LocalRuntimeStatus } from "@/modules/releases";
 import { ReleaseDashboardPanel } from "@/modules/releases/components/release-dashboard-panel";
@@ -32,6 +33,7 @@ export default async function ReleasesPage() {
     .map((task) => ({ id: task.id, label: `${task.shortId || task.id} ${task.title}`.trim() }));
   const outline = [
     { id: "release-overview", label: "通道总览" },
+    { id: "diff-aware-artifacts", label: "差异感知产物" },
     { id: "validation-layers", label: "验证层级" },
     { id: "runtime-status", label: "运行态" },
     { id: "release-history", label: "版本台账" },
@@ -58,6 +60,18 @@ export default async function ReleasesPage() {
               <Meta title="dev 预览链接" value={dashboard.dev_preview_url} />
               <Meta title="生产验收链接" value={dashboard.production_url} />
             </dl>
+          </Card>
+        </section>
+        <section id="diff-aware-artifacts">
+          <Card>
+            <p className="text-xs uppercase tracking-[0.28em] text-accent">差异感知 QA / Review / Retro</p>
+            <h2 className="mt-3 text-3xl font-semibold">按当前 diff 生成 review / retro / ship log 摘要</h2>
+            <p className="mt-4 max-w-4xl text-white/68">
+              这里把改动范围驱动的检查建议、review 结论和复盘线索放在一起，避免每次都靠人工拼一份新的验证清单。
+            </p>
+            <div className="mt-6">
+              <DiffAwarePanel artifact={snapshot.diffAware} />
+            </div>
           </Card>
         </section>
         <section id="validation-layers">
