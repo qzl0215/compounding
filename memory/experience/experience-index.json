@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-19T17:11:42.114Z",
+  "generated_at": "2026-03-19T17:14:42.741Z",
   "source_of_truth": "memory/experience/exp-*.md",
   "source_script": "scripts/ai/generate-experience-index.ts",
   "items": [

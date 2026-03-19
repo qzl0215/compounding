@@ -87,5 +87,5 @@ related_docs:
 
 - 本地离线证据：`pnpm lint`、`pnpm test`、`pnpm build`、`scripts/ai/validate-change-trace.ts`、`scripts/ai/validate-task-git-link.ts`
 - 服务器真实证据：本地生产 active release 以 `/releases` 页面与 release registry 为准
-- 当前结论适用边界：当前进入 `t-035` 规划窗口；目标是为 `t-036` 锁定唯一实现边界，再进入下一轮工程执行
+- 当前结论适用边界：当前进入 `t-035` 规划窗口；目标是为 `t-036` 锁定唯一实现边界，再进入下一轮工程执行。规划依据同步沉淀在 `memory/experience/exp-006-delivery-framework-phase-one-boundary.md`
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

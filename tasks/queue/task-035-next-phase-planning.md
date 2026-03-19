@@ -92,7 +92,7 @@ t-035
 
 ## 发布说明
 
-完成后先生成 `dev` 预览；若验收通过，再晋升到 `main` 与本地生产。
+完成后先生成 `dev` 预览；若验收通过，再晋升到 `main` 与本地生产。规划依据同时沉淀到 `memory/experience/exp-006-delivery-framework-phase-one-boundary.md`。
 
 ## 验收标准
 
@@ -112,7 +112,7 @@ doing
 ## 更新痕迹
 
 - 记忆：`memory/project/current-state.md, memory/project/operating-blueprint.md, memory/experience/exp-006-delivery-framework-phase-one-boundary.md`
-- 索引：`memory/experience/experience-index.json`
+- 索引：`no change: experience index already synchronized in prior planning commit`
 - 路线图：`memory/project/roadmap.md`
 - 文档：`tasks/queue/task-035-next-phase-planning.md, tasks/queue/task-036-delivery-framework-phase-one.md`
 

@@ -35,6 +35,8 @@ Delivery Framework Phase 1：任务伴随体与交付契约闭环
 
 完成 `t-035`，把 Delivery Framework 第一阶段固定为“任务伴随体与交付契约闭环”，并创建 `t-036` 作为唯一实现入口；在 `t-035` 发布前，不直接开启新的实现任务，也不扩浏览器 daemon、重型 orchestration UI 或新的持久化状态仓库。
 
+规划依据补充：`memory/experience/exp-006-delivery-framework-phase-one-boundary.md`
+
 ## 当前执行待办
 
 - [x] 完成 gstack 七项实践里程碑（t-019~t-024）
