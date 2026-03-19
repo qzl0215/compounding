@@ -17,37 +17,38 @@ last_reviewed_at: 2026-03-20
 
 ## 当前里程碑
 
-Delivery Framework Phase 1 已完成，下一阶段待规划
+Delivery Framework Phase 1 已完成，下一阶段待定，当前聚焦 `t-037` 首页决策板收口
 
 ## 关键子目标
 
-### 子目标 1：固定 companion contract 的核心边界
+### 子目标 1：固定首页决策板的最小信息面
 
 - 发布标准：
-  - 明确 Phase 1 要解决的是“任务伴随体与交付契约闭环”，而不是新的 orchestration UI
-  - `t-036` 已继承 `t-035` 的边界、范围外与成功标准，不需要再次回到规划层重谈范围
+  - 首页首屏只保留当前阶段、运行与发布、当前阻塞与下一步
+  - 不再在首页平铺任务细节、证据列表或长篇项目说明
 - 关联任务：
-  - `tasks/queue/task-036-delivery-framework-phase-one.md`
+  - `tasks/queue/task-037-homepage-decision-board.md`
 
-### 子目标 2：打通 companion 生命周期回写
+### 子目标 2：继续复用现有 ProjectCockpit 派生事实
 
 - 发布标准：
-  - `coord:task:create / start / handoff / merge` 对同一任务的 companion 状态回写一致
-  - pre-task、review、diff-aware 与 release handoff 能共享同一份 companion 上下文
+  - 继续只从 current-state、roadmap、operating-blueprint、DeliverySnapshot 和 release runtime 取值
+  - 不新增首页专用状态源
 - 关联任务：
-  - `tasks/queue/task-036-delivery-framework-phase-one.md`
+  - `tasks/queue/task-037-homepage-decision-board.md`
 
-### 子目标 3：维持现有交付边界与范围外约束
+### 子目标 3：维持任务页、发布页与知识库的详情承载职责
 
 - 发布标准：
-  - 继续不做浏览器 daemon、Bun 原生运行时、数据库与重型 orchestration UI
-  - 继续沿用 `main / dev / prod` 与 task / release 的现有交付边界
+  - 任务页继续承接任务摘要、交付风险、复盘和详情
+  - 发布页继续承接 release 台账、运行态和回滚 / 验收入口
+  - 知识库继续承接文档原文与主源沉淀
 - 关联任务：
-  - `tasks/queue/task-036-delivery-framework-phase-one.md`
+  - `tasks/queue/task-037-homepage-decision-board.md`
 
 ## 当前阻塞
 
-- 当前主要风险不是底座缺失，而是下一阶段若直接开新主线而不先收口候选范围，仍可能重新引入边界漂移。
+- 当前主要风险不是底座缺失，而是首页若仍承载过多解释内容，会重新变回详情工作台，破坏“先判断、再下钻”的结构。
 
 ## 下一检查点
 
@@ -57,7 +58,7 @@ Delivery Framework Phase 1 已完成，下一阶段待规划
 - [x] 完成 `t-034` 的高 ROI 收敛修复
 - [x] 完成 `t-035` 的边界规划与主线切换
 - [x] 完成 `t-036` 的 companion contract 实现
-- [ ] 评估下一阶段候选：运营后台首页内容简化
+- [ ] 推进 `t-037`：将首页收口为决策板
 
 ## 证据边界
 

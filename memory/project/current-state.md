@@ -55,7 +55,7 @@ related_docs:
 - [x] 完成 `t-034`：收口 task resolver、release cutover、roadmap frontmatter 与交付快照展示层，并已发布到 main 与本地生产
 - [x] 完成 `t-035`：锁定 Delivery Framework 第一阶段边界，并把主线切到 `t-036`
 - [x] 完成 `t-036`：让 companion 成为 create / pre-task / handoff / review / release handoff 的统一交付契约，并已发布到 main 与本地生产
-- [ ] 评估下一阶段候选：简化运营后台首页内容，只保留用户最重要的信息
+- [ ] 推进 `t-037`：将运营后台首页简化为决策板，只保留阶段、运行态、阻塞与下一步入口
 
 ## 当前推荐校验顺序
 
@@ -81,7 +81,7 @@ related_docs:
 - [x] 完成 `t-034` 的高 ROI 收敛修复
 - [x] 完成 `t-035`，把 Delivery Framework 第一阶段固定为“任务伴随体与交付契约闭环”
 - [x] 完成 `t-036`，并已将 companion-driven delivery contract 的最小闭环发布到 main 与本地生产
-- [ ] 评估下一阶段候选：简化运营后台首页内容
+- [ ] 推进 `t-037`：将运营后台首页简化为决策板
 - 保持运营快照与战略真相分工清楚
 - 保持 `pnpm validate:release` 持续绿色通过
 

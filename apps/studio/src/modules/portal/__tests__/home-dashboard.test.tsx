@@ -76,13 +76,13 @@ const cockpitFixture: ProjectCockpit = {
 };
 
 describe("home dashboard", () => {
-  it("renders the five fixed cockpit sections", () => {
+  it("renders the compact decision board", () => {
     render(<HomeDashboard overview={cockpitFixture} />);
 
-    expect(screen.getByRole("heading", { name: "项目是什么" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "当前优先级与里程碑" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "当前主线在怎么推进" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "先看哪里可能失真或卡住" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "需要细节时，去哪里看证据" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "先判断现状，再下钻细节" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "当前状态" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "production / dev 是否正常" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "当前阻塞与下一步" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "需要细节时，去哪里看证据" })).not.toBeInTheDocument();
   });
 });

@@ -17,7 +17,7 @@ related_docs:
 
 ## 当前阶段
 
-Autonomous Multi-Agent Delivery Framework（Phase 1 已完成，下一阶段待定）
+Autonomous Multi-Agent Delivery Framework（Phase 1 已完成，下一阶段待定：`t-037` 首页决策板收口）
 
 ## 下个里程碑
 
@@ -33,7 +33,7 @@ Delivery Framework Phase 1：任务伴随体与交付契约闭环
 
 ## 当前优先级
 
-评估下一阶段候选任务，优先考虑运营后台首页内容简化；在确认新的主线之前，不再扩展 Delivery Framework Phase 1 的实现范围。
+推进 `t-037`：首页内容简化为决策板，只保留阶段、运行态、阻塞与下一步入口；在确认新的主线之前，不再扩展 Delivery Framework Phase 1 的实现范围。
 
 规划依据补充：`memory/experience/exp-006-delivery-framework-phase-one-boundary.md`
 
@@ -51,7 +51,7 @@ Delivery Framework Phase 1：任务伴随体与交付契约闭环
 - [x] 完成 `t-034`：统一 task resolver、修复 release cutover 时序、继续收口交付快照与任务表展示
 - [x] 完成 `t-035`：明确 Delivery Framework 第一阶段边界、冻结项与成功标准
 - [x] 完成 `t-036`：任务伴随体与交付契约闭环
-- [ ] 评估下一阶段候选：运营后台首页内容简化
+- [ ] 推进 `t-037`：运营后台首页内容简化为决策板
 
 ## 证据边界
 
