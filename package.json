@@ -32,7 +32,7 @@
     "validate:diff-aware-qa": "node scripts/ai/diff-aware-qa-orchestrator.js",
     "validate:template-feedback": "node scripts/ai/template-feedback-orchestrator.js",
     "validate:release": "pnpm validate:static && pnpm validate:build",
-    "release:prepare": "node --experimental-strip-types scripts/release/prepare-release.ts --ref main",
+    "release:prepare": "node --experimental-strip-types scripts/release/prepare-release.ts",
     "release:switch": "node --experimental-strip-types scripts/release/switch-release.ts",
     "release:rollback": "node --experimental-strip-types scripts/release/rollback-release.ts",
     "release:summarize": "node --experimental-strip-types scripts/release/summarize-release.ts",
