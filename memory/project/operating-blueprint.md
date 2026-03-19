@@ -17,37 +17,39 @@ last_reviewed_at: 2026-03-20
 
 ## 当前里程碑
 
-下一阶段规划
+Delivery Framework Phase 1 边界定义
 
 ## 关键子目标
 
-### 子目标 1：定义 Delivery Framework 的首个实现边界
+### 子目标 1：固定 Phase 1 的核心问题
 
 - 发布标准：
-  - 明确首个实现任务的目标、范围外、成功标准与冻结项
-  - 不在规划未完成前直接开启新的实现任务
+  - 明确 Phase 1 要解决的是“任务伴随体与交付契约闭环”，而不是新的 orchestration UI
+  - 首个实现任务的目标、范围外、成功标准与冻结项已经固定
 - 关联任务：
-  - 待创建下一阶段规划 task
+  - `tasks/queue/task-035-next-phase-planning.md`
+  - `tasks/queue/task-036-delivery-framework-phase-one.md`
 
-### 子目标 2：固定下一阶段的安全边界
+### 子目标 2：明确 Phase 1 的范围外与冻结项
 
 - 发布标准：
-  - 明确哪些能力继续吸收、哪些明确不做
-  - 继续沿用 `main` / `dev` / task / release 的现有交付边界
+  - 明确不做浏览器 daemon、Bun 原生运行时、数据库与重型 orchestration UI
+  - 继续沿用 `main / dev / prod` 与 task / release 的现有交付边界
 - 关联任务：
-  - 待创建下一阶段规划 task
+  - `tasks/queue/task-035-next-phase-planning.md`
 
-### 子目标 3：给后续实现任务准备清晰入口
+### 子目标 3：创建首个实现任务入口
 
 - 发布标准：
   - roadmap、current-state 与 operating-blueprint 对下一阶段口径一致
-  - 后续第一个实现 task 可以直接按规划边界开工
+  - `t-036` 可直接作为下一条实现主线开工
 - 关联任务：
-  - 待创建下一阶段规划 task
+  - `tasks/queue/task-035-next-phase-planning.md`
+  - `tasks/queue/task-036-delivery-framework-phase-one.md`
 
 ## 当前阻塞
 
-- 无结构性阻塞；当前风险是若跳过规划直接进入实现，会再次制造 roadmap、task 与交付边界漂移。
+- 当前主要风险不是底座缺失，而是若跳过 `t-035` 直接进入 `t-036`，会把 companion contract 做成新一轮大而散的系统工程。
 
 ## 下一检查点
 
@@ -55,7 +57,8 @@ last_reviewed_at: 2026-03-20
 - [x] 完成 `t-032` 的差异感知 QA / Review / Retro 产物
 - [x] 完成 `t-033` 的预任务安全护栏补全
 - [x] 完成 `t-034` 的高 ROI 收敛修复
-- [ ] 创建下一阶段规划 task，明确首个 Delivery Framework 执行边界
+- [ ] 完成 `t-035` 的边界规划与主线切换
+- [ ] 进入 `t-036` 的实现准备
 
 ## 证据边界
 
