@@ -36,7 +36,7 @@ related_docs:
 
 ## 当前优先级
 
-多 Agent 协作系统 Phase 0~3 已落地（t-025/t-026/t-027），`t-030` 已完成对齐矩阵与引入边界，当前先推进 `t-031`，把规划链、执行链、交付链收口成清晰的工作模式入口与 runbook，再决定 `t-032`、`t-033` 的进入顺序，不引入浏览器 daemon、Bun 原生运行时或 Claude 专属生态。
+多 Agent 协作系统 Phase 0~3 已落地（t-025/t-026/t-027），`t-030` 已完成对齐矩阵与引入边界，`t-031` 已完成并发布，当前先推进 `t-032`，把差异感知 QA / Review / Retro 产物收口成清晰的派生链路，再决定 `t-033` 的进入顺序，不引入浏览器 daemon、Bun 原生运行时或 Claude 专属生态。
 
 ## 当前执行待办
 
@@ -46,8 +46,9 @@ related_docs:
 - [x] Phase 2 auto-review 增强：contract/architecture reviewer、merge gate、pre-push hook（t-026）
 - [x] Phase 3 无人值守完善：UI 产物格式、差异摘要、执行模式降级（t-027）
 - [x] 完成 `t-030`，产出唯一的 `gstack -> Compounding` 对齐矩阵与引入边界
-- [ ] 推进 `t-031`：收口工作模式入口与 runbook
-- [ ] 在 `t-031` 之后决定是否启动 `t-032`、`t-033`
+- [x] 推进 `t-031`：收口工作模式入口与 runbook
+- [ ] 推进 `t-032`：差异感知 QA / Review / Retro 产物
+- [ ] 在 `t-032` 之后决定是否启动 `t-033`
 
 ## 证据边界
 

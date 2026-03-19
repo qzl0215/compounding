@@ -17,41 +17,41 @@ last_reviewed_at: 2026-03-19
 
 ## 当前里程碑
 
-工作模式入口与 runbook 收口（t-031）
+差异感知 QA / Review / Retro 产物（t-032）
 
 ## 关键子目标
 
-### 子目标 1：固定规划链入口与 runbook
+### 子目标 1：最小 diff-aware 检查建议
 
 - 发布标准：
-  - 规划链能清楚说明何时进入、需要哪些输入、会产出什么、何时退出
-  - 弱 agent 能按 runbook 走到共商规划 task，而不是靠经验猜
+  - 常见 diff 能导出足够轻的检查建议，而不是一把上全量门禁
+  - 检查选择基于改动范围与风险，不依赖人工拍脑袋
 - 关联任务：
-  - `tasks/queue/task-031-work-mode-entry-and-runbook.md`
+  - `tasks/queue/task-032-diff-aware-qa-review-retro.md`
 
-### 子目标 2：固定执行链入口与 runbook
+### 子目标 2：统一 review / retro 结构化输出
 
 - 发布标准：
-  - 执行链的输入、产物、边界和验收前检查说明清楚
-  - 模式切换不依赖散落在多份文档里的口头经验
+  - review 摘要、retro 摘要和 ship log 结构统一
+  - 产物可复用，但不新增平行评估体系
 - 关联任务：
-  - `tasks/queue/task-031-work-mode-entry-and-runbook.md`
+  - `tasks/queue/task-032-diff-aware-qa-review-retro.md`
 
-### 子目标 3：固定交付链入口与 runbook
+### 子目标 3：沉淀可比较经验资产
 
 - 发布标准：
-  - 交付链能清楚覆盖质量验收、dev 预览、main 晋升与 production 验收
-  - 发布和回滚动作仍保持串行与唯一真相源约束
+  - 高价值 review / retro 结果能沉淀到 `memory/experience/*` 或相关摘要页
+  - 相似改动可被快速横向比较
 - 关联任务：
-  - `tasks/queue/task-031-work-mode-entry-and-runbook.md`
+  - `tasks/queue/task-032-diff-aware-qa-review-retro.md`
 
-### 子目标 4：固定最小脚本契约
+### 子目标 4：保持门禁轻量
 
 - 发布标准：
-  - `scripts/ai/*` 与 `scripts/release/*` 中的模式提示与发布动作能对应上述三条链路
-  - 文档与脚本之间不再各自发明一套切换语义
+  - 不引入外部评估平台
+  - 不把所有改动升级成重回归
 - 关联任务：
-  - `tasks/queue/task-031-work-mode-entry-and-runbook.md`
+  - `tasks/queue/task-032-diff-aware-qa-review-retro.md`
 
 ## 当前阻塞
 
@@ -59,8 +59,9 @@ last_reviewed_at: 2026-03-19
 
 ## 下一检查点
 
-- [ ] 完成 `t-031` 的工作模式入口与 runbook 收口
-- [ ] 再确认 `t-032`、`t-033` 的进入顺序与边界
+- [x] 完成 `t-031` 的工作模式入口与 runbook 收口
+- [ ] 推进 `t-032` 的差异感知 QA / Review / Retro 产物
+- [ ] 再确认 `t-033` 的进入顺序与边界
 - [ ] 用这份 runbook 与用户确认下一轮只吸收流程、门禁和交付产物层能力
 
 ## 证据边界

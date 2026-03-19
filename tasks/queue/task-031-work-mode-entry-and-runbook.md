@@ -39,7 +39,7 @@ t-031
 
 ## 当前模式
 
-质量验收
+发布复盘
 
 ## 分支
 
@@ -47,7 +47,7 @@ t-031
 
 ## 最近提交
 
-`auto: branch HEAD`
+`af517c1 feat: add work mode runbooks and align roadmap`
 
 ## 交付收益
 
@@ -59,15 +59,15 @@ t-031
 
 ## 一句复盘
 
-未复盘
+工作模式入口与 runbook 已收口，规划链 / 执行链 / 交付链可按统一入口和最小脚本契约执行。
 
 ## 主发布版本
 
-未生成
+`20260319112901-af517c1-prod`
 
 ## 关联发布版本
 
-无
+`20260319112540-af517c1-dev`
 
 ## 计划
 
@@ -77,7 +77,7 @@ t-031
 
 ## 发布说明
 
-本任务是 `t-030` 之后的候选实现任务，当前仅入列，不进入执行。
+本任务已完成并发布到 main 与本地生产。
 
 ## 验收标准
 
@@ -92,7 +92,7 @@ t-031
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
@@ -102,3 +102,7 @@ doing
 - 文档：`docs/WORK_MODES.md, docs/DEV_WORKFLOW.md, docs/AI_OPERATING_MODEL.md, tasks/queue/task-031-work-mode-entry-and-runbook.md`
 
 ## 复盘
+
+- 已完成规划链、执行链、交付链的 runbook 收口。
+- 弱 agent 可通过最小脚本契约按入口执行。
+- 已验收并发布到 main 与本地生产。

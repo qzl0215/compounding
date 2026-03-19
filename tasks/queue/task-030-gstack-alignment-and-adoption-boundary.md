@@ -45,7 +45,7 @@ t-030
 
 ## 当前模式
 
-质量验收
+发布复盘
 
 ## 分支
 
@@ -53,7 +53,7 @@ t-030
 
 ## 最近提交
 
-`auto: branch HEAD`
+`93da11c feat: add gstack alignment boundary and planning tasks`
 
 ## 交付收益
 
@@ -65,15 +65,15 @@ t-030
 
 ## 一句复盘
 
-未复盘
+gstack 引入边界已固定，后续任务边界清楚。
 
 ## 主发布版本
 
-未生成
+`20260319034822-4dff6cf-dev`
 
 ## 关联发布版本
 
-无
+`20260319034822-4dff6cf-dev`
 
 ## 计划
 
@@ -83,7 +83,7 @@ t-030
 
 ## 发布说明
 
-本任务只交付对齐矩阵、主线边界与后续任务定义。完成后先生成 `dev` 预览供你确认，再决定是否晋升到 `main` 与本地 production。
+本任务已完成对齐矩阵与引入边界，并已发布到 main 与本地生产。
 
 ## 验收标准
 
@@ -100,7 +100,7 @@ t-030
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
@@ -110,3 +110,7 @@ doing
 - 文档：`tasks/queue/task-030-gstack-alignment-and-adoption-boundary.md`, `tasks/queue/task-031-work-mode-entry-and-runbook.md`, `tasks/queue/task-032-diff-aware-qa-review-retro.md`, `tasks/queue/task-033-pre-task-safety-guardrails.md`
 
 ## 复盘
+
+- 对齐矩阵已完成。
+- 后续任务边界已固定。
+- 已发布到 main 与本地生产。
