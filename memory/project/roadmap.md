@@ -17,7 +17,7 @@ related_docs:
 
 ## 当前阶段
 
-Autonomous Multi-Agent Delivery Framework（Phase 1 规划）
+Autonomous Multi-Agent Delivery Framework（Phase 1 实现准备）
 
 ## 下个里程碑
 
@@ -33,7 +33,7 @@ Delivery Framework Phase 1：任务伴随体与交付契约闭环
 
 ## 当前优先级
 
-完成 `t-035`，把 Delivery Framework 第一阶段固定为“任务伴随体与交付契约闭环”，并创建 `t-036` 作为唯一实现入口；在 `t-035` 发布前，不直接开启新的实现任务，也不扩浏览器 daemon、重型 orchestration UI 或新的持久化状态仓库。
+启动 `t-036`，把 Delivery Framework Phase 1 落成“任务伴随体与交付契约闭环”的第一轮工程实现；当前优先打通 create / pre-task / handoff / review / release handoff 对同一份 companion contract 的生命周期回写，不扩浏览器 daemon、重型 orchestration UI 或新的持久化状态仓库。
 
 规划依据补充：`memory/experience/exp-006-delivery-framework-phase-one-boundary.md`
 
@@ -49,12 +49,13 @@ Delivery Framework Phase 1：任务伴随体与交付契约闭环
 - [x] 推进 `t-032`：差异感知 QA / Review / Retro 产物
 - [x] 完成 `t-033`：补齐 pre-task 安全护栏
 - [x] 完成 `t-034`：统一 task resolver、修复 release cutover 时序、继续收口交付快照与任务表展示
-- [ ] 完成 `t-035`：明确 Delivery Framework 第一阶段边界、冻结项与成功标准
+- [x] 完成 `t-035`：明确 Delivery Framework 第一阶段边界、冻结项与成功标准
 - [ ] 启动 `t-036`：任务伴随体与交付契约闭环
+- [ ] 让 `coord:task:create / start / handoff / merge` 共享同一份 companion-driven delivery contract
 
 ## 证据边界
 
-- 本地离线证据：
-- 服务器真实证据：
-- 当前结论适用边界：
+- 本地离线证据：`t-035` 规划文档、`t-036` 任务定义、`memory/experience/exp-006-delivery-framework-phase-one-boundary.md`
+- 服务器真实证据：本地生产 active release 与 `/releases` 页面应显示 `t-035` 已完成，当前无 pending dev
+- 当前结论适用边界：当前已结束 Delivery Framework Phase 1 的规划窗口；下一步在既有发布链与真相源边界不变的前提下启动 `t-036` 实现
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

@@ -53,8 +53,8 @@ related_docs:
 - [x] 推进 `t-032`：差异感知 QA / Review / Retro 产物，并已发布到 main 与本地生产
 - [x] 完成 `t-033`：补齐 pre-task 安全护栏，并已发布到 main 与本地生产
 - [x] 完成 `t-034`：收口 task resolver、release cutover、roadmap frontmatter 与交付快照展示层，并已发布到 main 与本地生产
-- [ ] 推进 `t-035`：完成 Delivery Framework 第一阶段规划，锁定 `t-036` 的实现边界
-- [ ] 准备 `t-036`：以任务伴随体与交付契约闭环作为下一条实现主线
+- [x] 完成 `t-035`：锁定 Delivery Framework 第一阶段边界，并把主线切到 `t-036`
+- [ ] 启动 `t-036`：以任务伴随体与交付契约闭环作为下一条实现主线
 
 ## 当前推荐校验顺序
 
@@ -78,8 +78,9 @@ related_docs:
 - [x] 完成 `t-032` 的差异感知 QA / Review / Retro 产物
 - [x] 完成 `t-033` 的预任务安全护栏补全
 - [x] 完成 `t-034` 的高 ROI 收敛修复
-- [ ] 完成 `t-035`，把 Delivery Framework 第一阶段固定为“任务伴随体与交付契约闭环”
-- [ ] 确认 `t-036` 只做 companion-driven delivery contract，不扩 orchestration UI、浏览器 daemon 或数据库
+- [x] 完成 `t-035`，把 Delivery Framework 第一阶段固定为“任务伴随体与交付契约闭环”
+- [ ] 启动 `t-036`，仅实现 companion-driven delivery contract，不扩 orchestration UI、浏览器 daemon 或数据库
+- [ ] 在 `t-036` 内优先打通 create / pre-task / handoff / review / release handoff 的 companion 生命周期
 - 保持运营快照与战略真相分工清楚
 - 保持 `pnpm validate:release` 持续绿色通过
 
@@ -87,5 +88,5 @@ related_docs:
 
 - 本地离线证据：`pnpm lint`、`pnpm test`、`pnpm build`、`scripts/ai/validate-change-trace.ts`、`scripts/ai/validate-task-git-link.ts`
 - 服务器真实证据：本地生产 active release 以 `/releases` 页面与 release registry 为准
-- 当前结论适用边界：当前进入 `t-035` 规划窗口；目标是为 `t-036` 锁定唯一实现边界，再进入下一轮工程执行。规划依据同步沉淀在 `memory/experience/exp-006-delivery-framework-phase-one-boundary.md`
+- 当前结论适用边界：`t-035` 已完成并且当前无 pending dev；下一条主线切到 `t-036`，目标是把任务伴随体升级成 companion-driven delivery contract 的最小闭环。规划依据同步沉淀在 `memory/experience/exp-006-delivery-framework-phase-one-boundary.md`
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

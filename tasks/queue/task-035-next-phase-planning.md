@@ -47,17 +47,17 @@ t-035
 
 ## 当前模式
 
-质量验收
+发布复盘
 
 
 ## 分支
 
-`codex/task-035-next-phase-planning`
+`main (promoted from codex/task-035-next-phase-planning)`
 
 
 ## 最近提交
 
-`auto: branch HEAD`
+`e47d06f`
 
 ## 交付收益
 
@@ -71,17 +71,17 @@ t-035
 
 ## 一句复盘
 
-先把 Phase 1 定成“任务伴随体与交付契约闭环”，比直接扩 orchestration UI 或浏览器基础设施更符合当前仓库的复利路径。
+先把 Phase 1 收口成“任务伴随体与交付契约闭环”，让下一条实现主线可以直接开工，而不是继续在 orchestration UI 或浏览器基础设施上分散注意力。
 
 
 ## 主发布版本
 
-未生成
+`20260319175230-e47d06f-prod`
 
 
 ## 关联发布版本
 
-无
+`20260319171534-e47d06f-dev`
 
 
 ## 计划
@@ -92,7 +92,7 @@ t-035
 
 ## 发布说明
 
-完成后先生成 `dev` 预览；若验收通过，再晋升到 `main` 与本地生产。规划依据同时沉淀到 `memory/experience/exp-006-delivery-framework-phase-one-boundary.md`。
+本任务已通过 `dev` 预览验收，并已晋升到 `main` 与本地生产。规划依据同时沉淀到 `memory/experience/exp-006-delivery-framework-phase-one-boundary.md`，后续实现主线切到 `t-036`。
 
 ## 验收标准
 
@@ -107,7 +107,7 @@ t-035
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
@@ -117,3 +117,6 @@ doing
 - 文档：`tasks/queue/task-035-next-phase-planning.md, tasks/queue/task-036-delivery-framework-phase-one.md`
 
 ## 复盘
+
+- 先把下一阶段边界锁定，再创建 `t-036`，避免 Delivery Framework 一开工就再次长成大而散的系统工程。
+- `roadmap / current-state / operating-blueprint` 在同一轮收口后，后续实现任务终于有了统一入口与冻结项。
