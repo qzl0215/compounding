@@ -36,7 +36,7 @@ related_docs:
 
 ## 当前优先级
 
-多 Agent 协作系统 Phase 0~3 已落地（t-025/t-026/t-027），`t-030` 已完成对齐矩阵与引入边界，`t-031` 已完成并发布，`t-032` 已完成并发布，当前评估 `t-033` 的进入顺序，再决定下一阶段是继续加固协作层还是推进更细的预任务安全护栏，不引入浏览器 daemon、Bun 原生运行时或 Claude 专属生态。
+多 Agent 协作系统 Phase 0~4 已落地（t-025~t-027、t-030~t-033）。当前优先级从执行阶段切换为下一阶段规划：先创建规划 task，决定是继续加固协作层，还是进入 Autonomous Multi-Agent Delivery Framework 的首个实现任务；不引入浏览器 daemon、Bun 原生运行时或 Claude 专属生态。
 
 ## 当前执行待办
 
@@ -48,7 +48,8 @@ related_docs:
 - [x] 完成 `t-030`，产出唯一的 `gstack -> Compounding` 对齐矩阵与引入边界
 - [x] 推进 `t-031`：收口工作模式入口与 runbook
 - [x] 推进 `t-032`：差异感知 QA / Review / Retro 产物
-- [ ] 在 `t-032` 之后决定是否启动 `t-033`
+- [x] 完成 `t-033`：补齐 pre-task 安全护栏
+- [ ] 创建下一阶段规划 task，明确 Delivery Framework 的首个实现边界
 
 ## 证据边界
 

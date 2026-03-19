@@ -42,7 +42,7 @@ t-033
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 ## 分支
 
@@ -50,7 +50,7 @@ t-033
 
 ## 最近提交
 
-`8ea2a08 docs: clarify pre-task gate worktree requirement`
+`d189713 docs: sync task-033 recent commit`
 
 ## 交付收益
 
@@ -62,15 +62,15 @@ t-033
 
 ## 一句复盘
 
-未复盘
+pre-task 已统一检查 worktree、runtime、scope、lock，并在高风险时产出 decision card。
 
 ## 主发布版本
 
-未生成
+`20260319153311-d189713-prod`
 
 ## 关联发布版本
 
-无
+`20260319152428-d189713-dev`
 
 ## 计划
 
@@ -80,7 +80,7 @@ t-033
 
 ## 发布说明
 
-本任务是 `t-030` 之后的候选实现任务，当前仅入列，不进入执行。
+本任务已通过 `dev` 预览验收，并已发布到 `main` 与本地生产。
 
 ## 验收标准
 
@@ -95,13 +95,15 @@ t-033
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
-- 记忆：`no change: scope limited to task gate, docs, and coord scripts`
+- 记忆：`memory/project/current-state.md, memory/project/operating-blueprint.md`
 - 索引：`no change: current scope only`
-- 路线图：`no change: current priority unchanged`
-- 文档：`tasks/queue/task-033-pre-task-safety-guardrails.md, scripts/coord/check.ts, scripts/coord/lib/task-meta.ts, docs/DEV_WORKFLOW.md, docs/AI_OPERATING_MODEL.md, AGENTS.md`
+- 路线图：`memory/project/roadmap.md`
+- 文档：`tasks/queue/task-033-pre-task-safety-guardrails.md, memory/project/current-state.md, memory/project/roadmap.md, memory/project/operating-blueprint.md`
 
 ## 复盘
+
+轻量 pre-task gate 先拦风险、再输出决策卡，比把风险留到提交后更稳，也没有把任务前检查做成审批流。

@@ -17,52 +17,52 @@ last_reviewed_at: 2026-03-19
 
 ## 当前里程碑
 
-差异感知 QA / Review / Retro 产物（t-032）
+下一阶段规划与交付边界确认
 
 ## 关键子目标
 
-### 子目标 1：最小 diff-aware 检查建议
+### 子目标 1：定义下一阶段主线
 
 - 发布标准：
-  - 常见 diff 能导出足够轻的检查建议，而不是一把上全量门禁
-  - 检查选择基于改动范围与风险，不依赖人工拍脑袋
+  - 明确下一阶段是继续加固协作层，还是进入 Delivery Framework 首个实现任务
+  - 主线目标能用一句话说明白，不与当前阶段成果重叠
 - 关联任务：
-  - `tasks/queue/task-032-diff-aware-qa-review-retro.md`
+  - `tasks/queue/task-033-pre-task-safety-guardrails.md`
 
-### 子目标 2：统一 review / retro 结构化输出
+### 子目标 2：收口首个执行边界
 
 - 发布标准：
-  - review 摘要、retro 摘要和 ship log 结构统一
-  - 产物可复用，但不新增平行评估体系
+  - 明确首个执行任务的输入、输出、限制条件和验收标准
+  - 不在规划阶段偷做实现
 - 关联任务：
-  - `tasks/queue/task-032-diff-aware-qa-review-retro.md`
+  - `tasks/queue/task-033-pre-task-safety-guardrails.md`
 
-### 子目标 3：沉淀可比较经验资产
+### 子目标 3：保持现有协作链稳定
 
 - 发布标准：
-  - 高价值 review / retro 结果能沉淀到 `memory/experience/*` 或相关摘要页
-  - 相似改动可被快速横向比较
+  - 现有 preview / prod / task / release 闭环保持可用
+  - 规划动作不破坏当前门禁、运行态和交付快照
 - 关联任务：
-  - `tasks/queue/task-032-diff-aware-qa-review-retro.md`
+  - `tasks/queue/task-033-pre-task-safety-guardrails.md`
 
-### 子目标 4：保持门禁轻量
+### 子目标 4：继续保持门禁轻量
 
 - 发布标准：
-  - 不引入外部评估平台
-  - 不把所有改动升级成重回归
+  - 不把规划动作变成审批流
+  - 不新增平行真相源或重型基础设施
 - 关联任务：
-  - `tasks/queue/task-032-diff-aware-qa-review-retro.md`
+  - `tasks/queue/task-033-pre-task-safety-guardrails.md`
 
 ## 当前阻塞
 
-- 无结构性阻塞；核心风险在于如果 runbook 写得过重，会再次制造规则负担。
+- 无结构性阻塞；当前风险是若下一阶段边界不清，后续实现任务会重新引入重复规划。
 
 ## 下一检查点
 
 - [x] 完成 `t-031` 的工作模式入口与 runbook 收口
-- [ ] 推进 `t-032` 的差异感知 QA / Review / Retro 产物
-- [ ] 再确认 `t-033` 的进入顺序与边界
-- [ ] 用这份 runbook 与用户确认下一轮只吸收流程、门禁和交付产物层能力
+- [x] 完成 `t-032` 的差异感知 QA / Review / Retro 产物
+- [x] 完成 `t-033` 的预任务安全护栏补全
+- [ ] 创建下一阶段规划 task，明确首个 Delivery Framework 执行边界
 
 ## 证据边界
 
