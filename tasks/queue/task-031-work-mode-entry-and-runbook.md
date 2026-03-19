@@ -39,7 +39,7 @@ t-031
 
 ## 当前模式
 
-方案评审
+质量验收
 
 ## 分支
 
@@ -92,13 +92,13 @@ t-031
 
 ## 状态
 
-todo
+doing
 
 ## 更新痕迹
 
-- 记忆：`no change: planning candidate only`
+- 记忆：`memory/project/current-state.md, memory/project/roadmap.md, memory/project/operating-blueprint.md`
 - 索引：`no change: planning candidate only`
-- 路线图：`no change: current priority unchanged`
-- 文档：`tasks/queue/task-031-work-mode-entry-and-runbook.md`
+- 路线图：`memory/project/roadmap.md`
+- 文档：`docs/WORK_MODES.md, docs/DEV_WORKFLOW.md, docs/AI_OPERATING_MODEL.md, tasks/queue/task-031-work-mode-entry-and-runbook.md`
 
 ## 复盘

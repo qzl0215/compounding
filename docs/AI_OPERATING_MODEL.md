@@ -4,7 +4,7 @@ doc_role: reference
 update_mode: manual
 owner_role: Foreman
 status: active
-last_reviewed_at: 2026-03-16
+last_reviewed_at: 2026-03-19
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -73,6 +73,18 @@ related_docs:
 - 若实现已完成但结果是否达标不明，进入质量验收
 - 若准备并入 `main` 或切换 release，进入发布复盘
 - 组织角色仍是职责镜头；工作模式是业务链入口，两者不能互相替代
+
+## 最小脚本契约
+
+- 规划链默认脚本：`scripts/ai/create-task.ts`
+  - 适用场景：需要先共商边界、生成规划 task、再进入方案评审。
+- 执行链默认脚本：`scripts/ai/build-context.ts`、`node --experimental-strip-types scripts/ai/validate-change-trace.ts`、`node --experimental-strip-types scripts/ai/validate-task-git-link.ts`
+  - 适用场景：task 已明确、准备动手、需要最小上下文与任务绑定校验。
+- 交付链默认脚本：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`、`node --experimental-strip-types scripts/release/accept-dev-release.ts`、`node --experimental-strip-types scripts/release/reject-dev-release.ts`、`node --experimental-strip-types scripts/release/rollback-release.ts`
+  - 适用场景：准备 `dev` 预览、验收通过、需要驳回或回滚。
+- 模式提示与校验辅助：`scripts/ai/collaboration-mode-integration.js`、`scripts/ai/task-mode-integration.ts`
+  - 适用场景：弱 agent 需要模式信息、入口建议或当前 task 模式校验时。
+- 这些脚本只承接最小契约，不替代 `docs/WORK_MODES.md`、`docs/DEV_WORKFLOW.md` 或任务边界。
 
 ## 上下文系统
 

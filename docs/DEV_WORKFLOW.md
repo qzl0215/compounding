@@ -4,7 +4,7 @@ doc_role: operation
 update_mode: manual
 owner_role: Builder
 status: active
-last_reviewed_at: 2026-03-16
+last_reviewed_at: 2026-03-19
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -21,6 +21,42 @@ related_docs:
 - 本地短分支仍可用于临时开发，但发布动作只认 `main`
 - `dev` 是 preview channel，不是长期 git 主分支
 - 同一时间只允许一个待验收 `dev`
+
+## 高频工作链 runbook
+
+### 规划链
+
+- 触发：`roadmap`、`operating-blueprint` 或发布标准不清，或者用户要求先共商方向。
+- 最小动作：
+  1. 先读 `memory/project/roadmap.md` 与 `memory/project/operating-blueprint.md`。
+  2. 必要时用 `scripts/ai/create-task.ts` 生成规划 task。
+  3. 和用户确认边界后，再进入方案评审或直接结束规划。
+- 输出：可执行里程碑、规划 task、更新后的战略真相。
+
+### 执行链
+
+- 触发：task 已确认，准备开始实现。
+- 最小动作：
+  1. 先读当前 task、相关 `module.md`、`code_index/*`。
+  2. 需要上下文压缩时，用 `scripts/ai/build-context.ts`。
+  3. 动手前先跑 `python3 scripts/pre_mutation_check.py`。
+- 输出：最小可验证改动、task 回写、必要的 memory / docs / index 回写。
+
+### 交付链
+
+- 触发：实现已完成，准备验收、发布或回滚。
+- 最小动作：
+  1. 先跑 `node --experimental-strip-types scripts/ai/validate-change-trace.ts` 与 `node --experimental-strip-types scripts/ai/validate-task-git-link.ts`。
+  2. 再按 release 流程准备 `dev` 预览：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`。
+  3. 如果已有未验收 `dev`，先提醒用户验收上一个 `dev`。
+  4. 用户验收通过后，再晋升到 `main` 与本地生产。
+  5. 最后用 `pnpm prod:status`、`pnpm prod:check` 和 `/releases` 完成生产验收。
+- 输出：`dev` / production 验收链接、release 切换结果、复盘结论。
+
+### 模式契约
+
+- `scripts/ai/collaboration-mode-integration.js` 与 `scripts/ai/task-mode-integration.ts` 只作为模式提示与校验辅助，不作为新的真相源。
+- 弱 agent 先按这三条 runbook 切换，不把模式切换写成大型审批流。
 
 ## 标准流程
 

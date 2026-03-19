@@ -48,7 +48,8 @@ related_docs:
 - [x] 落地 Multi-Agent Coordination Layer（t-025/t-026/t-027）
 - [x] 推进真相源收口与交付快照统一（t-028）
 - [x] 收口 `roadmap` 与 `current-state` 的职责边界，并继续收敛交付快照（t-029）
-- [ ] 完成 `t-030`：产出 `gstack -> Compounding` 对齐矩阵，并锁定下一阶段只吸收流程与门禁层高 ROI 能力
+- [x] 完成 `t-030`：产出 `gstack -> Compounding` 对齐矩阵，并锁定下一阶段只吸收流程与门禁层高 ROI 能力
+- [ ] 推进 `t-031`：把规划链、执行链、交付链收口成清晰的工作模式入口与 runbook
 
 ## 当前推荐校验顺序
 
@@ -69,7 +70,8 @@ related_docs:
 
 ## 下一检查点
 
-- 产出唯一的 `gstack` 对齐矩阵，并确认 `t-031`、`t-032`、`t-033` 的进入顺序
+- 完成 `t-031` 的工作模式入口与 runbook 收口
+- 再确认 `t-032`、`t-033` 的进入顺序与边界
 - 保持运营快照与战略真相分工清楚
 - 保持 `pnpm validate:release` 持续绿色通过
 

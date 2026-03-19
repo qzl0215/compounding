@@ -10,7 +10,7 @@ related_docs:
   - docs/ORG_MODEL.md
   - docs/AI_OPERATING_MODEL.md
   - memory/project/roadmap.md
-last_reviewed_at: 2026-03-17
+last_reviewed_at: 2026-03-19
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 工作模式
@@ -26,6 +26,36 @@ last_reviewed_at: 2026-03-17
 ## 业务链
 
 `需求提出 → 战略澄清 → 方案评审 → 工程执行 → 质量验收 → 发布复盘`
+
+## 高频工作链入口
+
+### 规划链
+
+- 入口：路线图、运营蓝图、成功标准或发布标准不清晰，或存在目标边界争议。
+- 输入：新需求或新问题、当前 `roadmap`、当前 `operating-blueprint`、尚未解开的关键问题。
+- 输出：清晰的里程碑定义、更新后的 `memory/project/roadmap.md`、更新后的 `memory/project/operating-blueprint.md`、共商规划 task。
+- 退出条件：已形成可执行的里程碑、蓝图和规划 task。
+
+### 执行链
+
+- 入口：task 已确认，方案边界已定，准备进入代码或文档落地。
+- 输入：已确认的 task、相关模块上下文、必要的 code_index 与记忆。
+- 输出：代码改动、文档 / 记忆 / 索引回写、可审查提交。
+- 退出条件：结果达到可验收状态，且相关回写已完成。
+
+### 交付链
+
+- 入口：实现已完成，验收标准已知，准备验证、发布或回滚。
+- 输入：已实现结果、验收标准、设计要求、运行时与测试结果、release 准备。
+- 输出：通过 / 不通过结论、release 切换或回滚结果、经验沉淀与复盘结论。
+- 退出条件：质量验收结论明确，版本切换或回滚完成，复盘已落地。
+
+### 切换原则
+
+- 弱 agent 先按这三条链路切模式，不靠经验猜。
+- 规划链只在方向、边界或标准不清时进入。
+- 执行链只在 task 已明确时进入。
+- 交付链只在可验收或可发布时进入。
 
 ## 战略澄清
 
