@@ -70,14 +70,14 @@ related_docs:
 
 ## 下一检查点
 
-- 完成 `t-032` 的差异感知 QA / Review / Retro 产物
+- [x] 完成 `t-032` 的差异感知 QA / Review / Retro 产物
 - 再确认 `t-033` 的进入顺序与边界
 - 保持运营快照与战略真相分工清楚
 - 保持 `pnpm validate:release` 持续绿色通过
 
 ## 证据边界
 
-- 本地离线证据：
-- 服务器真实证据：
-- 当前结论适用边界：
+- 本地离线证据：`pnpm lint`、`pnpm test`、`pnpm build`、`scripts/ai/validate-change-trace.ts`、`scripts/ai/validate-task-git-link.ts`
+- 服务器真实证据：本地生产 active release `20260319134351-6eec244-prod`
+- 当前结论适用边界：t-032 已完成并发布，当前仅剩 `t-033` 是否进入的路线图确认
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

@@ -37,7 +37,7 @@ t-032
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 ## 分支
 
@@ -45,7 +45,7 @@ t-032
 
 ## 最近提交
 
-`auto: branch HEAD`
+`6eec244 feat: add diff-aware qa review retro`
 
 ## 交付收益
 
@@ -57,15 +57,15 @@ t-032
 
 ## 一句复盘
 
-未复盘
+差异感知 QA / Review / Retro 产物已落地并发布。
 
 ## 主发布版本
 
-未生成
+`20260319134351-6eec244-prod`
 
 ## 关联发布版本
 
-无
+`20260319133810-6eec244-dev`
 
 ## 计划
 
@@ -75,7 +75,7 @@ t-032
 
 ## 发布说明
 
-本任务当前正在实现，完成后会先生成 `dev` 预览，再由用户验收后进入 `main` 与生产。
+本任务已验收通过，并已发布到 `main` 与本地生产。
 
 ## 验收标准
 
@@ -90,13 +90,13 @@ t-032
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
-- 记忆：`memory/experience/exp-005-diff-aware-qa-review-retro.md`
-- 索引：`memory/experience/experience-index.json`
-- 路线图：`no change: current priority unchanged`
+- 记忆：`no change: current-state updated in-place`
+- 索引：`no change: index unchanged`
+- 路线图：`memory/project/roadmap.md`
 - 文档：`tasks/queue/task-032-diff-aware-qa-review-retro.md`
 - 文档：`apps/studio/src/modules/delivery/diff-aware.ts, apps/studio/src/modules/delivery/components/diff-aware-panel.tsx, apps/studio/src/modules/delivery/service.ts, apps/studio/src/modules/delivery/types.ts`
 - 文档：`apps/studio/src/app/tasks/page.tsx, apps/studio/src/app/releases/page.tsx, apps/studio/src/modules/portal/builders.ts`
@@ -104,3 +104,5 @@ doing
 - 文档：`apps/studio/src/modules/tasks/module.md, apps/studio/src/modules/releases/module.md`
 
 ## 复盘
+
+diff-aware 产物与 UI 共享同一份实现，避免了脚本和页面各自组织检查建议与复盘结构。
