@@ -58,7 +58,7 @@ t-037
 
 ## 最近提交
 
-`117928e`
+`2819921`
 
 ## 交付收益
 
@@ -70,7 +70,7 @@ t-037
 
 ## 一句复盘
 
-首页已开始收口为决策板，后续只保留最重要的判断信息和最常用的下钻入口。
+首页已收口为决策板，本轮进一步把标题层级收紧，避免同义重复和中英混杂。
 
 ## 主发布版本
 
@@ -88,7 +88,7 @@ t-037
 
 ## 发布说明
 
-本任务已并入 main，首页已改为决策板布局；后续只需完成发布链收口并补齐主发布版本记录。
+本任务已并入 main，首页已改为决策板布局；本轮是标题层文案细化，让首页表达更自然。
 
 ## 验收标准
 
@@ -108,10 +108,10 @@ done
 
 ## 更新痕迹
 
-- 记忆：`memory/project/current-state.md, memory/project/roadmap.md, memory/project/operating-blueprint.md`
-- 索引：`no change: homepage simplification only affects portal projections`
-- 路线图：`memory/project/roadmap.md`
-- 文档：`tasks/queue/task-037-homepage-decision-board.md, apps/studio/src/modules/portal/components/home-dashboard.tsx, apps/studio/src/modules/portal/__tests__/home-dashboard.test.tsx, apps/studio/src/modules/portal/__tests__/service.test.tsx`
+- 记忆：`no change: title wording refinement only`
+- 索引：`no change: title wording refinement only`
+- 路线图：`no change: title wording refinement only`
+- 文档：`tasks/queue/task-037-homepage-decision-board.md, apps/studio/src/components/shell/app-shell.tsx, apps/studio/src/modules/portal/components/home-dashboard.tsx, apps/studio/src/modules/portal/__tests__/home-dashboard.test.tsx, apps/studio/src/modules/portal/__tests__/service.test.tsx`
 
 ## 复盘
 

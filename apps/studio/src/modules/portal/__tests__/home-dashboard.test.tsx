@@ -66,10 +66,10 @@ describe("home dashboard", () => {
   it("renders the compact decision board", () => {
     render(<HomeDashboard overview={cockpitFixture} />);
 
-    expect(screen.getByRole("heading", { name: "先判断现状，再下钻细节" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "当前状态" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "production / dev 是否正常" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "当前阻塞与下一步" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "先看现状，再看细节" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "阶段与优先级" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "运行态概览" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "阻塞与下一步" })).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "需要细节时，去哪里看证据" })).not.toBeInTheDocument();
   });
 });

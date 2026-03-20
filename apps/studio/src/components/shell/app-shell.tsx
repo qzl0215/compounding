@@ -26,8 +26,8 @@ export function AppShell({ children, runtimeChannel }: PropsWithChildren<{ runti
           <div className="mb-8 flex items-start justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.32em] text-accent">AI-Native Repo</p>
-              <h1 className="mt-3 font-mono text-2xl font-semibold text-white">项目驾驶舱</h1>
-              <p className="mt-2 text-sm text-white/65">人类优先的统一项目窗口，详情页继续承接任务、文档与发布</p>
+              <h1 className="mt-3 font-mono text-2xl font-semibold text-white">项目总览</h1>
+              <p className="mt-2 text-sm text-white/65">先看状态，再下钻任务、文档和发布</p>
             </div>
             <div className="flex flex-col items-end gap-2">
               <Badge tone={runtimeChannel === "dev" ? "warning" : "accent"}>{runtimeChannel === "dev" ? "DEV" : "PROD"}</Badge>

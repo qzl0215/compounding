@@ -17,7 +17,7 @@ export function HomeDashboard({ overview }: { overview: ProjectCockpit }) {
       <section id="project-decision-board">
         <Card>
           <p className="text-xs uppercase tracking-[0.32em] text-accent">决策板</p>
-          <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-tight">先判断现状，再下钻细节</h1>
+          <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-tight">先看现状，再看细节</h1>
           <p className="mt-4 max-w-3xl text-lg text-white/72">{overview.identity.oneLiner}</p>
           <p className="mt-4 max-w-4xl text-sm leading-7 text-white/64">{overview.executionStatus.summary}</p>
           <div className="mt-6 flex flex-wrap gap-2">
@@ -37,7 +37,7 @@ export function HomeDashboard({ overview }: { overview: ProjectCockpit }) {
       <section id="current-focus" className="grid gap-6 xl:grid-cols-[1fr_1fr_1fr]">
         <Card>
           <p className="text-xs uppercase tracking-[0.28em] text-accent">当前状态</p>
-          <h2 className="mt-3 text-3xl font-semibold">当前状态</h2>
+          <h2 className="mt-3 text-3xl font-semibold">阶段与优先级</h2>
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             <KeyStat title="当前阶段" value={overview.currentFocus.currentPhase} />
             <KeyStat title="当前里程碑" value={overview.currentFocus.currentMilestone} />
@@ -51,7 +51,7 @@ export function HomeDashboard({ overview }: { overview: ProjectCockpit }) {
         </Card>
         <Card>
           <p className="text-xs uppercase tracking-[0.28em] text-accent">运行与发布</p>
-          <h2 className="mt-3 text-3xl font-semibold">production / dev 是否正常</h2>
+          <h2 className="mt-3 text-3xl font-semibold">运行态概览</h2>
           <div className="mt-5 grid gap-4">
             {overview.executionStatus.runtimeSignals.map((signal) => (
               <RuntimeSignalCard key={signal.label} signal={signal} />
@@ -64,7 +64,7 @@ export function HomeDashboard({ overview }: { overview: ProjectCockpit }) {
         </Card>
         <Card>
           <p className="text-xs uppercase tracking-[0.28em] text-accent">当前阻塞与下一步</p>
-          <h2 className="mt-3 text-3xl font-semibold">当前阻塞与下一步</h2>
+          <h2 className="mt-3 text-3xl font-semibold">阻塞与下一步</h2>
           <div className="mt-6 space-y-4">
             <BulletBlock
               title="当前阻塞"
