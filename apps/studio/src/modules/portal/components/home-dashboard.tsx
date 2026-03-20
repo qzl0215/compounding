@@ -59,7 +59,7 @@ export function HomeDashboard({ overview }: { overview: ProjectCockpit }) {
           </div>
           <div className="mt-4 rounded-3xl border border-white/8 bg-white/[0.03] p-5">
             <p className="text-xs uppercase tracking-[0.22em] text-white/40">待验收版本</p>
-            <p className="mt-3 text-sm leading-7 text-white/72">{overview.riskBoard.items[0]?.summary ?? "当前没有待验收 dev。"}</p>
+            <p className="mt-3 text-sm leading-7 text-white/72">{overview.riskBoard.pendingDevSummary ?? "当前没有待验收 dev。"}</p>
           </div>
         </Card>
         <Card>

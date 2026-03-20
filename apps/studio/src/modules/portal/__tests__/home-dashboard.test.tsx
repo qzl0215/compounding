@@ -50,6 +50,7 @@ const cockpitFixture: ProjectCockpit = {
   riskBoard: {
     factConflicts: [],
     frozenItems: ["不新增数据库"],
+    pendingDevSummary: "当前没有待验收 dev。",
     items: [
       {
         title: "待验收版本",
@@ -59,20 +60,6 @@ const cockpitFixture: ProjectCockpit = {
       },
     ],
   },
-  evidenceLinks: [
-    {
-      title: "主源文档",
-      items: [{ title: "AGENTS", summary: "执行入口。", href: "/knowledge-base?path=AGENTS.md" }],
-    },
-    {
-      title: "详情工作台",
-      items: [{ title: "任务详情", summary: "查看 task 原文。", href: "/tasks" }],
-    },
-    {
-      title: "辅助理解",
-      items: [{ title: "工作模式", summary: "查看业务链。", href: "/knowledge-base?path=docs/WORK_MODES.md" }],
-    },
-  ],
 };
 
 describe("home dashboard", () => {

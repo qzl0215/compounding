@@ -2,7 +2,6 @@ import { getRuntimeStatusExplanation, type LocalRuntimeStatus } from "@/modules/
 import { TASK_STATUS_LABELS } from "@/modules/tasks";
 import type {
   CockpitCurrentFocus,
-  CockpitEvidenceGroup,
   CockpitExecutionStatus,
   CockpitIdentity,
   CockpitRiskBoard,
@@ -68,17 +67,20 @@ export function buildRiskBoard(
   previewRuntime: LocalRuntimeStatus,
   productionRuntime: LocalRuntimeStatus,
 ): CockpitRiskBoard {
+  const pendingDevSummary = pendingDevReleaseId
+    ? `当前存在待验收 dev：${pendingDevReleaseId}。继续推进新改动前，建议先完成这轮验收判断。`
+    : activeReleaseId
+      ? `当前没有待验收 dev。已激活的 production 版本是 ${activeReleaseId}。`
+      : "当前没有待验收 dev，也还没有激活的 production 版本。";
+
   return {
     factConflicts,
     frozenItems,
+    pendingDevSummary,
     items: [
       {
         title: "待验收版本",
-        summary: pendingDevReleaseId
-          ? `当前存在待验收 dev：${pendingDevReleaseId}。继续推进新改动前，建议先完成这轮验收判断。`
-          : activeReleaseId
-            ? `当前没有待验收 dev。已激活的 production 版本是 ${activeReleaseId}。`
-            : "当前没有待验收 dev，也还没有激活的 production 版本。",
+        summary: pendingDevSummary,
         tone: pendingDevReleaseId ? "warning" : "stable",
         href: "/releases",
       },
@@ -86,81 +88,6 @@ export function buildRiskBoard(
       toRuntimeRiskItem("production", productionRuntime),
     ],
   };
-}
-
-export function buildEvidenceLinks(): CockpitEvidenceGroup[] {
-  return [
-    {
-      title: "主源文档",
-      items: [
-        {
-          title: "AGENTS",
-          summary: "高频执行入口，先回答这是什么项目、当前优先级和协作硬规则。",
-          href: "/knowledge-base?path=AGENTS.md",
-        },
-        {
-          title: "路线图",
-          summary: "回答当前阶段和下个里程碑，不承接执行细节。",
-          href: "/knowledge-base?path=memory/project/roadmap.md",
-        },
-        {
-          title: "运营蓝图",
-          summary: "回答当前里程碑拆成哪几个子目标，以及每个子目标的发布标准。",
-          href: "/knowledge-base?path=memory/project/operating-blueprint.md",
-        },
-        {
-          title: "运营快照",
-          summary: "回答当前运营焦点、冻结项和最近检查点。",
-          href: "/knowledge-base?path=memory/project/current-state.md",
-        },
-      ],
-    },
-    {
-      title: "详情工作台",
-      items: [
-        {
-          title: "任务详情",
-          summary: "查看任务边界、Git 事实、更新痕迹和执行上下文。",
-          href: "/tasks",
-        },
-        {
-          title: "差异感知产物",
-          summary: "查看当前改动对应的 QA / Review / Retro 摘要。",
-          href: "/releases#diff-aware-artifacts",
-        },
-        {
-          title: "文档详情",
-          summary: "下钻到规则、架构、记忆、prompt 和 task 原文。",
-          href: "/knowledge-base",
-        },
-        {
-          title: "发布详情",
-          summary: "查看待验收 dev、production 运行态和回滚入口。",
-          href: "/releases",
-        },
-      ],
-    },
-    {
-      title: "辅助理解",
-      items: [
-        {
-          title: "工作模式",
-          summary: "查看需求提出到发布复盘的业务链，理解当前应该用哪种脑力。",
-          href: "/knowledge-base?path=docs/WORK_MODES.md",
-        },
-        {
-          title: "组织职责",
-          summary: "查看角色职责边界，避免把工作模式和组织镜头混在一起。",
-          href: "/knowledge-base?path=docs/ORG_MODEL.md",
-        },
-        {
-          title: "代码索引",
-          summary: "需要下钻到实现时，从模块索引进入而不是盲读整个仓库。",
-          href: "/knowledge-base?path=code_index/module-index.md",
-        },
-      ],
-    },
-  ];
 }
 
 export function toTaskSummary(task: {

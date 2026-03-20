@@ -71,18 +71,8 @@ export type CockpitRiskItem = {
 export type CockpitRiskBoard = {
   factConflicts: string[];
   frozenItems: string[];
+  pendingDevSummary: string | null;
   items: CockpitRiskItem[];
-};
-
-export type CockpitEvidenceLink = {
-  title: string;
-  summary: string;
-  href: string;
-};
-
-export type CockpitEvidenceGroup = {
-  title: string;
-  items: CockpitEvidenceLink[];
 };
 
 export type ProjectCockpit = {
@@ -90,6 +80,4 @@ export type ProjectCockpit = {
   currentFocus: CockpitCurrentFocus;
   executionStatus: CockpitExecutionStatus;
   riskBoard: CockpitRiskBoard;
-  evidenceLinks: CockpitEvidenceGroup[];
 };
-

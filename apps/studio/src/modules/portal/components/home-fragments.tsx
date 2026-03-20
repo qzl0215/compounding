@@ -1,11 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import type {
-  CockpitEvidenceGroup,
-  CockpitRiskItem,
-  CockpitRuntimeSignal,
-  TaskSummary,
-} from "../types";
+import type { CockpitRiskItem, CockpitRuntimeSignal, TaskSummary } from "../types";
 
 export function KeyStat({ title, value }: { title: string; value: string }) {
   return (
@@ -98,25 +93,5 @@ export function RiskCard({ item }: { item: CockpitRiskItem }) {
       <p className="text-xs uppercase tracking-[0.24em] text-white/72">{item.title}</p>
       <p className="mt-3 text-sm leading-6 text-white">{item.summary}</p>
     </Link>
-  );
-}
-
-export function EvidenceGroupCard({ group }: { group: CockpitEvidenceGroup }) {
-  return (
-    <article className="rounded-3xl border border-white/8 bg-white/[0.03] p-5">
-      <p className="text-xs uppercase tracking-[0.24em] text-accent">{group.title}</p>
-      <div className="mt-4 space-y-3">
-        {group.items.map((item) => (
-          <Link
-            key={`${group.title}-${item.title}`}
-            href={item.href}
-            className="block rounded-2xl border border-white/8 bg-black/20 px-3 py-3 transition hover:border-accent/30"
-          >
-            <p className="text-sm font-medium text-white">{item.title}</p>
-            <p className="mt-2 text-sm leading-6 text-white/66">{item.summary}</p>
-          </Link>
-        ))}
-      </div>
-    </article>
   );
 }

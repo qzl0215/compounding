@@ -2,7 +2,6 @@ import { extractSection, listDocsUnder, readDoc } from "@/modules/docs";
 import { getDeliverySnapshot } from "@/modules/delivery";
 import {
   buildCurrentFocus,
-  buildEvidenceLinks,
   buildExecutionStatus,
   buildIdentitySnapshot,
   buildRiskBoard,
@@ -61,7 +60,6 @@ export async function getProjectCockpit(): Promise<ProjectCockpit> {
       releaseDashboard.local_preview,
       releaseDashboard.local_runtime,
     ),
-    evidenceLinks: buildEvidenceLinks(),
   };
 }
 
