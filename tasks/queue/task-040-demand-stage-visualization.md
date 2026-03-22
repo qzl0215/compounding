@@ -134,7 +134,7 @@ doing
 ## 更新痕迹
 
 - 记忆：`no change: homepage expression tightening only`
-- 索引：`code_index/function-index.json`
+- 索引：`no change: synced in implementation commit`
 - 路线图：`no change: homepage expression tightening only`
 - 文档：`tasks/queue/task-040-demand-stage-visualization.md`
 
