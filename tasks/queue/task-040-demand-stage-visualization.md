@@ -77,7 +77,7 @@ t-040
 
 ## 最近提交
 
-`3a19b94 refactor: extract portal overview items`
+`b086318 refactor: tighten homepage decision board language`
 
 ## 交付收益
 
