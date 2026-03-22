@@ -58,7 +58,7 @@ function parseTaskToCompanion(taskLike, content) {
   const parsed = parseTaskContract(record.path, content);
   const goal = parsed.summary || record.title;
   const branch = parsed.branch;
-  const currentMode = parsed.currentMode || "方案评审";
+  const currentMode = parsed.currentMode;
   const taskStatus = normalizeTaskStatus(parsed.status);
   const modules = uniqueStrings(parsed.relatedModules);
   const plannedFiles = modules.filter((item) => item.includes("/") || /\.(md|ts|tsx|js|json|yaml|yml)$/.test(item));
@@ -77,7 +77,7 @@ function parseTaskToCompanion(taskLike, content) {
     owner_agent: "default",
     human_decision_needed: false,
     human_decision_reason: null,
-    current_mode: currentMode,
+    current_mode: currentMode || undefined,
     task_status: taskStatus,
     truth_boundaries: {
       task_document: record.path,
