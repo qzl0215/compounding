@@ -27,11 +27,10 @@ export function AppShell({ children, runtimeChannel }: PropsWithChildren<{ runti
             <div>
               <p className="text-xs uppercase tracking-[0.32em] text-accent">AI-Native Repo</p>
               <h1 className="mt-3 font-mono text-2xl font-semibold text-white">项目总览</h1>
-              <p className="mt-2 text-sm text-white/65">先看状态，再下钻任务、文档和发布</p>
+              <p className="mt-2 text-sm text-white/65">先判断需求在哪个环节，再决定看任务、证据还是发布</p>
             </div>
             <div className="flex flex-col items-end gap-2">
               <Badge tone={runtimeChannel === "dev" ? "warning" : "accent"}>{runtimeChannel === "dev" ? "DEV" : "PROD"}</Badge>
-              <Badge tone="accent">V4</Badge>
             </div>
           </div>
           <nav className="space-y-2">
@@ -62,21 +61,13 @@ export function AppShell({ children, runtimeChannel }: PropsWithChildren<{ runti
             })}
           </nav>
           <div className="mt-8 rounded-3xl border border-white/8 bg-white/[0.04] p-4">
-            <p className="text-xs uppercase tracking-[0.28em] text-white/45">默认法则</p>
-            <ul className="mt-3 space-y-2 text-sm text-white/72">
-              <li>AGENTS.md 是薄入口合约</li>
-              <li>首页先看主线，再下钻证据</li>
-              <li>roadmap 定战略，蓝图拆战术</li>
-              <li>task 负责执行边界</li>
-              <li>memory 负责沉淀，index 负责导航</li>
-              <li>改动前先做 preflight</li>
-              <li>每次改动都要更新 task</li>
-              <li>先 dev 预览，再验收发布</li>
-              <li>main 是唯一生产主线</li>
-            </ul>
+            <p className="text-xs uppercase tracking-[0.28em] text-white/45">阅读顺序</p>
+            <p className="mt-3 text-sm leading-7 text-white/72">
+              新问题先看首页判断它是待思考、待规划还是待执行；需要证据时去知识库，需要推进时去任务页，需要验收时去发布页。
+            </p>
             <Link className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-accent" href="/knowledge-base">
               <BookOpen className="size-3.5" />
-              打开详情文档入口
+              打开证据库
             </Link>
           </div>
         </aside>

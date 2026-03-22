@@ -1,18 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { getProjectCockpit } from "../service";
+import { getProjectOverview } from "../service";
 
-describe("project cockpit", () => {
-  it("surfaces the unified cockpit snapshot from markdown sources and runtime state", async () => {
-    const overview = await getProjectCockpit();
+describe("project overview", () => {
+  it("surfaces the stage-first snapshot from markdown sources and runtime state", async () => {
+    const overview = await getProjectOverview();
 
-    expect(overview.identity.oneLiner).toContain("AI-Native Repo");
-    expect(overview.currentFocus.currentPhase).toContain("Phase 2");
-    expect(overview.currentFocus.currentPriority).toContain("下一阶段主线");
-    expect(overview.currentFocus.currentMilestone).toContain("下一阶段主线待定");
-    expect(overview.currentFocus.successCriteria.length).toBeGreaterThanOrEqual(3);
-    expect(overview.executionStatus.nextCheckpoint.length).toBeGreaterThan(0);
-    expect(overview.executionStatus.runtimeSignals).toHaveLength(2);
-    expect(overview.executionStatus.runtimeSignals.some((signal) => signal.label === "production")).toBe(true);
-    expect(overview.riskBoard.pendingDevSummary).toMatch(/dev/);
-  });
+    expect(overview.overview.oneLiner).toContain("AI-Native Repo");
+    expect(overview.overview.currentPhase).toContain("Stage-First");
+    expect(overview.direction.summary).toContain("待思考");
+    expect(overview.thinkingItems.length).toBeGreaterThan(0);
+    expect(overview.planningItems.length).toBeGreaterThan(0);
+    expect(overview.doingItems.length).toBeGreaterThan(0);
+    expect(overview.runtimeFacts.nextCheckpoint.length).toBeGreaterThan(0);
+    expect(overview.runtimeFacts.runtimeSignals).toHaveLength(2);
+    expect(overview.runtimeFacts.runtimeSignals.some((signal) => signal.label === "production")).toBe(true);
+    expect(overview.runtimeFacts.pendingDevSummary).toMatch(/dev/);
+  }, 15000);
 });

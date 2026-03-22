@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import type { CockpitRuntimeSignal } from "../types";
+import type { CockpitRuntimeSignal, DemandStageItem } from "../types";
 
 export function KeyStat({ title, value }: { title: string; value: string }) {
   return (
@@ -24,6 +24,47 @@ export function BulletBlock({ title, items, empty }: { title: string; items: str
       ) : (
         <p className="mt-3 text-sm text-white/60">{empty}</p>
       )}
+    </div>
+  );
+}
+
+export function DemandItemList({
+  items,
+  empty,
+}: {
+  items: DemandStageItem[];
+  empty: string;
+}) {
+  if (items.length === 0) {
+    return <p className="rounded-3xl border border-dashed border-white/10 bg-white/[0.02] p-4 text-sm text-white/58">{empty}</p>;
+  }
+
+  return (
+    <div className="space-y-3">
+      {items.map((item) => (
+        <article key={item.id} className="rounded-3xl border border-white/8 bg-white/[0.03] p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-sm font-medium text-white">{item.title}</p>
+              <p className="mt-1 text-xs uppercase tracking-[0.18em] text-white/40">{item.source}</p>
+            </div>
+            {item.badge ? (
+              <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-white/64">{item.badge}</span>
+            ) : null}
+          </div>
+          <p className="mt-3 text-sm leading-6 text-white/72">{item.summary}</p>
+          <div className="mt-4 rounded-2xl border border-accent/15 bg-accent/8 px-4 py-3">
+            <p className="text-[11px] uppercase tracking-[0.18em] text-accent/80">AI 下一步</p>
+            <p className="mt-2 text-sm leading-6 text-white/80">{item.nextConversationAction}</p>
+          </div>
+          <Link
+            href={item.evidenceHref}
+            className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-accent transition hover:text-white"
+          >
+            查看证据
+          </Link>
+        </article>
+      ))}
     </div>
   );
 }

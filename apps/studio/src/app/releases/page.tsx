@@ -29,12 +29,22 @@ export default async function ReleasesPage() {
   const snapshot = await getDeliverySnapshot();
   const dashboard = snapshot.facts.releaseDashboard;
   const taskOptions = snapshot.projections.taskOptions;
+  const releaseConclusion = dashboard.pending_dev_release
+    ? "现在该验收，不该继续堆改动。"
+    : dashboard.local_runtime.status === "running"
+      ? `当前 production 在线，运行版本 ${dashboard.local_runtime.runtime_release_id || "未知"}。`
+      : "当前先确认运行态，再讨论继续发布。";
+  const releaseNextAction = dashboard.pending_dev_release
+    ? `先验收 ${dashboard.pending_dev_release.release_id}，通过或驳回后再继续推进。`
+    : dashboard.local_runtime.status === "running"
+      ? "如需继续推进，先生成新的 dev 预览，再进入验收。"
+      : "先恢复运行态，再决定是否继续生成或切换 release。";
   const outline = [
-    { id: "release-overview", label: "通道总览" },
-    { id: "diff-aware-artifacts", label: "差异感知产物" },
-    { id: "validation-layers", label: "验证层级" },
+    { id: "release-overview", label: "当前结论" },
     { id: "runtime-status", label: "运行态" },
     { id: "release-history", label: "版本台账" },
+    { id: "diff-aware-artifacts", label: "差异感知产物" },
+    { id: "validation-layers", label: "验证层级" },
   ];
 
   return (
@@ -42,12 +52,16 @@ export default async function ReleasesPage() {
       <div className="space-y-6">
         <section id="release-overview">
           <Card>
-            <p className="text-xs uppercase tracking-[0.28em] text-accent">发布管理</p>
-            <h2 className="mt-3 text-3xl font-semibold">dev 预览验收与 main 生产切换</h2>
+            <p className="text-xs uppercase tracking-[0.28em] text-accent">当前结论</p>
+            <h2 className="mt-3 text-3xl font-semibold">先判断现在该验收、继续发布，还是先修运行态</h2>
             <p className="mt-4 max-w-4xl text-white/68">
-              这里是统一驾驶舱下的发布详情页。首页只摘要显示待验收版本和运行风险；需要判断是否发布、回滚或排查环境时，
-              再进入这里查看完整事实。
+              发布页现在先给结论，再给细节。先看当前该不该验收、production 是否可信，再下钻版本历史、差异感知和验证层级。
             </p>
+            <div className="mt-6 rounded-3xl border border-accent/15 bg-accent/8 p-5">
+              <p className="text-xs uppercase tracking-[0.18em] text-accent/80">人话提示</p>
+              <p className="mt-2 text-lg font-medium text-white">{releaseConclusion}</p>
+              <p className="mt-3 text-sm leading-7 text-white/78">{releaseNextAction}</p>
+            </div>
             <dl className="mt-6 grid gap-4 md:grid-cols-4">
               <Meta title="运行根目录" value={dashboard.runtime_root} />
               <Meta title="待验收 dev" value={dashboard.pending_dev_release?.release_id || "当前没有待验收 dev"} />
@@ -58,6 +72,16 @@ export default async function ReleasesPage() {
               <Meta title="dev 预览链接" value={dashboard.dev_preview_url} />
               <Meta title="生产验收链接" value={dashboard.production_url} />
             </dl>
+          </Card>
+        </section>
+        <section id="runtime-status">
+          <Card>
+            <p className="text-xs uppercase tracking-[0.28em] text-accent">本地运行态</p>
+            <h2 className="mt-3 text-3xl font-semibold">dev 与 production 的真实运行状态</h2>
+            <div className="mt-6 grid gap-4 xl:grid-cols-2">
+              <RuntimeCard title="dev 预览" runtime={dashboard.local_preview} />
+              <RuntimeCard title="production" runtime={dashboard.local_runtime} />
+            </div>
           </Card>
         </section>
         <section id="diff-aware-artifacts">
@@ -71,6 +95,17 @@ export default async function ReleasesPage() {
               <DiffAwarePanel artifact={snapshot.facts.diffAware} />
             </div>
           </Card>
+        </section>
+        <section id="release-history">
+          <ReleaseDashboardPanel
+            activeReleaseId={dashboard.active_release_id}
+            pendingDevRelease={dashboard.pending_dev_release}
+            productionUrl={dashboard.production_url}
+            previewUrl={dashboard.dev_preview_url}
+            releases={dashboard.releases}
+            runtimeStatus={dashboard.local_runtime}
+            taskOptions={taskOptions}
+          />
         </section>
         <section id="validation-layers">
           <Card>
@@ -109,27 +144,6 @@ export default async function ReleasesPage() {
               ))}
             </div>
           </Card>
-        </section>
-        <section id="runtime-status">
-          <Card>
-            <p className="text-xs uppercase tracking-[0.28em] text-accent">本地运行态</p>
-            <h2 className="mt-3 text-3xl font-semibold">dev 与 production 的真实运行状态</h2>
-            <div className="mt-6 grid gap-4 xl:grid-cols-2">
-              <RuntimeCard title="dev 预览" runtime={dashboard.local_preview} />
-              <RuntimeCard title="production" runtime={dashboard.local_runtime} />
-            </div>
-          </Card>
-        </section>
-        <section id="release-history">
-          <ReleaseDashboardPanel
-            activeReleaseId={dashboard.active_release_id}
-            pendingDevRelease={dashboard.pending_dev_release}
-            productionUrl={dashboard.production_url}
-            previewUrl={dashboard.dev_preview_url}
-            releases={dashboard.releases}
-            runtimeStatus={dashboard.local_runtime}
-            taskOptions={taskOptions}
-          />
         </section>
       </div>
       <PageOutline items={outline} />

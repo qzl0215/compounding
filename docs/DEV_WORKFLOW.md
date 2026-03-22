@@ -22,6 +22,18 @@ related_docs:
 - `dev` 是 preview channel，不是长期 git 主分支
 - 同一时间只允许一个待验收 `dev`
 
+## 需求环节优先
+
+- 任何工作先判断当前处于哪个需求环节，再决定是否建 task、是否直接执行：
+  - `待思考`：只允许启发式追问，不进入执行 task
+  - `待规划`：先收口范围、取舍、优先级和验收标准；只有规划工作本身明确时，才允许存在规划 task
+  - `待执行`：目标、范围、约束和验收标准已清楚，可以进入执行 task
+  - `执行中`：默认围绕 task、阻塞与风险推进，不再回到模糊讨论
+  - `待验收`：先给链接和判断标准，不继续堆新改动
+  - `已发布`：先做复盘与后续影响判断
+- `task` 是执行边界，不承接未成熟需求；模糊事项继续留在 `roadmap / operating-blueprint`
+- 人只做价值判断、需求澄清和结果验收；AI 默认负责其余执行闭环
+
 ## 预任务护栏
 
 - `light` 改动默认跳过 `coord:check:pre-task`；`structural / release` task 真正开始动手前，默认先跑 `coord:check:pre-task`
@@ -81,17 +93,18 @@ related_docs:
 
 1. 先读 `AGENTS.md`
 2. 再读 `docs/PROJECT_RULES.md`、`docs/ARCHITECTURE.md`
-3. 再读 `memory/project/roadmap.md` 和 `memory/project/operating-blueprint.md`
-4. 若里程碑、蓝图或关键发布标准不清晰，先创建规划 task，并与用户共商后再继续
-5. 再读当前任务文件、相关 `module.md`、`code_index/*`
-6. 运行 `python3 scripts/pre_mutation_check.py`
-7. 完成最小可验证改动
-8. 更新 `task / memory / code_index / docs`
-9. 运行 `node --experimental-strip-types scripts/ai/validate-change-trace.ts` 与 `node --experimental-strip-types scripts/ai/validate-task-git-link.ts`；`light` 改动允许返回非阻断结果
-10. 先生成 `dev` 预览：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`
-11. 若已有未验收 `dev`，先提醒用户验收上一个 `dev`
-12. 用户验收通过后，再晋升到 `main` 与本地生产
-13. 用 `pnpm prod:status`、`pnpm prod:check`、`/releases` 和生产首页链接完成最终验收
+3. 再读 `memory/project/roadmap.md`、`memory/project/operating-blueprint.md` 与 `memory/project/current-state.md`
+4. 先判断当前是 `待思考 / 待规划 / 待执行 / 执行中 / 待验收 / 已发布`
+5. 若仍处于 `待思考`，只做启发式对话与主源补充，不进入执行 task
+6. 若处于 `待规划`，先收口边界；只有规划工作本身明确时，才创建规划 task，并在涉及价值判断或用户可感知分叉时与用户共商
+7. 若已进入 `待执行 / 执行中`，再读当前任务文件、相关 `module.md`、`code_index/*`
+8. 运行 `python3 scripts/pre_mutation_check.py`
+9. 完成最小可验证改动，并更新 `task / memory / code_index / docs`
+10. 运行 `node --experimental-strip-types scripts/ai/validate-change-trace.ts` 与 `node --experimental-strip-types scripts/ai/validate-task-git-link.ts`；`light` 改动允许返回非阻断结果
+11. 用户可感知改动默认先生成 `dev` 预览：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`
+12. 若已有未验收 `dev`，先提醒用户验收上一个 `dev`
+13. 用户可感知改动在 `dev` 验收通过后，再晋升到 `main` 与本地生产；内部低风险改动可由 AI 自验收并直接闭环
+14. 用 `pnpm prod:status`、`pnpm prod:check`、`/releases` 和生产首页链接完成最终验收
 
 ## 分层验证顺序
 
@@ -201,6 +214,7 @@ related_docs:
 - 生成 `dev` 预览前，必须显式指定主 task
 - 创建 `dev` 预览成功后，必须提供 `dev` 验收链接
 - 验收通过后，必须再次提供 production 验收链接
+- 用户可感知改动必须先经过 `dev` 验收；内部低风险改动允许 AI 自验收并直接收口
 - 页面与聊天都能触发验收动作，但 release registry 是唯一真相源
 - 切换失败前不得影响当前线上版本
 - 回滚通过 `scripts/release/rollback-release.ts` 或本机/内网发布管理页执行

@@ -2,30 +2,32 @@
 
 ## 模块目标
 
-负责统一项目驾驶舱快照、默认阅读入口、语义总览页和首页摘要辅助逻辑。
+负责统一项目需求环节总图、默认阅读入口、证据入口分组和首页阶段投影逻辑。
 
 ## 输入
 
 - AGENTS
 - current-state
 - roadmap
-- git-health
+- operating-blueprint
+- delivery snapshot
+- release runtime
 
 ## 输出
 
 - 首页入口链接
 - 默认文档路径
-- 统一驾驶舱快照
-- 文档页语义入口分组
-- 首页任务摘要
+- 需求环节总图快照
+- 证据库精选入口分组
+- 首页与任务页共享的阶段判断
 
 ## 关键职责
 
-- 固定首页入口模型
-- 从 Markdown 与 release runtime 真相源提取统一驾驶舱事实
-- 把任务与运行态翻译成产品/运营可理解的话术
-- 组织待办、记忆、索引和详情页的可视化入口
-- 复用任务清单数据，避免首页和任务页双写逻辑
+- 固定 stage-first 首页入口模型
+- 从 Markdown 与 release runtime 真相源提取需求环节事实
+- 把任务、规划和运行态翻译成人类优先的话术
+- 给知识库提供精选证据入口，而不是重新堆全量目录
+- 复用任务清单数据，避免首页和任务页双写阶段逻辑
 - 提供状态格式化
 
 ## 依赖
@@ -37,6 +39,7 @@
 
 - `DEFAULT_DOC_PATH`
 - `HOME_ENTRY_LINKS`
+- `getProjectOverview`
 - `getProjectCockpit`
 - `getSemanticEntryGroups`
 - `formatWorktreeStatus`

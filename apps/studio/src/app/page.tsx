@@ -1,7 +1,9 @@
 import { HomeDashboard } from "@/modules/portal/components/home-dashboard";
-import { getProjectCockpit } from "@/modules/portal";
+import { getProjectOverview } from "@/modules/portal";
+
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const overview = await getProjectCockpit();
+  const overview = await getProjectOverview();
   return <HomeDashboard overview={overview} />;
 }

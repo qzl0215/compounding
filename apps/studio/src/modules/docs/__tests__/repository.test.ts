@@ -21,12 +21,12 @@ describe("docs repository", () => {
     expect(memoryNode?.children?.some((node) => node.path === "memory/project")).toBe(true);
   });
 
-  it("keeps the home entry links focused on AGENTS, roadmap, and current state", () => {
+  it("keeps the home entry links focused on execution and release entry points", () => {
     expect(HOME_ENTRY_LINKS).toEqual([
       { href: "/knowledge-base?path=AGENTS.md", label: "执行入口", scope: "agents" },
       { href: "/knowledge-base?path=memory/project/roadmap.md", label: "战略路线", scope: "roadmap" },
-      { href: "/tasks", label: "任务清单", scope: "tasks" },
-      { href: "/releases", label: "发布记录", scope: "release" }
+      { href: "/tasks", label: "执行面板", scope: "tasks" },
+      { href: "/releases", label: "发布事实", scope: "release" }
     ]);
   });
 
@@ -50,12 +50,12 @@ describe("docs repository", () => {
   it("builds semantic entry groups and queue filters from the live docs tree", async () => {
     const [groups, queueDocs] = await Promise.all([getSemanticEntryGroups(), listDocsUnder("tasks/queue")]);
 
-    expect(groups.some((group) => group.title === "使命与方向")).toBe(true);
-    expect(groups.some((group) => group.title === "路线图与蓝图")).toBe(true);
-    expect(groups.some((group) => group.title === "任务与交付")).toBe(true);
-    expect(groups.some((group) => group.title === "工作模式与职责")).toBe(true);
-    expect(groups.some((group) => group.title === "认知资产")).toBe(true);
-    expect(groups.some((group) => group.title === "风险与发布")).toBe(true);
+    expect(groups.some((group) => group.title === "项目全貌")).toBe(true);
+    expect(groups.some((group) => group.title === "待思考证据")).toBe(true);
+    expect(groups.some((group) => group.title === "待规划证据")).toBe(true);
+    expect(groups.some((group) => group.title === "执行规则")).toBe(true);
+    expect(groups.some((group) => group.title === "发布事实")).toBe(true);
+    expect(groups.flatMap((group) => group.items).some((item) => item.path === "tasks/queue/task-001-repo-refactor.md")).toBe(false);
     expect(queueDocs).toContain("tasks/queue/task-001-repo-refactor.md");
   });
 });

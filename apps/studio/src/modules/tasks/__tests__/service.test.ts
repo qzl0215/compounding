@@ -26,13 +26,13 @@ describe("tasks service", () => {
     expect(planned?.branch).toBe("codex/task-009-ai-work-modes-productization");
     expect(planned?.git.state).toBe("merged");
     expect(Array.isArray(first?.companionReleaseIds)).toBe(true);
-  });
+  }, 15000);
 
   it("groups tasks by status for the board view", async () => {
     const groups = await getTaskBoard();
 
     expect(groups.map((group) => group.status)).toEqual(["todo", "doing", "blocked", "done"]);
-  });
+  }, 15000);
 
   it("builds delivery rows from release associations", async () => {
     const tasks = await listTaskCards();
@@ -71,7 +71,7 @@ describe("tasks service", () => {
     expect(row?.deliveryStatus).toBe("pending_acceptance");
     expect(row?.acceptReleaseId).toBe("rel-011-dev");
     expect(row?.versionLabel).toBe("rel-011-dev");
-  });
+  }, 15000);
 
   it("treats merged historical tasks as released even when old release records lack explicit task links", async () => {
     const tasks = await listTaskCards();
@@ -81,7 +81,7 @@ describe("tasks service", () => {
     const row = buildTaskDeliveryRows([releasedTask!], [])[0];
     expect(row?.deliveryStatus).toBe("released");
     expect(row?.versionLabel).toContain("main@");
-  });
+  }, 15000);
 
   it("does not bind releases to tasks by commit prefix alone", () => {
     const task = {

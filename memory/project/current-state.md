@@ -46,7 +46,8 @@ related_docs:
 
 - 本地 production 当前稳定运行在 `3010`；`main` 已发布，但常驻进程仍需要人工确认是否在线。
 - `t-038` 已完成并发布，短编号唯一性、任务/发布显式绑定、首页假状态与 live 文档空壳规则已完成一轮收口。
-- 当前阶段不扩 orchestration UI、数据库或新运行时；下一步先评估下一轮高 ROI 收敛或新的 Delivery Framework 阶段任务。
+- `t-040` 已启动，当前主线改为“需求环节总图与启发式对话入口”：先显式区分待思考、待规划、待执行、执行中和待验收，再决定是否进入 task。
+- 当前阶段不扩 orchestration UI、数据库或新运行时；先把人和 AI 的对话节奏、页面认知顺序和 task 边界对齐。
 
 ## 当前推荐校验顺序
 
@@ -72,5 +73,6 @@ related_docs:
 - `pnpm preview:check`
 - `pnpm prod:check`
 - `pnpm coord:check:pre-task`
-- 确认下一条主线任务是否继续做结构收口，或切入新的 Delivery Framework 阶段目标
+- 验证首页、任务页、知识库、发布页是否都按同一套需求环节模型投影
+- 验证规划类事项没有误进待执行 task
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

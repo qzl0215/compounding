@@ -32,19 +32,21 @@ export default async function KnowledgeBasePage({
     <div className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)_260px]">
       <div className="space-y-6">
         <Card className="h-fit">
-          <p className="text-xs uppercase tracking-[0.28em] text-accent">语义入口</p>
+          <p className="text-xs uppercase tracking-[0.28em] text-accent">证据入口</p>
           <div className="mt-5 space-y-5">
             {semanticGroups.map((group) => (
               <section key={group.title}>
                 <p className="text-sm font-medium tracking-[0.12em] text-white">{group.title}</p>
+                {group.description ? <p className="mt-1 text-xs leading-5 text-white/48">{group.description}</p> : null}
                 <div className="mt-3 grid gap-2">
                   {group.items.map((item) => (
                     <Link
-                      key={item.path}
-                      href={`/knowledge-base?path=${encodeURIComponent(item.path)}`}
+                      key={item.path || item.href || item.label}
+                      href={item.href || `/knowledge-base?path=${encodeURIComponent(item.path || DEFAULT_DOC_PATH)}`}
                       className="block rounded-2xl border border-white/8 bg-white/[0.03] px-3 py-3 transition hover:border-accent/30 hover:bg-white/[0.05]"
                     >
                       <p className="text-sm font-medium text-white">{item.label}</p>
+                      {item.description ? <p className="mt-1 text-xs leading-5 text-white/48">{item.description}</p> : null}
                     </Link>
                   ))}
                 </div>
@@ -53,10 +55,14 @@ export default async function KnowledgeBasePage({
           </div>
         </Card>
         <Card className="h-fit">
-          <p className="text-xs uppercase tracking-[0.28em] text-accent">文档</p>
-          <div className="mt-5">
-            <DocTree nodes={tree} selectedPath={selectedPath} />
-          </div>
+          <p className="text-xs uppercase tracking-[0.28em] text-accent">完整目录</p>
+          <details className="mt-5 rounded-3xl border border-white/8 bg-white/[0.03] p-4">
+            <summary className="cursor-pointer text-sm font-medium text-white">展开完整文档目录</summary>
+            <p className="mt-2 text-xs leading-5 text-white/48">当精选证据入口不够时，再下钻完整树和 archive。</p>
+            <div className="mt-4">
+              <DocTree nodes={tree} selectedPath={selectedPath} />
+            </div>
+          </details>
         </Card>
       </div>
       <DocViewer

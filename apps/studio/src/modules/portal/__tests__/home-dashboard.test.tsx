@@ -2,20 +2,38 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { HomeDashboard } from "../components/home-dashboard";
-import type { ProjectCockpit } from "../types";
+import type { ProjectOverviewSnapshot } from "../types";
 
-const cockpitFixture: ProjectCockpit = {
-  identity: {
+const cockpitFixture: ProjectOverviewSnapshot = {
+  overview: {
     oneLiner: "把仓库升级成适合长期协作的 AI-Native Repo。",
+    currentPhase: "Stage-First Project Visualization",
+    currentPriority: "先判断事情属于待思考、待规划还是待执行。",
+    currentMilestone: "需求环节总图与启发式对话入口",
   },
-  currentFocus: {
-    currentPhase: "首页统一驾驶舱一期",
-    currentPriority: "升级首页为人类优先的统一项目驾驶舱。",
-    currentMilestone: "首页统一驾驶舱一期",
-    successCriteria: ["首页固定为 5 个区块", "摘要全部可下钻"],
+  direction: {
+    summary: "把项目总览升级为需求环节总图。",
+    nextConversationAction: "先问范围、范围外、取舍、优先级和验收标准。",
+    evidenceHref: "/knowledge-base?path=memory/project/roadmap.md",
   },
-  executionStatus: {
-    summary: "先收口主线，再进入详情页。",
+  thinkingItems: [
+    {
+      id: "thinking-1",
+      title: "需求还没说清",
+      source: "运营蓝图",
+      stage: "thinking",
+      summary: "先把问题问对，再决定要不要开工。",
+      nextConversationAction: "先问问题是什么。",
+      evidenceHref: "/knowledge-base?path=memory/project/operating-blueprint.md",
+    },
+  ],
+  planningItems: [],
+  readyItems: [],
+  doingItems: [],
+  acceptanceItems: [],
+  releasedItems: [],
+  runtimeFacts: {
+    summary: "需求判断和运行判断要一起看。",
     blockedItems: ["当前没有结构性阻塞。"],
     nextCheckpoint: ["完成首页 5 个区块。"],
     runtimeSignals: [
@@ -32,21 +50,20 @@ const cockpitFixture: ProjectCockpit = {
         href: "/releases#runtime-status",
       },
     ],
-  },
-  riskBoard: {
     frozenItems: ["不新增数据库"],
     pendingDevSummary: "当前没有待验收 dev。",
+    activeReleaseId: "rel-prod",
   },
 };
 
 describe("home dashboard", () => {
-  it("renders the compact decision board", () => {
+  it("renders the stage-first overview", () => {
     render(<HomeDashboard overview={cockpitFixture} />);
 
-    expect(screen.getByRole("heading", { name: "先看现状，再看细节" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "阶段与优先级" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "运行态概览" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "阻塞与下一步" })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "需要细节时，去哪里看证据" })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "先判断事情在哪个环节，再决定怎么推进" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "先把问题问对，再决定要不要开工" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "方向成立了，但还不能直接进执行" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "只有边界说清了，才进入 task" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "先完成验收，再决定下一轮动作" })).toBeInTheDocument();
   });
 });

@@ -754,7 +754,7 @@
   {
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "buildIdentitySnapshot",
+    "symbol": "buildOverviewSummary",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -762,7 +762,7 @@
   {
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "buildCurrentFocus",
+    "symbol": "buildDirectionSummary",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -770,15 +770,7 @@
   {
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "buildExecutionStatus",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "buildRiskBoard",
+    "symbol": "buildRuntimeFacts",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -818,7 +810,7 @@
   {
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/service.ts",
-    "symbol": "getProjectCockpit",
+    "symbol": "getProjectOverview",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -850,7 +842,7 @@
   {
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/service.ts",
-    "symbol": "entry",
+    "symbol": "buildDocItems",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -858,7 +850,111 @@
   {
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/service.ts",
-    "symbol": "toTaskEntry",
+    "symbol": "buildTaskItem",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/service.ts",
+    "symbol": "buildAcceptanceReleaseItems",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/service.ts",
+    "symbol": "buildReleasedItems",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/service.ts",
+    "symbol": "summarizeTaskRow",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/service.ts",
+    "symbol": "splitItemText",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/service.ts",
+    "symbol": "dedupeItems",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/service.ts",
+    "symbol": "dedupeById",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/service.ts",
+    "symbol": "entryDoc",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/service.ts",
+    "symbol": "entryLink",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/stage-model.ts",
+    "symbol": "groupTaskRowsByDemandStage",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/stage-model.ts",
+    "symbol": "resolveTaskDemandStage",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/stage-model.ts",
+    "symbol": "isPlanningMode",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/stage-model.ts",
+    "symbol": "isExecutionMode",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/stage-model.ts",
+    "symbol": "normalizeMode",
     "kind": "function",
     "language": "TypeScript",
     "exported": true

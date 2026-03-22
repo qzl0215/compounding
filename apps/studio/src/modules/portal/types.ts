@@ -6,23 +6,28 @@ export type HomeEntryLink = {
 
 export type SemanticEntry = {
   label: string;
-  path: string;
+  path?: string;
+  href?: string;
+  description?: string;
 };
 
 export type SemanticEntryGroup = {
   title: string;
+  description?: string;
   items: SemanticEntry[];
 };
 
-export type CockpitIdentity = {
+export type ProjectOverviewSummary = {
   oneLiner: string;
+  currentPhase: string;
+  currentMilestone: string;
+  currentPriority: string;
 };
 
-export type CockpitCurrentFocus = {
-  currentPhase: string;
-  currentPriority: string;
-  currentMilestone: string;
-  successCriteria: string[];
+export type ProjectOverviewDirection = {
+  summary: string;
+  nextConversationAction: string;
+  evidenceHref: string;
 };
 
 export type CockpitRuntimeSignal = {
@@ -32,21 +37,40 @@ export type CockpitRuntimeSignal = {
   href: string;
 };
 
-export type CockpitExecutionStatus = {
+export type DemandStage = "thinking" | "planning" | "ready" | "doing" | "acceptance" | "released";
+
+export type DemandStageItem = {
+  id: string;
+  title: string;
+  source: string;
+  stage: DemandStage;
+  summary: string;
+  nextConversationAction: string;
+  evidenceHref: string;
+  taskId?: string;
+  badge?: string;
+};
+
+export type RuntimeFacts = {
   summary: string;
   blockedItems: string[];
   nextCheckpoint: string[];
   runtimeSignals: CockpitRuntimeSignal[];
-};
-
-export type CockpitRiskBoard = {
   frozenItems: string[];
-  pendingDevSummary: string | null;
+  pendingDevSummary: string;
+  activeReleaseId: string | null;
 };
 
-export type ProjectCockpit = {
-  identity: CockpitIdentity;
-  currentFocus: CockpitCurrentFocus;
-  executionStatus: CockpitExecutionStatus;
-  riskBoard: CockpitRiskBoard;
+export type ProjectOverviewSnapshot = {
+  overview: ProjectOverviewSummary;
+  direction: ProjectOverviewDirection;
+  thinkingItems: DemandStageItem[];
+  planningItems: DemandStageItem[];
+  readyItems: DemandStageItem[];
+  doingItems: DemandStageItem[];
+  acceptanceItems: DemandStageItem[];
+  releasedItems: DemandStageItem[];
+  runtimeFacts: RuntimeFacts;
 };
+
+export type ProjectCockpit = ProjectOverviewSnapshot;

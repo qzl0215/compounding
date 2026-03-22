@@ -1,65 +1,54 @@
 import { getRuntimeStatusExplanation, type LocalRuntimeStatus } from "@/modules/releases";
 import type {
-  CockpitCurrentFocus,
-  CockpitExecutionStatus,
-  CockpitIdentity,
-  CockpitRiskBoard,
   CockpitRuntimeSignal,
+  ProjectOverviewDirection,
+  ProjectOverviewSummary,
+  RuntimeFacts,
 } from "./types";
 
-export function buildIdentitySnapshot(missionAndVision: Record<string, string>): CockpitIdentity {
+export function buildOverviewSummary(
+  missionAndVision: Record<string, string>,
+  currentPhase: string,
+  currentMilestone: string,
+  currentPriority: string,
+): ProjectOverviewSummary {
   return {
     oneLiner: missionAndVision["使命"] ?? "项目一句话尚未写入主源。",
-  };
-}
-
-export function buildCurrentFocus(
-  currentPhase: string,
-  currentPriority: string,
-  currentMilestone: string,
-  successCriteria: string[],
-): CockpitCurrentFocus {
-  return {
     currentPhase: currentPhase || "当前阶段尚未定义。",
-    currentPriority: currentPriority || "当前优先级尚未定义。",
     currentMilestone: currentMilestone || "当前里程碑尚未定义。",
-    successCriteria,
+    currentPriority: currentPriority || "当前优先级尚未定义。",
   };
 }
 
-export function buildExecutionStatus(
-  currentMilestone: string,
-  doingTaskCount: number,
+export function buildDirectionSummary(summary: string): ProjectOverviewDirection {
+  return {
+    summary: summary || "下一阶段方向尚未写入。",
+    nextConversationAction: "先问范围、范围外、取舍、优先级和验收标准。",
+    evidenceHref: "/knowledge-base?path=memory/project/roadmap.md",
+  };
+}
+
+export function buildRuntimeFacts(
+  pendingDevSummary: string,
+  activeReleaseId: string | null,
   blockedItems: string[],
   nextCheckpoint: string[],
+  frozenItems: string[],
   runtimeSignals: CockpitRuntimeSignal[],
-): CockpitExecutionStatus {
-  const progressSummary = doingTaskCount > 0
-    ? `当前有 ${doingTaskCount} 项任务在推进，首页只保留最需要人工判断的状态与入口。`
-    : "当前没有标记为进行中的任务，建议先确认下一步是否需要补 task 或重排优先级。";
-
+): RuntimeFacts {
+  const summary = pendingDevSummary.includes("待验收 dev")
+    ? "当前存在待验收版本，先完成验收判断，再决定是否继续推进。"
+    : activeReleaseId
+      ? `当前 production 已有激活版本 ${activeReleaseId}，新一轮推进前先确认需求处于哪个环节。`
+      : "当前还没有激活的 production 版本，先确认需求环节，再决定是否推进发布。";
   return {
-    summary: `${progressSummary} 运行态摘要和下一检查点会一起展示，避免人只看任务不看环境。`,
+    summary,
     blockedItems,
     nextCheckpoint,
     runtimeSignals,
-  };
-}
-
-export function buildRiskBoard(
-  frozenItems: string[],
-  pendingDevReleaseId: string | null,
-  activeReleaseId: string | null,
-): CockpitRiskBoard {
-  const pendingDevSummary = pendingDevReleaseId
-    ? `当前存在待验收 dev：${pendingDevReleaseId}。继续推进新改动前，建议先完成这轮验收判断。`
-    : activeReleaseId
-      ? `当前没有待验收 dev。已激活的 production 版本是 ${activeReleaseId}。`
-      : "当前没有待验收 dev，也还没有激活的 production 版本。";
-
-  return {
     frozenItems,
     pendingDevSummary,
+    activeReleaseId,
   };
 }
 

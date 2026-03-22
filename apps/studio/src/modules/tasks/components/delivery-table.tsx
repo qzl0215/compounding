@@ -11,9 +11,17 @@ type Props = {
   rows: TaskDeliveryRow[];
   previewUrl: string;
   productionUrl: string;
+  showControls?: boolean;
+  emptyText?: string;
 };
 
-export function DeliveryTable({ rows, previewUrl, productionUrl }: Props) {
+export function DeliveryTable({
+  rows,
+  previewUrl,
+  productionUrl,
+  showControls = true,
+  emptyText = "当前筛选条件下没有任务。",
+}: Props) {
   const router = useRouter();
   const [deliveryFilter, setDeliveryFilter] = useState<"all" | TaskDeliveryStatus>("all");
   const [pendingOnly, setPendingOnly] = useState(false);
@@ -62,14 +70,18 @@ export function DeliveryTable({ rows, previewUrl, productionUrl }: Props) {
 
   return (
     <div className="space-y-4">
-      <DeliveryTableControls
-        deliveryFilter={deliveryFilter}
-        pendingOnly={pendingOnly}
-        filteredCount={filteredRows.length}
-        message={message}
-        onDeliveryFilterChange={setDeliveryFilter}
-        onPendingOnlyChange={setPendingOnly}
-      />
+      {showControls ? (
+        <DeliveryTableControls
+          deliveryFilter={deliveryFilter}
+          pendingOnly={pendingOnly}
+          filteredCount={filteredRows.length}
+          message={message}
+          onDeliveryFilterChange={setDeliveryFilter}
+          onPendingOnlyChange={setPendingOnly}
+        />
+      ) : message ? (
+        <p className="text-sm text-white/68">{message}</p>
+      ) : null}
 
       <div className="overflow-hidden rounded-[1.75rem] border border-white/8">
         <div className="overflow-x-auto">
@@ -104,7 +116,7 @@ export function DeliveryTable({ rows, previewUrl, productionUrl }: Props) {
               ) : (
                 <tr>
                   <td colSpan={7} className="px-4 py-5 text-white/58">
-                    当前筛选条件下没有任务。
+                    {emptyText}
                   </td>
                 </tr>
               )}
