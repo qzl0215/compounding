@@ -72,7 +72,7 @@ function buildBestPracticeConstraints(pathname: string, docRole: string, project
     return [...shared, "规划文档要保留目标、边界、验收与阶段性顺序"];
   }
   if (pathname.includes("tasks/")) {
-    return [...shared, "任务文档要保留目标、范围、约束、验收标准与更新痕迹"];
+    return [...shared, "任务文档要保留执行合同：为什么现在、承接边界、完成定义、要做/不做、关键风险、测试策略与交付结果"];
   }
   if (pathname.includes("WORK_MODES")) {
     return [...shared, "工作模式文档要强调输入、输出、进入退出条件与边界，不得混入角色职责正文", stripMarkdown(workModes).slice(0, 600)];

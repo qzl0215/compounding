@@ -1,18 +1,22 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const childProcess = require("node:child_process");
-const { extractSection, stripMarkdown } = require("./lib/markdown-sections.ts");
 const { getChangePolicy } = require("./lib/change-policy.ts");
-const { collectTaskIdentityErrors, taskIdFromPath } = require(
-  path.join(process.cwd(), "shared", "task-identity.ts")
-);
+const { parseTaskContract } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
+const { collectTaskIdentityErrors, taskIdFromPath } = require(path.join(process.cwd(), "shared", "task-identity.ts"));
+const { readCompanion } = require("../coord/lib/task-meta.ts");
 
 const root = process.cwd();
+
 function git(args) {
   try {
     return {
       ok: true,
-      output: childProcess.execFileSync("git", args, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim(),
+      output: childProcess.execFileSync("git", args, {
+        cwd: root,
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "ignore"],
+      }).trim(),
     };
   } catch (error) {
     return {
@@ -39,19 +43,18 @@ function listTaskPaths() {
 }
 
 function parseTask(pathname) {
-  const content = read(pathname);
-  const titleMatch = content.match(/^#\s+(.+)$/m);
-  const rawShortId = cleanValue(stripMarkdown(extractSection(content, "short_id", root) || ""));
+  const parsed = parseTaskContract(pathname, read(pathname));
+  const companion = readCompanion(parsed.id);
   return {
     id: taskIdFromPath(pathname),
-    shortId: rawShortId,
-    rawShortId,
+    shortId: parsed.shortId,
+    rawShortId: parsed.shortId,
     path: pathname,
-    title: titleMatch ? titleMatch[1].trim() : taskIdFromPath(pathname),
-    status: normalizeStatus(stripMarkdown(extractSection(content, "status", root) || "")),
-    currentMode: cleanValue(stripMarkdown(extractSection(content, "current_mode", root) || "")),
-    branch: stripMarkdown(extractSection(content, "branch", root) || ""),
-    recentCommit: stripMarkdown(extractSection(content, "recent_commit", root) || ""),
+    title: parsed.title,
+    status: normalizeStatus(parsed.status),
+    currentMode: cleanValue(companion?.current_mode || parsed.currentMode || ""),
+    branch: cleanValue(companion?.branch_name || parsed.branch || ""),
+    recentCommit: cleanValue(companion?.lifecycle?.handoff?.git_head || parsed.recentCommit || ""),
   };
 }
 
@@ -133,7 +136,7 @@ function validateTask(task, errors) {
   }
 
   if (!task.currentMode) {
-    errors.push(`${task.path}: 缺少当前模式。`);
+    errors.push(`${task.path}: 缺少当前模式机器事实。`);
   } else if (!ALLOWED_MODES.has(task.currentMode)) {
     errors.push(`${task.path}: 当前模式不在允许列表内。`);
   }
@@ -141,7 +144,7 @@ function validateTask(task, errors) {
   const snapshot = getTaskGitSnapshot(task);
 
   if (task.status !== "done" && !snapshot.branch) {
-    errors.push(`${task.path}: 非 done 任务必须填写分支。`);
+    errors.push(`${task.path}: 非 done 任务必须能解析到分支绑定。`);
   }
 
   if (

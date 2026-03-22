@@ -66,7 +66,7 @@ function resolveDeliveryStatus(
   if (task.status === "done" && latestProd?.status === "rolled_back") {
     return "rolled_back";
   }
-  if (task.status === "done" && (activeProd || latestProd || task.git.state === "merged")) {
+  if (task.status === "done" && (activeProd || latestProd || task.machine.git.state === "merged")) {
     return "released";
   }
   if (task.status === "doing") {
@@ -90,18 +90,18 @@ function inferReleaseLabel(
   if (latestProd?.release_id) {
     return latestProd.release_id;
   }
-  if (task.companionLatestRelease) {
-    return task.companionLatestRelease;
+  if (task.machine.companionLatestRelease) {
+    return task.machine.companionLatestRelease;
   }
-  if (task.primaryRelease && task.primaryRelease !== "未生成") {
-    return task.primaryRelease;
+  if (task.machine.primaryRelease && task.machine.primaryRelease !== "未生成") {
+    return task.machine.primaryRelease;
   }
-  const linkedRelease = task.linkedReleases.find((value) => Boolean(value) && value !== "无");
+  const linkedRelease = task.machine.linkedReleases.find((value) => Boolean(value) && value !== "无");
   if (linkedRelease) {
     return linkedRelease;
   }
-  const commit = sanitizeCommit(task.git.recentCommit || task.recentCommit);
-  if (task.status === "done" && task.git.state === "merged" && commit) {
+  const commit = sanitizeCommit(task.machine.git.recentCommit || task.machine.recentCommit);
+  if (task.status === "done" && task.machine.git.state === "merged" && commit) {
     return `main@${commit}`;
   }
   return "未生成";
@@ -110,7 +110,7 @@ function inferReleaseLabel(
 function explicitReleaseRefs(task: TaskCard) {
   return Array.from(
     new Set(
-      [task.primaryRelease, ...task.linkedReleases, ...task.companionReleaseIds]
+      [task.machine.primaryRelease, ...task.machine.linkedReleases, ...task.machine.companionReleaseIds]
         .map((value) => String(value || "").trim())
         .filter((value) => Boolean(value) && value !== "未生成" && value !== "无")
     )

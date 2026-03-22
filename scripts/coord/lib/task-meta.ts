@@ -4,8 +4,8 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
-const { extractSection, stripMarkdown } = require("../../ai/lib/markdown-sections.ts");
 const { resolveTaskRecord } = require("../../ai/lib/task-resolver.ts");
+const { parseTaskContract } = require("../../../shared/task-contract.ts");
 const {
   buildCompatView,
   createEmptyArtifacts,
@@ -47,16 +47,6 @@ function readTaskContent(taskLike) {
   return fs.existsSync(abs) ? fs.readFileSync(abs, "utf8") : null;
 }
 
-function extractTaskSection(content, ...names) {
-  for (const name of names) {
-    const value = extractSection(content, name, ROOT);
-    if (value) {
-      return stripMarkdown(value).replace(/`/g, "").trim();
-    }
-  }
-  return "";
-}
-
 function serializeCompanion(companion) {
   return normalizeCompanion(companion);
 }
@@ -65,13 +55,12 @@ function parseTaskToCompanion(taskLike, content) {
   const record = getTaskRecord(taskLike);
   if (!record) return null;
 
-  const goal = extractTaskSection(content, "goal", "目标") || record.title;
-  const branch = extractTaskSection(content, "branch", "分支");
-  const currentMode = extractTaskSection(content, "current_mode", "当前模式") || "方案评审";
-  const taskStatus = normalizeTaskStatus(extractTaskSection(content, "status", "状态"));
-  const related =
-    extractSection(content, "related_modules", ROOT) || extractSection(content, "关联模块", ROOT) || "";
-  const modules = uniqueStrings((related.match(/`([^`]+)`/g) || []).map((item) => item.replace(/`/g, "")));
+  const parsed = parseTaskContract(record.path, content);
+  const goal = parsed.summary || record.title;
+  const branch = parsed.branch;
+  const currentMode = parsed.currentMode || "方案评审";
+  const taskStatus = normalizeTaskStatus(parsed.status);
+  const modules = uniqueStrings(parsed.relatedModules);
   const plannedFiles = modules.filter((item) => item.includes("/") || /\.(md|ts|tsx|js|json|yaml|yml)$/.test(item));
   if (!plannedFiles.includes(record.path)) {
     plannedFiles.unshift(record.path);

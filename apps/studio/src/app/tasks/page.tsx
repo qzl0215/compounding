@@ -12,28 +12,28 @@ export default async function TasksPage() {
   const rows = snapshot.projections.taskRows;
   const stages = groupTaskRowsByDemandStage(rows);
   const executionSummary = releaseDashboard.pending_dev_release
-    ? `当前已有待验收 dev：${releaseDashboard.pending_dev_release.release_id}。执行链路先围绕验收收口，不要继续横向扩散。`
+    ? `当前已有待验收 dev：${releaseDashboard.pending_dev_release.release_id}。先完成验收，不要继续横向扩散。`
     : stages.doing.length > 0
-      ? `当前有 ${stages.doing.length} 条执行中事项，先看推进和阻塞。`
+      ? `当前有 ${stages.doing.length} 条执行合同正在推进，先看阻塞和下一步。`
       : stages.ready.length > 0
-        ? `当前有 ${stages.ready.length} 条已具备执行边界的事项，可以直接进入 task 推进。`
-        : "当前没有新的执行链事项，若还在讨论范围和成功标准，先留在待规划。";
+        ? `当前有 ${stages.ready.length} 条合同已经成立，可以直接进入执行。`
+        : "当前没有新的执行合同；边界没收清前，先留在待规划。";
 
   return (
     <div className="space-y-6">
       <section id="task-overview">
         <Card>
           <p className="text-xs uppercase tracking-[0.28em] text-accent">执行判断</p>
-          <h2 className="mt-3 text-3xl font-semibold">这页只回答一件事：现在哪些事真的该推进</h2>
+          <h2 className="mt-3 text-3xl font-semibold">这页只回答一件事：哪些 task 真的能执行</h2>
           <p className="mt-4 max-w-4xl text-white/68">{executionSummary}</p>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
-            <StageStat title="待执行" value={String(stages.ready.length)} detail="边界已清楚，可以直接推进。" />
+            <StageStat title="待执行" value={String(stages.ready.length)} detail="执行合同已成立，可以直接推进。" />
             <StageStat title="执行中" value={String(stages.doing.length)} detail="只看推进、阻塞和风险。" />
-            <StageStat title="待验收" value={String(stages.acceptance.length)} detail="结果已出，先做通过/驳回判断。" />
+            <StageStat title="待验收" value={String(stages.acceptance.length)} detail="结果已出，先按完成定义验收。" />
           </div>
           <div className="mt-5 rounded-[1.75rem] border border-white/8 bg-white/[0.03] p-4 text-sm leading-7 text-white/72">
             {stages.planning.length > 0
-              ? `另外还有 ${stages.planning.length} 条规划类 task。它们仍在收口边界，不应该挤进执行首屏。`
+              ? `另外还有 ${stages.planning.length} 条规划类 task。它们还没形成执行合同，不应该挤进执行首屏。`
               : "当前没有额外规划类 task 抢占执行面板注意力。"}
           </div>
         </Card>
@@ -42,7 +42,7 @@ export default async function TasksPage() {
       <section id="task-ready">
         <Card>
           <p className="text-xs uppercase tracking-[0.28em] text-accent">待执行</p>
-          <h3 className="mt-2 text-2xl font-semibold">边界已经说清，现在可以进 task</h3>
+          <h3 className="mt-2 text-2xl font-semibold">执行合同已成立，现在可以开工</h3>
           <p className="mt-4 max-w-4xl text-white/68">{DEMAND_STAGE_HINTS.ready}</p>
           <div className="mt-5">
             <DeliveryTable
@@ -50,7 +50,7 @@ export default async function TasksPage() {
               previewUrl={releaseDashboard.dev_preview_url}
               productionUrl={releaseDashboard.production_url}
               showControls={false}
-              emptyText="当前没有待执行 task。若边界没说清，不要硬放进这里。"
+              emptyText="当前没有待执行 task。合同没成立前，不要硬放进这里。"
             />
           </div>
         </Card>
@@ -59,7 +59,7 @@ export default async function TasksPage() {
       <section id="task-doing">
         <Card>
           <p className="text-xs uppercase tracking-[0.28em] text-accent">执行中</p>
-          <h3 className="mt-2 text-2xl font-semibold">已经开工的事情，只看推进与阻塞</h3>
+          <h3 className="mt-2 text-2xl font-semibold">合同已经生效，只看推进与阻塞</h3>
           <p className="mt-4 max-w-4xl text-white/68">{DEMAND_STAGE_HINTS.doing}</p>
           <div className="mt-5">
             <DeliveryTable
@@ -76,7 +76,7 @@ export default async function TasksPage() {
       <section id="task-acceptance">
         <Card>
           <p className="text-xs uppercase tracking-[0.28em] text-accent">待验收</p>
-          <h3 className="mt-2 text-2xl font-semibold">结果已经出来了，先判断通过还是驳回</h3>
+          <h3 className="mt-2 text-2xl font-semibold">结果已经出来了，先按完成定义验收</h3>
           <p className="mt-4 max-w-4xl text-white/68">{DEMAND_STAGE_HINTS.acceptance}</p>
           <div className="mt-5">
             <DeliveryTable
@@ -93,7 +93,7 @@ export default async function TasksPage() {
       <section id="task-planning">
         <Card>
           <p className="text-xs uppercase tracking-[0.28em] text-accent">待规划</p>
-          <h3 className="mt-2 text-2xl font-semibold">这些 task 还在收口边界，不该进入执行首屏</h3>
+          <h3 className="mt-2 text-2xl font-semibold">这些 task 还没形成执行合同</h3>
           <p className="mt-4 max-w-4xl text-white/68">{DEMAND_STAGE_HINTS.planning}</p>
           <div className="mt-5">
             <DeliveryTable

@@ -1,8 +1,7 @@
-const fs = require("node:fs");
 const path = require("node:path");
 const childProcess = require("node:child_process");
-const { extractSection } = require("./lib/markdown-sections.ts");
 const { getChangePolicy } = require("./lib/change-policy.ts");
+const { parseTaskContract } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
 
 const root = process.cwd();
 
@@ -14,97 +13,30 @@ function currentBranch() {
   return git(["branch", "--show-current"]);
 }
 
-function read(relPath) {
-  return fs.readFileSync(path.join(root, relPath), "utf8");
+function readTask(taskPath) {
+  const fs = require("node:fs");
+  return parseTaskContract(taskPath, fs.readFileSync(path.join(root, taskPath), "utf8"));
 }
 
-function parseTrace(content) {
-  const trace = extractSection(content, "update_trace", root);
-  if (!trace) {
-    return null;
-  }
-
-  return {
-    memory: extractTraceValue(trace, "记忆"),
-    index: extractTraceValue(trace, "索引"),
-    roadmap: extractTraceValue(trace, "路线图"),
-    docs: extractTraceValue(trace, "文档"),
-  };
-}
-
-function extractTraceValue(trace, label) {
-  const line = trace.split(/\r?\n/).find((item) => {
-    const normalized = item.trim().replace(/^-\s*/, "");
-    return normalized.startsWith(`${label}：`) || normalized.startsWith(`${label}:`);
-  });
-  if (!line) {
-    return "";
-  }
-  return line
-    .trim()
-    .replace(/^-\s*/, "")
-    .split(/[:：]/)
-    .slice(1)
-    .join(":")
-    .replace(/`/g, "")
-    .trim();
-}
-
-function isNoChange(value) {
-  return value.replace(/`/g, "").toLowerCase().startsWith("no change:");
-}
-
-function parseReferencedPaths(value) {
-  return value
-    .replace(/`/g, "")
-    .split(/[，,、]/)
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
-
-function validateTask(taskPath, changedFiles, errors) {
-  const content = read(taskPath);
-  const trace = parseTrace(content);
-  if (!trace) {
-    errors.push(`${taskPath}: 缺少“更新痕迹”区块。`);
-    return;
-  }
-
-  const requiredSections = [
-    ["当前模式", extractSection(content, "current_mode", root)],
-    ["父计划", extractSection(content, "parent_plan", root)],
-    ["计划快照", extractSection(content, "plan_snapshot", root)],
-    ["分支", extractSection(content, "branch", root)],
-    ["最近提交", extractSection(content, "recent_commit", root)],
-    ["交付收益", extractSection(content, "delivery_benefit", root)],
-    ["交付风险", extractSection(content, "delivery_risk", root)],
-    ["一句复盘", extractSection(content, "delivery_retro", root)],
-    ["体验验收结果", extractSection(content, "experience_acceptance_result", root)],
-    ["测试策略", extractSection(content, "test_strategy", root)],
-    ["状态", extractSection(content, "status", root)],
+function validateTask(taskPath, errors) {
+  const task = readTask(taskPath);
+  const requiredFields = [
+    ["短编号", task.shortId],
+    ["父计划", task.parentPlan],
+    ["任务摘要", task.summary],
+    ["为什么现在", task.whyNow],
+    ["承接边界", task.boundary],
+    ["完成定义", task.doneWhen],
+    ["要做", task.inScope],
+    ["不做", task.outOfScope],
+    ["关键风险", task.risk],
+    ["测试策略", task.testStrategy],
+    ["状态", task.status],
   ];
-  for (const [label, value] of requiredSections) {
+
+  for (const [label, value] of requiredFields) {
     if (!String(value || "").trim()) {
       errors.push(`${taskPath}: 缺少必填字段“${label}”。`);
-    }
-  }
-
-  for (const [label, value] of Object.entries(trace)) {
-    if (!value) {
-      errors.push(`${taskPath}: ${label} 未填写。`);
-      continue;
-    }
-    if (isNoChange(value)) {
-      continue;
-    }
-    const referenced = parseReferencedPaths(value);
-    if (referenced.length === 0) {
-      errors.push(`${taskPath}: ${label} 没有给出有效路径。`);
-      continue;
-    }
-    const matched = referenced.some((relPath) => changedFiles.includes(relPath));
-    if (!matched) {
-      errors.push(`${taskPath}: ${label} 指向的路径未出现在本次改动中。`);
     }
   }
 }
@@ -137,16 +69,13 @@ function main() {
     errors.push("存在 repo-tracked 改动，但没有任何 tasks/queue/*.md 变更。");
   }
 
-  changedTaskFiles.forEach((taskPath) => validateTask(taskPath, changedFiles, errors));
+  changedTaskFiles.forEach((taskPath) => validateTask(taskPath, errors));
 
   if (changePolicy.policy.strict_task_binding && activeBranch.startsWith("codex/") && changedTaskFiles.length > 0) {
-    const matchingBranchTask = changedTaskFiles.some((taskPath) => {
-      const content = read(taskPath);
-      const branch = String(extractSection(content, "branch", root) || "").replace(/`/g, "").trim();
-      return branch === activeBranch;
-    });
-    if (!matchingBranchTask) {
-      errors.push(`当前分支 ${activeBranch} 有代码改动，但本次变更的 task 中没有任何一个绑定到该分支。`);
+    const branchTaskId = activeBranch.replace(/^codex\//, "");
+    const matchesBranchTask = changedTaskFiles.some((taskPath) => taskPath.endsWith(`${branchTaskId}.md`));
+    if (!matchesBranchTask) {
+      errors.push(`当前分支 ${activeBranch} 有代码改动，但本次变更的 task 中没有与分支同名的执行 task。`);
     }
   }
 

@@ -35,7 +35,7 @@ related_docs:
 - 若 roadmap / operating-blueprint / 发布标准不清晰，先创建规划 task，再与用户共商
 - 任务是 scope 和验收边界，不是可有可无的备注
 - 任务的目标是让团队高效协作，而不是制造更多流程负担
-- 每个执行 task 都应绑定短分支，并在任务中记录最近提交和是否并入 `main`
+- 每个执行 task 都应绑定短分支；分支、最近提交、planned files、release handoff 与是否并入 `main` 由 companion / release 台账维护，不再手工写入 task 正文
 - 任务在对话中默认使用“中文任务摘要 + 短编号”表达；短编号固定为 `t-xxx`
 - 任务页默认优先展示交付摘要，而不是工程明细；工程信息在需要时再展开
 - `light` 改动可跳过 `coord:check:pre-task`；`structural / release` task 动手前默认先跑 `coord:check:pre-task`，它会同时检查任务 companion、scope guard、运行态和锁状态；高风险时会产出决策卡

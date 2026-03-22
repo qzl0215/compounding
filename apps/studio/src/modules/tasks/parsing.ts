@@ -1,81 +1,42 @@
-import { extractFirstHeading, extractSection, stripMarkdown } from "@/modules/docs";
-import { taskIdFromPath } from "../../../../../shared/task-identity";
-import type { TaskCard, TaskUpdateTrace, TaskStatus } from "./types";
+import { parseTaskContract } from "../../../../../shared/task-contract";
+import type { TaskCard, TaskStatus } from "./types";
 
-export function parseTaskCard(path: string, content: string): Omit<TaskCard, "git"> {
-  const id = taskIdFromPath(path);
+export function parseTaskCard(path: string, content: string): Omit<TaskCard, "machine"> {
+  const parsed = parseTaskContract(path, content);
+
   return {
-    id,
-    path,
-    shortId: stripMarkdown(extractSection(content, "short_id") ?? ""),
-    title: extractFirstHeading(content) ?? path.split("/").pop() ?? path,
-    goal: stripMarkdown(extractSection(content, "goal") ?? "当前任务尚未填写目标。"),
-    status: normalizeTaskStatus(stripMarkdown(extractSection(content, "status") ?? "todo")),
-    parentPlan: stripMarkdown(extractSection(content, "parent_plan") ?? ""),
-    planSnapshot: stripMarkdown(extractSection(content, "plan_snapshot") ?? ""),
-    currentMode: stripMarkdown(extractSection(content, "current_mode") ?? ""),
-    branch: stripMarkdown(extractSection(content, "branch") ?? ""),
-    recentCommit: stripMarkdown(extractSection(content, "recent_commit") ?? ""),
-    deliveryBenefit: stripMarkdown(extractSection(content, "delivery_benefit") ?? extractSection(content, "goal") ?? ""),
-    deliveryRisk: stripMarkdown(extractSection(content, "delivery_risk") ?? extractSection(content, "risks") ?? ""),
-    deliveryRetro: stripMarkdown(extractSection(content, "delivery_retro") ?? extractSection(content, "retrospective") ?? "未复盘"),
-    experienceAcceptanceResult: stripMarkdown(extractSection(content, "experience_acceptance_result") ?? "待验收"),
-    testStrategy: stripMarkdown(extractSection(content, "test_strategy") ?? "未记录"),
-    primaryRelease: stripMarkdown(extractSection(content, "primary_release") ?? "未生成"),
-    linkedReleases: parseLinkedReleases(content),
-    companionReleaseIds: [],
-    companionLatestRelease: null,
-    relatedModules: parseRelatedModules(content),
-    updateTrace: parseUpdateTrace(content),
+    id: parsed.id,
+    path: parsed.path,
+    shortId: parsed.shortId,
+    title: parsed.title,
+    status: normalizeTaskStatus(parsed.status),
+    parentPlan: parsed.parentPlan,
+    summary: parsed.summary,
+    whyNow: parsed.whyNow,
+    boundary: parsed.boundary,
+    doneWhen: parsed.doneWhen,
+    inScope: parsed.inScope,
+    outOfScope: parsed.outOfScope,
+    constraints: parsed.constraints,
+    risk: parsed.risk,
+    testStrategy: parsed.testStrategy,
+    acceptanceResult: parsed.acceptanceResult,
+    deliveryResult: parsed.deliveryResult,
+    retro: parsed.retro,
+    currentMode: parsed.currentMode,
   };
 }
 
-function parseRelatedModules(content: string) {
-  const raw = extractSection(content, "related_modules") ?? "";
-  const inline = Array.from(raw.matchAll(/`([^`]+)`/g)).map((match) => match[1].trim());
-  const bullets = raw
-    .split(/\r?\n/)
-    .map((line) => line.replace(/^-+\s*/, "").trim())
-    .filter(Boolean)
-    .map((line) => line.replace(/`/g, ""));
-  return Array.from(new Set([...inline, ...bullets]));
-}
-
-function parseUpdateTrace(content: string): TaskUpdateTrace {
-  const raw = extractSection(content, "update_trace") ?? "";
+export function parseTaskMachineFields(path: string, content: string) {
+  const parsed = parseTaskContract(path, content);
   return {
-    memory: extractTraceValue(raw, "记忆"),
-    index: extractTraceValue(raw, "索引"),
-    roadmap: extractTraceValue(raw, "路线图"),
-    docs: extractTraceValue(raw, "文档"),
+    branch: parsed.branch,
+    recentCommit: parsed.recentCommit,
+    primaryRelease: parsed.primaryRelease || "未生成",
+    linkedReleases: parsed.linkedReleases,
+    relatedModules: parsed.relatedModules,
+    updateTrace: parsed.updateTrace,
   };
-}
-
-function parseLinkedReleases(content: string) {
-  const raw = extractSection(content, "linked_releases") ?? "";
-  return raw
-    .split(/\r?\n/)
-    .map((line) => line.replace(/^-\s*/, "").replace(/`/g, "").trim())
-    .filter(Boolean)
-    .filter((value) => value !== "无");
-}
-
-function extractTraceValue(raw: string, label: string) {
-  const line = raw.split(/\r?\n/).find((item) => {
-    const normalized = item.trim().replace(/^-\s*/, "");
-    return normalized.startsWith(`${label}：`) || normalized.startsWith(`${label}:`);
-  });
-  if (!line) {
-    return "no change: 未记录";
-  }
-  return line
-    .trim()
-    .replace(/^-\s*/, "")
-    .split(/[:：]/)
-    .slice(1)
-    .join(":")
-    .replace(/`/g, "")
-    .trim();
 }
 
 function normalizeTaskStatus(value: string): TaskStatus {

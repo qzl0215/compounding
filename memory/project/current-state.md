@@ -45,8 +45,8 @@ related_docs:
 ## 当前焦点
 
 - 本地 production 当前稳定运行在 `3010`；`main` 已发布，但常驻进程仍需要人工确认是否在线。
-- 当前运营重点是保持 `task / release / companion / stage-first` 这一组真相源稳定，不因新规则切换重新引入双写。
-- 当前阶段不扩 orchestration UI、数据库或新运行时；先把单层 plan、任务边界、体验验收和高 ROI test 治理对齐。
+- 当前运营重点是把 task 收口成执行合同，避免 `task / release / companion` 再次混写边界、结果和机器台账。
+- 当前阶段不扩 orchestration UI、数据库或新运行时；先把 task 合同、机器 provenance 下沉和高 ROI test 治理对齐。
 
 ## 当前推荐校验顺序
 
@@ -72,7 +72,7 @@ related_docs:
 - `pnpm preview:check`
 - `pnpm prod:check`
 - `pnpm coord:check:pre-task`
-- 验证首页、任务页、发布页是否都按同一套阶段模型投影
-- 验证 `operating-blueprint` 是否成为唯一 plan 主源
-- 验证测试策略是否可追踪且没有新冗余门禁
+- 验证新 task 是否只保留执行合同字段
+- 验证历史 task 是否仍能被兼容解析
+- 验证 `/tasks` 是否改成合同视角而不是 provenance 视角
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

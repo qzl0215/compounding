@@ -19,31 +19,42 @@ export type TaskGitInfo = {
   detail: string;
 };
 
-export type TaskCard = {
-  id: string;
-  path: string;
-  shortId: string;
-  title: string;
-  goal: string;
-  status: TaskStatus;
-  parentPlan: string;
-  planSnapshot: string;
-  currentMode: string;
+export type TaskMachineFacts = {
   branch: string;
   recentCommit: string;
-  deliveryBenefit: string;
-  deliveryRisk: string;
-  deliveryRetro: string;
-  experienceAcceptanceResult: string;
-  testStrategy: string;
   primaryRelease: string;
   linkedReleases: string[];
   companionReleaseIds: string[];
   companionLatestRelease: string | null;
-  git: TaskGitInfo;
   relatedModules: string[];
   updateTrace: TaskUpdateTrace;
+  git: TaskGitInfo;
 };
+
+export type TaskContract = {
+  id: string;
+  path: string;
+  shortId: string;
+  title: string;
+  status: TaskStatus;
+  parentPlan: string;
+  summary: string;
+  whyNow: string;
+  boundary: string;
+  doneWhen: string;
+  inScope: string;
+  outOfScope: string;
+  constraints: string;
+  risk: string;
+  testStrategy: string;
+  acceptanceResult: string;
+  deliveryResult: string;
+  retro: string;
+  currentMode: string;
+  machine: TaskMachineFacts;
+};
+
+export type TaskCard = TaskContract;
 
 export type TaskGroup = {
   status: TaskStatus;
@@ -51,7 +62,7 @@ export type TaskGroup = {
   tasks: TaskCard[];
 };
 
-export type TaskDeliveryRow = TaskCard & {
+export type TaskDeliveryRow = TaskContract & {
   deliveryStatus: TaskDeliveryStatus;
   versionLabel: string;
   acceptReleaseId: string | null;

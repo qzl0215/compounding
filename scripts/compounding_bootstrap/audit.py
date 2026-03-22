@@ -89,25 +89,14 @@ def audit(config_path: Path, target: Path) -> AuditResult:
     if task_template.exists():
         template_text = task_template.read_text(encoding="utf8")
         for heading in [
-            "## 目标",
-            "## 为什么",
-            "## 范围",
-            "## 范围外",
-            "## 约束",
-            "## 父计划",
-            "## 计划快照",
-            "## 关联模块",
-            "## 分支",
-            "## 最近提交",
-            "## 体验验收结果",
-            "## 测试策略",
-            "## 计划",
-            "## 发布说明",
-            "## 验收标准",
-            "## 风险",
-            "## 状态",
-            "## 更新痕迹",
-            "## 复盘",
+            "## 任务摘要",
+            "## 执行合同",
+            "## 交付结果",
+            "### 要做",
+            "### 不做",
+            "### 约束",
+            "### 关键风险",
+            "### 测试策略",
         ]:
             if heading not in template_text:
                 result.errors.append(f"task template missing heading: {heading}")

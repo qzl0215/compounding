@@ -21,22 +21,22 @@ Single-Plan Demand Operating Model（推进中）
 
 ## 当前里程碑
 
-单层 Plan、阶段优先与高 ROI Test 治理
+Task 执行合同与机器台账下沉
 
 ## 里程碑成功标准
 
-- `operating-blueprint` 成为唯一 plan 主源，`roadmap` 不再并行写计划
-- AI 在进入 task 前，先扩选项、再收决策、最后对准体验级验收结果
-- `task` 继续只承接可执行事项，并显式绑定 1 个父计划
-- test 采用风险驱动最小集，不再靠堆数量制造安全感
+- task 重构成共享执行合同，只保留边界、结果、风险和测试策略
+- 分支、提交、release、trace 等机器台账从 task 主体下沉到 companion / release / 投影层
+- 历史 task 在不重写文档的情况下仍可被兼容解析
+- `/tasks` 主表默认展示合同字段，而不是机器 provenance
 
 ## 当前优先级
 
-把 `operating-blueprint` 收口成唯一 plan 主源，并让首页、任务页、发布页和 AI 对话都围绕同一套阶段模型与体验验收标准行动。
+把 task 从“全量档案”收口成执行合同，让 plan 负责想清楚、task 负责做清楚、release / companion 负责机器台账。
 
 ## 下一阶段方向
 
-- 固定“单层 plan + task 执行边界”模型，防止 roadmap 和 blueprint 重新双写计划
-- 把 AI 对话从“等确认再动手”收口成“先扩选项，再收决策，再进 task”
-- 让 test 只覆盖高价值行为契约、关键边界和高效体验验证，不再越积越厚
+- 让 task 页、release 页和 companion 继续围绕同一份执行合同投影
+- 让 AI 默认读 plan 与 task 合同，不再被 task 档案噪声拖慢
+- 继续用风险驱动最小测试集保护结构改动，而不是追加重复门禁
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

@@ -1,9 +1,9 @@
 const fs = require("node:fs");
 const { execFileSync } = require("node:child_process");
 const { releaseReload: releaseReloadImpl } = require("./reload.ts");
-const { extractSection, stripMarkdown } = require("../ai/lib/markdown-sections.ts");
 const { resolveTaskId, resolveTaskRecord } = require("../ai/lib/task-resolver.ts");
 const { readCompanionReleaseContext } = require("../coord/lib/task-meta.ts");
+const { parseTaskContract } = require("../../shared/task-contract.ts");
 const {
   ensureLayout,
   layoutPaths,
@@ -83,13 +83,6 @@ function parseTaskIdList(value) {
     .filter((item, index, values) => values.indexOf(item) === index);
 }
 
-function firstMeaningfulLine(value) {
-  return String(value || "")
-    .split(/\r?\n/)
-    .map((line) => stripMarkdown(line).replace(/^[-*]\s*/, "").trim())
-    .find(Boolean) || "";
-}
-
 function readTaskDeliveryMetadata(taskId) {
   const record = resolveTaskRecord(taskId, workspaceRoot());
   if (!record) {
@@ -97,14 +90,9 @@ function readTaskDeliveryMetadata(taskId) {
   }
   const file = require("node:path").join(workspaceRoot(), record.path);
   const content = fs.readFileSync(file, "utf8");
-  const shortId = stripMarkdown(extractSection(content, "short_id", workspaceRoot()) || record.shortId);
-  const title = record.title;
-  const benefit = firstMeaningfulLine(
-    extractSection(content, "delivery_benefit", workspaceRoot()) || extractSection(content, "goal", workspaceRoot()) || ""
-  );
-  const risk = firstMeaningfulLine(
-    extractSection(content, "delivery_risk", workspaceRoot()) || extractSection(content, "risks", workspaceRoot()) || ""
-  );
+  const parsed = parseTaskContract(record.path, content);
+  const shortId = parsed.shortId || record.shortId;
+  const title = parsed.title || record.title;
   const companionContext = readCompanionReleaseContext(record.id);
   return {
     id: record.id,
@@ -112,8 +100,9 @@ function readTaskDeliveryMetadata(taskId) {
     short_id: shortId,
     title,
     delivery_summary: companionContext?.delivery_summary || `${shortId} ${title}`.trim(),
-    delivery_benefit: companionContext?.delivery_benefit || benefit || null,
-    delivery_risks: companionContext?.delivery_risks || risk || null,
+    delivery_benefit:
+      companionContext?.delivery_benefit || firstMeaningfulLine(parsed.deliveryResult || parsed.doneWhen || parsed.summary) || null,
+    delivery_risks: companionContext?.delivery_risks || firstMeaningfulLine(parsed.risk) || null,
   };
 }
 
@@ -162,6 +151,13 @@ function withReleaseLock(callback) {
     }
     fs.rmSync(lockPath, { force: true });
   }
+}
+
+function firstMeaningfulLine(value) {
+  return String(value || "")
+    .split(/\r?\n/)
+    .map((line) => line.replace(/^[-*]\s*/, "").trim())
+    .find(Boolean) || "";
 }
 
 module.exports = {

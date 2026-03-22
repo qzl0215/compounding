@@ -89,11 +89,11 @@ export function DeliveryTable({
             <thead className="bg-white/[0.04] text-white/52">
               <tr>
                 <HeadCell>任务</HeadCell>
-                <HeadCell>收益</HeadCell>
-                <HeadCell>风险</HeadCell>
+                <HeadCell>为什么现在</HeadCell>
+                <HeadCell>完成定义</HeadCell>
                 <HeadCell>状态</HeadCell>
-                <HeadCell>版本</HeadCell>
-                <HeadCell>复盘</HeadCell>
+                <HeadCell>关键风险</HeadCell>
+                <HeadCell>交付结果</HeadCell>
                 <HeadCell>操作</HeadCell>
               </tr>
             </thead>

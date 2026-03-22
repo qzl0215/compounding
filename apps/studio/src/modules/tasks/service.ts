@@ -1,7 +1,7 @@
 import { listDocsUnder, readDoc } from "@/modules/docs";
-import { readTaskCompanionReleaseInfo } from "./companion";
+import { readTaskCompanionFacts } from "./companion";
 import { resolveTaskGitInfo } from "./git";
-import { parseTaskCard } from "./parsing";
+import { parseTaskCard, parseTaskMachineFields } from "./parsing";
 import type { TaskCard, TaskGroup, TaskStatus } from "./types";
 import { assertUniqueTaskIdentities } from "../../../../../shared/task-identity";
 
@@ -32,16 +32,43 @@ export async function listTaskCards(): Promise<TaskCard[]> {
   const taskCards = taskPaths
     .map((taskPath, index) => {
       const parsed = parseTaskCard(taskPath, docs[index].content);
-      const companion = readTaskCompanionReleaseInfo(parsed.id);
+      const parsedMachine = parseTaskMachineFields(taskPath, docs[index].content);
+      const companion = readTaskCompanionFacts(parsed.id);
+      const branch = parsedMachine.branch || companion.branch;
+      const recentCommit = parsedMachine.recentCommit || companion.recentCommit;
+      const currentMode = parsed.currentMode || companion.currentMode || defaultModeForStatus(parsed.status);
       return {
         ...parsed,
-        companionReleaseIds: companion.releaseIds,
-        companionLatestRelease: companion.latestReleaseId,
-        git: resolveTaskGitInfo(parsed.status, parsed.branch, parsed.recentCommit),
+        currentMode,
+        machine: {
+          branch,
+          recentCommit,
+          primaryRelease: parsedMachine.primaryRelease || companion.latestReleaseId || "未生成",
+          linkedReleases: uniqueStrings([...parsedMachine.linkedReleases, ...companion.releaseIds]),
+          companionReleaseIds: companion.releaseIds,
+          companionLatestRelease: companion.latestReleaseId,
+          relatedModules: mergeMachineModules(taskPath, parsedMachine.relatedModules, companion.plannedFiles, companion.plannedModules),
+          updateTrace: parsedMachine.updateTrace,
+          git: resolveTaskGitInfo(parsed.status, branch, recentCommit),
+        },
       };
     })
     .sort((left, right) => TASK_STATUS_ORDER.indexOf(left.status) - TASK_STATUS_ORDER.indexOf(right.status) || left.path.localeCompare(right.path));
 
   assertUniqueTaskIdentities(taskCards.map((task) => ({ id: task.id, shortId: task.shortId, path: task.path })));
   return taskCards;
+}
+
+function mergeMachineModules(taskPath: string, relatedModules: string[], plannedFiles: string[], plannedModules: string[]) {
+  return uniqueStrings(
+    [...relatedModules, ...plannedFiles.filter((item) => item !== taskPath), ...plannedModules].filter(Boolean)
+  );
+}
+
+function uniqueStrings(values: string[]) {
+  return Array.from(new Set(values.map((value) => String(value || "").trim()).filter(Boolean)));
+}
+
+function defaultModeForStatus(status: TaskStatus) {
+  return status === "todo" ? "方案评审" : "工程执行";
 }

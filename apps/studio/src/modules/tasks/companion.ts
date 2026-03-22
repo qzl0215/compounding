@@ -6,24 +6,50 @@ type CompanionReleaseNote = {
   recorded_at?: string | null;
 };
 
+type CompanionLifecycle = {
+  handoff?: {
+    git_head?: string | null;
+  } | null;
+  release_handoff?: CompanionReleaseNote | null;
+};
+
+type CompanionContract = {
+  branch_name?: string | null;
+  planned_files?: string[];
+  planned_modules?: string[];
+};
+
 type TaskCompanionShape = {
-  lifecycle?: {
-    release_handoff?: CompanionReleaseNote | null;
-  };
+  current_mode?: string | null;
+  lifecycle?: CompanionLifecycle;
+  contract?: CompanionContract;
   artifacts?: {
     release_notes?: CompanionReleaseNote[];
   };
 };
 
-export type TaskCompanionReleaseInfo = {
+export type TaskCompanionFacts = {
+  currentMode: string;
+  branch: string;
+  recentCommit: string;
   releaseIds: string[];
   latestReleaseId: string | null;
+  plannedFiles: string[];
+  plannedModules: string[];
 };
 
-export function readTaskCompanionReleaseInfo(taskId: string): TaskCompanionReleaseInfo {
+export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
   const companionPath = path.join(process.cwd(), "agent-coordination", "tasks", `${taskId}.json`);
   if (!fs.existsSync(companionPath)) {
-    return { releaseIds: [], latestReleaseId: null };
+    return {
+      currentMode: "",
+      branch: "",
+      recentCommit: "",
+      releaseIds: [],
+      latestReleaseId: null,
+      plannedFiles: [],
+      plannedModules: [],
+    };
   }
 
   try {
@@ -36,9 +62,32 @@ export function readTaskCompanionReleaseInfo(taskId: string): TaskCompanionRelea
           .filter(Boolean)
       )
     );
-    const latestReleaseId = String(companion.lifecycle?.release_handoff?.release_id || "").trim() || releaseIds.at(-1) || null;
-    return { releaseIds, latestReleaseId };
+    return {
+      currentMode: String(companion.current_mode || "").trim(),
+      branch: String(companion.contract?.branch_name || "").trim(),
+      recentCommit: sanitizeCommit(companion.lifecycle?.handoff?.git_head),
+      releaseIds,
+      latestReleaseId: String(companion.lifecycle?.release_handoff?.release_id || "").trim() || releaseIds.at(-1) || null,
+      plannedFiles: uniqueStrings(companion.contract?.planned_files ?? []),
+      plannedModules: uniqueStrings(companion.contract?.planned_modules ?? []),
+    };
   } catch {
-    return { releaseIds: [], latestReleaseId: null };
+    return {
+      currentMode: "",
+      branch: "",
+      recentCommit: "",
+      releaseIds: [],
+      latestReleaseId: null,
+      plannedFiles: [],
+      plannedModules: [],
+    };
   }
+}
+
+function sanitizeCommit(value: string | null | undefined) {
+  return String(value || "").trim().replace(/^([0-9a-f]{7}).*$/i, "$1");
+}
+
+function uniqueStrings(values: string[]) {
+  return Array.from(new Set((values || []).map((value) => String(value || "").trim()).filter(Boolean)));
 }

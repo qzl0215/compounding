@@ -86,24 +86,24 @@ export function dedupeItems(values: string[]) {
 
 function summarizeTaskRow(row: TaskDeliveryRow, stage: DemandStage) {
   if (stage === "planning") {
-    return row.goal;
+    return row.boundary || row.summary;
   }
   if (stage === "ready") {
-    return `${row.deliveryBenefit || row.goal} 已具备执行边界，可以进入 task 推进。`;
+    return `${row.doneWhen || row.summary} 已具备执行边界，可以进入 task 推进。`;
   }
   if (stage === "doing") {
     if (row.status === "blocked") {
-      return `${row.deliveryRisk || row.goal} 当前处于阻塞，需要先清掉依赖或边界问题。`;
+      return `${row.risk || row.summary} 当前处于阻塞，需要先清掉依赖或边界问题。`;
     }
-    return `${row.deliveryBenefit || row.goal} 当前正在推进，优先看风险和下一步。`;
+    return `${row.doneWhen || row.summary} 当前正在推进，优先看风险和下一步。`;
   }
   if (stage === "acceptance") {
-    return `当前版本 ${row.versionLabel} 待验收。${row.deliveryRisk || "先判断结果是否通过。"}`;
+    return `当前版本 ${row.versionLabel} 待验收。${row.risk || "先判断结果是否通过。"}`;
   }
   if (stage === "released") {
-    return `已发布到 ${row.versionLabel}。${row.deliveryRetro || row.deliveryBenefit || "下一步先看复盘与影响。"}`;
+    return `已发布到 ${row.versionLabel}。${row.retro || row.deliveryResult || "下一步先看复盘与影响。"}`;
   }
-  return row.goal;
+  return row.summary;
 }
 
 function splitItemText(value: string) {

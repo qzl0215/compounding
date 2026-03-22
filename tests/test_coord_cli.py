@@ -159,34 +159,65 @@ console.log(JSON.stringify(readCompanionReleaseContext("t-999"), null, 2));
         (self.target / "tasks" / "queue" / "task-123-historical.md").write_text(
             """# 历史任务
 
-## 短编号
+## 任务摘要
 
-t-123
+- 短编号：`t-123`
+- 父计划：`memory/project/operating-blueprint.md`
+- 任务摘要：
+  一个未被本轮触碰的旧任务。
+- 为什么现在：
+  仅用于验证历史噪音不会污染本轮校验。
+- 承接边界：
+  不参与当前改动，只保留为历史任务样本。
+- 完成定义：
+  校验器应忽略未被触碰的历史任务噪音。
 
-## 目标
+## 执行合同
 
-一个未被本轮触碰的旧任务。
+### 要做
 
-## 当前模式
+- 保留历史任务样本。
 
-工程执行
+### 不做
 
-## 分支
+- 不参与本轮实现。
 
-`codex/task-123-historical`
+### 约束
 
-## 最近提交
+- 保持为静态历史噪音。
 
-`auto: branch HEAD`
+### 关键风险
 
-## 状态
+- 若任务解析误判，历史任务可能混入当前校验。
 
-doing
+### 测试策略
+
+- 为什么测：确认校验器只关心本轮触碰任务。
+- 测什么：结构性变更下的任务筛选。
+- 不测什么：不验证历史任务本身的发布状态。
+- 当前最小集理由：只锁住噪音过滤行为。
+
+## 交付结果
+
+- 状态：doing
+- 体验验收结果：
+  不适用
+- 交付结果：
+  作为旧任务噪音样本存在。
+- 复盘：
+  未复盘
 """,
             encoding="utf8",
         )
         self.init_git_repo()
         subprocess.run(["git", "checkout", "-b", "codex/task-999-sample"], cwd=self.target, check=True)
+        self.run_node(
+            f"""
+const {{ ensureCompanion }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-meta.ts");
+ensureCompanion("t-999");
+console.log(JSON.stringify({{ ok: true }}));
+"""
+        )
         script_path.write_text("export const value = 2;\n", encoding="utf8")
 
         completed = self.run_script("scripts/ai/validate-task-git-link.ts")

@@ -1,17 +1,16 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { listTaskRecords } = require("./lib/task-resolver.ts");
+const { ensureCompanion } = require("../coord/lib/task-meta.ts");
 
-const [taskId, goal, why] = process.argv.slice(2);
-if (!taskId || !goal || !why) {
-  console.error("Usage: node --experimental-strip-types scripts/ai/create-task.ts <task-id> <goal> <why>");
+const [taskId, summary, whyNow] = process.argv.slice(2);
+if (!taskId || !summary || !whyNow) {
+  console.error("Usage: node --experimental-strip-types scripts/ai/create-task.ts <task-id> <summary> <why-now>");
   process.exit(1);
 }
+
 const root = process.cwd();
-const templatePath = path.join(root, "tasks", "templates", "task-template.md");
 const outputPath = path.join(root, "tasks", "queue", `${taskId}.md`);
-const template = fs.readFileSync(templatePath, "utf8");
-const suggestedBranch = `codex/${taskId}`;
 const shortIdMatch = taskId.match(/^task-(\d+)/);
 const shortId = shortIdMatch ? `t-${shortIdMatch[1]}` : `t-${taskId}`;
 const existingTaskRecords = listTaskRecords(root);
@@ -23,27 +22,59 @@ if (existingTaskRecords.some((record) => record.shortId === shortId)) {
   console.error(`Short task id already exists: ${shortId}`);
   process.exit(1);
 }
-const filled = template
-  .replace("# 任务模板", `# 任务 ${taskId}`)
-  .replace("## 短编号\n", `## 短编号\n\n${shortId}\n\n`)
-  .replace("## 目标\n", `## 目标\n\n${goal}\n\n`)
-  .replace("## 为什么\n", `## 为什么\n\n${why}\n\n`)
-  .replace("## 父计划\n", "## 父计划\n\n`memory/project/operating-blueprint.md`\n\n")
-  .replace("## 计划快照\n", "## 计划快照\n\n待补充：写明本 task 承接的那一小段 plan 边界。\n\n")
-  .replace("## 当前模式\n", "## 当前模式\n\n方案评审\n\n")
-  .replace("## 分支\n", `## 分支\n\n\`${suggestedBranch}\`\n\n`)
-  .replace("## 交付收益\n", "## 交付收益\n\n待补充：说明这次交付完成后的直接收益。\n\n")
-  .replace("## 交付风险\n", "## 交付风险\n\n待补充：说明当前最需要防范的发布或回归风险。\n\n")
-  .replace("## 一句复盘\n", "## 一句复盘\n\n未复盘\n\n")
-  .replace("## 体验验收结果\n", "## 体验验收结果\n\n待验收\n\n")
-  .replace("## 测试策略\n", "## 测试策略\n\n待补充：说明为什么要测、测什么、不测什么、为什么当前这样最划算。\n\n")
-  .replace("## 主发布版本\n", "## 主发布版本\n\n未生成\n\n")
-  .replace("## 关联发布版本\n", "## 关联发布版本\n\n无\n\n")
-  .replace("## 状态\n", "## 状态\n\ntodo\n")
-  .replace("- 记忆：", "- 记忆：`no change: task created only`")
-  .replace("- 索引：", "- 索引：`no change: task created only`")
-  .replace("- 路线图：", "- 路线图：`no change: current priority unchanged`")
-  .replace("- 文档：", `- 文档：\`tasks/queue/${taskId}.md\``);
+
+const body = `# 任务 ${taskId}
+
+## 任务摘要
+
+- 短编号：\`${shortId}\`
+- 父计划：\`memory/project/operating-blueprint.md\`
+- 任务摘要：
+  ${summary}
+- 为什么现在：
+  ${whyNow}
+- 承接边界：
+  待补充：写明这个 task 从 plan 承接的那一段清晰边界。
+- 完成定义：
+  待补充：写明体验级交付结果，而不是实现动作。
+
+## 执行合同
+
+### 要做
+
+- 待补充：列出这次明确要做的事项。
+
+### 不做
+
+- 待补充：列出这次明确不做的事项。
+
+### 约束
+
+- 待补充：列出必须遵守的边界、依赖和冻结项。
+
+### 关键风险
+
+- 待补充：说明最大的回归或发布风险。
+
+### 测试策略
+
+- 为什么测：待补充。
+- 测什么：待补充。
+- 不测什么：待补充。
+- 当前最小集理由：待补充。
+
+## 交付结果
+
+- 状态：todo
+- 体验验收结果：
+  待验收
+- 交付结果：
+  未交付
+- 复盘：
+  未复盘
+`;
+
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-fs.writeFileSync(outputPath, filled);
+fs.writeFileSync(outputPath, body);
+ensureCompanion(taskId);
 console.log(outputPath);

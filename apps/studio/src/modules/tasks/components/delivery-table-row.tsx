@@ -33,24 +33,25 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
           </button>
         </Cell>
         <Cell className="min-w-[240px] text-white/76">
-          <div title={row.deliveryBenefit}>{truncate(row.deliveryBenefit || row.goal, 48)}</div>
+          <div title={row.whyNow}>{truncate(row.whyNow || "未记录", 52)}</div>
         </Cell>
-        <Cell className="min-w-[220px] text-white/68">
-          <div title={row.deliveryRisk}>{truncate(row.deliveryRisk || "未记录", 40)}</div>
+        <Cell className="min-w-[260px] text-white/72">
+          <div title={row.doneWhen}>{truncate(row.doneWhen || "未记录", 52)}</div>
         </Cell>
         <Cell className="min-w-[140px]">
           <span className={`inline-flex rounded-full border px-3 py-1 text-xs ${DELIVERY_TONE[row.deliveryStatus]}`}>
             {TASK_DELIVERY_LABELS[row.deliveryStatus]}
           </span>
         </Cell>
-        <Cell className="min-w-[200px] text-white/76">
+        <Cell className="min-w-[220px] text-white/68">
+          <div title={row.risk}>{truncate(row.risk || "未记录", 40)}</div>
+        </Cell>
+        <Cell className="min-w-[220px] text-white/76">
           <div className="space-y-1">
-            <p>{row.versionLabel}</p>
+            <p title={row.deliveryResult}>{truncate(row.deliveryResult || "未记录", 40)}</p>
+            <p className="text-xs text-white/45">{row.versionLabel}</p>
             {row.linkedTaskIds.length > 0 ? <p className="text-xs text-white/45">关联 task：{row.linkedTaskIds.join(", ")}</p> : null}
           </div>
-        </Cell>
-        <Cell className="min-w-[200px] text-white/68">
-          <div title={row.deliveryRetro}>{truncate(row.deliveryRetro || "未复盘", 40)}</div>
         </Cell>
         <Cell className="min-w-[230px]">
           <div className="flex flex-wrap gap-2">
@@ -87,27 +88,36 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
         <tr>
           <td colSpan={7} className="bg-white/[0.03] px-4 py-4">
             <div className="grid gap-4 text-sm text-white/68 lg:grid-cols-3">
-              <DetailBlock title="工程明细">
-                <p>任务路径：{row.path}</p>
+              <DetailBlock title="任务摘要">
                 <p>父计划：{row.parentPlan || "未标注"}</p>
+                <p>承接边界：{row.boundary || "未记录"}</p>
+                <p>完成定义：{row.doneWhen || "未记录"}</p>
+              </DetailBlock>
+              <DetailBlock title="执行合同">
+                <p className="whitespace-pre-line">要做：{row.inScope || "未记录"}</p>
+                <p className="whitespace-pre-line">不做：{row.outOfScope || "未记录"}</p>
+                <p className="whitespace-pre-line">约束：{row.constraints || "未记录"}</p>
+                <p className="whitespace-pre-line">测试策略：{row.testStrategy || "未记录"}</p>
+              </DetailBlock>
+              <DetailBlock title="交付结果">
+                <p>体验验收结果：{row.acceptanceResult || "待验收"}</p>
+                <p>交付结果：{row.deliveryResult || "未记录"}</p>
+                <p>复盘：{row.retro || "未复盘"}</p>
+              </DetailBlock>
+              <DetailBlock title="机器事实">
+                <p>任务路径：{row.path}</p>
                 <p>当前模式：{row.currentMode || "未标注"}</p>
-                <p>分支：{row.branch || "未绑定"}</p>
-                <p>最近提交：{row.git.recentCommit || row.recentCommit || "pending"}</p>
-                <p>Git 状态：{row.git.detail}</p>
+                <p>分支：{row.machine.branch || "未绑定"}</p>
+                <p>最近提交：{row.machine.git.recentCommit || row.machine.recentCommit || "pending"}</p>
+                <p>Git 状态：{row.machine.git.detail}</p>
+                <p>主发布版本：{row.machine.primaryRelease || "未生成"}</p>
               </DetailBlock>
-              <DetailBlock title="关联模块">
-                {row.relatedModules.length > 0 ? row.relatedModules.map((item) => <p key={item}>{item}</p>) : <p>无</p>}
-              </DetailBlock>
-              <DetailBlock title="计划与验证">
-                <p>计划快照：{row.planSnapshot || "未记录"}</p>
-                <p>测试策略：{row.testStrategy || "未记录"}</p>
-                <p>体验验收结果：{row.experienceAcceptanceResult || "待验收"}</p>
-              </DetailBlock>
-              <DetailBlock title="更新痕迹">
-                <p>记忆：{row.updateTrace.memory}</p>
-                <p>索引：{row.updateTrace.index}</p>
-                <p>路线图：{row.updateTrace.roadmap}</p>
-                <p>文档：{row.updateTrace.docs}</p>
+              <DetailBlock title="模块与痕迹">
+                {row.machine.relatedModules.length > 0 ? row.machine.relatedModules.map((item) => <p key={item}>{item}</p>) : <p>无关联模块</p>}
+                <p>记忆：{row.machine.updateTrace.memory}</p>
+                <p>索引：{row.machine.updateTrace.index}</p>
+                <p>路线图：{row.machine.updateTrace.roadmap}</p>
+                <p>文档：{row.machine.updateTrace.docs}</p>
               </DetailBlock>
             </div>
           </td>

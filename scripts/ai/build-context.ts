@@ -1,6 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const { extractSection, parseMarkdownSections } = require("./lib/markdown-sections.ts");
+const { parseTaskContract } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
+const { readCompanion } = require("../coord/lib/task-meta.ts");
 
 const args = process.argv.slice(2);
 const taskPath = args.find((arg) => !arg.startsWith("--"));
@@ -33,16 +34,6 @@ function normalizeModuleToken(token) {
   return token.replace(/`/g, "").replace(/\/\*$/, "").trim();
 }
 
-function extractRelatedModules(taskSections) {
-  const raw = taskSections["Related Modules"] || taskSections["关联模块"] || "";
-  const inline = Array.from(raw.matchAll(/`([^`]+)`/g)).map((match) => match[1]);
-  const bullets = raw
-    .split(/\r?\n/)
-    .map((line) => line.replace(/^-+\s*/, "").trim())
-    .filter(Boolean);
-  return unique([...inline, ...bullets].map(normalizeModuleToken));
-}
-
 function loadFunctionIndex() {
   const absolute = path.join(root, "code_index", "function-index.json");
   if (!fs.existsSync(absolute)) return [];
@@ -64,12 +55,12 @@ function findRelevantFunctions(relatedModules) {
   );
 }
 
-function buildKeywords(taskSections, relatedModules) {
+function buildKeywords(taskContract, relatedModules) {
   const combined = [
-    taskSections.Goal || taskSections["目标"],
-    taskSections.Why || taskSections["为什么"] || taskSections["原因"],
-    taskSections.Scope || taskSections["范围"],
-    taskSections.Constraints || taskSections["约束"],
+    taskContract.summary,
+    taskContract.whyNow,
+    taskContract.inScope,
+    taskContract.constraints,
     ...relatedModules,
   ]
     .filter(Boolean)
@@ -122,10 +113,15 @@ if (!taskContent) {
   process.exit(1);
 }
 
-const taskSections = parseMarkdownSections(taskContent);
-const relatedModules = extractRelatedModules(taskSections);
+const taskContract = parseTaskContract(relTask, taskContent);
+const companion = readCompanion(taskContract.id);
+const relatedModules = unique([
+  ...taskContract.relatedModules,
+  ...((companion?.planned_files || []).filter((item) => item !== relTask).map(normalizeModuleToken)),
+  ...((companion?.planned_modules || []).map(normalizeModuleToken)),
+]);
 const relevantFunctions = findRelevantFunctions(relatedModules);
-const keywords = buildKeywords(taskSections, relatedModules);
+const keywords = buildKeywords(taskContract, relatedModules);
 const moduleDocs = findModuleDocs(relatedModules);
 const memoryDocs = includeProjectMemory ? findRelevantMemoryDocs(keywords, relatedModules) : [];
 const codeIndexFiles =
@@ -170,21 +166,12 @@ output += `- Memory Matches: ${memoryDocs.length ? memoryDocs.map((item) => `\`$
 output += `- Function Hits: ${relevantFunctions.length}\n\n`;
 
 output += "## Task Summary\n\n";
-output += `- Goal: ${taskSections.Goal || taskSections["目标"] || "n/a"}\n`;
-output += `- Why: ${taskSections.Why || taskSections["为什么"] || taskSections["原因"] || "n/a"}\n`;
-output += `- Scope: ${taskSections.Scope || taskSections["范围"] || "n/a"}\n`;
-output += `- Constraints: ${taskSections.Constraints || taskSections["约束"] || "n/a"}\n`;
-
-const updateTrace = extractSection(taskContent, "update_trace", root);
-if (updateTrace) {
-  output += `- Update Trace:\n${updateTrace
-    .split(/\r?\n/)
-    .filter(Boolean)
-    .map((line) => `  - ${line}`)
-    .join("\n")}\n\n`;
-} else {
-  output += "\n";
-}
+output += `- Summary: ${taskContract.summary || "n/a"}\n`;
+output += `- Why Now: ${taskContract.whyNow || "n/a"}\n`;
+output += `- Boundary: ${taskContract.boundary || "n/a"}\n`;
+output += `- Done When: ${taskContract.doneWhen || "n/a"}\n`;
+output += `- In Scope: ${taskContract.inScope || "n/a"}\n`;
+output += `- Constraints: ${taskContract.constraints || "n/a"}\n\n`;
 
 output += "## Relevant Function Index\n\n";
 output += "```json\n";

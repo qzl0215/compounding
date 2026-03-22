@@ -10,38 +10,55 @@ ROOT = Path(__file__).resolve().parents[1]
 
 SAMPLE_TASK_MARKDOWN = """# 示例任务
 
-## 短编号
+## 任务摘要
 
-t-999
+- 短编号：`t-999`
+- 父计划：`memory/project/operating-blueprint.md`
+- 任务摘要：
+  验证 companion lifecycle。
+- 为什么现在：
+  需要确认 companion 生命周期与 release handoff 还能围绕统一合同运作。
+- 承接边界：
+  只验证 task companion、review 与 release handoff 的闭环，不扩到页面投影。
+- 完成定义：
+  companion 生命周期记录完整，且 release context 能优先读取 companion handoff。
 
-## 目标
+## 执行合同
 
-验证 companion lifecycle。
+### 要做
 
-## 关联模块
+- 验证 companion 初始化与生命周期回写。
+- 验证 release handoff 读取逻辑。
 
-- `scripts/coord/task.ts`
-- `tasks/queue/task-999-sample.md`
+### 不做
 
-## 当前模式
+- 不测试 UI 页面。
+- 不测试真实 release 切换。
 
-工程执行
+### 约束
 
-## 分支
+- 保持 task 文档为执行合同，机器事实下沉到 companion。
 
-`codex/task-999-sample`
+### 关键风险
 
-## 交付收益
+- 若 contract 解析漂移，会重新长出第二套状态表。
 
-让 review 与 release 可以复用同一份 companion。
+### 测试策略
 
-## 交付风险
+- 为什么测：需要锁住 companion 生命周期与 release context 的兼容性。
+- 测什么：companion 初始化、pre-task/review/release handoff 回写，以及 release context 读取。
+- 不测什么：不做页面层或真实发布链验证。
+- 当前最小集理由：先保护最容易断裂的 coordination 主链。
 
-若 contract 漂移，会重新长出第二套状态表。
+## 交付结果
 
-## 状态
-
-doing
+- 状态：doing
+- 体验验收结果：
+  待验收
+- 交付结果：
+  让 review 与 release 可以复用同一份 companion。
+- 复盘：
+  未复盘
 """
 
 
@@ -53,6 +70,7 @@ class CoordCliTestCase(unittest.TestCase):
         (self.target / "shared").mkdir(parents=True, exist_ok=True)
         (self.target / "bootstrap").mkdir(parents=True, exist_ok=True)
         shutil.copy(ROOT / "shared" / "task-identity.ts", self.target / "shared" / "task-identity.ts")
+        shutil.copy(ROOT / "shared" / "task-contract.ts", self.target / "shared" / "task-contract.ts")
         shutil.copy(ROOT / "bootstrap" / "heading_aliases.json", self.target / "bootstrap" / "heading_aliases.json")
         (self.target / "tasks" / "queue" / "task-999-sample.md").write_text(SAMPLE_TASK_MARKDOWN, encoding="utf8")
 

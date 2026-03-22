@@ -15,84 +15,53 @@ const root = process.cwd();
 // 任务文件模板定义
 const TASK_TEMPLATE = `# 任务 {task_id}
 
-## 短编号
+## 任务摘要
 
-{short_id}
+- 短编号：\`{short_id}\`
+- 父计划：\`memory/project/operating-blueprint.md\`
+- 任务摘要：
+  {objective}
+- 为什么现在：
+  {why}
+- 承接边界：
+  {boundary}
+- 完成定义：
+  {done_definition}
 
-## 目标
+## 执行合同
 
-{objective}
-
-## 为什么
-
-{why}
-
-## 范围
+### 要做
 
 {scope}
 
-## 范围外
+### 不做
 
 {out_of_scope}
 
-## 约束
+### 约束
 
 {constraints}
 
-## 关联模块
-
-{related_modules}
-
-## 当前模式
-
-{current_mode}
-
-## 分支
-
-{branch_name}
-
-## 最近提交
-
-{recent_commit}
-
-## 交付收益
-
-{benefits}
-
-## 交付风险
-
-{risks}
-
-## 计划
-
-{plan}
-
-## 发布说明
-
-{release_notes}
-
-## 验收标准
-
-{acceptance_criteria}
-
-## 风险
+### 关键风险
 
 {implementation_risks}
 
-## 状态
+### 测试策略
 
-todo
+- 为什么测：{test_reason}
+- 测什么：{test_scope}
+- 不测什么：{test_skip}
+- 当前最小集理由：{test_roi}
 
-## 更新痕迹
+## 交付结果
 
-- 记忆：\`memory/project/current-state.md\`
-- 索引：\`no change: 本轮仅新增任务编排\`
-- 路线图：\`memory/project/roadmap.md\`
-- 文档：\`{task_path}\`
-
-## 一句复盘
-
-未复盘
+- 状态：todo
+- 体验验收结果：
+  待验收
+- 交付结果：
+  {delivery_result}
+- 复盘：
+  未复盘
 `;
 
 // 经验记录模板定义
@@ -184,20 +153,17 @@ class TemplateGenerator {
       short_id: 't-XXX',
       objective: '待补充',
       why: '待补充',
-      scope: '待补充',
-      out_of_scope: '待补充',
-      constraints: '待补充',
-      related_modules: '待补充',
-      current_mode: '方案评审',
-      branch_name: 'codex/{task_id}',
-      recent_commit: 'auto: branch HEAD',
-      benefits: '待补充',
-      risks: '待补充',
-      plan: '1. 待补充\n2. 待补充\n3. 待补充',
-      release_notes: '待补充',
-      acceptance_criteria: '待补充',
-      implementation_risks: '待补充',
-      task_path: 'tasks/queue/{task_id}.md'
+      boundary: '待补充',
+      done_definition: '待补充',
+      scope: '- 待补充',
+      out_of_scope: '- 待补充',
+      constraints: '- 待补充',
+      implementation_risks: '- 待补充',
+      test_reason: '待补充',
+      test_scope: '待补充',
+      test_skip: '待补充',
+      test_roi: '待补充',
+      delivery_result: '未交付',
     };
 
     const merged = { ...defaults, ...params };
@@ -270,7 +236,7 @@ class TemplateGenerator {
 
     // 模板特定的验证
     if (templateName === 'task') {
-      const requiredSections = ['目标', '为什么', '范围', '计划', '验收标准'];
+      const requiredSections = ['任务摘要', '执行合同', '交付结果', '要做', '不做', '关键风险', '测试策略'];
       const missingSections = requiredSections.filter(section => 
         !content.includes(`## ${section}`) && !content.includes(`## ${section}（已填写）`)
       );
@@ -460,10 +426,17 @@ function generateTaskTemplate(generator) {
     short_id: 't-XXX',
     objective: '建立模板生成与反馈闭环机制，防止关键资产漂移',
     why: '规则与执行文档最容易在迭代中漂移，需要标准化模板和反馈机制',
+    boundary: '从模板治理里承接“任务文档如何稳定生成并被校验”这一段，不扩到整个平台改造。',
+    done_definition: '模板生成器能稳定产出执行合同结构，且校验器能识别缺项。',
     scope: '- 创建任务文件、经验记录、工具反馈的标准化模板\n- 实现模板内容一致性校验\n- 建立工具体验反馈收集与分析机制',
-    related_modules: '- `docs/ASSET_MAINTENANCE.md`\n- `docs/AI_OPERATING_MODEL.md`\n- `memory/experience/*`\n- `memory/feedback/*`',
-    plan: '1. 定义标准化模板格式\n2. 实现模板生成与验证功能\n3. 建立反馈收集与分析机制\n4. 在真实任务中验证闭环效果',
-    acceptance_criteria: '- 模板生成器可创建标准化文档\n- 一致性校验能发现格式问题\n- 反馈机制能收集和分析体验数据\n- 经验升格路径清晰可执行'
+    out_of_scope: '- 不重做整套任务系统',
+    constraints: '- 保持模板与主源口径一致',
+    implementation_risks: '- 模板与主源脱节会重新制造漂移',
+    test_reason: '需要锁住模板结构和校验行为',
+    test_scope: '模板生成与校验逻辑',
+    test_skip: '不做 UI 层验证',
+    test_roi: '先保护最容易漂移的模板和校验链',
+    delivery_result: '模板生成与反馈闭环建立'
   };
 
   const content = generator.generateTaskFile(params);
@@ -538,12 +511,20 @@ function validateTemplateContent(generator) {
     short_id: 't-validate',
     objective: '验证模板内容',
     why: '确保模板生成质量',
-    scope: '测试模板验证功能',
-    plan: '1. 生成模板\n2. 验证内容\n3. 输出结果',
-    acceptance_criteria: '模板验证能发现问题'
+    boundary: '只验证模板生成和字段完整性',
+    done_definition: '模板验证能发现关键缺项',
+    scope: '- 测试模板验证功能',
+    out_of_scope: '- 不做 UI 预览',
+    constraints: '- 保持当前模板契约',
+    implementation_risks: '- 漏检会让旧结构混回系统',
+    test_reason: '需要验证模板校验器本身',
+    test_scope: '生成内容与必填章节',
+    test_skip: '不测经验模板',
+    test_roi: '锁住最小主链',
+    delivery_result: '模板验证可用'
   });
 
-  const invalidContent = validContent.replace('## 目标', '## 目标（已填写）')
+  const invalidContent = validContent.replace('## 任务摘要', '## 任务摘要（已填写）')
     .replace('验证模板内容', '待补充'); // 故意制造问题
 
   console.log('🔍 模板验证测试:');

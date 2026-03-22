@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { buildTaskDeliveryRows } from "../delivery";
 import { getTaskBoard, listTaskCards } from "../service";
 import type { ReleaseRecord } from "@/modules/releases";
+import type { TaskDeliveryRow } from "../types";
 
 describe("tasks service", () => {
   it("parses queue docs into lightweight project-management cards", async () => {
@@ -11,21 +12,21 @@ describe("tasks service", () => {
     const planned = tasks.find((task) => task.path === "tasks/queue/task-009-ai-work-modes-productization.md");
 
     expect(first).toBeTruthy();
-    expect(first?.goal.length).toBeGreaterThan(0);
+    expect(first?.summary.length).toBeGreaterThan(0);
     expect(first?.status).toBe("done");
-    expect(first?.branch).toContain("main");
-    expect(first?.git.state).toBe("merged");
+    expect(first?.machine.branch).toContain("main");
+    expect(first?.machine.git.state).toBe("merged");
     expect(first?.shortId).toBe("t-001");
-    expect(first?.updateTrace.docs.length).toBeGreaterThan(0);
-    expect(current?.branch).toBe("codex/task-006-rich-doc-edit-and-ai-rewrite");
-    expect(current?.recentCommit).toBe("bd37dec");
-    expect(current?.git.state).toBeDefined();
+    expect(first?.machine.updateTrace.docs.length).toBeGreaterThan(0);
+    expect(current?.machine.branch).toBe("codex/task-006-rich-doc-edit-and-ai-rewrite");
+    expect(current?.machine.recentCommit).toBe("bd37dec");
+    expect(current?.machine.git.state).toBeDefined();
     expect(planned?.status).toBe("done");
     expect(planned?.currentMode).toBe("发布复盘");
-    expect(planned?.deliveryBenefit.length).toBeGreaterThan(0);
-    expect(planned?.branch).toBe("codex/task-009-ai-work-modes-productization");
-    expect(planned?.git.state).toBe("merged");
-    expect(Array.isArray(first?.companionReleaseIds)).toBe(true);
+    expect(planned?.deliveryResult.length).toBeGreaterThan(0);
+    expect(planned?.machine.branch).toBe("codex/task-009-ai-work-modes-productization");
+    expect(planned?.machine.git.state).toBe("merged");
+    expect(Array.isArray(first?.machine.companionReleaseIds)).toBe(true);
   }, 15000);
 
   it("groups tasks by status for the board view", async () => {
@@ -84,37 +85,53 @@ describe("tasks service", () => {
   }, 15000);
 
   it("does not bind releases to tasks by commit prefix alone", () => {
-    const task = {
+    const task: TaskDeliveryRow = {
       id: "task-038-autonomy-entropy-reduction",
       path: "tasks/queue/task-038-autonomy-entropy-reduction.md",
       shortId: "t-038",
       title: "任务 task-038-autonomy-entropy-reduction",
-      goal: "收口真相源、规则层与交付绑定中的结构性熵增点",
       status: "doing" as const,
+      parentPlan: "memory/project/operating-blueprint.md",
+      summary: "收口真相源、规则层与交付绑定中的结构性熵增点",
+      whyNow: "当前双写仍在扩散",
+      boundary: "收口 task / release / companion 的结构性熵增点",
+      doneWhen: "状态、版本和真相源口径统一",
+      inScope: "- 收口真相源\n- 精简规则",
+      outOfScope: "- 不做新 UI",
+      constraints: "- 不新增状态源",
+      risk: "若收口不彻底会继续双写",
+      testStrategy: "锁住解析和投影链",
+      acceptanceResult: "待验收",
+      deliveryResult: "减少歧义与重复规则",
+      retro: "未复盘",
       currentMode: "工程执行",
-      branch: "codex/task-038-autonomy-entropy-reduction",
-      recentCommit: "abc1234",
-      deliveryBenefit: "减少歧义与重复规则",
-      deliveryRisk: "若收口不彻底会继续双写",
-      deliveryRetro: "未复盘",
-      primaryRelease: "未生成",
-      linkedReleases: [],
-      companionReleaseIds: [],
-      companionLatestRelease: null,
-      git: {
+      machine: {
         branch: "codex/task-038-autonomy-entropy-reduction",
         recentCommit: "abc1234",
-        mergedToMain: false,
-        state: "committed" as const,
-        detail: "ready",
+        primaryRelease: "未生成",
+        linkedReleases: [],
+        companionReleaseIds: [],
+        companionLatestRelease: null,
+        relatedModules: ["shared/task-identity.ts"],
+        updateTrace: {
+          memory: "no change",
+          index: "no change",
+          roadmap: "no change",
+          docs: "tasks/queue/task-038-autonomy-entropy-reduction.md",
+        },
+        git: {
+          branch: "codex/task-038-autonomy-entropy-reduction",
+          recentCommit: "abc1234",
+          mergedToMain: false,
+          state: "committed",
+          detail: "ready",
+        },
       },
-      relatedModules: ["shared/task-identity.ts"],
-      updateTrace: {
-        memory: "no change",
-        index: "no change",
-        roadmap: "no change",
-        docs: "tasks/queue/task-038-autonomy-entropy-reduction.md",
-      },
+      deliveryStatus: "in_progress",
+      versionLabel: "未生成",
+      acceptReleaseId: null,
+      rollbackReleaseId: null,
+      linkedTaskIds: [],
     };
 
     const release: ReleaseRecord = {
