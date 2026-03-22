@@ -55,7 +55,7 @@ t-038
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 
 ## 分支
@@ -65,7 +65,7 @@ t-038
 
 ## 最近提交
 
-`auto: branch HEAD`
+`d934756 feat: reduce entropy across task truth and cockpit`
 
 ## 交付收益
 
@@ -79,17 +79,17 @@ t-038
 
 ## 一句复盘
 
-未复盘
+短编号、任务绑定、首页决策板与 live 文档模板已经收口到更一致的显式真相，AI 自主链路的规则噪声和模糊匹配显著下降。
 
 
 ## 主发布版本
 
-未生成
+`20260322111107-d934756-prod`
 
 
 ## 关联发布版本
 
-无
+- `20260322105731-d934756-dev`
 
 
 ## 计划
@@ -120,13 +120,15 @@ t-038
 - 当前生产版本若不经过 preview 验收就直接吸收这轮结构调整，容易把台账问题带到主线
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
-- 记忆：`memory/architecture/system-overview.md`
+- 记忆：`no change: release closeout only`
 - 索引：`no change: structure cleanup only`
 - 路线图：`memory/project/roadmap.md`, `memory/project/operating-blueprint.md`, `memory/project/current-state.md`
 - 文档：`tasks/queue/task-038-autonomy-entropy-reduction.md`, `AGENTS.md`, `docs/AI_OPERATING_MODEL.md`, `docs/DEV_WORKFLOW.md`, `docs/PROJECT_RULES.md`, `docs/ARCHITECTURE.md`
 
 ## 复盘
+
+- 这轮高 ROI 收口有效，但 bootstrap 渲染器、live 文档和任务台账必须继续串行对齐，否则旧噪声会重新长回。

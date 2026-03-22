@@ -45,8 +45,8 @@ related_docs:
 ## 当前焦点
 
 - 本地 production 当前稳定运行在 `3010`；`main` 已发布，但常驻进程仍需要人工确认是否在线。
-- 当前正在执行 `t-038`：收口 task identity、规则层与 cockpit 残余冗余，避免旧规则和旧读模型继续长回。
-- 当前阶段不扩 orchestration UI、数据库或新运行时，只做单一真相与 AI 自主链路的继续减熵。
+- `t-038` 已完成并发布，短编号唯一性、任务/发布显式绑定、首页假状态与 live 文档空壳规则已完成一轮收口。
+- 当前阶段不扩 orchestration UI、数据库或新运行时；下一步先评估下一轮高 ROI 收敛或新的 Delivery Framework 阶段任务。
 
 ## 当前推荐校验顺序
 
@@ -72,4 +72,5 @@ related_docs:
 - `pnpm preview:check`
 - `pnpm prod:check`
 - `pnpm coord:check:pre-task`
+- 确认下一条主线任务是否继续做结构收口，或切入新的 Delivery Framework 阶段目标
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->
