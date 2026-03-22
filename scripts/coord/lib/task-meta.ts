@@ -115,8 +115,11 @@ function mergeCompanion(existing, parsed) {
     contract: {
       ...(current.contract || {}),
       ...(next.contract || {}),
-      planned_files: next.contract.planned_files,
-      planned_modules: next.contract.planned_modules,
+      planned_files: uniqueStrings([...(current.contract?.planned_files || []), ...(next.contract?.planned_files || [])]),
+      planned_modules: uniqueStrings([
+        ...(current.contract?.planned_modules || []),
+        ...(next.contract?.planned_modules || []),
+      ]),
     },
     lifecycle: { ...createEmptyLifecycle(), ...(current.lifecycle || {}) },
     artifacts: {
