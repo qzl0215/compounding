@@ -102,7 +102,7 @@ t-040
 ## 计划
 
 1. 更新 `roadmap / operating-blueprint / current-state`，补齐阶段模型和待思考/待规划分区。
-2. 引入 stage-first 投影层，派生首页、任务页和知识库首屏所需的阶段项。
+2. 引入 stage-first 投影层，并拆出 `overview-items` helper，派生首页、任务页和知识库首屏所需的阶段项。
 3. 重构首页、任务页、知识库和发布页的首屏结构与文案。
 4. 收口 `AGENTS / DEV_WORKFLOW / AI_OPERATING_MODEL / WORK_MODES` 的人机分工规则。
 5. 跑 lint / test / build / 校验器，生成 `dev` 预览并交付验收。
