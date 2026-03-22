@@ -42,6 +42,7 @@ t-037
 - `apps/studio/src/modules/portal/service.ts`
 - `apps/studio/src/modules/portal/builders.ts`
 - `apps/studio/src/modules/portal/types.ts`
+- `apps/studio/src/components/shell/app-shell.tsx`
 - `apps/studio/src/modules/portal/__tests__/home-dashboard.test.tsx`
 - `apps/studio/src/modules/portal/__tests__/service.test.ts`
 - `memory/project/current-state.md`
@@ -70,7 +71,7 @@ t-037
 
 ## 一句复盘
 
-首页已收口为决策板，本轮进一步把标题层级收紧，避免同义重复和中英混杂。
+首页已收口为决策板，本轮补齐任务伴随体的计划文件边界，消掉 pre-task 的 scope warning。
 
 ## 主发布版本
 
@@ -88,7 +89,7 @@ t-037
 
 ## 发布说明
 
-本任务已并入 main，首页已改为决策板布局；本轮是标题层文案细化，让首页表达更自然。
+本任务已并入 main，首页已改为决策板布局；本轮补齐 companion 的计划文件边界，并修正任务台账里的测试路径。
 
 ## 验收标准
 
@@ -111,8 +112,8 @@ done
 - 记忆：`no change: title wording refinement only`
 - 索引：`no change: title wording refinement only`
 - 路线图：`no change: title wording refinement only`
-- 文档：`tasks/queue/task-037-homepage-decision-board.md, apps/studio/src/components/shell/app-shell.tsx, apps/studio/src/modules/portal/components/home-dashboard.tsx, apps/studio/src/modules/portal/__tests__/home-dashboard.test.tsx, apps/studio/src/modules/portal/__tests__/service.test.tsx`
+- 文档：`tasks/queue/task-037-homepage-decision-board.md, apps/studio/src/components/shell/app-shell.tsx, apps/studio/src/modules/portal/components/home-dashboard.tsx, apps/studio/src/modules/portal/__tests__/home-dashboard.test.tsx, apps/studio/src/modules/portal/__tests__/service.test.ts`
 
 ## 复盘
 
-- 首页已收口为决策板，后续只保留判断局面和下钻入口所需的最小信息。
+- 首页已收口为决策板；伴随体里的 planned_files 也必须与真实改动对齐，否则 pre-task 仍会留下低价值噪音。
