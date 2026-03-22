@@ -65,19 +65,25 @@ class BootstrapScaffoldCliTests(BootstrapWorkspaceTestCase):
 
         self.assertEqual(snapshot, after)
 
-    def test_audit_rejects_missing_agents_roadmap_pointer(self) -> None:
+    def test_audit_rejects_missing_agents_plan_pointer(self) -> None:
         scaffold(self.brief_path, self.target)
         agents_path = self.target / AGENTS_PATH
         agents_text = agents_path.read_text(encoding="utf8")
         agents_path.write_text(
-            agents_text.replace("`memory/project/roadmap.md`", "`memory/project/missing-roadmap.md`", 1),
+            agents_text.replace(
+                "- 计划主源：`memory/project/operating-blueprint.md`",
+                "- 计划主源：`memory/project/missing-blueprint.md`",
+                1,
+            ),
             encoding="utf8",
         )
 
         result = audit(self.brief_path, self.target)
 
         self.assertFalse(result.passed)
-        self.assertTrue(any("AGENTS Current State must point to memory/project/roadmap.md as the planning source." in item for item in result.errors))
+        self.assertTrue(
+            any("AGENTS truth map must declare memory/project/operating-blueprint.md as the single plan source." in item for item in result.errors)
+        )
 
     def test_audit_rejects_legacy_live_docs_and_missing_experience_section(self) -> None:
         scaffold(self.brief_path, self.target)

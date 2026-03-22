@@ -5,10 +5,14 @@ describe("project overview", () => {
   it("surfaces the stage-first snapshot from markdown sources and runtime state", async () => {
     const overview = await getProjectOverview();
 
-    expect(overview.overview.oneLiner).toContain("AI-Native Repo");
-    expect(overview.overview.currentPhase).toContain("Stage-First");
-    expect(overview.homepage.headline).toBe("先定阶段，再定动作");
-    expect(overview.direction.summary).toContain("待思考");
+    expect(overview.overview.oneLiner).toContain("单层 Plan");
+    expect(overview.overview.currentPhase).toContain("Single-Plan");
+    expect(overview.homepage.headline).toBe("先扩选项，再收决策");
+    expect(overview.homepage.primaryStats).toHaveLength(4);
+    expect(overview.homepage.stageStats).toHaveLength(5);
+    expect(overview.homepage.decision.title.length).toBeGreaterThan(0);
+    expect(overview.homepage.routes).toHaveLength(3);
+    expect(overview.direction.summary).toContain("单层 plan");
     expect(overview.thinkingItems.length).toBeGreaterThan(0);
     expect(overview.planningItems.length).toBeGreaterThan(0);
     expect(

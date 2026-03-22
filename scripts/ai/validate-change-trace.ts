@@ -72,11 +72,15 @@ function validateTask(taskPath, changedFiles, errors) {
 
   const requiredSections = [
     ["当前模式", extractSection(content, "current_mode", root)],
+    ["父计划", extractSection(content, "parent_plan", root)],
+    ["计划快照", extractSection(content, "plan_snapshot", root)],
     ["分支", extractSection(content, "branch", root)],
     ["最近提交", extractSection(content, "recent_commit", root)],
     ["交付收益", extractSection(content, "delivery_benefit", root)],
     ["交付风险", extractSection(content, "delivery_risk", root)],
     ["一句复盘", extractSection(content, "delivery_retro", root)],
+    ["体验验收结果", extractSection(content, "experience_acceptance_result", root)],
+    ["测试策略", extractSection(content, "test_strategy", root)],
     ["状态", extractSection(content, "status", root)],
   ];
   for (const [label, value] of requiredSections) {

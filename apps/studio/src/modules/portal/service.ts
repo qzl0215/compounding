@@ -7,7 +7,7 @@ import {
   buildRuntimeFacts,
   toRuntimeSignal,
 } from "./builders";
-import { buildAcceptanceReleaseItems, buildDocItems, buildReleasedItems, buildTaskItem, dedupeItems } from "./overview-items";
+import { buildAcceptanceReleaseItems, buildDocItems, buildReleasedItems, buildTaskItem } from "./overview-items";
 import { normalizeInline, parseBulletList, parseBulletMap } from "./parsing";
 import { groupTaskRowsByDemandStage } from "./stage-model";
 import type { HomeEntryLink, ProjectOverviewSnapshot, SemanticEntry, SemanticEntryGroup } from "./types";
@@ -15,10 +15,9 @@ import type { HomeEntryLink, ProjectOverviewSnapshot, SemanticEntry, SemanticEnt
 export const DEFAULT_DOC_PATH = "AGENTS.md";
 
 export const HOME_ENTRY_LINKS: HomeEntryLink[] = [
-  { href: "/knowledge-base?path=AGENTS.md", label: "执行入口", scope: "agents" },
-  { href: "/knowledge-base?path=memory/project/roadmap.md", label: "战略路线", scope: "roadmap" },
-  { href: "/tasks", label: "执行面板", scope: "tasks" },
-  { href: "/releases", label: "发布事实", scope: "release" },
+  { href: "/knowledge-base", label: "证据库", description: "看主源、规则和背景。", scope: "memory" },
+  { href: "/tasks", label: "执行面板", description: "看真正可推进的事项。", scope: "tasks" },
+  { href: "/releases", label: "发布事实", description: "看验收、版本和运行态。", scope: "release" },
 ];
 
 export async function getProjectOverview(): Promise<ProjectOverviewSnapshot> {
@@ -31,18 +30,14 @@ export async function getProjectOverview(): Promise<ProjectOverviewSnapshot> {
 
   const missionAndVision = parseBulletMap(extractSection(currentState.content, "mission_and_vision") ?? "");
   const frozenItems = parseBulletList(extractSection(currentState.content, "frozen_items") ?? "");
+  const blueprintOverview = normalizeInline(extractSection(blueprint.content, "plan_overview") ?? "");
   const roadmapPhase = normalizeInline(extractSection(roadmap.content, "current_phase") ?? "");
   const currentPriority = normalizeInline(extractSection(roadmap.content, "current_priority") ?? "");
-  const currentMilestone = normalizeInline(extractSection(blueprint.content, "current_milestone") ?? roadmapPhase);
-  const nextDirection = normalizeInline(
-    extractSection(roadmap.content, "next_direction") ?? extractSection(roadmap.content, "next_milestone") ?? ""
-  );
+  const currentMilestone = normalizeInline(extractSection(roadmap.content, "current_milestone") ?? roadmapPhase);
+  const nextDirection = normalizeInline(extractSection(roadmap.content, "next_direction") ?? "");
   const thinkingBacklog = parseBulletList(extractSection(blueprint.content, "thinking_backlog") ?? "");
   const nextConversation = parseBulletList(extractSection(blueprint.content, "next_conversation") ?? "");
-  const planningBacklog = dedupeItems([
-    ...parseBulletList(extractSection(roadmap.content, "planning_backlog") ?? ""),
-    ...parseBulletList(extractSection(blueprint.content, "planning_backlog") ?? ""),
-  ]);
+  const planningBacklog = parseBulletList(extractSection(blueprint.content, "planning_backlog") ?? "");
   const taskRows = deliverySnapshot.projections.taskRows;
   const releaseDashboard = deliverySnapshot.facts.releaseDashboard;
   const stageBuckets = groupTaskRowsByDemandStage(taskRows);
@@ -56,7 +51,7 @@ export async function getProjectOverview(): Promise<ProjectOverviewSnapshot> {
     : "当前无待验收版本";
 
   const snapshot = {
-    overview: buildOverviewSummary(missionAndVision, roadmapPhase, currentMilestone, currentPriority),
+    overview: buildOverviewSummary(blueprintOverview || missionAndVision["使命"] || "", roadmapPhase, currentMilestone, currentPriority),
     direction: buildDirectionSummary(nextDirection || currentPriority),
     thinkingItems: buildDocItems({
       values: thinkingBacklog,
@@ -69,8 +64,8 @@ export async function getProjectOverview(): Promise<ProjectOverviewSnapshot> {
       ...buildDocItems({
         values: planningBacklog,
         stage: "planning",
-        source: "路线图 / 蓝图",
-        evidenceHref: "/knowledge-base?path=memory/project/roadmap.md",
+        source: "运营蓝图",
+        evidenceHref: "/knowledge-base?path=memory/project/operating-blueprint.md",
       }),
       ...stageBuckets.planning.map((row) => buildTaskItem(row)),
     ],
@@ -93,7 +88,7 @@ export async function getProjectOverview(): Promise<ProjectOverviewSnapshot> {
 
   return {
     ...snapshot,
-    homepage: buildHomepageProjection(snapshot),
+    homepage: buildHomepageProjection(snapshot, HOME_ENTRY_LINKS),
   };
 }
 
@@ -104,11 +99,11 @@ export async function getSemanticEntryGroups(): Promise<SemanticEntryGroup[]> {
   return [
     {
       title: "项目全貌",
-      description: "先看当前状态、路线图和运营蓝图。",
+      description: "先看需求总览、战略摘要和运营快照。",
       items: [
+        entryDoc("运营蓝图", "memory/project/operating-blueprint.md", "唯一 plan 主源"),
+        entryDoc("路线图", "memory/project/roadmap.md", "阶段、里程碑和方向"),
         entryDoc("当前状态", "memory/project/current-state.md", "当前运营快照"),
-        entryDoc("路线图", "memory/project/roadmap.md", "当前阶段、方向与待规划"),
-        entryDoc("运营蓝图", "memory/project/operating-blueprint.md", "待思考、待规划与下一步对话"),
         entryDoc("AGENTS 入口", "AGENTS.md", "高频执行入口"),
       ],
     },
@@ -124,8 +119,8 @@ export async function getSemanticEntryGroups(): Promise<SemanticEntryGroup[]> {
       title: "待规划证据",
       description: "已经成立但还没收口的方向与规划边界。",
       items: [
-        entryDoc("路线图 · 待规划", "memory/project/roadmap.md", "下一阶段方向与待规划"),
         entryDoc("运营蓝图 · 待规划", "memory/project/operating-blueprint.md", "待验证的规划边界"),
+        entryDoc("运营蓝图 · 测试策略", "memory/project/operating-blueprint.md", "何时引入、优化和退休测试"),
         entryLink("执行面板", "/tasks", "查看规划类 task 与可执行事项的分界"),
       ],
     },

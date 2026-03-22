@@ -1,6 +1,7 @@
 import { getRuntimeStatusExplanation, type LocalRuntimeStatus } from "@/modules/releases";
 import type {
   CockpitRuntimeSignal,
+  HomeEntryLink,
   HomepageProjection,
   ProjectOverviewDirection,
   ProjectOverviewSnapshot,
@@ -9,13 +10,13 @@ import type {
 } from "./types";
 
 export function buildOverviewSummary(
-  missionAndVision: Record<string, string>,
+  oneLiner: string,
   currentPhase: string,
   currentMilestone: string,
   currentPriority: string,
 ): ProjectOverviewSummary {
   return {
-    oneLiner: missionAndVision["使命"] ?? "项目一句话尚未写入主源。",
+    oneLiner: oneLiner || "项目一句话尚未写入主源。",
     currentPhase: currentPhase || "当前阶段尚未定义。",
     currentMilestone: currentMilestone || "当前里程碑尚未定义。",
     currentPriority: currentPriority || "当前优先级尚未定义。",
@@ -78,31 +79,92 @@ export function toRuntimeSignal(label: string, runtime: LocalRuntimeStatus): Coc
   };
 }
 
-export function buildHomepageProjection(snapshot: Pick<
-  ProjectOverviewSnapshot,
-  "overview" | "direction" | "thinkingItems" | "planningItems" | "readyItems" | "doingItems" | "acceptanceItems"
->): HomepageProjection {
+export function buildHomepageProjection(
+  snapshot: Pick<
+    ProjectOverviewSnapshot,
+    | "overview"
+    | "direction"
+    | "thinkingItems"
+    | "planningItems"
+    | "readyItems"
+    | "doingItems"
+    | "acceptanceItems"
+    | "runtimeFacts"
+  >,
+  routes: HomeEntryLink[],
+): HomepageProjection {
+  const topBlocked = snapshot.runtimeFacts.blockedItems[0];
+  const topThinking = snapshot.thinkingItems[0];
+  const topPlanning = snapshot.planningItems[0];
+  const topAcceptance = snapshot.acceptanceItems[0];
+  const topReady = snapshot.readyItems[0];
+  const topDoing = snapshot.doingItems[0];
+  const topCheckpoint = snapshot.runtimeFacts.nextCheckpoint[0];
+  const decision = topAcceptance
+    ? {
+        title: "当前先验收",
+        summary: `当前已有待验收事项。先完成 ${topAcceptance.title} 的验收判断，再决定下一轮动作。`,
+        evidenceHref: "/releases",
+        ctaLabel: "去发布页判断",
+        badge: snapshot.runtimeFacts.pendingDevSummary,
+      }
+    : topDoing
+      ? {
+          title: "当前先推进",
+          summary: `当前有执行中事项。先处理推进与阻塞：${topBlocked || topDoing.summary}`,
+          evidenceHref: topBlocked ? "/releases#runtime-status" : "/tasks",
+          ctaLabel: topBlocked ? "看运行与阻塞" : "看执行面板",
+          badge: `${snapshot.doingItems.length} 条执行中`,
+        }
+      : topReady
+        ? {
+            title: "当前可执行",
+            summary: `当前有已具备边界的事项。先推进 ${topReady.title} 这类 task，不再停留在泛化讨论。`,
+            evidenceHref: "/tasks",
+            ctaLabel: "去执行面板",
+            badge: `${snapshot.readyItems.length} 条待执行`,
+          }
+        : topPlanning
+          ? {
+              title: "当前先收边界",
+              summary: `像“${topPlanning.title}”这类事项仍在待规划。先定范围外、取舍和体验验收标准。`,
+              evidenceHref: topPlanning.evidenceHref,
+              ctaLabel: "看计划主源",
+              badge: `${snapshot.planningItems.length} 条待规划`,
+            }
+          : topThinking
+            ? {
+                title: "当前先扩选项",
+                summary: `像“${topThinking.title}”这类事项仍在待思考。先把问题、价值、时机和替代方案问清。`,
+                evidenceHref: topThinking.evidenceHref,
+                ctaLabel: "回主源补问题",
+                badge: `${snapshot.thinkingItems.length} 条待思考`,
+              }
+            : {
+                title: "当前主线稳定",
+                summary: topCheckpoint || snapshot.direction.nextConversationAction,
+                evidenceHref: snapshot.direction.evidenceHref,
+                ctaLabel: "看路线图",
+              };
+
   return {
     eyebrow: "需求总览",
-    headline: "先定阶段，再定动作",
-    subheadline: "先判断是待思考、待规划、待执行还是待验收，再决定讨论、建 task 或发布。",
+    headline: "先扩选项，再收决策",
+    subheadline: "单层 Plan 只在 operating-blueprint 收口。边界没清前，不进 task；结果未验收前，不继续堆改动。",
     primaryStats: [
       { label: "当前阶段", value: snapshot.overview.currentPhase },
       { label: "当前里程碑", value: snapshot.overview.currentMilestone },
+      { label: "当前优先级", value: snapshot.overview.currentPriority },
       { label: "下一方向", value: snapshot.direction.summary },
     ],
     stageStats: [
-      { label: "待思考", value: String(snapshot.thinkingItems.length) },
-      { label: "待规划", value: String(snapshot.planningItems.length) },
-      { label: "待执行", value: String(snapshot.readyItems.length) },
-      { label: "执行中", value: String(snapshot.doingItems.length) },
-      { label: "待验收", value: String(snapshot.acceptanceItems.length) },
+      { label: "待思考", value: String(snapshot.thinkingItems.length), hint: "先补问题" },
+      { label: "待规划", value: String(snapshot.planningItems.length), hint: "先收边界" },
+      { label: "待执行", value: String(snapshot.readyItems.length), hint: "可进 task" },
+      { label: "执行中", value: String(snapshot.doingItems.length), hint: "看推进" },
+      { label: "待验收", value: String(snapshot.acceptanceItems.length), hint: "先判断" },
     ],
-    sectionHints: {
-      thinking: "先定义问题，不开工",
-      planning: "先收口边界，再定方案",
-      execution: "只展示真正可执行的事项",
-      acceptance: "先完成验收，再继续推进",
-    },
+    decision,
+    routes,
   };
 }

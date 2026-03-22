@@ -55,7 +55,6 @@ def audit(config_path: Path, target: Path) -> AuditResult:
             result.errors.append(f"Legacy live docs path still exists: {relative_path}")
 
     agents_path = target / AGENTS_PATH
-    roadmap_path = target / "memory/project/roadmap.md"
     if agents_path.exists():
         agents_text = agents_path.read_text(encoding="utf8")
         for required in [
@@ -66,8 +65,8 @@ def audit(config_path: Path, target: Path) -> AuditResult:
         ]:
             if required not in agents_text:
                 result.errors.append(f"AGENTS must require reading {required}.")
-        if "`memory/project/roadmap.md`" not in agents_text:
-            result.errors.append("AGENTS Current State must point to memory/project/roadmap.md as the planning source.")
+        if "- 计划主源：`memory/project/operating-blueprint.md`" not in agents_text:
+            result.errors.append("AGENTS truth map must declare memory/project/operating-blueprint.md as the single plan source.")
 
     for relative_path in [AGENTS_PATH, *CANONICAL_DOCS, *MEMORY_DOCS, "code_index/module-index.md", "code_index/dependency-map.md"]:
         path = target / relative_path
@@ -95,9 +94,13 @@ def audit(config_path: Path, target: Path) -> AuditResult:
             "## 范围",
             "## 范围外",
             "## 约束",
+            "## 父计划",
+            "## 计划快照",
             "## 关联模块",
             "## 分支",
             "## 最近提交",
+            "## 体验验收结果",
+            "## 测试策略",
             "## 计划",
             "## 发布说明",
             "## 验收标准",

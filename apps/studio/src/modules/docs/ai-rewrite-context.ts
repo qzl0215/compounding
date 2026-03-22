@@ -28,10 +28,10 @@ export async function buildRewriteContext(args: {
     readDoc("docs/PROJECT_RULES.md"),
   ]);
 
-  const currentPriority = stripMarkdown(extractSection(agents.content, "current_priority") ?? "");
+  const currentPriority = stripMarkdown(extractSection(roadmap.content, "current_priority") ?? "");
   const currentPhase = stripMarkdown(extractSection(roadmap.content, "current_phase") ?? "");
-  const nextMilestone = stripMarkdown(extractSection(roadmap.content, "next_milestone") ?? "");
-  const blueprintGoals = stripMarkdown(extractSection(blueprint.content, "key_sub_goals") ?? "");
+  const nextMilestone = stripMarkdown(extractSection(roadmap.content, "current_milestone") ?? "");
+  const blueprintGoals = stripMarkdown(extractSection(blueprint.content, "plan_overview") ?? "");
   const projectSnapshot = stripMarkdown(extractSection(currentState.content, "project_snapshot") ?? "");
   const currentFocus = stripMarkdown(extractSection(currentState.content, "current_focus") ?? "");
   const missionVision = stripMarkdown(extractSection(currentState.content, "mission_and_vision") ?? "");

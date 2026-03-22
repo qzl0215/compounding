@@ -21,8 +21,8 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Compounding Project Cockpit",
-  description: "Human-first project cockpit with task, document, and release detail workbenches"
+  title: "Compounding Project Overview",
+  description: "Human-first project overview with evidence, execution, and release detail workbenches"
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

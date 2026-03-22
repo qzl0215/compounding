@@ -1,5 +1,5 @@
 import { extractFirstHeading, extractSection, stripMarkdown } from "@/modules/docs";
-import { deriveShortId, taskIdFromPath } from "../../../../../shared/task-identity";
+import { taskIdFromPath } from "../../../../../shared/task-identity";
 import type { TaskCard, TaskUpdateTrace, TaskStatus } from "./types";
 
 export function parseTaskCard(path: string, content: string): Omit<TaskCard, "git"> {
@@ -11,12 +11,16 @@ export function parseTaskCard(path: string, content: string): Omit<TaskCard, "gi
     title: extractFirstHeading(content) ?? path.split("/").pop() ?? path,
     goal: stripMarkdown(extractSection(content, "goal") ?? "当前任务尚未填写目标。"),
     status: normalizeTaskStatus(stripMarkdown(extractSection(content, "status") ?? "todo")),
+    parentPlan: stripMarkdown(extractSection(content, "parent_plan") ?? ""),
+    planSnapshot: stripMarkdown(extractSection(content, "plan_snapshot") ?? ""),
     currentMode: stripMarkdown(extractSection(content, "current_mode") ?? ""),
     branch: stripMarkdown(extractSection(content, "branch") ?? ""),
     recentCommit: stripMarkdown(extractSection(content, "recent_commit") ?? ""),
     deliveryBenefit: stripMarkdown(extractSection(content, "delivery_benefit") ?? extractSection(content, "goal") ?? ""),
     deliveryRisk: stripMarkdown(extractSection(content, "delivery_risk") ?? extractSection(content, "risks") ?? ""),
     deliveryRetro: stripMarkdown(extractSection(content, "delivery_retro") ?? extractSection(content, "retrospective") ?? "未复盘"),
+    experienceAcceptanceResult: stripMarkdown(extractSection(content, "experience_acceptance_result") ?? "待验收"),
+    testStrategy: stripMarkdown(extractSection(content, "test_strategy") ?? "未记录"),
     primaryRelease: stripMarkdown(extractSection(content, "primary_release") ?? "未生成"),
     linkedReleases: parseLinkedReleases(content),
     companionReleaseIds: [],

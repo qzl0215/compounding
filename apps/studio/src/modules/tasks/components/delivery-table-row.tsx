@@ -89,6 +89,7 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
             <div className="grid gap-4 text-sm text-white/68 lg:grid-cols-3">
               <DetailBlock title="工程明细">
                 <p>任务路径：{row.path}</p>
+                <p>父计划：{row.parentPlan || "未标注"}</p>
                 <p>当前模式：{row.currentMode || "未标注"}</p>
                 <p>分支：{row.branch || "未绑定"}</p>
                 <p>最近提交：{row.git.recentCommit || row.recentCommit || "pending"}</p>
@@ -96,6 +97,11 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
               </DetailBlock>
               <DetailBlock title="关联模块">
                 {row.relatedModules.length > 0 ? row.relatedModules.map((item) => <p key={item}>{item}</p>) : <p>无</p>}
+              </DetailBlock>
+              <DetailBlock title="计划与验证">
+                <p>计划快照：{row.planSnapshot || "未记录"}</p>
+                <p>测试策略：{row.testStrategy || "未记录"}</p>
+                <p>体验验收结果：{row.experienceAcceptanceResult || "待验收"}</p>
               </DetailBlock>
               <DetailBlock title="更新痕迹">
                 <p>记忆：{row.updateTrace.memory}</p>
@@ -125,8 +131,9 @@ function DetailBlock({ title, children }: { title: string; children: ReactNode }
 }
 
 function truncate(value: string, maxLength: number) {
-  if (value.length <= maxLength) {
-    return value;
+  const safe = value || "";
+  if (safe.length <= maxLength) {
+    return safe;
   }
-  return `${value.slice(0, maxLength - 1)}…`;
+  return `${safe.slice(0, maxLength - 1)}…`;
 }

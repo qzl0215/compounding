@@ -26,12 +26,16 @@ export type TaskCard = {
   title: string;
   goal: string;
   status: TaskStatus;
+  parentPlan: string;
+  planSnapshot: string;
   currentMode: string;
   branch: string;
   recentCommit: string;
   deliveryBenefit: string;
   deliveryRisk: string;
   deliveryRetro: string;
+  experienceAcceptanceResult: string;
+  testStrategy: string;
   primaryRelease: string;
   linkedReleases: string[];
   companionReleaseIds: string[];

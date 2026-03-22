@@ -32,6 +32,7 @@ related_docs:
   - `待验收`：先给链接和判断标准，不继续堆新改动
   - `已发布`：先做复盘与后续影响判断
 - `task` 是执行边界，不承接未成熟需求；模糊事项继续留在 `roadmap / operating-blueprint`
+- 当前只允许一层 plan；`memory/project/operating-blueprint.md` 是唯一 plan 主源，`roadmap` 只记录战略摘要与里程碑
 - 人只做价值判断、需求澄清和结果验收；AI 默认负责其余执行闭环
 
 ## 预任务护栏
@@ -51,12 +52,12 @@ related_docs:
 
 ### 规划链
 
-- 触发：`roadmap`、`operating-blueprint` 或发布标准不清，或者用户要求先共商方向。
+- 触发：方向成立但边界、取舍、优先级、成功标准或体验验收标准不清。
 - 最小动作：
-  1. 先读 `memory/project/roadmap.md` 与 `memory/project/operating-blueprint.md`。
-  2. 必要时用 `scripts/ai/create-task.ts` 生成规划 task。
-  3. 和用户确认边界后，再进入方案评审或直接结束规划。
-- 输出：可执行里程碑、规划 task、更新后的战略真相。
+  1. 先读 `memory/project/operating-blueprint.md`，再对齐 `memory/project/roadmap.md` 的战略摘要。
+  2. 先扩选项，再收关键决策，最后决定是否产出 task。
+  3. 只有规划工作本身明确时，才用 `scripts/ai/create-task.ts` 生成规划 task。
+- 输出：单层 plan、体验验收标准、必要时产出的 task。
 
 ### 执行链
 
@@ -93,10 +94,10 @@ related_docs:
 
 1. 先读 `AGENTS.md`
 2. 再读 `docs/PROJECT_RULES.md`、`docs/ARCHITECTURE.md`
-3. 再读 `memory/project/roadmap.md`、`memory/project/operating-blueprint.md` 与 `memory/project/current-state.md`
+3. 再读 `memory/project/operating-blueprint.md`、`memory/project/roadmap.md` 与 `memory/project/current-state.md`
 4. 先判断当前是 `待思考 / 待规划 / 待执行 / 执行中 / 待验收 / 已发布`
-5. 若仍处于 `待思考`，只做启发式对话与主源补充，不进入执行 task
-6. 若处于 `待规划`，先收口边界；只有规划工作本身明确时，才创建规划 task，并在涉及价值判断或用户可感知分叉时与用户共商
+5. 若仍处于 `待思考`，先扩问题、价值、时机、替代方案与失败方式，不进入执行 task
+6. 若处于 `待规划`，先收目标、范围外、取舍、优先级和体验验收标准；只有规划工作本身明确时，才创建规划 task，并在涉及价值判断或用户可感知分叉时与用户共商
 7. 若已进入 `待执行 / 执行中`，再读当前任务文件、相关 `module.md`、`code_index/*`
 8. 运行 `python3 scripts/pre_mutation_check.py`
 9. 完成最小可验证改动，并更新 `task / memory / code_index / docs`
@@ -180,9 +181,10 @@ related_docs:
 - 每个 `structural / release` 改动必须绑定 `tasks/queue/*`
 - 默认先更新 task，再改代码；改完后补齐更新痕迹和必要回写
 - 任何 `structural / release` repo-tracked 改动若没有 task 文件变更，视为硬失败
-- 每个 task 至少包含 目标 / 为什么 / 范围 / 范围外 / 约束 / 关联模块 / 当前模式 / 分支 / 最近提交 / 计划 / 发布说明 / 验收标准 / 风险 / 状态 / 更新痕迹 / 复盘
+- 每个 task 至少包含 目标 / 为什么 / 范围 / 范围外 / 约束 / 父计划 / 计划快照 / 关联模块 / 当前模式 / 分支 / 最近提交 / 计划 / 测试策略 / 体验验收结果 / 发布说明 / 验收标准 / 风险 / 状态 / 更新痕迹 / 复盘
 - 每个 task 还必须包含短编号；短编号格式固定为 `t-xxx`
 - task 模板默认补齐 `交付收益 / 交付风险 / 一句复盘`，供任务页高密度摘要表直接读取
+- 不是每个 task 都必须新增测试，但每个结构性 task 都必须写清测试策略：为什么要测、测什么、不测什么、为什么当前最划算
 - 修改结束后要同步更新任务状态和验收结果
 - 每个 task 对应一条短分支；进入 `main` 后，任务状态与 Git 状态必须一致
 - task 默认挂到当前工作模式，而不是挂到角色名称
@@ -204,6 +206,15 @@ related_docs:
   2. 再基于用户补充重构正文
 - AI 重构结果必须先预览，再人工应用；不得自动直接落盘
 - 若文档结构过于复杂，允许回退到高级模式编辑
+
+## Test 治理
+
+- 默认采用风险驱动最小集，不以测试数量作为完成感
+- `待思考` 只识别风险，不写测试代码
+- `待规划` 先定义测试策略和关键失败模式
+- `待执行 / 执行中` 只补最能抓关键错误的测试
+- `待验收` 以 smoke、运行时检查和体验验收为主
+- 被更高层稳定覆盖、长期不抓独特错误、保护已删除行为或成本过高的测试，应合并、降级或退休
 
 ## 发布规则
 

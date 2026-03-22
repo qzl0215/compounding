@@ -24,6 +24,8 @@ last_reviewed_at: 2026-03-22
 - 默认先做只读盘点，再做最小可验证改动。
 - 默认先做高 ROI 动作，不做过度工程和抽象炫技。
 - 人只做价值判断、需求澄清和结果验收；AI 默认负责执行闭环。
+- 只允许一层 plan；`memory/project/operating-blueprint.md` 是唯一 plan 主源，`memory/project/roadmap.md` 只保留战略摘要与里程碑。
+- AI 进入 task 前，默认先扩选项，再收关键决策，最后对准体验级验收结果。
 - 改动门禁固定分级：`light` 只覆盖 `docs/*`、`memory/*`、`code_index/*`、现有 `tasks/queue/*`；`structural` 覆盖代码、脚本、模板与依赖；`release` 覆盖发布和运行时链路。
 - 任何结构性改动都必须绑定任务、更新相关记忆，并在进入 `main` 前完成 review。
 - 每个执行 task 对应一条短分支；任务状态、最近提交与是否并入 `main` 必须可追踪。
@@ -41,7 +43,7 @@ last_reviewed_at: 2026-03-22
 
 - 战略真相：`memory/project/roadmap.md`
 - 运营快照：`memory/project/current-state.md`
-- 战术蓝图：`memory/project/operating-blueprint.md`
+- 计划主源：`memory/project/operating-blueprint.md`
 - 角色定义：`docs/ORG_MODEL.md`
 - 工作模式：`docs/WORK_MODES.md`
 - 工作流：`docs/DEV_WORKFLOW.md`
@@ -63,6 +65,9 @@ last_reviewed_at: 2026-03-22
   - 环境说明
   - 页面链接
   - 如何验收
+- 在 `待思考 / 待规划`，AI 默认先做两件事：
+  - 扩展可选项与隐藏约束
+  - 收敛关键决策与体验验收标准
 - 进入下一候选事项时，只有在 `待思考 / 待规划`、存在用户可感知分叉，或涉及高风险不可逆动作时，才先提供：
   - 中文任务摘要
   - 可执行方案

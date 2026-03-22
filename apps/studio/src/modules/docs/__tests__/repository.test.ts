@@ -21,12 +21,11 @@ describe("docs repository", () => {
     expect(memoryNode?.children?.some((node) => node.path === "memory/project")).toBe(true);
   });
 
-  it("keeps the home entry links focused on execution and release entry points", () => {
+  it("keeps the home entry links focused on evidence, execution, and release entry points", () => {
     expect(HOME_ENTRY_LINKS).toEqual([
-      { href: "/knowledge-base?path=AGENTS.md", label: "执行入口", scope: "agents" },
-      { href: "/knowledge-base?path=memory/project/roadmap.md", label: "战略路线", scope: "roadmap" },
-      { href: "/tasks", label: "执行面板", scope: "tasks" },
-      { href: "/releases", label: "发布事实", scope: "release" }
+      { href: "/knowledge-base", label: "证据库", description: "看主源、规则和背景。", scope: "memory" },
+      { href: "/tasks", label: "执行面板", description: "看真正可推进的事项。", scope: "tasks" },
+      { href: "/releases", label: "发布事实", description: "看验收、版本和运行态。", scope: "release" }
     ]);
   });
 

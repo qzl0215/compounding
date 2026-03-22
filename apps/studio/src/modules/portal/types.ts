@@ -1,7 +1,27 @@
 export type HomeEntryLink = {
   href: string;
   label: string;
+  description: string;
   scope: "agents" | "roadmap" | "memory" | "tasks" | "release";
+};
+
+export type HomepageStat = {
+  label: string;
+  value: string;
+};
+
+export type HomepageStageStat = {
+  label: string;
+  value: string;
+  hint: string;
+};
+
+export type HomepageDecision = {
+  title: string;
+  summary: string;
+  evidenceHref: string;
+  ctaLabel: string;
+  badge?: string;
 };
 
 export type SemanticEntry = {
@@ -30,23 +50,14 @@ export type ProjectOverviewDirection = {
   evidenceHref: string;
 };
 
-export type HomepageStat = {
-  label: string;
-  value: string;
-};
-
 export type HomepageProjection = {
   eyebrow: string;
   headline: string;
   subheadline: string;
   primaryStats: HomepageStat[];
-  stageStats: HomepageStat[];
-  sectionHints: {
-    thinking: string;
-    planning: string;
-    execution: string;
-    acceptance: string;
-  };
+  stageStats: HomepageStageStat[];
+  decision: HomepageDecision;
+  routes: HomeEntryLink[];
 };
 
 export type CockpitRuntimeSignal = {
