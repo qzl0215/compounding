@@ -785,6 +785,70 @@
   },
   {
     "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/overview-items.ts",
+    "symbol": "buildDocItems",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/overview-items.ts",
+    "symbol": "buildTaskItem",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/overview-items.ts",
+    "symbol": "buildAcceptanceReleaseItems",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/overview-items.ts",
+    "symbol": "buildReleasedItems",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/overview-items.ts",
+    "symbol": "dedupeItems",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/overview-items.ts",
+    "symbol": "summarizeTaskRow",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/overview-items.ts",
+    "symbol": "splitItemText",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/overview-items.ts",
+    "symbol": "dedupeById",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/parsing.ts",
     "symbol": "parseBulletMap",
     "kind": "function",
@@ -835,70 +899,6 @@
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/service.ts",
     "symbol": "formatSyncStatus",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/service.ts",
-    "symbol": "buildDocItems",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/service.ts",
-    "symbol": "buildTaskItem",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/service.ts",
-    "symbol": "buildAcceptanceReleaseItems",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/service.ts",
-    "symbol": "buildReleasedItems",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/service.ts",
-    "symbol": "summarizeTaskRow",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/service.ts",
-    "symbol": "splitItemText",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/service.ts",
-    "symbol": "dedupeItems",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/service.ts",
-    "symbol": "dedupeById",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
