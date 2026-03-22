@@ -101,6 +101,7 @@ function parseTaskToCompanion(taskLike, content) {
 function mergeCompanion(existing, parsed) {
   const current = normalizeCompanion(existing);
   const next = normalizeCompanion(parsed);
+  const explicitCurrentMode = typeof parsed?.current_mode === "string" ? parsed.current_mode.trim() : "";
   return normalizeCompanion({
     ...current,
     task_id: next.task_id || current.task_id,
@@ -109,7 +110,7 @@ function mergeCompanion(existing, parsed) {
     task_path: next.task_path || current.task_path,
     title: next.title || current.title,
     goal: next.goal || current.goal,
-    current_mode: next.current_mode || current.current_mode,
+    current_mode: explicitCurrentMode || current.current_mode || next.current_mode,
     task_status: next.task_status || current.task_status,
     truth_boundaries: { ...(current.truth_boundaries || {}), ...(next.truth_boundaries || {}) },
     contract: {
