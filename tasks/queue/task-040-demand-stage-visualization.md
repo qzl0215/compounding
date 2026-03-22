@@ -89,7 +89,7 @@ t-040
 
 ## 一句复盘
 
-阶段投影已稳定，当前收口是把首页 item builder 从 `portal/service.ts` 拆出，降低后续迭代成本。
+阶段投影已稳定，当前收口重点是压缩首页表达层，让阶段判断更短、更硬、更利于决策。
 
 ## 主发布版本
 
@@ -133,9 +133,9 @@ doing
 
 ## 更新痕迹
 
-- 记忆：`no change: helper extraction only`
+- 记忆：`no change: homepage expression tightening only`
 - 索引：`code_index/function-index.json`
-- 路线图：`no change: helper extraction only`
+- 路线图：`no change: homepage expression tightening only`
 - 文档：`tasks/queue/task-040-demand-stage-visualization.md`
 
 ## 复盘

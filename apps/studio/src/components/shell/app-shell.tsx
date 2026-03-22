@@ -8,7 +8,7 @@ import type { PropsWithChildren } from "react";
 import { cn } from "@/lib/classnames";
 
 const navigation = [
-  { href: "/", label: "驾驶舱", icon: LayoutDashboard },
+  { href: "/", label: "总览", icon: LayoutDashboard },
   { href: "/tasks", label: "任务", icon: ListTodo },
   { href: "/knowledge-base", label: "文档", icon: BookOpen },
   { href: "/releases", label: "发布", icon: Rocket }
@@ -27,7 +27,7 @@ export function AppShell({ children, runtimeChannel }: PropsWithChildren<{ runti
             <div>
               <p className="text-xs uppercase tracking-[0.32em] text-accent">AI-Native Repo</p>
               <h1 className="mt-3 font-mono text-2xl font-semibold text-white">项目总览</h1>
-              <p className="mt-2 text-sm text-white/65">先判断需求在哪个环节，再决定看任务、证据还是发布</p>
+              <p className="mt-2 text-sm text-white/65">先定阶段，再定动作</p>
             </div>
             <div className="flex flex-col items-end gap-2">
               <Badge tone={runtimeChannel === "dev" ? "warning" : "accent"}>{runtimeChannel === "dev" ? "DEV" : "PROD"}</Badge>
@@ -60,16 +60,6 @@ export function AppShell({ children, runtimeChannel }: PropsWithChildren<{ runti
               );
             })}
           </nav>
-          <div className="mt-8 rounded-3xl border border-white/8 bg-white/[0.04] p-4">
-            <p className="text-xs uppercase tracking-[0.28em] text-white/45">阅读顺序</p>
-            <p className="mt-3 text-sm leading-7 text-white/72">
-              新问题先看首页判断它是待思考、待规划还是待执行；需要证据时去知识库，需要推进时去任务页，需要验收时去发布页。
-            </p>
-            <Link className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-accent" href="/knowledge-base">
-              <BookOpen className="size-3.5" />
-              打开证据库
-            </Link>
-          </div>
         </aside>
         <main className="flex-1">{children}</main>
       </div>

@@ -30,6 +30,25 @@ export type ProjectOverviewDirection = {
   evidenceHref: string;
 };
 
+export type HomepageStat = {
+  label: string;
+  value: string;
+};
+
+export type HomepageProjection = {
+  eyebrow: string;
+  headline: string;
+  subheadline: string;
+  primaryStats: HomepageStat[];
+  stageStats: HomepageStat[];
+  sectionHints: {
+    thinking: string;
+    planning: string;
+    execution: string;
+    acceptance: string;
+  };
+};
+
 export type CockpitRuntimeSignal = {
   label: string;
   status: string;
@@ -64,6 +83,7 @@ export type RuntimeFacts = {
 export type ProjectOverviewSnapshot = {
   overview: ProjectOverviewSummary;
   direction: ProjectOverviewDirection;
+  homepage: HomepageProjection;
   thinkingItems: DemandStageItem[];
   planningItems: DemandStageItem[];
   readyItems: DemandStageItem[];

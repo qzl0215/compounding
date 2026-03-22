@@ -785,6 +785,14 @@
   },
   {
     "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/builders.ts",
+    "symbol": "buildHomepageProjection",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/overview-items.ts",
     "symbol": "buildDocItems",
     "kind": "function",

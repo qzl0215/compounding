@@ -14,21 +14,21 @@ export const DEMAND_STAGE_LABELS: Record<DemandStage, string> = {
 };
 
 export const DEMAND_STAGE_HINTS: Record<DemandStage, string> = {
-  thinking: "现在不是该开工的时候",
-  planning: "现在该先把边界说清",
+  thinking: "先定义问题，不开工",
+  planning: "先收口边界，再定方案",
   ready: "现在可以进 task",
-  doing: "现在该围绕交付推进",
-  acceptance: "现在该验收，不该继续堆改动",
-  released: "现在该看复盘与后续影响",
+  doing: "先围绕交付推进",
+  acceptance: "先完成验收",
+  released: "先看复盘与影响",
 };
 
 export const DEMAND_STAGE_ACTIONS: Record<DemandStage, string> = {
-  thinking: "先问问题是什么、为什么现在、成功算什么、不做会怎样。",
-  planning: "先问范围、范围外、取舍、优先级和验收标准。",
-  ready: "先确认 task 边界、约束和验收标准，再进入执行。",
-  doing: "先看阻塞、风险和下一步动作，不再回到模糊讨论。",
-  acceptance: "先完成验收判断，再决定是否继续推进或发布。",
-  released: "先复盘结果和后续影响，再决定下一轮动作。",
+  thinking: "先补问题、时机和成功标准。",
+  planning: "先定范围外、取舍和验收标准。",
+  ready: "确认边界后进入 task。",
+  doing: "先处理阻塞和下一步。",
+  acceptance: "先做通过或驳回判断。",
+  released: "先看复盘，再定后续。",
 };
 
 export function groupTaskRowsByDemandStage(rows: TaskDeliveryRow[]) {

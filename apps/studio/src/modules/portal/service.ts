@@ -1,6 +1,7 @@
 import { extractSection, readDoc } from "@/modules/docs";
 import { getDeliverySnapshot } from "@/modules/delivery";
 import {
+  buildHomepageProjection,
   buildDirectionSummary,
   buildOverviewSummary,
   buildRuntimeFacts,
@@ -51,12 +52,10 @@ export async function getProjectOverview(): Promise<ProjectOverviewSnapshot> {
   ];
   const nextCheckpoint = parseBulletList(extractSection(currentState.content, "next_checkpoint") ?? "");
   const pendingDevSummary = releaseDashboard.pending_dev_release
-    ? `当前存在待验收 dev：${releaseDashboard.pending_dev_release.release_id}。先完成验收判断，再决定是否继续推进。`
-    : releaseDashboard.active_release_id
-      ? `当前没有待验收 dev。已激活的 production 版本是 ${releaseDashboard.active_release_id}。`
-      : "当前没有待验收 dev，也还没有激活的 production 版本。";
+    ? `待验收版本：${releaseDashboard.pending_dev_release.release_id}`
+    : "当前无待验收版本";
 
-  return {
+  const snapshot = {
     overview: buildOverviewSummary(missionAndVision, roadmapPhase, currentMilestone, currentPriority),
     direction: buildDirectionSummary(nextDirection || currentPriority),
     thinkingItems: buildDocItems({
@@ -90,6 +89,11 @@ export async function getProjectOverview(): Promise<ProjectOverviewSnapshot> {
       frozenItems,
       [toRuntimeSignal("dev 预览", releaseDashboard.local_preview), toRuntimeSignal("production", releaseDashboard.local_runtime)],
     ),
+  };
+
+  return {
+    ...snapshot,
+    homepage: buildHomepageProjection(snapshot),
   };
 }
 

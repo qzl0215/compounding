@@ -53,16 +53,15 @@ export function DemandItemList({
             ) : null}
           </div>
           <p className="mt-3 text-sm leading-6 text-white/72">{item.summary}</p>
-          <div className="mt-4 rounded-2xl border border-accent/15 bg-accent/8 px-4 py-3">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-accent/80">AI 下一步</p>
-            <p className="mt-2 text-sm leading-6 text-white/80">{item.nextConversationAction}</p>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-white/8 pt-3">
+            <p className="text-xs uppercase tracking-[0.18em] text-accent/80">下一动作：{item.nextConversationAction}</p>
+            <Link
+              href={item.evidenceHref}
+              className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-accent transition hover:text-white"
+            >
+              查看证据
+            </Link>
           </div>
-          <Link
-            href={item.evidenceHref}
-            className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-accent transition hover:text-white"
-          >
-            查看证据
-          </Link>
         </article>
       ))}
     </div>
