@@ -77,7 +77,7 @@ t-040
 
 ## 最近提交
 
-`12a1011 feat: add stage-first demand overview`
+`3a19b94 refactor: extract portal overview items`
 
 ## 交付收益
 
@@ -89,7 +89,7 @@ t-040
 
 ## 一句复盘
 
-未复盘
+阶段投影已稳定，当前收口是把首页 item builder 从 `portal/service.ts` 拆出，降低后续迭代成本。
 
 ## 主发布版本
 
@@ -133,9 +133,9 @@ doing
 
 ## 更新痕迹
 
-- 记忆：`memory/project/current-state.md`
-- 索引：`no change: stage-first projection only`
-- 路线图：`memory/project/roadmap.md`, `memory/project/operating-blueprint.md`, `memory/project/current-state.md`
-- 文档：`tasks/queue/task-040-demand-stage-visualization.md`, `AGENTS.md`, `docs/DEV_WORKFLOW.md`, `docs/AI_OPERATING_MODEL.md`, `docs/WORK_MODES.md`
+- 记忆：`no change: helper extraction only`
+- 索引：`code_index/function-index.json`
+- 路线图：`no change: helper extraction only`
+- 文档：`tasks/queue/task-040-demand-stage-visualization.md`
 
 ## 复盘
