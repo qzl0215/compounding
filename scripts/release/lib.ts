@@ -1,99 +1,31 @@
 const fs = require("node:fs");
-const path = require("node:path");
 const { execFileSync } = require("node:child_process");
 const { releaseReload: releaseReloadImpl } = require("./reload.ts");
 const { extractSection, stripMarkdown } = require("../ai/lib/markdown-sections.ts");
 const { resolveTaskId, resolveTaskRecord } = require("../ai/lib/task-resolver.ts");
 const { readCompanionReleaseContext } = require("../coord/lib/task-meta.ts");
-
-function workspaceRoot() {
-  return process.cwd();
-}
-
-function runtimeRoot() {
-  return process.env.AI_OS_RELEASE_ROOT || path.resolve(workspaceRoot(), "..", ".compounding-runtime");
-}
-
-function layoutPaths() {
-  const root = runtimeRoot();
-  return {
-    root,
-    releasesDir: path.join(root, "releases"),
-    sharedDir: path.join(root, "shared"),
-    currentLink: path.join(root, "current"),
-    previewCurrentLink: path.join(root, "preview-current"),
-    registryPath: path.join(root, "registry.json"),
-    sharedEnvPath: path.join(root, "shared", "portal.env"),
-    lockPath: path.join(root, "release.lock"),
-  };
-}
-
-function ensureLayout() {
-  const layout = layoutPaths();
-  fs.mkdirSync(layout.releasesDir, { recursive: true });
-  fs.mkdirSync(layout.sharedDir, { recursive: true });
-  bootstrapSharedEnv(layout.sharedEnvPath);
-  return layout;
-}
-
-function bootstrapSharedEnv(sharedEnvPath) {
-  if (fs.existsSync(sharedEnvPath)) {
-    return;
-  }
-  for (const candidate of [".env.local", ".env"]) {
-    const source = path.join(workspaceRoot(), candidate);
-    if (fs.existsSync(source)) {
-      fs.copyFileSync(source, sharedEnvPath);
-      return;
-    }
-  }
-}
-
-function emptyRegistry() {
-  return { active_release_id: null, pending_dev_release_id: null, updated_at: null, releases: [] };
-}
-
-function readRegistry() {
-  const { registryPath } = ensureLayout();
-  if (!fs.existsSync(registryPath)) {
-    return emptyRegistry();
-  }
-  try {
-    const raw = JSON.parse(fs.readFileSync(registryPath, "utf8"));
-    return {
-      active_release_id: raw.active_release_id ?? null,
-      pending_dev_release_id: raw.pending_dev_release_id ?? null,
-      updated_at: raw.updated_at ?? null,
-      releases: Array.isArray(raw.releases) ? raw.releases.map(normalizeReleaseRecord) : [],
-    };
-  } catch {
-    return emptyRegistry();
-  }
-}
-
-function writeRegistry(registry) {
-  const { registryPath } = ensureLayout();
-  registry.updated_at = new Date().toISOString();
-  fs.writeFileSync(registryPath, JSON.stringify(registry, null, 2) + "\n");
-}
-
-function manifestPath(releaseId) {
-  return path.join(ensureLayout().releasesDir, releaseId, "release-manifest.json");
-}
-
-function writeManifest(record) {
-  const file = manifestPath(record.release_id);
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, JSON.stringify(record, null, 2) + "\n");
-}
-
-function readManifest(releaseId) {
-  const file = manifestPath(releaseId);
-  if (!fs.existsSync(file)) {
-    throw new Error(`Unknown release: ${releaseId}`);
-  }
-  return normalizeReleaseRecord(JSON.parse(fs.readFileSync(file, "utf8")));
-}
+const {
+  ensureLayout,
+  layoutPaths,
+  previewBaseUrl,
+  productionBaseUrl,
+  runtimeRoot,
+  workspaceRoot,
+} = require("./runtime-layout.ts");
+const {
+  clearPendingDevRelease,
+  currentActiveRelease,
+  emptyRegistry,
+  manifestPath,
+  markActive,
+  pendingDevRelease,
+  readManifest,
+  readRegistry,
+  setPendingDevRelease,
+  upsertRelease,
+  writeManifest,
+  writeRegistry,
+} = require("./registry.ts");
 
 function run(command, args, cwd = workspaceRoot()) {
   return execFileSync(command, args, {
@@ -151,17 +83,28 @@ function parseTaskIdList(value) {
     .filter((item, index, values) => values.indexOf(item) === index);
 }
 
+function firstMeaningfulLine(value) {
+  return String(value || "")
+    .split(/\r?\n/)
+    .map((line) => stripMarkdown(line).replace(/^[-*]\s*/, "").trim())
+    .find(Boolean) || "";
+}
+
 function readTaskDeliveryMetadata(taskId) {
   const record = resolveTaskRecord(taskId, workspaceRoot());
   if (!record) {
     throw new Error(`Unknown task: ${taskId}`);
   }
-  const file = path.join(workspaceRoot(), record.path);
+  const file = require("node:path").join(workspaceRoot(), record.path);
   const content = fs.readFileSync(file, "utf8");
   const shortId = stripMarkdown(extractSection(content, "short_id", workspaceRoot()) || record.shortId);
   const title = record.title;
-  const benefit = firstMeaningfulLine(extractSection(content, "delivery_benefit", workspaceRoot()) || extractSection(content, "goal", workspaceRoot()) || "");
-  const risk = firstMeaningfulLine(extractSection(content, "delivery_risk", workspaceRoot()) || extractSection(content, "risks", workspaceRoot()) || "");
+  const benefit = firstMeaningfulLine(
+    extractSection(content, "delivery_benefit", workspaceRoot()) || extractSection(content, "goal", workspaceRoot()) || ""
+  );
+  const risk = firstMeaningfulLine(
+    extractSection(content, "delivery_risk", workspaceRoot()) || extractSection(content, "risks", workspaceRoot()) || ""
+  );
   const companionContext = readCompanionReleaseContext(record.id);
   return {
     id: record.id,
@@ -176,13 +119,6 @@ function readTaskDeliveryMetadata(taskId) {
 
 function resolveCanonicalTaskIds(taskIds) {
   return Array.from(new Set((taskIds || []).map((taskId) => resolveTaskId(taskId, workspaceRoot())).filter(Boolean)));
-}
-
-function firstMeaningfulLine(value) {
-  return String(value || "")
-    .split(/\r?\n/)
-    .map((line) => stripMarkdown(line).replace(/^[-*]\s*/, "").trim())
-    .find(Boolean) || "";
 }
 
 function updateChannelSymlink(target, channel = "prod") {
@@ -203,106 +139,6 @@ function updateChannelSymlink(target, channel = "prod") {
 function clearChannelSymlink(channel = "dev") {
   const { currentLink, previewCurrentLink } = ensureLayout();
   fs.rmSync(channel === "dev" ? previewCurrentLink : currentLink, { force: true, recursive: true });
-}
-
-function upsertRelease(record) {
-  const registry = readRegistry();
-  const normalizedRecord = normalizeReleaseRecord(record);
-  const existingIndex = registry.releases.findIndex((item) => item.release_id === normalizedRecord.release_id);
-  if (existingIndex >= 0) {
-    registry.releases[existingIndex] = normalizedRecord;
-  } else {
-    registry.releases.push(normalizedRecord);
-  }
-  writeRegistry(registry);
-  writeManifest(normalizedRecord);
-  return registry;
-}
-
-function markActive(releaseId, rollbackFrom = null) {
-  const registry = readRegistry();
-  const now = new Date().toISOString();
-  registry.active_release_id = releaseId;
-  registry.releases = registry.releases.map((item) => {
-    if (item.release_id === releaseId) {
-      return {
-        ...item,
-        channel: "prod",
-        acceptance_status: "accepted",
-        status: "active",
-        cutover_at: now,
-        rollback_from: rollbackFrom,
-      };
-    }
-    if (item.channel === "prod" && item.status === "active") {
-      return { ...item, status: rollbackFrom ? "rolled_back" : "superseded", rollback_from: null };
-    }
-    return item;
-  });
-  writeRegistry(registry);
-  registry.releases.forEach((item) => writeManifest(item));
-  return registry;
-}
-
-function currentActiveRelease(registry = readRegistry()) {
-  return registry.releases.find((item) => item.release_id === registry.active_release_id) || null;
-}
-
-function pendingDevRelease(registry = readRegistry()) {
-  const direct = registry.pending_dev_release_id
-    ? registry.releases.find((item) => item.release_id === registry.pending_dev_release_id)
-    : null;
-  if (direct) {
-    return direct;
-  }
-  return (
-    registry.releases
-      .filter((item) => item.channel === "dev" && item.acceptance_status === "pending")
-      .sort((left, right) => right.created_at.localeCompare(left.created_at))[0] || null
-  );
-}
-
-function setPendingDevRelease(releaseId) {
-  const registry = readRegistry();
-  registry.pending_dev_release_id = releaseId;
-  writeRegistry(registry);
-  return registry;
-}
-
-function clearPendingDevRelease() {
-  const registry = readRegistry();
-  registry.pending_dev_release_id = null;
-  writeRegistry(registry);
-  return registry;
-}
-
-function previewBaseUrl() {
-  const host = process.env.AI_OS_LOCAL_PREVIEW_HOST || "127.0.0.1";
-  const port = process.env.AI_OS_LOCAL_PREVIEW_PORT || "3011";
-  return `http://${host}:${port}`;
-}
-
-function productionBaseUrl() {
-  const host = process.env.AI_OS_LOCAL_PROD_HOST || process.env.AI_OS_LOCAL_HOST || "127.0.0.1";
-  const port = process.env.AI_OS_LOCAL_PROD_PORT || process.env.AI_OS_LOCAL_PORT || "3010";
-  return `http://${host}:${port}`;
-}
-
-function normalizeReleaseRecord(record) {
-  const normalized = { ...record };
-  normalized.primary_task_id = normalized.primary_task_id || null;
-  normalized.linked_task_ids = Array.isArray(normalized.linked_task_ids) ? normalized.linked_task_ids : [];
-  normalized.delivery_summary = normalized.delivery_summary || null;
-  normalized.delivery_benefit = normalized.delivery_benefit || null;
-  normalized.delivery_risks = normalized.delivery_risks || null;
-  normalized.channel = normalized.channel === "dev" ? "dev" : "prod";
-  normalized.acceptance_status =
-    normalized.acceptance_status ||
-    (normalized.channel === "dev" ? (normalized.status === "failed" ? "rejected" : "pending") : "accepted");
-  normalized.preview_url = normalized.preview_url || (normalized.channel === "dev" ? previewBaseUrl() : null);
-  normalized.promoted_to_main_at = normalized.promoted_to_main_at || null;
-  normalized.promoted_from_dev_release_id = normalized.promoted_from_dev_release_id || null;
-  return normalized;
 }
 
 function withReleaseLock(callback) {
@@ -343,13 +179,13 @@ module.exports = {
   pendingDevRelease,
   previewBaseUrl,
   parseTaskIdList,
-  resolveCanonicalTaskIds,
-  readTaskDeliveryMetadata,
   productionBaseUrl,
   readManifest,
   readRegistry,
+  readTaskDeliveryMetadata,
   releaseIdFor,
   releaseReload,
+  resolveCanonicalTaskIds,
   resolveCommit,
   run,
   runtimeRoot,
@@ -357,6 +193,7 @@ module.exports = {
   updateChannelSymlink,
   upsertRelease,
   withReleaseLock,
+  workspaceRoot,
   writeManifest,
   writeRegistry,
 };

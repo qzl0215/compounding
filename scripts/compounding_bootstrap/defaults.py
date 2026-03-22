@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from .catalog import AI_SCRIPT_PATHS, CANONICAL_DOCS, CODE_INDEX_DOCS, DOC_META, MEMORY_DOCS, SCAFFOLD_PATHS, TASK_DOCS, WORKFLOW_FILES
+from .catalog import AI_SCRIPT_PATHS, CANONICAL_DOCS, CODE_INDEX_DOCS, MEMORY_DOCS, SCAFFOLD_PATHS, TASK_DOCS, WORKFLOW_FILES
 
 AGENTS_PATH = "AGENTS.md"
 BRIEF_PATH = "bootstrap/project_brief.yaml"

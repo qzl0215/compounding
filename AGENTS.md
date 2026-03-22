@@ -23,9 +23,10 @@ last_reviewed_at: 2026-03-22
 - 任何改动前必须先读 `docs/PROJECT_RULES.md` 与 `docs/ARCHITECTURE.md`，再进入对应工作流文档。
 - 默认先做只读盘点，再做最小可验证改动。
 - 默认先做高 ROI 动作，不做过度工程和抽象炫技。
+- 改动门禁固定分级：`light` 只覆盖 `docs/*`、`memory/*`、`code_index/*`、现有 `tasks/queue/*`；`structural` 覆盖代码、脚本、模板与依赖；`release` 覆盖发布和运行时链路。
 - 任何结构性改动都必须绑定任务、更新相关记忆，并在进入 `main` 前完成 review。
 - 每个执行 task 对应一条短分支；任务状态、最近提交与是否并入 `main` 必须可追踪。
-- 每次改动都必须绑定并更新 task；若存在 repo-tracked 改动但无 task 更新，校验器必须直接失败。
+- `light` 改动允许无 task 硬阻断；`structural / release` 改动若没有 task 更新，校验器必须直接失败。
 - task 短编号必须全局唯一，并显式写入任务文档；不允许再靠文件名或序号隐式推导。
 - 巨型 util / helper / common 不允许继续扩张；新增逻辑必须伴随清理或明确删除计划。
 - 经验先写入 `memory/experience/*`，稳定后再升格到 `docs/*` 或 `AGENTS.md`。
@@ -78,7 +79,7 @@ last_reviewed_at: 2026-03-22
 - 本地生产是手动拉起的常驻进程；`main` 已更新不等于本机生产端口自动在线。当前本地默认端口是 `3010`，预览默认端口是 `3011`。
 - 本地生产生效的判定是：`current` 已切到目标 release、常驻进程正在运行、`prod:check` 通过。
 - 默认推荐校验顺序是：静态门禁 → 构建门禁 → 运行时门禁；只有 AI 相关资产变化时，再补 AI 输出门禁。
-- 任务动手前默认先跑 `coord:check:pre-task`，它会同时检查任务 companion、scope guard、运行态与锁状态；高风险时输出决策卡。
+- `light` 改动可跳过 `coord:check:pre-task` 与 companion；`structural / release` 动手前默认先跑 `coord:check:pre-task`，它会同时检查任务 companion、scope guard、运行态与锁状态；高风险时输出决策卡。
 - 每轮可验收改动默认先生成 `dev` 预览；若已有未验收 `dev`，先提醒用户验收上一个 `dev`。
 - `dev` 验收通过后，才允许晋升到 `main` 与本地生产，并再次提供生产环境验收链接。
 - release 默认绑定 1 个主 task，可附带少量辅助 task；task 是执行边界，release 是验收与回滚边界。

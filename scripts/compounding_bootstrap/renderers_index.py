@@ -12,10 +12,13 @@ def render_module_index(scan: dict[str, Any]) -> str:
         "defaults",
         "config_resolution",
         "managed_blocks",
-        "document_renderers",
         "scaffold",
+        "scaffold_assets",
         "audit",
         "proposal_engine",
+        "proposal_generation",
+        "proposal_support",
+        "repo_scan",
         "engine",
     ]
     lines = ["# 模块索引", "", "## Studio 模块", ""]

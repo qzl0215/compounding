@@ -1,6 +1,174 @@
 [
   {
     "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-impact.ts",
+    "symbol": "dedupe",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-impact.ts",
+    "symbol": "severityRank",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-impact.ts",
+    "symbol": "categoryLabel",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-impact.ts",
+    "symbol": "analyzeFileImpact",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-impact.ts",
+    "symbol": "buildCategories",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-impact.ts",
+    "symbol": "selectSuggestedChecks",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-impact.ts",
+    "symbol": "collectEvidencePoints",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-source.ts",
+    "symbol": "git",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-source.ts",
+    "symbol": "currentBranch",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-source.ts",
+    "symbol": "dedupe",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-source.ts",
+    "symbol": "toNumber",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-source.ts",
+    "symbol": "summarizeNumStat",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-source.ts",
+    "symbol": "getDiffStatsFromFiles",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-source.ts",
+    "symbol": "getDiffStatsFromRange",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-source.ts",
+    "symbol": "readDiffSnapshot",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-summaries.ts",
+    "symbol": "calculateHealthScore",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-summaries.ts",
+    "symbol": "buildScopeSummary",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-summaries.ts",
+    "symbol": "buildReviewSummary",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-summaries.ts",
+    "symbol": "buildRetroSummary",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-summaries.ts",
+    "symbol": "buildShipLog",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-summaries.ts",
+    "symbol": "buildNextActions",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
     "file": "apps/studio/src/modules/delivery/diff-aware.ts",
     "symbol": "collectDiffAwareArtifact",
     "kind": "function",
@@ -11,158 +179,6 @@
     "module": "apps/studio/src/modules/delivery",
     "file": "apps/studio/src/modules/delivery/diff-aware.ts",
     "symbol": "buildDiffAwareArtifactFromFiles",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "readDiffSnapshot",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "getDiffStatsFromFiles",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "getDiffStatsFromRange",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "summarizeNumStat",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "currentBranch",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "analyzeFileImpact",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "buildCategories",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "selectSuggestedChecks",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "calculateHealthScore",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "buildScopeSummary",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "buildReviewSummary",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "buildRetroSummary",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "buildShipLog",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "buildNextActions",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "git",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "dedupe",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "toNumber",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "severityRank",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
-    "symbol": "categoryLabel",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -770,39 +786,7 @@
   {
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "buildEvidenceLinks",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "toTaskSummary",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/builders.ts",
     "symbol": "toRuntimeSignal",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "summarizeTaskTrace",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "toRuntimeRiskItem",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -881,8 +865,112 @@
   },
   {
     "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/access.ts",
+    "symbol": "getManagementAccessState",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/access.ts",
+    "symbol": "readHeader",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/access.ts",
+    "symbol": "splitHeaderValues",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/access.ts",
+    "symbol": "normalizeHost",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/access.ts",
+    "symbol": "isLocalOrPrivate",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
     "file": "apps/studio/src/modules/releases/action-client.ts",
     "symbol": "executeReleaseAction",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/actions-service.ts",
+    "symbol": "runCreateDevPreview",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/actions-service.ts",
+    "symbol": "runCreateDevPreviewWithTasks",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/actions-service.ts",
+    "symbol": "runAcceptDevRelease",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/actions-service.ts",
+    "symbol": "runRejectDevRelease",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/actions-service.ts",
+    "symbol": "runDeployRelease",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/actions-service.ts",
+    "symbol": "runRollbackRelease",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/actions-service.ts",
+    "symbol": "runReleaseScript",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/actions-service.ts",
+    "symbol": "finalizeAction",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -897,6 +985,30 @@
   },
   {
     "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/registry.ts",
+    "symbol": "readReleaseRegistry",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/registry.ts",
+    "symbol": "getReleaseDashboard",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/registry.ts",
+    "symbol": "normalizeReleaseRecord",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
     "file": "apps/studio/src/modules/releases/runtime-status.ts",
     "symbol": "getRuntimeStatusExplanation",
     "kind": "function",
@@ -905,7 +1017,7 @@
   },
   {
     "module": "apps/studio/src/modules/releases",
-    "file": "apps/studio/src/modules/releases/service.ts",
+    "file": "apps/studio/src/modules/releases/runtime.ts",
     "symbol": "getReleaseRuntimeRoot",
     "kind": "function",
     "language": "TypeScript",
@@ -913,95 +1025,7 @@
   },
   {
     "module": "apps/studio/src/modules/releases",
-    "file": "apps/studio/src/modules/releases/service.ts",
-    "symbol": "getManagementAccessState",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/releases",
-    "file": "apps/studio/src/modules/releases/service.ts",
-    "symbol": "readReleaseRegistry",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/releases",
-    "file": "apps/studio/src/modules/releases/service.ts",
-    "symbol": "getReleaseDashboard",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/releases",
-    "file": "apps/studio/src/modules/releases/service.ts",
-    "symbol": "getLocalRuntimeStatus",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/releases",
-    "file": "apps/studio/src/modules/releases/service.ts",
-    "symbol": "runCreateDevPreview",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/releases",
-    "file": "apps/studio/src/modules/releases/service.ts",
-    "symbol": "runCreateDevPreviewWithTasks",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/releases",
-    "file": "apps/studio/src/modules/releases/service.ts",
-    "symbol": "runAcceptDevRelease",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/releases",
-    "file": "apps/studio/src/modules/releases/service.ts",
-    "symbol": "runRejectDevRelease",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/releases",
-    "file": "apps/studio/src/modules/releases/service.ts",
-    "symbol": "runDeployRelease",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/releases",
-    "file": "apps/studio/src/modules/releases/service.ts",
-    "symbol": "runRollbackRelease",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/releases",
-    "file": "apps/studio/src/modules/releases/service.ts",
-    "symbol": "runReleaseScript",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/releases",
-    "file": "apps/studio/src/modules/releases/service.ts",
+    "file": "apps/studio/src/modules/releases/runtime.ts",
     "symbol": "getChannelBaseUrl",
     "kind": "function",
     "language": "TypeScript",
@@ -1009,40 +1033,24 @@
   },
   {
     "module": "apps/studio/src/modules/releases",
-    "file": "apps/studio/src/modules/releases/service.ts",
-    "symbol": "normalizeReleaseRecord",
+    "file": "apps/studio/src/modules/releases/runtime.ts",
+    "symbol": "getLocalRuntimeStatus",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
   },
   {
     "module": "apps/studio/src/modules/releases",
-    "file": "apps/studio/src/modules/releases/service.ts",
-    "symbol": "readHeader",
+    "file": "apps/studio/src/modules/releases/runtime.ts",
+    "symbol": "createRuntimeFallback",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
   },
   {
-    "module": "apps/studio/src/modules/releases",
-    "file": "apps/studio/src/modules/releases/service.ts",
-    "symbol": "splitHeaderValues",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/releases",
-    "file": "apps/studio/src/modules/releases/service.ts",
-    "symbol": "normalizeHost",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/releases",
-    "file": "apps/studio/src/modules/releases/service.ts",
-    "symbol": "isLocalOrPrivate",
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/companion.ts",
+    "symbol": "readTaskCompanionReleaseInfo",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -1083,6 +1091,14 @@
     "module": "apps/studio/src/modules/tasks",
     "file": "apps/studio/src/modules/tasks/delivery.ts",
     "symbol": "inferReleaseLabel",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/delivery.ts",
+    "symbol": "explicitReleaseRefs",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -1290,7 +1306,7 @@
   {
     "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/audit.py",
-    "symbol": "audit",
+    "symbol": "has_bundled_source_of_truth",
     "kind": "function",
     "language": "Python",
     "exported": true
@@ -1298,7 +1314,7 @@
   {
     "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/audit.py",
-    "symbol": "extract_value",
+    "symbol": "audit",
     "kind": "function",
     "language": "Python",
     "exported": true
@@ -1665,22 +1681,6 @@
   },
   {
     "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/renderers_base_docs.py",
-    "symbol": "render_agents",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/renderers_base_docs.py",
-    "symbol": "render_project_rules",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/renderers_experience_docs.py",
     "symbol": "render_experience_readme",
     "kind": "function",
@@ -1737,88 +1737,8 @@
   },
   {
     "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/renderers_memory.py",
-    "symbol": "render_system_overview",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/renderers_memory.py",
-    "symbol": "render_current_state",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/renderers_memory.py",
-    "symbol": "render_tech_debt",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/renderers_memory.py",
-    "symbol": "render_roadmap",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/renderers_memory.py",
-    "symbol": "render_operating_blueprint",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/renderers_org_docs.py",
-    "symbol": "render_work_modes",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/renderers_org_docs.py",
-    "symbol": "render_org_model",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/renderers_refactor_docs.py",
     "symbol": "render_refactor_plan",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/renderers_system_docs.py",
-    "symbol": "render_architecture",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/renderers_system_docs.py",
-    "symbol": "render_dev_workflow",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/renderers_system_docs.py",
-    "symbol": "render_ai_operating_model",
     "kind": "function",
     "language": "Python",
     "exported": true
@@ -1873,8 +1793,8 @@
   },
   {
     "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/scaffold.py",
-    "symbol": "build_meta",
+    "file": "scripts/compounding_bootstrap/scaffold_assets.py",
+    "symbol": "copy_canonical_file",
     "kind": "function",
     "language": "Python",
     "exported": true
@@ -1882,7 +1802,7 @@
   {
     "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/scaffold_assets.py",
-    "symbol": "copy_canonical_file",
+    "symbol": "sync_canonical_managed_document",
     "kind": "function",
     "language": "Python",
     "exported": true

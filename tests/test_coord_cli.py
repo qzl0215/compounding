@@ -1,80 +1,17 @@
 import json
-import shutil
 import subprocess
-import tempfile
 import unittest
-from pathlib import Path
+from tests.coord_support import ROOT, CoordCliTestCase
 
 
-ROOT = Path(__file__).resolve().parents[1]
-
-
-class CoordCliTests(unittest.TestCase):
-    def setUp(self) -> None:
-        self.temp_dir = tempfile.TemporaryDirectory()
-        self.target = Path(self.temp_dir.name)
-        (self.target / "tasks" / "queue").mkdir(parents=True, exist_ok=True)
-        (self.target / "shared").mkdir(parents=True, exist_ok=True)
-        (self.target / "bootstrap").mkdir(parents=True, exist_ok=True)
-        shutil.copy(ROOT / "shared" / "task-identity.ts", self.target / "shared" / "task-identity.ts")
-        shutil.copy(ROOT / "bootstrap" / "heading_aliases.json", self.target / "bootstrap" / "heading_aliases.json")
-        (self.target / "tasks" / "queue" / "task-999-sample.md").write_text(
-            """# 示例任务
-
-## 短编号
-
-t-999
-
-## 目标
-
-验证 companion lifecycle。
-
-## 关联模块
-
-- `scripts/coord/task.ts`
-- `tasks/queue/task-999-sample.md`
-
-## 当前模式
-
-工程执行
-
-## 分支
-
-`codex/task-999-sample`
-
-## 交付收益
-
-让 review 与 release 可以复用同一份 companion。
-
-## 交付风险
-
-若 contract 漂移，会重新长出第二套状态表。
-
-## 状态
-
-doing
-""",
-            encoding="utf8",
-        )
-
-    def tearDown(self) -> None:
-        self.temp_dir.cleanup()
-
-    def run_node(self, code: str) -> dict:
-        completed = subprocess.run(
-            ["node", "--experimental-strip-types", "-e", code],
-            cwd=self.target,
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-        return json.loads(completed.stdout)
+class CoordCliTests(CoordCliTestCase):
 
     def test_companion_lifecycle_records_pre_task_review_and_release_handoff(self) -> None:
         script_root = ROOT.as_posix()
         payload = self.run_node(
             f"""
-const {{ ensureCompanion, readCompanion }} = require("{script_root}/scripts/coord/lib/task-meta.ts");
+const fs = require("node:fs");
+const {{ ensureCompanion, getCompanionPath, readCompanion }} = require("{script_root}/scripts/coord/lib/task-meta.ts");
 const {{
   recordCreated,
   recordPreTaskResult,
@@ -119,17 +56,28 @@ recordReleaseHandoff("t-999", {{
   production_url: "http://127.0.0.1:3010",
   status: "active"
 }});
-console.log(JSON.stringify(readCompanion("t-999"), null, 2));
+console.log(JSON.stringify({{
+  companion: readCompanion("t-999"),
+  raw: JSON.parse(fs.readFileSync(getCompanionPath("t-999"), "utf8"))
+}}, null, 2));
 """
         )
 
-        self.assertEqual(payload["companion_phase"], "released")
-        self.assertEqual(payload["lifecycle"]["handoff"]["summary"], "handoff summary")
-        self.assertEqual(payload["lifecycle"]["review"]["merge_decision"], "auto_merge")
-        self.assertEqual(payload["lifecycle"]["release_handoff"]["release_id"], "20260320-abc-prod")
-        self.assertTrue(payload["human_decision_needed"] is False)
-        self.assertEqual(payload["artifacts"]["decision_cards"][-1]["decision_id"], "dec-test")
-        self.assertEqual(payload["artifacts"]["diff_summaries"][-1]["path"], "agent-coordination/reports/diff-summary-main-head.json")
+        companion = payload["companion"]
+        raw = payload["raw"]
+
+        self.assertEqual(companion["companion_phase"], "released")
+        self.assertEqual(companion["lifecycle"]["handoff"]["summary"], "handoff summary")
+        self.assertEqual(companion["lifecycle"]["review"]["merge_decision"], "auto_merge")
+        self.assertEqual(companion["lifecycle"]["release_handoff"]["release_id"], "20260320-abc-prod")
+        self.assertTrue(companion["human_decision_needed"] is False)
+        self.assertEqual(companion["artifacts"]["decision_cards"][-1]["decision_id"], "dec-test")
+        self.assertEqual(companion["artifacts"]["diff_summaries"][-1]["path"], "agent-coordination/reports/diff-summary-main-head.json")
+        self.assertNotIn("branch_name", raw)
+        self.assertNotIn("planned_files", raw)
+        self.assertNotIn("status", raw)
+        self.assertNotIn("companion_phase", raw)
+        self.assertNotIn("summary_artifacts", raw)
 
     def test_release_context_prefers_companion_release_handoff(self) -> None:
         script_root = ROOT.as_posix()
@@ -154,6 +102,102 @@ console.log(JSON.stringify(readCompanionReleaseContext("t-999"), null, 2));
         self.assertEqual(payload["delivery_summary"], "t-999 companion summary")
         self.assertEqual(payload["delivery_benefit"], "benefit from companion")
         self.assertEqual(payload["delivery_risks"], "risk from companion")
+
+    def test_validate_change_trace_allows_light_docs_without_task_update(self) -> None:
+        docs_dir = self.target / "docs"
+        docs_dir.mkdir(parents=True, exist_ok=True)
+        doc_path = docs_dir / "notes.md"
+        doc_path.write_text("# Notes\n\ninitial\n", encoding="utf8")
+        self.init_git_repo()
+        doc_path.write_text("# Notes\n\nupdated\n", encoding="utf8")
+
+        completed = self.run_script("scripts/ai/validate-change-trace.ts")
+        payload = json.loads(completed.stdout)
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["change_class"], "light")
+        self.assertEqual(payload["changed_tasks"], [])
+
+    def test_validate_change_trace_rejects_structural_change_without_task_update(self) -> None:
+        scripts_dir = self.target / "scripts"
+        scripts_dir.mkdir(parents=True, exist_ok=True)
+        script_path = scripts_dir / "sample.ts"
+        script_path.write_text("export const value = 1;\n", encoding="utf8")
+        self.init_git_repo()
+        script_path.write_text("export const value = 2;\n", encoding="utf8")
+
+        completed = self.run_script("scripts/ai/validate-change-trace.ts")
+        payload = json.loads(completed.stdout)
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertFalse(payload["ok"])
+        self.assertEqual(payload["change_class"], "structural")
+        self.assertTrue(any("没有任何 tasks/queue/*.md 变更" in error for error in payload["errors"]))
+
+    def test_pre_task_skips_for_light_changes_without_task_id(self) -> None:
+        docs_dir = self.target / "docs"
+        docs_dir.mkdir(parents=True, exist_ok=True)
+        doc_path = docs_dir / "notes.md"
+        doc_path.write_text("# Notes\n\ninitial\n", encoding="utf8")
+        self.init_git_repo()
+        doc_path.write_text("# Notes\n\nupdated\n", encoding="utf8")
+
+        completed = self.run_script("scripts/coord/check.ts", "pre-task")
+        payload = json.loads(completed.stdout)
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertTrue(payload["ok"])
+        self.assertTrue(payload["skipped"])
+        self.assertEqual(payload["change_class"], "light")
+
+    def test_validate_task_git_link_ignores_unchanged_historical_task_noise(self) -> None:
+        scripts_dir = self.target / "scripts"
+        scripts_dir.mkdir(parents=True, exist_ok=True)
+        script_path = scripts_dir / "sample.ts"
+        script_path.write_text("export const value = 1;\n", encoding="utf8")
+        (self.target / "tasks" / "queue" / "task-123-historical.md").write_text(
+            """# 历史任务
+
+## 短编号
+
+t-123
+
+## 目标
+
+一个未被本轮触碰的旧任务。
+
+## 当前模式
+
+工程执行
+
+## 分支
+
+`codex/task-123-historical`
+
+## 最近提交
+
+`auto: branch HEAD`
+
+## 状态
+
+doing
+""",
+            encoding="utf8",
+        )
+        self.init_git_repo()
+        subprocess.run(["git", "checkout", "-b", "codex/task-999-sample"], cwd=self.target, check=True)
+        script_path.write_text("export const value = 2;\n", encoding="utf8")
+
+        completed = self.run_script("scripts/ai/validate-task-git-link.ts")
+        payload = json.loads(completed.stdout)
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["change_class"], "structural")
+        self.assertEqual(payload["changed_task_paths"], [])
+        self.assertEqual(payload["validated_task_paths"], ["tasks/queue/task-999-sample.md"])
+        self.assertEqual([task["path"] for task in payload["tasks"]], ["tasks/queue/task-999-sample.md"])
 
 
 if __name__ == "__main__":

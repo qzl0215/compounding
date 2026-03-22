@@ -2,16 +2,22 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { extractSection, parseMarkdownSections } = require("./lib/markdown-sections.ts");
 
-const taskPath = process.argv[2];
+const args = process.argv.slice(2);
+const taskPath = args.find((arg) => !arg.startsWith("--"));
 if (!taskPath) {
-  console.error("Usage: node --experimental-strip-types scripts/ai/build-context.ts <task-path>");
+  console.error(
+    "Usage: node --experimental-strip-types scripts/ai/build-context.ts <task-path> [--include-workflow] [--include-ai-model] [--include-project-memory]"
+  );
   process.exit(1);
 }
+
+const includeWorkflow = args.includes("--include-workflow");
+const includeAiModel = args.includes("--include-ai-model");
+const includeProjectMemory = args.includes("--include-project-memory");
 
 const root = process.cwd();
 const relTask = taskPath.replace(/^\/+/, "");
 const taskId = path.basename(relTask, path.extname(relTask));
-const taskAbsolute = path.join(root, relTask);
 
 function readIfExists(relPath) {
   const absolute = path.join(root, relPath);
@@ -121,27 +127,45 @@ const relatedModules = extractRelatedModules(taskSections);
 const relevantFunctions = findRelevantFunctions(relatedModules);
 const keywords = buildKeywords(taskSections, relatedModules);
 const moduleDocs = findModuleDocs(relatedModules);
-const memoryDocs = findRelevantMemoryDocs(keywords, relatedModules);
+const memoryDocs = includeProjectMemory ? findRelevantMemoryDocs(keywords, relatedModules) : [];
+const codeIndexFiles =
+  relatedModules.length > 0 || relevantFunctions.length > 0
+    ? ["code_index/module-index.md", "code_index/dependency-map.md"]
+    : [];
 
 const baseFiles = [
   "AGENTS.md",
   "docs/PROJECT_RULES.md",
   "docs/ARCHITECTURE.md",
-  "docs/DEV_WORKFLOW.md",
-  "docs/AI_OPERATING_MODEL.md",
   relTask,
-  "memory/project/current-state.md",
-  "memory/project/roadmap.md",
-  "memory/project/operating-blueprint.md",
-  "code_index/module-index.md",
-  "code_index/dependency-map.md",
 ];
 
-const includedFiles = unique([...baseFiles, ...moduleDocs, ...memoryDocs]);
+const optionalFiles = [
+  ...(includeWorkflow ? ["docs/DEV_WORKFLOW.md"] : []),
+  ...(includeAiModel ? ["docs/AI_OPERATING_MODEL.md"] : []),
+  ...(includeProjectMemory
+    ? [
+        "memory/project/current-state.md",
+        "memory/project/roadmap.md",
+        "memory/project/operating-blueprint.md",
+      ]
+    : []),
+];
+
+const includedFiles = unique([...baseFiles, ...moduleDocs, ...codeIndexFiles, ...optionalFiles, ...memoryDocs]);
 
 let output = "# Context Packet\n\n";
 output += `- Task: \`${relTask}\`\n`;
 output += `- Related Modules: ${relatedModules.length ? relatedModules.map((item) => `\`${item}\``).join(", ") : "none"}\n`;
+output += `- Optional Inputs: ${
+  [
+    includeWorkflow ? "`workflow`" : "",
+    includeAiModel ? "`ai-model`" : "",
+    includeProjectMemory ? "`project-memory`" : "",
+  ]
+    .filter(Boolean)
+    .join(", ") || "none"
+}\n`;
 output += `- Memory Matches: ${memoryDocs.length ? memoryDocs.map((item) => `\`${item}\``).join(", ") : "none"}\n`;
 output += `- Function Hits: ${relevantFunctions.length}\n\n`;
 

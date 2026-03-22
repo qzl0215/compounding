@@ -7,8 +7,8 @@ describe("project cockpit", () => {
 
     expect(overview.identity.oneLiner).toContain("AI-Native Repo");
     expect(overview.currentFocus.currentPhase).toContain("Phase 2");
-    expect(overview.currentFocus.currentPriority).toContain("t-038");
-    expect(overview.currentFocus.currentMilestone).toContain("AI 自主系统反熵收敛");
+    expect(overview.currentFocus.currentPriority).toContain("下一阶段主线");
+    expect(overview.currentFocus.currentMilestone).toContain("下一阶段主线待定");
     expect(overview.currentFocus.successCriteria.length).toBeGreaterThanOrEqual(3);
     expect(overview.executionStatus.nextCheckpoint.length).toBeGreaterThan(0);
     expect(overview.executionStatus.runtimeSignals).toHaveLength(2);

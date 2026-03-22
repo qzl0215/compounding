@@ -21,6 +21,10 @@ from .defaults import (
 from .managed_blocks import split_frontmatter
 
 
+def has_bundled_source_of_truth(value: object) -> bool:
+    return bool(re.search(r"[+,，]", str(value or "")))
+
+
 def audit(config_path: Path, target: Path) -> AuditResult:
     result = AuditResult(passed=True)
     brief_path = config_path if config_path.exists() else target / BRIEF_PATH
@@ -73,6 +77,8 @@ def audit(config_path: Path, target: Path) -> AuditResult:
         missing = [field for field in REQUIRED_FRONTMATTER if field not in meta]
         if missing:
             result.errors.append(f"{relative_path} missing frontmatter fields: {', '.join(missing)}")
+        if has_bundled_source_of_truth(meta.get("source_of_truth")):
+            result.errors.append(f"{relative_path} must use a single source_of_truth owner.")
 
     memory_readme = target / "memory/experience/README.md"
     if memory_readme.exists():

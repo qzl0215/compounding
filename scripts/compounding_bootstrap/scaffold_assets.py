@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from .defaults import AGENTS_PATH
+from .managed_blocks import extract_managed_block, split_frontmatter, suffix_after_managed_block, write_managed_document
 
 SOURCE_ROOT = Path(__file__).resolve().parents[2]
 
@@ -17,6 +18,16 @@ def copy_canonical_file(target: Path, relative_path: str) -> None:
         return
     destination.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(source, destination)
+
+
+def sync_canonical_managed_document(target: Path, relative_path: str) -> None:
+    source = SOURCE_ROOT / relative_path
+    destination = target / relative_path
+    raw = source.read_text(encoding="utf8")
+    meta, body = split_frontmatter(raw)
+    block = extract_managed_block(body)
+    suffix = suffix_after_managed_block(body)
+    write_managed_document(destination, meta, block, default_suffix=suffix)
 
 
 def task_001(resolved: dict[str, Any]) -> str:

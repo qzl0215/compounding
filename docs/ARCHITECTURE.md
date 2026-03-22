@@ -27,6 +27,7 @@ related_docs:
 
 ### Studio 模块
 
+- `apps/studio/src/modules/delivery`
 - `apps/studio/src/modules/docs`
 - `apps/studio/src/modules/git-health`
 - `apps/studio/src/modules/portal`
@@ -39,20 +40,15 @@ related_docs:
 - `scripts/compounding_bootstrap/catalog.py`
 - `scripts/compounding_bootstrap/config_resolution.py`
 - `scripts/compounding_bootstrap/defaults.py`
-- `scripts/compounding_bootstrap/document_renderers.py`
 - `scripts/compounding_bootstrap/engine.py`
 - `scripts/compounding_bootstrap/managed_blocks.py`
 - `scripts/compounding_bootstrap/proposal_engine.py`
 - `scripts/compounding_bootstrap/proposal_generation.py`
 - `scripts/compounding_bootstrap/proposal_support.py`
 - `scripts/compounding_bootstrap/renderers_base_docs.py`
-- `scripts/compounding_bootstrap/renderers_docs.py`
 - `scripts/compounding_bootstrap/renderers_experience_docs.py`
 - `scripts/compounding_bootstrap/renderers_index.py`
-- `scripts/compounding_bootstrap/renderers_memory.py`
-- `scripts/compounding_bootstrap/renderers_org_docs.py`
 - `scripts/compounding_bootstrap/renderers_refactor_docs.py`
-- `scripts/compounding_bootstrap/renderers_system_docs.py`
 - `scripts/compounding_bootstrap/repo_scan.py`
 - `scripts/compounding_bootstrap/scaffold.py`
 - `scripts/compounding_bootstrap/scaffold_assets.py`

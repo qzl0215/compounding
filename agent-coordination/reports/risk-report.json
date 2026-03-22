@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-03-18T07:12:59.125Z",
+  "generated_at": "2026-03-22T12:45:37.558Z",
   "report_only": false,
-  "total_files": 268,
+  "total_files": 320,
   "by_risk": {
-    "core": 18,
-    "high_conflict": 59,
-    "normal": 191,
+    "core": 22,
+    "high_conflict": 60,
+    "normal": 238,
     "generated": 0,
     "test_only": 0,
     "docs_only": 0
   },
   "by_source": {
     "hard_rule": 10,
-    "heuristic": 258,
+    "heuristic": 310,
     "override": 0
   },
   "high_risk_files": [
@@ -98,6 +98,18 @@
     },
     {
       "path": "apps/studio/src/app/tasks/page.tsx",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/delivery/index.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/delivery/module.md",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "apps/studio/src/modules/delivery/types.ts",
       "risk_level": "high_conflict"
     },
     {
@@ -205,14 +217,6 @@
       "risk_level": "high_conflict"
     },
     {
-      "path": "scripts/ai/collaboration-mode-integration.js",
-      "risk_level": "high_conflict"
-    },
-    {
-      "path": "scripts/ai/collaboration-mode-manager.ts",
-      "risk_level": "high_conflict"
-    },
-    {
       "path": "scripts/ai/create-task.ts",
       "risk_level": "high_conflict"
     },
@@ -237,11 +241,19 @@
       "risk_level": "high_conflict"
     },
     {
+      "path": "scripts/ai/lib/change-policy.ts",
+      "risk_level": "high_conflict"
+    },
+    {
       "path": "scripts/ai/lib/knowledge-assets.ts",
       "risk_level": "high_conflict"
     },
     {
       "path": "scripts/ai/lib/markdown-sections.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/lib/task-resolver.ts",
       "risk_level": "high_conflict"
     },
     {
@@ -253,15 +265,7 @@
       "risk_level": "high_conflict"
     },
     {
-      "path": "scripts/ai/task-mode-integration.ts",
-      "risk_level": "high_conflict"
-    },
-    {
       "path": "scripts/ai/template-feedback-orchestrator.js",
-      "risk_level": "high_conflict"
-    },
-    {
-      "path": "scripts/ai/unified-preamble.ts",
       "risk_level": "high_conflict"
     },
     {
@@ -297,7 +301,19 @@
       "risk_level": "core"
     },
     {
+      "path": "scripts/release/prepare-release-support.ts",
+      "risk_level": "core"
+    },
+    {
       "path": "scripts/release/prepare-release.ts",
+      "risk_level": "core"
+    },
+    {
+      "path": "scripts/release/prod-runtime-stability.ts",
+      "risk_level": "core"
+    },
+    {
+      "path": "scripts/release/registry.ts",
       "risk_level": "core"
     },
     {
@@ -310,6 +326,10 @@
     },
     {
       "path": "scripts/release/rollback-release.ts",
+      "risk_level": "core"
+    },
+    {
+      "path": "scripts/release/runtime-layout.ts",
       "risk_level": "core"
     },
     {
@@ -482,6 +502,58 @@
       "risk_level": "normal",
       "source": "heuristic"
     },
+    "apps/studio/src/modules/delivery/__tests__/diff-aware.test.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/delivery/__tests__/service.test.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/delivery/components/diff-aware-panel.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/delivery/diff-aware-analysis.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/delivery/diff-aware-impact.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/delivery/diff-aware-source.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/delivery/diff-aware-summaries.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/delivery/diff-aware.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/delivery/index.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/delivery/module.md": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/delivery/projections.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/delivery/service.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/delivery/types.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
     "apps/studio/src/modules/docs/__tests__/ai-rewrite-prompts.test.ts": {
       "risk_level": "normal",
       "source": "heuristic"
@@ -650,7 +722,27 @@
       "risk_level": "normal",
       "source": "heuristic"
     },
+    "apps/studio/src/modules/releases/access.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/releases/action-client.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/releases/actions-service.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
     "apps/studio/src/modules/releases/actions.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/releases/components/release-dashboard-controls.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/releases/components/release-dashboard-history.tsx": {
       "risk_level": "normal",
       "source": "heuristic"
     },
@@ -666,7 +758,15 @@
       "risk_level": "high_conflict",
       "source": "heuristic"
     },
+    "apps/studio/src/modules/releases/registry.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
     "apps/studio/src/modules/releases/runtime-status.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/releases/runtime.ts": {
       "risk_level": "normal",
       "source": "heuristic"
     },
@@ -682,7 +782,23 @@
       "risk_level": "normal",
       "source": "heuristic"
     },
+    "apps/studio/src/modules/tasks/__tests__/identity.test.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
     "apps/studio/src/modules/tasks/__tests__/service.test.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/tasks/companion.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/tasks/components/delivery-table-controls.tsx": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/tasks/components/delivery-table-row.tsx": {
       "risk_level": "normal",
       "source": "heuristic"
     },
@@ -858,6 +974,10 @@
       "risk_level": "normal",
       "source": "heuristic"
     },
+    "memory/.DS_Store": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
     "memory/architecture/system-overview.md": {
       "risk_level": "normal",
       "source": "heuristic"
@@ -891,6 +1011,18 @@
       "source": "heuristic"
     },
     "memory/experience/exp-003-delete-legacy-ui-first.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/experience/exp-004-gstack-alignment-boundary.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/experience/exp-005-diff-aware-qa-review-retro.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/experience/exp-006-delivery-framework-phase-one-boundary.md": {
       "risk_level": "normal",
       "source": "heuristic"
     },
@@ -938,14 +1070,6 @@
       "risk_level": "high_conflict",
       "source": "heuristic"
     },
-    "scripts/ai/collaboration-mode-integration.js": {
-      "risk_level": "high_conflict",
-      "source": "heuristic"
-    },
-    "scripts/ai/collaboration-mode-manager.ts": {
-      "risk_level": "high_conflict",
-      "source": "heuristic"
-    },
     "scripts/ai/create-task.ts": {
       "risk_level": "high_conflict",
       "source": "heuristic"
@@ -970,11 +1094,19 @@
       "risk_level": "high_conflict",
       "source": "heuristic"
     },
+    "scripts/ai/lib/change-policy.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
     "scripts/ai/lib/knowledge-assets.ts": {
       "risk_level": "high_conflict",
       "source": "heuristic"
     },
     "scripts/ai/lib/markdown-sections.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/lib/task-resolver.ts": {
       "risk_level": "high_conflict",
       "source": "heuristic"
     },
@@ -986,15 +1118,7 @@
       "risk_level": "high_conflict",
       "source": "heuristic"
     },
-    "scripts/ai/task-mode-integration.ts": {
-      "risk_level": "high_conflict",
-      "source": "heuristic"
-    },
     "scripts/ai/template-feedback-orchestrator.js": {
-      "risk_level": "high_conflict",
-      "source": "heuristic"
-    },
-    "scripts/ai/unified-preamble.ts": {
       "risk_level": "high_conflict",
       "source": "heuristic"
     },
@@ -1042,10 +1166,6 @@
       "risk_level": "normal",
       "source": "heuristic"
     },
-    "scripts/compounding_bootstrap/document_renderers.py": {
-      "risk_level": "normal",
-      "source": "heuristic"
-    },
     "scripts/compounding_bootstrap/engine.py": {
       "risk_level": "normal",
       "source": "heuristic"
@@ -1074,10 +1194,6 @@
       "risk_level": "normal",
       "source": "heuristic"
     },
-    "scripts/compounding_bootstrap/renderers_docs.py": {
-      "risk_level": "normal",
-      "source": "heuristic"
-    },
     "scripts/compounding_bootstrap/renderers_experience_docs.py": {
       "risk_level": "normal",
       "source": "heuristic"
@@ -1086,19 +1202,7 @@
       "risk_level": "normal",
       "source": "heuristic"
     },
-    "scripts/compounding_bootstrap/renderers_memory.py": {
-      "risk_level": "normal",
-      "source": "heuristic"
-    },
-    "scripts/compounding_bootstrap/renderers_org_docs.py": {
-      "risk_level": "normal",
-      "source": "heuristic"
-    },
     "scripts/compounding_bootstrap/renderers_refactor_docs.py": {
-      "risk_level": "normal",
-      "source": "heuristic"
-    },
-    "scripts/compounding_bootstrap/renderers_system_docs.py": {
       "risk_level": "normal",
       "source": "heuristic"
     },
@@ -1118,7 +1222,15 @@
       "risk_level": "normal",
       "source": "heuristic"
     },
+    "scripts/coord/architecture-reviewer.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
     "scripts/coord/check.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/coord/contract-reviewer.ts": {
       "risk_level": "normal",
       "source": "heuristic"
     },
@@ -1126,7 +1238,27 @@
       "risk_level": "normal",
       "source": "heuristic"
     },
+    "scripts/coord/diff-summary.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/coord/lib/companion-lifecycle.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/coord/lib/companion-shape.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
     "scripts/coord/lib/manifest.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/coord/lib/pre-task-decision.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/coord/lib/pre-task-runtime.ts": {
       "risk_level": "normal",
       "source": "heuristic"
     },
@@ -1139,6 +1271,10 @@
       "source": "heuristic"
     },
     "scripts/coord/lock.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "scripts/coord/pre-push-review.sh": {
       "risk_level": "normal",
       "source": "heuristic"
     },
@@ -1238,7 +1374,19 @@
       "risk_level": "core",
       "source": "heuristic"
     },
+    "scripts/release/prepare-release-support.ts": {
+      "risk_level": "core",
+      "source": "heuristic"
+    },
     "scripts/release/prepare-release.ts": {
+      "risk_level": "core",
+      "source": "heuristic"
+    },
+    "scripts/release/prod-runtime-stability.ts": {
+      "risk_level": "core",
+      "source": "heuristic"
+    },
+    "scripts/release/registry.ts": {
       "risk_level": "core",
       "source": "heuristic"
     },
@@ -1251,6 +1399,10 @@
       "source": "heuristic"
     },
     "scripts/release/rollback-release.ts": {
+      "risk_level": "core",
+      "source": "heuristic"
+    },
+    "scripts/release/runtime-layout.ts": {
       "risk_level": "core",
       "source": "heuristic"
     },
@@ -1271,6 +1423,10 @@
       "source": "heuristic"
     },
     "scripts/server_truth_ledger.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "shared/task-identity.ts": {
       "risk_level": "normal",
       "source": "heuristic"
     },
@@ -1350,6 +1506,10 @@
       "risk_level": "normal",
       "source": "heuristic"
     },
+    "tasks/queue/task-018-local-entry-port-migration.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
     "tasks/queue/task-019-gstack-practices-milestone.md": {
       "risk_level": "normal",
       "source": "heuristic"
@@ -1386,11 +1546,79 @@
       "risk_level": "normal",
       "source": "heuristic"
     },
+    "tasks/queue/task-028-source-map-and-delivery-snapshot.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-029-truth-source-and-delivery-snapshot.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-030-gstack-alignment-and-adoption-boundary.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-031-work-mode-entry-and-runbook.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-032-diff-aware-qa-review-retro.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-033-pre-task-safety-guardrails.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-034-high-roi-convergence-fixes.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-035-next-phase-planning.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-036-delivery-framework-phase-one.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-037-homepage-decision-board.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-038-autonomy-entropy-reduction.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-039-truth-source-and-autonomy-subtraction.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
     "tasks/templates/task-template.md": {
       "risk_level": "normal",
       "source": "heuristic"
     },
-    "tests/test_bootstrap_cli.py": {
+    "tests/__init__.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tests/bootstrap_support.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tests/coord_support.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tests/test_bootstrap_proposals_cli.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tests/test_bootstrap_scaffold_cli.py": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tests/test_coord_cli.py": {
       "risk_level": "normal",
       "source": "heuristic"
     },
