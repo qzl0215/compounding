@@ -6,6 +6,15 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { extractSection, stripMarkdown } = require("../../ai/lib/markdown-sections.ts");
 const { resolveTaskRecord } = require("../../ai/lib/task-resolver.ts");
+const {
+  buildCompatView,
+  createEmptyArtifacts,
+  createEmptyLifecycle,
+  mergeArtifactList,
+  normalizeCompanion,
+  normalizeTaskStatus,
+  uniqueStrings,
+} = require("./companion-shape.ts");
 
 const ROOT = process.cwd();
 const TASKS_DIR = path.join(ROOT, "agent-coordination", "tasks");
@@ -48,110 +57,8 @@ function extractTaskSection(content, ...names) {
   return "";
 }
 
-function uniqueStrings(values) {
-  return Array.from(new Set((values || []).map((value) => String(value || "").trim()).filter(Boolean)));
-}
-
-function mergeArtifactList(existing = [], incoming = [], key = "path") {
-  const merged = [];
-  const seen = new Set();
-  for (const item of [...existing, ...incoming]) {
-    const signature =
-      item && typeof item === "object" && key in item ? `${key}:${item[key]}` : JSON.stringify(item);
-    if (!signature || seen.has(signature)) continue;
-    seen.add(signature);
-    merged.push(item);
-  }
-  return merged;
-}
-
-function createEmptyLifecycle() {
-  return {
-    created: null,
-    pre_task: null,
-    handoff: null,
-    review: null,
-    release_handoff: null,
-  };
-}
-
-function createEmptyArtifacts() {
-  return {
-    decision_cards: [],
-    diff_summaries: [],
-    handoff_notes: [],
-    review_notes: [],
-    release_notes: [],
-  };
-}
-
-function normalizeLegacyStatus(taskStatus) {
-  if (taskStatus === "done") return "merged";
-  if (taskStatus === "doing") return "active";
-  if (taskStatus === "blocked") return "blocked";
-  return "planned";
-}
-
-function buildCompanionPhase(companion) {
-  if (companion.lifecycle?.release_handoff?.channel === "prod") return "released";
-  if (companion.lifecycle?.release_handoff) return "release_handoff";
-  if (companion.lifecycle?.review) return "reviewed";
-  if (companion.lifecycle?.handoff) return "handoff_ready";
-  if (companion.lifecycle?.pre_task) return "pre_task_checked";
-  if (companion.lifecycle?.created) return "created";
-  return "initialized";
-}
-
-function collectSummaryArtifacts(companion) {
-  const artifacts = companion.artifacts || createEmptyArtifacts();
-  return uniqueStrings([
-    ...(companion.summary_artifacts || []),
-    ...artifacts.decision_cards.map((item) => item.path),
-    ...artifacts.diff_summaries.map((item) => item.path),
-  ]);
-}
-
-function syncLegacyFields(companion) {
-  const contract = companion.contract || {};
-  const synced = {
-    ...companion,
-    task_id: companion.short_id || companion.task_id,
-    short_id: companion.short_id || companion.task_id,
-    task_record_id: companion.task_record_id,
-    task_path: companion.task_path,
-    current_mode: companion.current_mode || "方案评审",
-    task_status: companion.task_status || "todo",
-    branch_name: contract.branch_name || companion.branch_name,
-    base_branch: contract.base_branch || companion.base_branch || "dev",
-    planned_files: uniqueStrings(contract.planned_files || companion.planned_files || []),
-    planned_modules: uniqueStrings(contract.planned_modules || companion.planned_modules || []),
-    risk_assessment: contract.risk_assessment || companion.risk_assessment || "medium",
-    execution_mode: contract.execution_mode || companion.execution_mode || "direct_edit",
-    status: normalizeLegacyStatus(companion.task_status || "todo"),
-    ui_validation_required: Boolean(contract.ui_validation_required || companion.ui_validation_required),
-    lifecycle: { ...createEmptyLifecycle(), ...(companion.lifecycle || {}) },
-    artifacts: {
-      ...createEmptyArtifacts(),
-      ...(companion.artifacts || {}),
-      decision_cards: mergeArtifactList(companion.artifacts?.decision_cards, [], "path"),
-      diff_summaries: mergeArtifactList(companion.artifacts?.diff_summaries, [], "path"),
-      handoff_notes: mergeArtifactList(companion.artifacts?.handoff_notes, [], "recorded_at"),
-      review_notes: mergeArtifactList(companion.artifacts?.review_notes, [], "recorded_at"),
-      release_notes: mergeArtifactList(companion.artifacts?.release_notes, [], "release_id"),
-    },
-  };
-  synced.contract = {
-    branch_name: synced.branch_name,
-    base_branch: synced.base_branch,
-    planned_files: synced.planned_files,
-    planned_modules: synced.planned_modules,
-    risk_assessment: synced.risk_assessment,
-    execution_mode: synced.execution_mode,
-    ui_validation_required: synced.ui_validation_required,
-  };
-  synced.companion_phase = buildCompanionPhase(synced);
-  synced.summary_artifacts = collectSummaryArtifacts(synced);
-  return synced;
+function serializeCompanion(companion) {
+  return normalizeCompanion(companion);
 }
 
 function parseTaskToCompanion(taskLike, content) {
@@ -161,16 +68,17 @@ function parseTaskToCompanion(taskLike, content) {
   const goal = extractTaskSection(content, "goal", "目标") || record.title;
   const branch = extractTaskSection(content, "branch", "分支");
   const currentMode = extractTaskSection(content, "current_mode", "当前模式") || "方案评审";
-  const taskStatus = extractTaskSection(content, "status", "状态").toLowerCase() || "todo";
-  const related = extractSection(content, "related_modules", ROOT) || extractSection(content, "关联模块", ROOT) || "";
+  const taskStatus = normalizeTaskStatus(extractTaskSection(content, "status", "状态"));
+  const related =
+    extractSection(content, "related_modules", ROOT) || extractSection(content, "关联模块", ROOT) || "";
   const modules = uniqueStrings((related.match(/`([^`]+)`/g) || []).map((item) => item.replace(/`/g, "")));
   const plannedFiles = modules.filter((item) => item.includes("/") || /\.(md|ts|tsx|js|json|yaml|yml)$/.test(item));
   if (!plannedFiles.includes(record.path)) {
     plannedFiles.unshift(record.path);
   }
 
-  return syncLegacyFields({
-    schema_version: "1",
+  return normalizeCompanion({
+    schema_version: "2",
     task_id: record.shortId,
     short_id: record.shortId,
     task_record_id: record.id,
@@ -198,52 +106,69 @@ function parseTaskToCompanion(taskLike, content) {
     },
     lifecycle: createEmptyLifecycle(),
     artifacts: createEmptyArtifacts(),
-    summary_artifacts: [],
   });
 }
 
 function mergeCompanion(existing, parsed) {
-  return syncLegacyFields({
-    ...existing,
-    ...parsed,
-    truth_boundaries: { ...(existing.truth_boundaries || {}), ...(parsed.truth_boundaries || {}) },
+  const current = normalizeCompanion(existing);
+  const next = normalizeCompanion(parsed);
+  return normalizeCompanion({
+    ...current,
+    task_id: next.task_id || current.task_id,
+    short_id: next.short_id || current.short_id,
+    task_record_id: next.task_record_id || current.task_record_id,
+    task_path: next.task_path || current.task_path,
+    title: next.title || current.title,
+    goal: next.goal || current.goal,
+    current_mode: next.current_mode || current.current_mode,
+    task_status: next.task_status || current.task_status,
+    truth_boundaries: { ...(current.truth_boundaries || {}), ...(next.truth_boundaries || {}) },
     contract: {
-      ...(existing.contract || {}),
-      ...(parsed.contract || {}),
-      planned_files: parsed.contract.planned_files,
-      planned_modules: parsed.contract.planned_modules,
+      ...(current.contract || {}),
+      ...(next.contract || {}),
+      planned_files: next.contract.planned_files,
+      planned_modules: next.contract.planned_modules,
     },
-    lifecycle: { ...createEmptyLifecycle(), ...(existing.lifecycle || {}) },
+    lifecycle: { ...createEmptyLifecycle(), ...(current.lifecycle || {}) },
     artifacts: {
       ...createEmptyArtifacts(),
-      ...(existing.artifacts || {}),
-      decision_cards: mergeArtifactList(existing.artifacts?.decision_cards, parsed.artifacts?.decision_cards, "path"),
-      diff_summaries: mergeArtifactList(existing.artifacts?.diff_summaries, parsed.artifacts?.diff_summaries, "path"),
-      handoff_notes: mergeArtifactList(existing.artifacts?.handoff_notes, parsed.artifacts?.handoff_notes, "recorded_at"),
-      review_notes: mergeArtifactList(existing.artifacts?.review_notes, parsed.artifacts?.review_notes, "recorded_at"),
-      release_notes: mergeArtifactList(existing.artifacts?.release_notes, parsed.artifacts?.release_notes, "release_id"),
+      ...(current.artifacts || {}),
+      decision_cards: mergeArtifactList(current.artifacts?.decision_cards, next.artifacts?.decision_cards, "path"),
+      diff_summaries: mergeArtifactList(current.artifacts?.diff_summaries, next.artifacts?.diff_summaries, "path"),
+      handoff_notes: mergeArtifactList(current.artifacts?.handoff_notes, next.artifacts?.handoff_notes, "recorded_at"),
+      review_notes: mergeArtifactList(current.artifacts?.review_notes, next.artifacts?.review_notes, "recorded_at"),
+      release_notes: mergeArtifactList(current.artifacts?.release_notes, next.artifacts?.release_notes, "release_id"),
     },
+    human_decision_needed: Boolean(current.human_decision_needed),
+    human_decision_reason: current.human_decision_reason || null,
+    owner_agent: current.owner_agent || next.owner_agent || "default",
   });
 }
 
-function readCompanion(taskLike) {
+function readCompanionFile(taskLike) {
   const file = getCompanionPath(taskLike);
-  return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : null;
+  return fs.existsSync(file) ? normalizeCompanion(JSON.parse(fs.readFileSync(file, "utf8"))) : null;
+}
+
+function readCompanion(taskLike) {
+  const companion = readCompanionFile(taskLike);
+  return companion ? buildCompatView(companion) : null;
 }
 
 function writeCompanion(taskLike, companion) {
   ensureDir();
   const file = getCompanionPath(taskLike);
-  fs.writeFileSync(file, JSON.stringify(syncLegacyFields(companion), null, 2) + "\n");
+  fs.writeFileSync(file, JSON.stringify(serializeCompanion(companion), null, 2) + "\n");
 }
 
 function ensureCompanion(taskLike) {
   const content = readTaskContent(taskLike);
   if (!content) return { ok: false, error: "Task not found" };
   const parsed = parseTaskToCompanion(taskLike, content);
-  const companion = readCompanion(taskLike) ? mergeCompanion(readCompanion(taskLike), parsed) : parsed;
-  writeCompanion(taskLike, companion);
-  return { ok: true, companion, record: getTaskRecord(taskLike) };
+  const existing = readCompanionFile(taskLike);
+  const canonical = existing ? mergeCompanion(existing, parsed) : parsed;
+  writeCompanion(taskLike, canonical);
+  return { ok: true, companion: buildCompatView(canonical), record: getTaskRecord(taskLike) };
 }
 
 function updateCompanion(taskLike, updater) {
@@ -256,13 +181,14 @@ function updateCompanion(taskLike, updater) {
 }
 
 function readCompanionReleaseContext(taskLike) {
-  const companion = readCompanion(taskLike);
+  const companion = readCompanionFile(taskLike);
   if (!companion) return null;
   const handoff = companion.lifecycle?.handoff || null;
   const review = companion.lifecycle?.review || null;
   const releaseHandoff = companion.lifecycle?.release_handoff || null;
   return {
-    delivery_summary: releaseHandoff?.delivery_summary || handoff?.summary || `${companion.short_id} ${companion.title}`.trim(),
+    delivery_summary:
+      releaseHandoff?.delivery_summary || handoff?.summary || `${companion.short_id} ${companion.title}`.trim(),
     delivery_benefit: releaseHandoff?.delivery_benefit || handoff?.delivery_benefit || null,
     delivery_risks: releaseHandoff?.delivery_risks || review?.merge_decision_explanation || null,
     latest_diff_summary_path: review?.diff_summary_path || null,
@@ -274,6 +200,7 @@ module.exports = {
   ensureCompanion,
   getCompanionPath,
   getTaskPath,
+  normalizeCompanion,
   parseTaskToCompanion,
   readCompanion,
   readCompanionReleaseContext,

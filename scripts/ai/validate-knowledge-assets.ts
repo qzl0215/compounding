@@ -1,6 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const { getKnowledgeAssets, loadPromptManifest } = require("./lib/knowledge-assets.ts");
+const { getKnowledgeAssets, hasBundledSourceOfTruth, loadPromptManifest } = require("./lib/knowledge-assets.ts");
 const { renderAssetMaintenanceDoc } = require("./generate-asset-maintenance.ts");
 
 const root = process.cwd();
@@ -46,6 +46,9 @@ function validatePromptManifest() {
 
 for (const asset of getKnowledgeAssets(root)) {
   details.asset_ids.push(asset.id);
+  if (hasBundledSourceOfTruth(asset.source_of_truth)) {
+    errors.push(`Knowledge asset ${asset.id} must use a single source_of_truth owner.`);
+  }
 }
 
 validatePromptManifest();

@@ -29,15 +29,15 @@ related_docs:
 
 - AI 默认围绕 `tasks/queue/*` 工作
 - 若任务不存在，先用 `scripts/ai/create-task.ts` 生成
-- 任何 repo-tracked 改动都必须同步更新 task；若没有 task 更新，校验器必须失败
+- `light` 改动可直接维护 `docs / memory / code_index / 现有 task`；`structural / release` 改动若没有 task 更新，校验器必须失败
 - 若 roadmap / operating-blueprint / 发布标准不清晰，先创建规划 task，再与用户共商
 - 任务是 scope 和验收边界，不是可有可无的备注
 - 任务的目标是让团队高效协作，而不是制造更多流程负担
 - 每个执行 task 都应绑定短分支，并在任务中记录最近提交和是否并入 `main`
 - 任务在对话中默认使用“中文任务摘要 + 短编号”表达；短编号固定为 `t-xxx`
 - 任务页默认优先展示交付摘要，而不是工程明细；工程信息在需要时再展开
-- 每个 task 动手前默认先跑 `coord:check:pre-task`，它会同时检查任务 companion、scope guard、运行态和锁状态；高风险时会产出决策卡
-- 当前 Delivery Framework Phase 1 默认把 task companion 视为 machine-readable delivery contract；`create / start / handoff / merge / release handoff` 应围绕同一份 companion 回写，不再各自拼接临时上下文
+- `light` 改动可跳过 `coord:check:pre-task`；`structural / release` task 动手前默认先跑 `coord:check:pre-task`，它会同时检查任务 companion、scope guard、运行态和锁状态；高风险时会产出决策卡
+- 当前 Delivery Framework 默认把 task companion 视为派生的 machine-readable delivery contract；`create / start / handoff / merge / release handoff` 围绕同一份 companion 回写，但发布主状态仍只认 release registry
 
 ## AI 特有协作约束
 
@@ -72,8 +72,6 @@ related_docs:
   - 适用场景：task 已明确、准备动手、需要最小上下文与任务绑定校验。
 - 交付链默认脚本：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`、`node --experimental-strip-types scripts/release/accept-dev-release.ts`、`node --experimental-strip-types scripts/release/reject-dev-release.ts`、`node --experimental-strip-types scripts/release/rollback-release.ts`
   - 适用场景：准备 `dev` 预览、验收通过、需要驳回或回滚。
-- 模式提示与校验辅助：`scripts/ai/collaboration-mode-integration.js`、`scripts/ai/task-mode-integration.ts`
-  - 适用场景：弱 agent 需要模式信息、入口建议或当前 task 模式校验时。
 - 这些脚本只承接最小契约，不替代 `docs/WORK_MODES.md`、`docs/DEV_WORKFLOW.md` 或任务边界。
 
 ## 上下文系统
@@ -81,7 +79,7 @@ related_docs:
 - `code_index/module-index.md` 给模块入口
 - `code_index/dependency-map.md` 给依赖方向
 - `code_index/function-index.json` 给粗粒度函数索引
-- `scripts/ai/build-context.ts` 负责把规则、架构、任务、模块和记忆压缩成最小上下文包
+- `scripts/ai/build-context.ts` 默认只把规则、架构、任务、模块和命中的 `code_index/*` 压成最小上下文包；workflow / AI model / project memory 改为显式按需附加
 - `docs/ASSET_MAINTENANCE.md` 给高频知识资产的维护方式矩阵，帮助区分哪些走生成、哪些走校验、哪些继续人工维护
 
 ## 记忆系统

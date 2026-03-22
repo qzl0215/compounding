@@ -2,6 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const childProcess = require("node:child_process");
 const { extractSection } = require("./lib/markdown-sections.ts");
+const { getChangePolicy } = require("./lib/change-policy.ts");
 
 const root = process.cwd();
 
@@ -11,33 +12,6 @@ function git(args) {
 
 function currentBranch() {
   return git(["branch", "--show-current"]);
-}
-
-function listChangedFiles() {
-  const status = git(["status", "--short"]);
-  if (status) {
-    return status
-      .split("\n")
-      .map((line) => {
-        const match = line.match(/^.. (.+)$/);
-        if (!match) {
-          return "";
-        }
-        const value = match[1].trim();
-        return value.includes(" -> ") ? value.split(" -> ").at(-1)?.trim() ?? "" : value;
-      })
-      .filter(Boolean);
-  }
-
-  try {
-    const previous = git(["rev-parse", "HEAD^"]);
-    return git(["diff", "--name-only", `${previous}..HEAD`])
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean);
-  } catch {
-    return [];
-  }
 }
 
 function read(relPath) {
@@ -132,9 +106,22 @@ function validateTask(taskPath, changedFiles, errors) {
 }
 
 function main() {
-  const changedFiles = listChangedFiles().filter((file) => !file.startsWith("output/"));
+  const changePolicy = getChangePolicy(root);
+  const changedFiles = changePolicy.changed_files;
   if (changedFiles.length === 0) {
-    console.log(JSON.stringify({ ok: true, message: "No repo-tracked changes to validate.", changed_files: [] }, null, 2));
+    console.log(
+      JSON.stringify(
+        {
+          ok: true,
+          message: "No repo-tracked changes to validate.",
+          changed_files: [],
+          change_class: changePolicy.change_class,
+          policy: changePolicy.policy,
+        },
+        null,
+        2
+      )
+    );
     return;
   }
 
@@ -142,13 +129,13 @@ function main() {
   const errors = [];
   const activeBranch = currentBranch();
 
-  if (changedTaskFiles.length === 0) {
+  if (changePolicy.policy.requires_task && changedTaskFiles.length === 0) {
     errors.push("存在 repo-tracked 改动，但没有任何 tasks/queue/*.md 变更。");
   }
 
   changedTaskFiles.forEach((taskPath) => validateTask(taskPath, changedFiles, errors));
 
-  if (activeBranch.startsWith("codex/") && changedTaskFiles.length > 0) {
+  if (changePolicy.policy.strict_task_binding && activeBranch.startsWith("codex/") && changedTaskFiles.length > 0) {
     const matchingBranchTask = changedTaskFiles.some((taskPath) => {
       const content = read(taskPath);
       const branch = String(extractSection(content, "branch", root) || "").replace(/`/g, "").trim();
@@ -164,6 +151,8 @@ function main() {
     ok,
     changed_files: changedFiles,
     changed_tasks: changedTaskFiles,
+    change_class: changePolicy.change_class,
+    policy: changePolicy.policy,
     errors,
   };
 

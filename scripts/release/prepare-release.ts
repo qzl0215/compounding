@@ -1,6 +1,5 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const childProcess = require("node:child_process");
 const { recordReleaseHandoff } = require("../coord/lib/companion-lifecycle.ts");
 const {
   changeSummary,
@@ -20,6 +19,12 @@ const {
   upsertRelease,
   withReleaseLock,
 } = require("./lib.ts");
+const {
+  createReleaseRecord,
+  ensurePreviewAvailable,
+  hasBuildSmokeSignal,
+  installAndBuildRelease,
+} = require("./prepare-release-support.ts");
 
 function parseArg(name, fallback = null) {
   const index = process.argv.indexOf(name);
@@ -34,25 +39,25 @@ const channel = parseArg("--channel", "prod");
 const primaryTaskId = parseArg("--primary-task", null);
 const linkedTaskIds = parseTaskIdList(parseArg("--linked-tasks", ""));
 
-function runNodeScript(scriptPath) {
-  return JSON.parse(
-    childProcess.execFileSync("node", ["--experimental-strip-types", scriptPath], {
-      cwd: process.cwd(),
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"],
-    })
-  );
-}
-
-function ensurePreviewAvailable(releaseId, releasePath) {
-  updateChannelSymlink(releasePath, "dev");
-  const startScript = path.join(process.cwd(), "scripts", "local-runtime", "start-preview.ts");
-  const payload = runNodeScript(startScript);
-  return {
-    ok: Boolean(payload.ok),
-    message: payload.message || `dev 预览 ${releaseId} 已生成。`,
-    note: payload.message || "",
-  };
+function canPrepareChannel(channelName, taskId) {
+  if (channelName !== "dev") {
+    return null;
+  }
+  const existingPending = pendingDevRelease();
+  if (existingPending) {
+    return {
+      ok: false,
+      message: "当前已有未验收的 dev 预览，请先验收上一个 dev。",
+      release: existingPending,
+    };
+  }
+  if (!taskId) {
+    return {
+      ok: false,
+      message: "生成 dev 预览前必须指定主 task。",
+    };
+  }
+  return null;
 }
 
 function main() {
@@ -68,21 +73,9 @@ function main() {
 
   try {
     const result = withReleaseLock(() => {
-      if (channel === "dev") {
-        const existingPending = pendingDevRelease();
-        if (existingPending) {
-          return {
-            ok: false,
-            message: "当前已有未验收的 dev 预览，请先验收上一个 dev。",
-            release: existingPending,
-          };
-        }
-        if (!primaryTaskId) {
-          return {
-            ok: false,
-            message: "生成 dev 预览前必须指定主 task。",
-          };
-        }
+      const blocked = canPrepareChannel(channel, primaryTaskId);
+      if (blocked) {
+        return blocked;
       }
 
       const commitSha = resolveCommit(ref);
@@ -99,46 +92,27 @@ function main() {
       git(["worktree", "add", "--detach", releasePath, commitSha]);
       try {
         git(["clean", "-fdx"], releasePath);
-        childProcess.execFileSync("pnpm", ["install", "--frozen-lockfile=false"], {
-          cwd: releasePath,
-          stdio: ["ignore", "pipe", "pipe"],
-        });
-        childProcess.execFileSync("pnpm", ["build"], {
-          cwd: releasePath,
-          stdio: ["ignore", "pipe", "pipe"],
-        });
-
-        const buildIdPath = path.join(releasePath, "apps", "studio", ".next", "BUILD_ID");
-        const smokePassed = fs.existsSync(buildIdPath);
+        installAndBuildRelease(releasePath);
+        const smokePassed = hasBuildSmokeSignal(releasePath);
         if (!smokePassed) {
           notes.push("BUILD_ID missing after build.");
         }
 
-        const prepared = {
-          release_id: releaseId,
-          commit_sha: commitSha,
-          tag: null,
-          source_ref: ref,
-          primary_task_id: taskMeta?.id || null,
-          linked_task_ids: normalizedLinkedTaskIds,
-          delivery_summary: taskMeta?.delivery_summary || null,
-          delivery_benefit: taskMeta?.delivery_benefit || null,
-          delivery_risks: taskMeta?.delivery_risks || null,
+        const prepared = createReleaseRecord({
+          releaseId,
+          commitSha,
+          ref,
           channel,
-          acceptance_status: channel === "dev" ? "pending" : "accepted",
-          preview_url: channel === "dev" ? previewBaseUrl() : null,
-          promoted_to_main_at: null,
-          promoted_from_dev_release_id: null,
-          created_at: new Date().toISOString(),
+          taskMeta,
+          linkedTaskIds: normalizedLinkedTaskIds,
+          releasePath,
+          summary,
+          createdAt: new Date().toISOString(),
           status: channel === "dev" ? "preview" : "prepared",
-          build_result: "passed",
-          smoke_result: smokePassed ? "passed" : "failed",
-          cutover_at: null,
-          rollback_from: null,
-          release_path: releasePath,
-          change_summary: summary,
+          buildResult: "passed",
+          smokeResult: smokePassed ? "passed" : "failed",
           notes,
-        };
+        });
 
         upsertRelease(prepared);
         if (taskMeta?.id) {
@@ -180,31 +154,21 @@ function main() {
           release: prepared,
         };
       } catch (error) {
-        const failed = {
-          release_id: releaseId,
-          commit_sha,
-          tag: null,
-          source_ref: ref,
-          primary_task_id: taskMeta?.id || null,
-          linked_task_ids: normalizedLinkedTaskIds,
-          delivery_summary: null,
-          delivery_benefit: null,
-          delivery_risks: null,
+        const failed = createReleaseRecord({
+          releaseId,
+          commitSha,
+          ref,
           channel,
-          acceptance_status: channel === "dev" ? "rejected" : "accepted",
-          preview_url: channel === "dev" ? previewBaseUrl() : null,
-          promoted_to_main_at: null,
-          promoted_from_dev_release_id: null,
-          created_at: new Date().toISOString(),
+          taskMeta,
+          linkedTaskIds: normalizedLinkedTaskIds,
+          releasePath,
+          summary,
+          createdAt: new Date().toISOString(),
           status: "failed",
-          build_result: "failed",
-          smoke_result: "failed",
-          cutover_at: null,
-          rollback_from: null,
-          release_path: releasePath,
-          change_summary: summary,
+          buildResult: "failed",
+          smokeResult: "failed",
           notes: [error instanceof Error ? error.message : "release build failed"],
-        };
+        });
         upsertRelease(failed);
         return {
           ok: false,

@@ -24,7 +24,7 @@ related_docs:
 
 ## 预任务护栏
 
-- 每个 task 真正开始动手前，默认先跑 `coord:check:pre-task`
+- `light` 改动默认跳过 `coord:check:pre-task`；`structural / release` task 真正开始动手前，默认先跑 `coord:check:pre-task`
 - `pre-task` 默认同时检查：
   - 工作区是否干净
   - 任务 companion
@@ -51,7 +51,7 @@ related_docs:
 - 触发：task 已确认，准备开始实现。
 - 最小动作：
   1. 先读当前 task、相关 `module.md`、`code_index/*`。
-  2. 需要上下文压缩时，用 `scripts/ai/build-context.ts`。
+  2. 需要上下文压缩时，用 `scripts/ai/build-context.ts`；默认只拉 `AGENTS.md`、`docs/PROJECT_RULES.md`、`docs/ARCHITECTURE.md`、当前 task、相关 `module.md` 与命中的 `code_index/*`。
   3. 动手前先跑 `python3 scripts/pre_mutation_check.py`。
 - 输出：最小可验证改动、task 回写、必要的 memory / docs / index 回写。
 
@@ -60,7 +60,7 @@ related_docs:
 - 触发：实现已完成，准备验收、发布或回滚。
 - 最小动作：
   1. 先跑 `node --experimental-strip-types scripts/ai/validate-change-trace.ts` 与 `node --experimental-strip-types scripts/ai/validate-task-git-link.ts`。
-2. 再按 release 流程准备 `dev` 预览：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`。
+  2. 再按 release 流程准备 `dev` 预览：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`。
   3. 如果已有未验收 `dev`，先提醒用户验收上一个 `dev`。
   4. 用户验收通过后，再晋升到 `main` 与本地生产。
   5. 最后用 `pnpm prod:status`、`pnpm prod:check` 和 `/releases` 完成生产验收。
@@ -74,7 +74,7 @@ related_docs:
 
 ### 模式契约
 
-- `scripts/ai/collaboration-mode-integration.js` 与 `scripts/ai/task-mode-integration.ts` 只作为模式提示与校验辅助，不作为新的真相源。
+- 工作模式只在 `docs/WORK_MODES.md` 与本工作流内解释，不再保留独立 mode / preamble helper 栈。
 - 弱 agent 先按这三条 runbook 切换，不把模式切换写成大型审批流。
 
 ## 标准流程
@@ -87,7 +87,7 @@ related_docs:
 6. 运行 `python3 scripts/pre_mutation_check.py`
 7. 完成最小可验证改动
 8. 更新 `task / memory / code_index / docs`
-9. 运行 `node --experimental-strip-types scripts/ai/validate-change-trace.ts` 与 `node --experimental-strip-types scripts/ai/validate-task-git-link.ts`
+9. 运行 `node --experimental-strip-types scripts/ai/validate-change-trace.ts` 与 `node --experimental-strip-types scripts/ai/validate-task-git-link.ts`；`light` 改动允许返回非阻断结果
 10. 先生成 `dev` 预览：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`
 11. 若已有未验收 `dev`，先提醒用户验收上一个 `dev`
 12. 用户验收通过后，再晋升到 `main` 与本地生产
@@ -163,9 +163,10 @@ related_docs:
 
 ## 任务规则
 
-- 每个结构性改动必须绑定 `tasks/queue/*`
+- `light` 改动可只更新 `docs / memory / code_index / 现有 task`，不强制新建或绑定结构性 task
+- 每个 `structural / release` 改动必须绑定 `tasks/queue/*`
 - 默认先更新 task，再改代码；改完后补齐更新痕迹和必要回写
-- 任何 repo-tracked 改动若没有 task 文件变更，视为硬失败
+- 任何 `structural / release` repo-tracked 改动若没有 task 文件变更，视为硬失败
 - 每个 task 至少包含 目标 / 为什么 / 范围 / 范围外 / 约束 / 关联模块 / 当前模式 / 分支 / 最近提交 / 计划 / 发布说明 / 验收标准 / 风险 / 状态 / 更新痕迹 / 复盘
 - 每个 task 还必须包含短编号；短编号格式固定为 `t-xxx`
 - task 模板默认补齐 `交付收益 / 交付风险 / 一句复盘`，供任务页高密度摘要表直接读取

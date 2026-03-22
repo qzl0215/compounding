@@ -2,8 +2,10 @@ const fs = require("node:fs");
 const path = require("node:path");
 const childProcess = require("node:child_process");
 const { extractSection, stripMarkdown } = require("./lib/markdown-sections.ts");
-const { listTaskRecords } = require("./lib/task-resolver.ts");
-const { isValidShortId } = require(path.join(process.cwd(), "shared", "task-identity.ts"));
+const { getChangePolicy } = require("./lib/change-policy.ts");
+const { collectTaskIdentityErrors, taskIdFromPath } = require(
+  path.join(process.cwd(), "shared", "task-identity.ts")
+);
 
 const root = process.cwd();
 function git(args) {
@@ -24,15 +26,28 @@ function read(relPath) {
   return fs.readFileSync(path.join(root, relPath), "utf8");
 }
 
-function parseTask(record) {
-  const pathname = record.path;
+function listTaskPaths() {
+  const queueDir = path.join(root, "tasks", "queue");
+  if (!fs.existsSync(queueDir)) {
+    return [];
+  }
+  return fs
+    .readdirSync(queueDir)
+    .filter((name) => name.endsWith(".md"))
+    .sort()
+    .map((name) => path.posix.join("tasks/queue", name));
+}
+
+function parseTask(pathname) {
   const content = read(pathname);
+  const titleMatch = content.match(/^#\s+(.+)$/m);
   const rawShortId = cleanValue(stripMarkdown(extractSection(content, "short_id", root) || ""));
   return {
-    id: record.id,
-    shortId: record.shortId,
+    id: taskIdFromPath(pathname),
+    shortId: rawShortId,
     rawShortId,
     path: pathname,
+    title: titleMatch ? titleMatch[1].trim() : taskIdFromPath(pathname),
     status: normalizeStatus(stripMarkdown(extractSection(content, "status", root) || "")),
     currentMode: cleanValue(stripMarkdown(extractSection(content, "current_mode", root) || "")),
     branch: stripMarkdown(extractSection(content, "branch", root) || ""),
@@ -123,12 +138,6 @@ function validateTask(task, errors) {
     errors.push(`${task.path}: 当前模式不在允许列表内。`);
   }
 
-  if (!task.rawShortId) {
-    errors.push(`${task.path}: 必须显式填写短编号。`);
-  } else if (!isValidShortId(task.rawShortId)) {
-    errors.push(`${task.path}: 短编号必须符合 t-xxx 格式。`);
-  }
-
   const snapshot = getTaskGitSnapshot(task);
 
   if (task.status !== "done" && !snapshot.branch) {
@@ -166,23 +175,26 @@ function validateTask(task, errors) {
 }
 
 function main() {
-  let taskRecords;
-  try {
-    taskRecords = listTaskRecords(root);
-  } catch (error) {
-    console.log(
-      JSON.stringify({
-        ok: false,
-        tasks: [],
-        errors: [error instanceof Error ? error.message : "task identity validation failed"],
-      }, null, 2)
-    );
-    process.exit(1);
-  }
+  const changePolicy = getChangePolicy(root);
   const errors = [];
   const activeBranch = currentBranch();
-  const snapshots = taskRecords.map((record) => {
-    const task = parseTask(record);
+  const changedTaskPaths = changePolicy.changed_files.filter((file) => /^tasks\/queue\/.+\.md$/.test(file));
+  const allTasks = listTaskPaths().map((taskPath) => parseTask(taskPath));
+  const branchMatchedTasks =
+    changePolicy.policy.strict_task_binding && activeBranch.startsWith("codex/")
+      ? allTasks.filter((task) => cleanValue(task.branch) === activeBranch)
+      : [];
+  const relevantTasks = Array.from(
+    new Map(
+      [...allTasks.filter((task) => changedTaskPaths.includes(task.path)), ...branchMatchedTasks].map((task) => [task.path, task])
+    ).values()
+  );
+
+  errors.push(
+    ...collectTaskIdentityErrors(relevantTasks.map((task) => ({ id: task.id, shortId: task.rawShortId, path: task.path })))
+  );
+
+  const snapshots = relevantTasks.map((task) => {
     validateTask(task, errors);
     const snapshot = getTaskGitSnapshot(task);
     return {
@@ -198,17 +210,23 @@ function main() {
     };
   });
 
-  if (activeBranch.startsWith("codex/")) {
-    const activeTask = taskRecords
-      .map((record) => parseTask(record))
-      .find((task) => cleanValue(task.branch) === activeBranch);
-    if (!activeTask) {
+  if (changePolicy.policy.strict_task_binding && activeBranch.startsWith("codex/")) {
+    if (branchMatchedTasks.length === 0) {
       errors.push(`当前分支 ${activeBranch} 没有对应的 task 绑定。`);
     }
   }
 
   const ok = errors.length === 0;
-  const payload = { ok, tasks: snapshots, errors };
+  const payload = {
+    ok,
+    tasks: snapshots,
+    errors,
+    changed_task_paths: changedTaskPaths,
+    validated_task_paths: relevantTasks.map((task) => task.path),
+    change_class: changePolicy.change_class,
+    policy: changePolicy.policy,
+    skipped_task_binding: !changePolicy.policy.strict_task_binding,
+  };
   console.log(JSON.stringify(payload, null, 2));
   if (!ok) {
     process.exit(1);

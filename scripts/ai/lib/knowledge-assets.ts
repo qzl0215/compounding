@@ -1,6 +1,10 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
+function hasBundledSourceOfTruth(value) {
+  return /[+，,]/.test(String(value || ""));
+}
+
 function loadPromptManifest(root) {
   const manifestPath = path.join(root, "docs", "prompts", "prompt-assets.json");
   if (!fs.existsSync(manifestPath)) {
@@ -49,7 +53,7 @@ function getKnowledgeAssets(root) {
       id: "governance-docs",
       title: "关键说明文档",
       maintenance_mode: "manual",
-      source_of_truth: "AGENTS.md + docs/* + memory/*",
+      source_of_truth: "frontmatter.source_of_truth (per document)",
       generation_or_validation: "人工 review + task 回写",
       files: [
         "AGENTS.md",
@@ -69,5 +73,6 @@ function getKnowledgeAssets(root) {
 
 module.exports = {
   getKnowledgeAssets,
+  hasBundledSourceOfTruth,
   loadPromptManifest,
 };

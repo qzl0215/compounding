@@ -55,7 +55,7 @@ related_docs:
 ### 关键说明文档
 
 - 维护方式：`manual`
-- 真相源：`AGENTS.md + docs/* + memory/*`
+- 真相源：`frontmatter.source_of_truth (per document)`
 - 入口命令：`人工 review + task 回写`
 - 资产文件：
   - `AGENTS.md`
