@@ -88,7 +88,7 @@ export async function getProjectOverview(): Promise<ProjectOverviewSnapshot> {
 
   return {
     ...snapshot,
-    homepage: buildHomepageProjection(snapshot, HOME_ENTRY_LINKS),
+    homepage: buildHomepageProjection(snapshot),
   };
 }
 

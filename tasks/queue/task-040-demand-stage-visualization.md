@@ -98,7 +98,7 @@ t-040
 
 ## 最近提交
 
-`6ca58df feat: adopt single-plan demand operating model`
+`2508b8b feat: tighten homepage demand overview`
 
 ## 交付收益
 
@@ -110,7 +110,7 @@ t-040
 
 ## 一句复盘
 
-阶段投影已稳定，当前收口重点从“多区块说明”改成“单层 plan + 首页只保留需求总览”，让表达和执行边界一起变短。
+阶段投影已稳定，首页进一步压到只保留需求总览本体，让用户先看判断，再去任务、发布和证据页下钻。
 
 ## 体验验收结果
 
@@ -167,9 +167,9 @@ doing
 
 ## 更新痕迹
 
-- 记忆：`memory/project/operating-blueprint.md`, `memory/project/current-state.md`
+- 记忆：`no change: 本轮只继续收首页表达层，不改 memory 主源`
 - 索引：`no change: current code index already covers the touched modules`
-- 路线图：`memory/project/roadmap.md`
+- 路线图：`no change: current priority unchanged`
 - 文档：`AGENTS.md`, `docs/DEV_WORKFLOW.md`, `docs/AI_OPERATING_MODEL.md`, `docs/WORK_MODES.md`, `tasks/templates/task-template.md`, `tasks/queue/task-040-demand-stage-visualization.md`, `apps/studio/src/modules/portal/module.md`
 
 ## 复盘

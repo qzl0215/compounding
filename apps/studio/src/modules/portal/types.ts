@@ -10,20 +10,6 @@ export type HomepageStat = {
   value: string;
 };
 
-export type HomepageStageStat = {
-  label: string;
-  value: string;
-  hint: string;
-};
-
-export type HomepageDecision = {
-  title: string;
-  summary: string;
-  evidenceHref: string;
-  ctaLabel: string;
-  badge?: string;
-};
-
 export type SemanticEntry = {
   label: string;
   path?: string;
@@ -55,9 +41,6 @@ export type HomepageProjection = {
   headline: string;
   subheadline: string;
   primaryStats: HomepageStat[];
-  stageStats: HomepageStageStat[];
-  decision: HomepageDecision;
-  routes: HomeEntryLink[];
 };
 
 export type CockpitRuntimeSignal = {

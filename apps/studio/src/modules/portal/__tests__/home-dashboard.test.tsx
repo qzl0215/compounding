@@ -18,32 +18,12 @@ const cockpitFixture: ProjectOverviewSnapshot = {
   },
   homepage: {
     eyebrow: "需求总览",
-    headline: "先扩选项，再收决策",
+    headline: "先定问题，再定动作",
     subheadline: "单层 Plan 只在 operating-blueprint 收口。",
     primaryStats: [
       { label: "当前阶段", value: "Single-Plan Demand Operating Model" },
       { label: "当前里程碑", value: "单层 Plan、阶段优先与高 ROI Test 治理" },
-      { label: "当前优先级", value: "先明确事情属于待思考、待规划还是待执行。" },
       { label: "下一方向", value: "把首页收口成只保留需求总览的入口。" },
-    ],
-    stageStats: [
-      { label: "待思考", value: "1", hint: "先补问题" },
-      { label: "待规划", value: "0", hint: "先收边界" },
-      { label: "待执行", value: "0", hint: "可进 task" },
-      { label: "执行中", value: "0", hint: "看推进" },
-      { label: "待验收", value: "0", hint: "先判断" },
-    ],
-    decision: {
-      title: "当前先扩选项",
-      summary: "像“需求还没说清”这类事项还在待思考。先补问题、价值和时机。",
-      evidenceHref: "/knowledge-base?path=memory/project/operating-blueprint.md",
-      ctaLabel: "回主源补问题",
-      badge: "1 条待思考",
-    },
-    routes: [
-      { href: "/knowledge-base", label: "证据库", description: "看主源、规则和背景。", scope: "memory" },
-      { href: "/tasks", label: "执行面板", description: "看真正可推进的事项。", scope: "tasks" },
-      { href: "/releases", label: "发布事实", description: "看验收、版本和运行态。", scope: "release" },
     ],
   },
   thinkingItems: [
@@ -90,10 +70,11 @@ describe("home dashboard", () => {
   it("renders a summary-only demand overview instead of a multi-card timeline", () => {
     render(<HomeDashboard overview={cockpitFixture} />);
 
-    expect(screen.getByRole("heading", { name: "先扩选项，再收决策" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "先定问题，再定动作" })).toBeInTheDocument();
     expect(screen.getByText("当前阶段")).toBeInTheDocument();
     expect(screen.getByText("当前里程碑")).toBeInTheDocument();
-    expect(screen.getByText("当前判断")).toBeInTheDocument();
+    expect(screen.getByText("下一方向")).toBeInTheDocument();
+    expect(screen.queryByText("当前判断")).not.toBeInTheDocument();
     expect(screen.queryByText("01 现在是什么")).not.toBeInTheDocument();
   });
 });
