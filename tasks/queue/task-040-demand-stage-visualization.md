@@ -39,6 +39,7 @@ t-040
 - `apps/studio/src/modules/portal/builders.ts`
 - `apps/studio/src/modules/portal/index.ts`
 - `apps/studio/src/modules/portal/module.md`
+- `apps/studio/src/modules/portal/overview-items.ts`
 - `apps/studio/src/modules/portal/service.ts`
 - `apps/studio/src/modules/portal/stage-model.ts`
 - `apps/studio/src/modules/portal/types.ts`
@@ -76,7 +77,7 @@ t-040
 
 ## 最近提交
 
-`auto: branch HEAD`
+`12a1011 feat: add stage-first demand overview`
 
 ## 交付收益
 
