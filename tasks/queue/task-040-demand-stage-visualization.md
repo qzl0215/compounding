@@ -98,7 +98,7 @@ t-040
 
 ## 最近提交
 
-`2508b8b feat: tighten homepage demand overview`
+`9b23bdd refactor: tighten homepage demand overview`
 
 ## 交付收益
 
