@@ -55,7 +55,7 @@ t-039
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 
 ## 分支
@@ -79,7 +79,7 @@ t-039
 
 ## 一句复盘
 
-未复盘
+影子真相源、冗余 helper 栈、全量强门禁与 companion 镜像扩张已经同步收口，自治链路更轻、更稳，也更容易持续维护。
 
 
 ## 主发布版本
@@ -122,7 +122,7 @@ t-039
 
 ## 状态
 
-doing
+done
 
 ## 更新痕迹
 
@@ -132,3 +132,7 @@ doing
 - 文档：`AGENTS.md, docs/AI_OPERATING_MODEL.md, docs/ARCHITECTURE.md, docs/ASSET_MAINTENANCE.md, docs/DEV_WORKFLOW.md, tasks/queue/task-039-truth-source-and-autonomy-subtraction.md`
 
 ## 复盘
+
+- bootstrap 不再重写 live 治理正文，真相源边界从“文档+生成器双写”收回到 live Markdown。
+- task gate 改成按改动等级分流，轻量维护不再被 full ceremony 拖慢，结构性与发布类改动仍保留硬门禁。
+- code-side 大文件已清零，后续再做治理时可以在更小、更明确的模块边界上继续减熵。
