@@ -90,20 +90,19 @@ class BootstrapCliTests(unittest.TestCase):
 
         self.assertEqual(snapshot, after)
 
-    def test_audit_rejects_agents_roadmap_priority_drift(self) -> None:
+    def test_audit_rejects_missing_agents_roadmap_pointer(self) -> None:
         scaffold(self.brief_path, self.target)
         agents_path = self.target / AGENTS_PATH
         agents_text = agents_path.read_text(encoding="utf8")
-        current_priority_line = next(line for line in agents_text.splitlines() if line.startswith("- 当前优先级："))
         agents_path.write_text(
-            agents_text.replace(current_priority_line, "- 当前优先级：已经偏离 roadmap 的错误值。"),
+            agents_text.replace("`memory/project/roadmap.md`", "`memory/project/missing-roadmap.md`", 1),
             encoding="utf8",
         )
 
         result = audit(self.brief_path, self.target)
 
         self.assertFalse(result.passed)
-        self.assertTrue(any("AGENTS current priority must mirror roadmap current priority." in item for item in result.errors))
+        self.assertTrue(any("AGENTS Current State must point to memory/project/roadmap.md as the planning source." in item for item in result.errors))
 
     def test_audit_rejects_legacy_live_docs_and_missing_experience_section(self) -> None:
         scaffold(self.brief_path, self.target)

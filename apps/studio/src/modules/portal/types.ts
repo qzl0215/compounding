@@ -14,26 +14,8 @@ export type SemanticEntryGroup = {
   items: SemanticEntry[];
 };
 
-export type TaskSummary = {
-  title: string;
-  goal: string;
-  status: string;
-  path: string;
-  relatedModules: string[];
-  updateTrace: string;
-};
-
-export type OverviewSnippet = {
-  label: string;
-  path: string;
-  content: string;
-};
-
 export type CockpitIdentity = {
   oneLiner: string;
-  mission: string;
-  successDefinition: string;
-  mustProtect: string[];
 };
 
 export type CockpitCurrentFocus = {
@@ -51,28 +33,15 @@ export type CockpitRuntimeSignal = {
 };
 
 export type CockpitExecutionStatus = {
-  headline: string;
   summary: string;
-  doingTasks: TaskSummary[];
   blockedItems: string[];
   nextCheckpoint: string[];
   runtimeSignals: CockpitRuntimeSignal[];
 };
 
-export type CockpitRiskTone = "stable" | "warning" | "danger";
-
-export type CockpitRiskItem = {
-  title: string;
-  summary: string;
-  tone: CockpitRiskTone;
-  href: string;
-};
-
 export type CockpitRiskBoard = {
-  factConflicts: string[];
   frozenItems: string[];
   pendingDevSummary: string | null;
-  items: CockpitRiskItem[];
 };
 
 export type ProjectCockpit = {

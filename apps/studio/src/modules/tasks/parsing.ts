@@ -7,7 +7,7 @@ export function parseTaskCard(path: string, content: string): Omit<TaskCard, "gi
   return {
     id,
     path,
-    shortId: stripMarkdown(extractSection(content, "short_id") ?? deriveShortId(id)),
+    shortId: stripMarkdown(extractSection(content, "short_id") ?? ""),
     title: extractFirstHeading(content) ?? path.split("/").pop() ?? path,
     goal: stripMarkdown(extractSection(content, "goal") ?? "当前任务尚未填写目标。"),
     status: normalizeTaskStatus(stripMarkdown(extractSection(content, "status") ?? "todo")),
@@ -19,6 +19,8 @@ export function parseTaskCard(path: string, content: string): Omit<TaskCard, "gi
     deliveryRetro: stripMarkdown(extractSection(content, "delivery_retro") ?? extractSection(content, "retrospective") ?? "未复盘"),
     primaryRelease: stripMarkdown(extractSection(content, "primary_release") ?? "未生成"),
     linkedReleases: parseLinkedReleases(content),
+    companionReleaseIds: [],
+    companionLatestRelease: null,
     relatedModules: parseRelatedModules(content),
     updateTrace: parseUpdateTrace(content),
   };

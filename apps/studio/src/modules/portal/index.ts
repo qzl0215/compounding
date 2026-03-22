@@ -4,12 +4,9 @@ export type {
   CockpitExecutionStatus,
   CockpitIdentity,
   CockpitRiskBoard,
-  CockpitRiskItem,
   CockpitRuntimeSignal,
   HomeEntryLink,
-  OverviewSnippet,
   ProjectCockpit,
   SemanticEntry,
   SemanticEntryGroup,
-  TaskSummary,
 } from "./types";

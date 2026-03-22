@@ -1,5 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const { listTaskRecords } = require("./lib/task-resolver.ts");
 
 const [taskId, goal, why] = process.argv.slice(2);
 if (!taskId || !goal || !why) {
@@ -13,6 +14,15 @@ const template = fs.readFileSync(templatePath, "utf8");
 const suggestedBranch = `codex/${taskId}`;
 const shortIdMatch = taskId.match(/^task-(\d+)/);
 const shortId = shortIdMatch ? `t-${shortIdMatch[1]}` : `t-${taskId}`;
+const existingTaskRecords = listTaskRecords(root);
+if (existingTaskRecords.some((record) => record.id === taskId || record.path === path.posix.join("tasks/queue", `${taskId}.md`))) {
+  console.error(`Task already exists: ${taskId}`);
+  process.exit(1);
+}
+if (existingTaskRecords.some((record) => record.shortId === shortId)) {
+  console.error(`Short task id already exists: ${shortId}`);
+  process.exit(1);
+}
 const filled = template
   .replace("# 任务模板", `# 任务 ${taskId}`)
   .replace("## 短编号\n", `## 短编号\n\n${shortId}\n\n`)

@@ -10,7 +10,7 @@ related_docs:
   - docs/ORG_MODEL.md
   - docs/AI_OPERATING_MODEL.md
   - memory/project/roadmap.md
-last_reviewed_at: 2026-03-19
+last_reviewed_at: 2026-03-22
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 工作模式
@@ -188,9 +188,4 @@ last_reviewed_at: 2026-03-19
   - 版本切换或回滚完成
   - 复盘与经验沉淀已落地
 
-## 证据边界
-
-- 本地离线证据：
-- 服务器真实证据：
-- 当前结论适用边界：
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

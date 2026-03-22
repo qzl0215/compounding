@@ -4,7 +4,7 @@ doc_role: reference
 update_mode: manual
 owner_role: Foreman
 status: active
-last_reviewed_at: 2026-03-19
+last_reviewed_at: 2026-03-22
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -16,16 +16,14 @@ related_docs:
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # AI 工作模型
 
-## 标准阅读顺序
+## 最小起步顺序
 
-1. `AGENTS.md`
-2. `docs/PROJECT_RULES.md`
-3. `docs/ARCHITECTURE.md`
-4. 当前任务文件
-5. 相关 `module.md`
-6. `code_index/*`
-7. 必要代码
-8. 动手前 `python3 scripts/pre_mutation_check.py`
+- 默认先按 `AGENTS.md` 的真相源地图进入对应主源，不在本文件重复维护完整阅读顺序
+- AI 进入执行前至少应补齐：
+  - 当前任务文件
+  - 相关 `module.md`
+  - `code_index/*`
+  - `python3 scripts/pre_mutation_check.py`
 
 ## 任务驱动开发
 
@@ -41,22 +39,12 @@ related_docs:
 - 每个 task 动手前默认先跑 `coord:check:pre-task`，它会同时检查任务 companion、scope guard、运行态和锁状态；高风险时会产出决策卡
 - 当前 Delivery Framework Phase 1 默认把 task companion 视为 machine-readable delivery contract；`create / start / handoff / merge / release handoff` 应围绕同一份 companion 回写，不再各自拼接临时上下文
 
-## 默认沟通契约
+## AI 特有协作约束
 
-- AI 默认使用以下输出顺序：
-  1. 已完成清单
-  2. 证据与当前结论适用边界
-  3. 风险与待决策
-  4. 下一步
-- 交付 `dev` 或 production 页面时，默认同时提供：
-  - 当前环境说明
-  - 首页或关键页面链接
-  - 可执行的验收说明
-- 进入下一候选任务时，默认顺序固定为：
-  1. 中文任务摘要
-  2. 可执行方案
-  3. 用户确认后再执行
-- 若用户尚未确认任务方案，AI 不得直接进入该任务的实现阶段
+- 默认沟通结构和页面交付契约以 `AGENTS.md` 为唯一高频归宿，不在这里重复维护一整套模板
+- AI 特有的附加约束只有两条：
+  - 若用户尚未确认任务方案，不得直接进入实现阶段
+  - 若任务 companion、task 或 release 主源出现冲突，先修主源，再继续执行
 
 ## 工作模式
 
@@ -165,10 +153,4 @@ related_docs:
 - 文档以 Markdown 为唯一真相源；知识库默认编辑正文层，高级模式才编辑完整 Markdown
 - prompt 文档是 AI 重构行为的可维护真相源，应支持预览、保存生效与上一版本回退
 - 高频知识资产先按 `generated / validated / manual` 三分法分类，再决定维护方式；不要在未分层前把所有文档一股脑推进生成式
-
-## 证据边界
-
-- 本地离线证据：
-- 服务器真实证据：
-- 当前结论适用边界：
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

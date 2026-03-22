@@ -14,7 +14,7 @@ related_docs:
   - docs/ASSET_MAINTENANCE.md
   - memory/project/current-state.md
   - memory/project/roadmap.md
-last_reviewed_at: 2026-03-19
+last_reviewed_at: 2026-03-22
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 ## 硬规则
@@ -26,6 +26,7 @@ last_reviewed_at: 2026-03-19
 - 任何结构性改动都必须绑定任务、更新相关记忆，并在进入 `main` 前完成 review。
 - 每个执行 task 对应一条短分支；任务状态、最近提交与是否并入 `main` 必须可追踪。
 - 每次改动都必须绑定并更新 task；若存在 repo-tracked 改动但无 task 更新，校验器必须直接失败。
+- task 短编号必须全局唯一，并显式写入任务文档；不允许再靠文件名或序号隐式推导。
 - 巨型 util / helper / common 不允许继续扩张；新增逻辑必须伴随清理或明确删除计划。
 - 经验先写入 `memory/experience/*`，稳定后再升格到 `docs/*` 或 `AGENTS.md`。
 - 任务是边界，不是官僚表单；roadmap 只记录主线变化，不追踪碎片执行。

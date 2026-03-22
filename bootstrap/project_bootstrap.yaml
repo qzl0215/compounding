@@ -29,7 +29,7 @@ frozen_items:
 high_risk_actions:
   - 未经确认直接重写规范库
   - 引入平行规则体系
-  - 跳过 evidence boundary 做结论
+  - 跳过适用边界说明直接做结论
 lanes:
   studio: apps/studio/**
   governance: docs/**
@@ -49,7 +49,7 @@ enabled_modules:
   ui_system: true
   server_truth_ledger: true
   quant_review: true
-  evidence_boundary: true
+  evidence_boundary: false
   anti_entropy: true
   tech_debt: true
 template_profile: software-multi-agent-server
@@ -65,7 +65,7 @@ operating_principles:
   - 所有规则都必须有唯一归宿
   - 默认采用 proposal-preview-confirm-apply
   - 新增结构必须解释如何创造复利
-  - 所有报告默认区分本地证据与服务器证据
+  - 所有报告默认说明结论适用边界，必要时再区分本地证据与运行态证据
 org_structure:
   - department: Executive Office
     role: Foreman
@@ -101,7 +101,7 @@ org_structure:
   - department: Quality
     role: Auditor
     responsibilities:
-      - 审核 evidence boundary、规则冲突和技术债
+      - 审核适用边界说明、规则冲突和技术债
       - 维护 audit 与 quant review 输出
       - 追踪反熵增执行质量
     reports_to: Foreman
@@ -132,14 +132,11 @@ decision_policy:
 reporting_contract:
   default_sections:
     - 已完成清单
-    - 超预期完成的优化清单
-    - 计划下阶段待办清单方案要点与支撑点
-    - 待决策清单
+    - 证据与当前结论适用边界
+    - 风险与待决策
+    - 下一步
   required_fields:
-    - 本地离线证据
-    - 服务器真实证据
     - 当前结论适用边界
-    - 复杂度收支附录
 knowledge_domains:
   - docs
   - memory

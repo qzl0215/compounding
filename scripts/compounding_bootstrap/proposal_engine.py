@@ -183,7 +183,7 @@ def update_agents_lines(lines: list[str], prompt: str) -> list[str]:
         ]
     if "review" in prompt.lower() or "审核" in prompt:
         marker = "- 任何结构性改动都必须绑定任务、更新相关记忆，并通过 PR 合并。"
-        addition = "- 关键结构改动必须先 review 再写入，禁止跳过任务和证据边界直接落盘。"
+        addition = "- 关键结构改动必须先 review 再写入，禁止跳过任务和适用边界说明直接落盘。"
         if addition not in updated:
             try:
                 index = updated.index(marker)
@@ -196,7 +196,7 @@ def update_agents_lines(lines: list[str], prompt: str) -> list[str]:
 def update_project_rules_lines(lines: list[str], prompt: str) -> list[str]:
     updated = list(lines)
     if "review" in prompt.lower() or "审核" in prompt:
-        addition = "- 关键结构改动必须带 review 说明、证据边界和删除计划。"
+        addition = "- 关键结构改动必须带 review 说明和删除计划。"
         if addition not in updated:
             try:
                 index = updated.index("## Change Contract")

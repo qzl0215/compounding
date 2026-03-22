@@ -25,6 +25,7 @@ describe("tasks service", () => {
     expect(planned?.deliveryBenefit.length).toBeGreaterThan(0);
     expect(planned?.branch).toBe("codex/task-009-ai-work-modes-productization");
     expect(planned?.git.state).toBe("merged");
+    expect(Array.isArray(first?.companionReleaseIds)).toBe(true);
   });
 
   it("groups tasks by status for the board view", async () => {
@@ -80,5 +81,71 @@ describe("tasks service", () => {
     const row = buildTaskDeliveryRows([releasedTask!], [])[0];
     expect(row?.deliveryStatus).toBe("released");
     expect(row?.versionLabel).toContain("main@");
+  });
+
+  it("does not bind releases to tasks by commit prefix alone", () => {
+    const task = {
+      id: "task-038-autonomy-entropy-reduction",
+      path: "tasks/queue/task-038-autonomy-entropy-reduction.md",
+      shortId: "t-038",
+      title: "任务 task-038-autonomy-entropy-reduction",
+      goal: "收口真相源、规则层与交付绑定中的结构性熵增点",
+      status: "doing" as const,
+      currentMode: "工程执行",
+      branch: "codex/task-038-autonomy-entropy-reduction",
+      recentCommit: "abc1234",
+      deliveryBenefit: "减少歧义与重复规则",
+      deliveryRisk: "若收口不彻底会继续双写",
+      deliveryRetro: "未复盘",
+      primaryRelease: "未生成",
+      linkedReleases: [],
+      companionReleaseIds: [],
+      companionLatestRelease: null,
+      git: {
+        branch: "codex/task-038-autonomy-entropy-reduction",
+        recentCommit: "abc1234",
+        mergedToMain: false,
+        state: "committed" as const,
+        detail: "ready",
+      },
+      relatedModules: ["shared/task-identity.ts"],
+      updateTrace: {
+        memory: "no change",
+        index: "no change",
+        roadmap: "no change",
+        docs: "tasks/queue/task-038-autonomy-entropy-reduction.md",
+      },
+    };
+
+    const release: ReleaseRecord = {
+      release_id: "rel-heuristic-only-dev",
+      commit_sha: "abc1234deadbeef",
+      tag: null,
+      source_ref: "HEAD",
+      primary_task_id: null,
+      linked_task_ids: [],
+      delivery_summary: "heuristic-only",
+      delivery_benefit: null,
+      delivery_risks: null,
+      channel: "dev",
+      acceptance_status: "pending",
+      preview_url: "http://127.0.0.1:3011",
+      promoted_to_main_at: null,
+      promoted_from_dev_release_id: null,
+      created_at: "2026-03-22T10:00:00Z",
+      status: "preview",
+      build_result: "passed",
+      smoke_result: "passed",
+      cutover_at: null,
+      rollback_from: null,
+      release_path: "/tmp/rel-heuristic-only-dev",
+      change_summary: ["abc1234 fix: commit-only reference"],
+      notes: [],
+    };
+
+    const row = buildTaskDeliveryRows([task], [release])[0];
+    expect(row.deliveryStatus).toBe("in_progress");
+    expect(row.acceptReleaseId).toBeNull();
+    expect(row.versionLabel).toBe("未生成");
   });
 });

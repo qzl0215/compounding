@@ -4,7 +4,7 @@ doc_role: reference
 update_mode: promote_only
 owner_role: Architect
 status: active
-last_reviewed_at: 2026-03-15
+last_reviewed_at: 2026-03-22
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -43,6 +43,7 @@ related_docs:
 - 新增代码必须伴随清理
 - 替代旧逻辑时，必须删除旧逻辑、或在技术债中写明兼容层和删除计划
 - 任何结构性改动都必须同步更新 `task`、`memory`、`code_index`
+- task 短编号必须显式写入文档且全局唯一；不允许靠文件名或序号推导出隐式身份
 - 规则若限制主线效率，可直接更新，但必须同步回 `AGENTS.md`、相关文档和 ADR
 
 ## 发布治理
@@ -91,10 +92,4 @@ related_docs:
 - 旧 workflow 前台、旧 API、旧 docs 树不允许再作为 live 结构继续扩张
 - 必须收敛到 `AGENTS + docs + memory + code_index + tasks`
 - 需要保留的过渡逻辑必须写入 `memory/project/tech-debt.md`
-
-## 证据边界
-
-- 本地离线证据：
-- 服务器真实证据：
-- 当前结论适用边界：
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

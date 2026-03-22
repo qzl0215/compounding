@@ -34,6 +34,8 @@ export type TaskCard = {
   deliveryRetro: string;
   primaryRelease: string;
   linkedReleases: string[];
+  companionReleaseIds: string[];
+  companionLatestRelease: string | null;
   git: TaskGitInfo;
   relatedModules: string[];
   updateTrace: TaskUpdateTrace;

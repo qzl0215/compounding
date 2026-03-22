@@ -2,7 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { extractSection, stripMarkdown } = require("./markdown-sections.ts");
 const {
-  deriveShortId,
+  assertUniqueTaskIdentities,
   matchesTaskReference,
   normalizeTaskReference,
   taskIdFromPath,
@@ -13,7 +13,7 @@ function taskQueueDir(root = process.cwd()) {
 }
 
 function listTaskRecords(root = process.cwd()) {
-  return fs
+  const records = fs
     .readdirSync(taskQueueDir(root))
     .filter((name) => name.endsWith(".md"))
     .sort()
@@ -21,7 +21,7 @@ function listTaskRecords(root = process.cwd()) {
       const relativePath = path.posix.join("tasks/queue", name);
       const content = fs.readFileSync(path.join(root, relativePath), "utf8");
       const id = taskIdFromPath(relativePath);
-      const shortId = stripMarkdown(extractSection(content, "short_id", root) || deriveShortId(id));
+      const shortId = stripMarkdown(extractSection(content, "short_id", root) || "");
       const titleMatch = content.match(/^#\s+(.+)$/m);
       return {
         id,
@@ -30,6 +30,8 @@ function listTaskRecords(root = process.cwd()) {
         title: titleMatch ? titleMatch[1].trim() : id,
       };
     });
+  assertUniqueTaskIdentities(records);
+  return records;
 }
 
 function resolveTaskRecord(taskLike, root = process.cwd()) {

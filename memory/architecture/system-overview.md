@@ -4,7 +4,7 @@ doc_role: memory
 update_mode: promote_only
 owner_role: Architect
 status: active
-last_reviewed_at: 2026-03-15
+last_reviewed_at: 2026-03-22
 source_of_truth: docs/ARCHITECTURE.md
 related_docs:
   - docs/ARCHITECTURE.md
@@ -52,10 +52,4 @@ related_docs:
 - 禁止跨模块直接依赖私有实现
 - 禁止继续堆巨型 `engine.py`
 - 禁止未过 preflight 就进入改动
-
-## 证据边界
-
-- 本地离线证据：
-- 服务器真实证据：
-- 当前结论适用边界：
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

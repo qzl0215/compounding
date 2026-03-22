@@ -7,11 +7,17 @@ import type { DeliverySnapshot } from "./types";
 export async function getDeliverySnapshot(): Promise<DeliverySnapshot> {
   const [taskCards, releaseDashboard] = await Promise.all([listTaskCards(), getReleaseDashboard()]);
   const taskRows = buildTaskRowsProjection(taskCards, releaseDashboard);
+  const diffAware = collectDiffAwareArtifact();
 
   return {
-    taskRows,
-    taskOptions: buildTaskOptionsProjection(taskRows),
-    releaseDashboard,
-    diffAware: collectDiffAwareArtifact(),
+    facts: {
+      taskCards,
+      releaseDashboard,
+      diffAware,
+    },
+    projections: {
+      taskRows,
+      taskOptions: buildTaskOptionsProjection(taskRows),
+    },
   };
 }

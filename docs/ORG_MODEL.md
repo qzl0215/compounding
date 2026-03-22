@@ -10,7 +10,7 @@ related_docs:
   - docs/WORK_MODES.md
   - docs/ARCHITECTURE.md
   - memory/project/roadmap.md
-last_reviewed_at: 2026-03-15
+last_reviewed_at: 2026-03-22
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 组织模型
@@ -169,9 +169,4 @@ last_reviewed_at: 2026-03-15
 - 角色只是职责分工，不是组织层级炫耀
 - 若规范本身限制复利效率，可直接简化规范
 
-## 证据边界
-
-- 本地离线证据：
-- 服务器真实证据：
-- 当前结论适用边界：
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

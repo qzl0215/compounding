@@ -77,14 +77,6 @@ export function HomeDashboard({ overview }: { overview: ProjectCockpit }) {
               empty="下一检查点尚未写入。"
             />
             <div className="rounded-3xl border border-white/8 bg-white/[0.03] p-4">
-              <p className="text-xs uppercase tracking-[0.22em] text-white/40">主源冲突</p>
-              <p className="mt-3 text-sm leading-7 text-white/72">
-                {overview.riskBoard.factConflicts.length > 0
-                  ? overview.riskBoard.factConflicts.join("；")
-                  : "当前未发现 AGENTS / roadmap / operating-blueprint / current-state 的主线冲突。"}
-              </p>
-            </div>
-            <div className="rounded-3xl border border-white/8 bg-white/[0.03] p-4">
               <p className="text-xs uppercase tracking-[0.22em] text-white/40">关键冻结项</p>
               <p className="mt-3 text-sm leading-7 text-white/72">
                 {overview.riskBoard.frozenItems.length > 0

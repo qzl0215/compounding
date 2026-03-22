@@ -27,12 +27,6 @@ REQUIRED_FRONTMATTER = [
 
 MANAGED_FRONTMATTER_FIELDS = REQUIRED_FRONTMATTER.copy()
 
-EVIDENCE_BOUNDARY_TITLES = [
-    "本地离线证据",
-    "服务器真实证据",
-    "当前结论适用边界",
-]
-
 LEGACY_TERMS = [
     "ranking_app_parallel",
     "PG/Qdrant",

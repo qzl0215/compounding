@@ -27,8 +27,8 @@ export default async function ReleasesPage() {
   }
 
   const snapshot = await getDeliverySnapshot();
-  const dashboard = snapshot.releaseDashboard;
-  const taskOptions = snapshot.taskOptions;
+  const dashboard = snapshot.facts.releaseDashboard;
+  const taskOptions = snapshot.projections.taskOptions;
   const outline = [
     { id: "release-overview", label: "通道总览" },
     { id: "diff-aware-artifacts", label: "差异感知产物" },
@@ -68,7 +68,7 @@ export default async function ReleasesPage() {
               这里把改动范围驱动的检查建议、review 结论和复盘线索放在一起，避免每次都靠人工拼一份新的验证清单。
             </p>
             <div className="mt-6">
-              <DiffAwarePanel artifact={snapshot.diffAware} />
+              <DiffAwarePanel artifact={snapshot.facts.diffAware} />
             </div>
           </Card>
         </section>

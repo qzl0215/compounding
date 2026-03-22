@@ -6,7 +6,6 @@ import {
   buildIdentitySnapshot,
   buildRiskBoard,
   toRuntimeSignal,
-  toTaskSummary,
 } from "./builders";
 import { normalizeInline, parseBulletList, parseBulletMap } from "./parsing";
 import type { HomeEntryLink, ProjectCockpit, SemanticEntry, SemanticEntryGroup } from "./types";
@@ -28,37 +27,32 @@ export async function getProjectCockpit(): Promise<ProjectCockpit> {
     getDeliverySnapshot(),
   ]);
 
-  const releaseDashboard = deliverySnapshot.releaseDashboard;
   const missionAndVision = parseBulletMap(extractSection(currentState.content, "mission_and_vision") ?? "");
   const frozenItems = parseBulletList(extractSection(currentState.content, "frozen_items") ?? "");
   const roadmapPhase = normalizeInline(extractSection(roadmap.content, "current_phase") ?? "");
   const currentPriority = normalizeInline(extractSection(roadmap.content, "current_priority") ?? "");
   const currentMilestone = normalizeInline(extractSection(blueprint.content, "current_milestone") ?? roadmapPhase);
   const milestoneSuccessCriteria = parseBulletList(extractSection(roadmap.content, "milestone_success_criteria") ?? "");
-  const successDefinition = milestoneSuccessCriteria.slice(0, 2).join("；");
-  const taskSummaries = deliverySnapshot.taskRows.map(toTaskSummary);
-  const doingTasks = taskSummaries.filter((task) => task.status === "进行中");
+  const taskRows = deliverySnapshot.projections.taskRows;
+  const releaseDashboard = deliverySnapshot.facts.releaseDashboard;
+  const doingTaskCount = taskRows.filter((task) => task.status === "doing").length;
   const blockedItems = [
     ...parseBulletList(extractSection(blueprint.content, "current_blockers") ?? ""),
-    ...taskSummaries.filter((task) => task.status === "阻塞中").map((task) => `${task.title}（${task.status}）`),
+    ...taskRows.filter((task) => task.status === "blocked").map((task) => `${task.shortId} ${task.title}（已阻塞）`),
   ];
   const nextCheckpoint = parseBulletList(extractSection(currentState.content, "next_checkpoint") ?? "");
-  const factConflicts: string[] = [];
 
   return {
-    identity: buildIdentitySnapshot(missionAndVision, successDefinition, frozenItems),
+    identity: buildIdentitySnapshot(missionAndVision),
     currentFocus: buildCurrentFocus(roadmapPhase, currentPriority, currentMilestone, milestoneSuccessCriteria),
-    executionStatus: buildExecutionStatus(currentMilestone, doingTasks, blockedItems, nextCheckpoint, [
+    executionStatus: buildExecutionStatus(currentMilestone, doingTaskCount, blockedItems, nextCheckpoint, [
       toRuntimeSignal("dev 预览", releaseDashboard.local_preview),
       toRuntimeSignal("production", releaseDashboard.local_runtime),
     ]),
     riskBoard: buildRiskBoard(
-      factConflicts,
       frozenItems,
       releaseDashboard.pending_dev_release?.release_id || null,
       releaseDashboard.active_release_id,
-      releaseDashboard.local_preview,
-      releaseDashboard.local_runtime,
     ),
   };
 }

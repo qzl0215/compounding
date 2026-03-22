@@ -1,6 +1,6 @@
 import type { ReleaseDashboard } from "@/modules/releases";
 import type { ReleaseTaskOption } from "@/modules/releases";
-import type { TaskDeliveryRow } from "@/modules/tasks";
+import type { TaskCard, TaskDeliveryRow } from "@/modules/tasks";
 
 export type DiffAwareCategory = {
   name: string;
@@ -44,9 +44,18 @@ export type DiffAwareArtifact = {
   };
 };
 
-export type DeliverySnapshot = {
-  taskRows: TaskDeliveryRow[];
-  taskOptions: ReleaseTaskOption[];
+export type DeliveryFacts = {
+  taskCards: TaskCard[];
   releaseDashboard: ReleaseDashboard;
   diffAware: DiffAwareArtifact;
+};
+
+export type DeliveryProjections = {
+  taskRows: TaskDeliveryRow[];
+  taskOptions: ReleaseTaskOption[];
+};
+
+export type DeliverySnapshot = {
+  facts: DeliveryFacts;
+  projections: DeliveryProjections;
 };

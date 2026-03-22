@@ -8,8 +8,8 @@ export const dynamic = "force-dynamic";
 
 export default async function TasksPage() {
   const snapshot = await getDeliverySnapshot();
-  const releaseDashboard = snapshot.releaseDashboard;
-  const rows = snapshot.taskRows;
+  const releaseDashboard = snapshot.facts.releaseDashboard;
+  const rows = snapshot.projections.taskRows;
   const outline = [
     { id: "task-overview", label: "任务总览" },
     { id: "task-diff-aware", label: "差异感知产物" },
@@ -42,7 +42,7 @@ export default async function TasksPage() {
               这里不新增一套评估平台，只把当前改动的范围、风险、建议检查和复盘线索收拢成同一份派生摘要，方便先看再决定是否介入。
             </p>
             <div className="mt-5">
-              <DiffAwarePanel artifact={snapshot.diffAware} variant="compact" />
+              <DiffAwarePanel artifact={snapshot.facts.diffAware} variant="compact" />
             </div>
           </Card>
         </section>

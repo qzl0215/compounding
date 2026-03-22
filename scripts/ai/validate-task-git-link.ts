@@ -3,6 +3,7 @@ const path = require("node:path");
 const childProcess = require("node:child_process");
 const { extractSection, stripMarkdown } = require("./lib/markdown-sections.ts");
 const { listTaskRecords } = require("./lib/task-resolver.ts");
+const { isValidShortId } = require(path.join(process.cwd(), "shared", "task-identity.ts"));
 
 const root = process.cwd();
 function git(args) {
@@ -26,9 +27,11 @@ function read(relPath) {
 function parseTask(record) {
   const pathname = record.path;
   const content = read(pathname);
+  const rawShortId = cleanValue(stripMarkdown(extractSection(content, "short_id", root) || ""));
   return {
     id: record.id,
     shortId: record.shortId,
+    rawShortId,
     path: pathname,
     status: normalizeStatus(stripMarkdown(extractSection(content, "status", root) || "")),
     currentMode: cleanValue(stripMarkdown(extractSection(content, "current_mode", root) || "")),
@@ -120,6 +123,12 @@ function validateTask(task, errors) {
     errors.push(`${task.path}: 当前模式不在允许列表内。`);
   }
 
+  if (!task.rawShortId) {
+    errors.push(`${task.path}: 必须显式填写短编号。`);
+  } else if (!isValidShortId(task.rawShortId)) {
+    errors.push(`${task.path}: 短编号必须符合 t-xxx 格式。`);
+  }
+
   const snapshot = getTaskGitSnapshot(task);
 
   if (task.status !== "done" && !snapshot.branch) {
@@ -157,7 +166,19 @@ function validateTask(task, errors) {
 }
 
 function main() {
-  const taskRecords = listTaskRecords(root);
+  let taskRecords;
+  try {
+    taskRecords = listTaskRecords(root);
+  } catch (error) {
+    console.log(
+      JSON.stringify({
+        ok: false,
+        tasks: [],
+        errors: [error instanceof Error ? error.message : "task identity validation failed"],
+      }, null, 2)
+    );
+    process.exit(1);
+  }
   const errors = [];
   const activeBranch = currentBranch();
   const snapshots = taskRecords.map((record) => {

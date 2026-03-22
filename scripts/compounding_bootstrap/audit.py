@@ -65,12 +65,6 @@ def audit(config_path: Path, target: Path) -> AuditResult:
         if "`memory/project/roadmap.md`" not in agents_text:
             result.errors.append("AGENTS Current State must point to memory/project/roadmap.md as the planning source.")
 
-    if agents_path.exists() and roadmap_path.exists():
-        agents_priority = extract_value(agents_path.read_text(encoding="utf8"), "当前优先级")
-        roadmap_priority = extract_heading_block(target, roadmap_path.read_text(encoding="utf8"), "current_priority")
-        if agents_priority and roadmap_priority and agents_priority.strip() != roadmap_priority.strip():
-            result.errors.append("AGENTS current priority must mirror roadmap current priority.")
-
     for relative_path in [AGENTS_PATH, *CANONICAL_DOCS, *MEMORY_DOCS, "code_index/module-index.md", "code_index/dependency-map.md"]:
         path = target / relative_path
         if not path.exists():
@@ -124,11 +118,6 @@ def audit(config_path: Path, target: Path) -> AuditResult:
         result.errors.extend(f"Legacy term leaked: {item}" for item in result.hardcoded_legacy_terms)
     result.passed = not result.errors
     return result
-
-
-def extract_value(text: str, label: str) -> str | None:
-    match = re.search(rf"- {re.escape(label)}：(.*)", text)
-    return match.group(1).strip() if match else None
 
 
 def extract_heading_block(target: Path, text: str, heading_key: str) -> str | None:

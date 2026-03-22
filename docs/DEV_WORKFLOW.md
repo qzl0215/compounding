@@ -4,7 +4,7 @@ doc_role: operation
 update_mode: manual
 owner_role: Builder
 status: active
-last_reviewed_at: 2026-03-19
+last_reviewed_at: 2026-03-22
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -156,25 +156,10 @@ related_docs:
 - 下一步：
   - 先补 prompt / 路由 / provider 资产，再进入发布链路
 
-## 汇报契约
+## 沟通归宿
 
-- 默认回复结构：
-  - 已完成清单
-  - 证据与当前结论适用边界
-  - 风险与待决策
-  - 下一步
-- 默认交付链接时必须同时给出：
-  - 当前环境说明
-  - 页面链接
-  - 如何验收
-- 对下一候选任务，默认先给：
-  - 中文任务摘要
-  - 可执行方案
-  - 用户确认后再执行
-- 所有关键报告必须显式区分：
-  - 本地离线证据
-  - 服务器真实证据
-  - 当前结论适用边界
+- 默认回复结构与页面交付契约以 `AGENTS.md` 为唯一高频归宿
+- 本文只补工作流本身，不再重复维护另一套沟通模板
 
 ## 任务规则
 
@@ -222,10 +207,4 @@ related_docs:
 - 对于 Next.js 门户，服务重载优先使用 `AI_OS_RELOAD_COMMAND` 或 `systemctl restart`
 - 在本地 macOS 环境中，若本地生产已在运行，release 切换和回滚会自动调用本地运行时最小重启
 - 若本地生产未运行，release 切换不会偷偷拉起新进程；需要手动执行 `pnpm prod:start`
-
-## 证据边界
-
-- 本地离线证据：
-- 服务器真实证据：
-- 当前结论适用边界：
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

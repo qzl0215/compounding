@@ -4,7 +4,7 @@ doc_role: reference
 update_mode: promote_only
 owner_role: Architect
 status: active
-last_reviewed_at: 2026-03-16
+last_reviewed_at: 2026-03-22
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -100,10 +100,4 @@ related_docs:
 - 禁止从 UI 组件跨层读取任意文件系统状态而不经过模块仓储层
 - 禁止在 bootstrap 引擎里继续堆单一巨型 `engine.py`
 - 禁止把临时上下文直接塞回 `AGENTS.md`
-
-## 证据边界
-
-- 本地离线证据：
-- 服务器真实证据：
-- 当前结论适用边界：
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

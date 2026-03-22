@@ -91,7 +91,7 @@ def render_dev_workflow() -> str:
 
 - `main` 是唯一生产主线
 - 本地短分支仍可用于临时开发，但发布动作只认 `main`
-- 不再使用 `dev` 作为发布缓冲层
+- `dev` 是 preview channel，不是长期 git 主分支
 
 ## 标准流程
 
@@ -107,17 +107,10 @@ def render_dev_workflow() -> str:
 10. 运行 `node --experimental-strip-types scripts/release/prepare-release.ts --ref main`
 11. 构建与 smoke 通过后，再运行 `node --experimental-strip-types scripts/release/switch-release.ts --release <release-id>`
 
-## 汇报契约
+## 沟通归宿
 
-- 默认回复结构：
-  - 已完成清单
-  - 证据与当前结论适用边界
-  - 风险与待决策
-  - 下一步
-- 所有关键报告必须显式区分：
-  - 本地离线证据
-  - 服务器真实证据
-  - 当前结论适用边界
+- 默认回复结构与页面交付契约以 `AGENTS.md` 为唯一高频归宿
+- 本文只补工作流本身，不再重复维护另一套沟通模板
 
 ## 任务规则
 
@@ -161,16 +154,14 @@ def render_dev_workflow() -> str:
 def render_ai_operating_model() -> str:
     return f"""# AI 工作模型
 
-## 标准阅读顺序
+## 最小起步顺序
 
-1. `AGENTS.md`
-2. `docs/PROJECT_RULES.md`
-3. `docs/ARCHITECTURE.md`
-4. 当前任务文件
-5. 相关 `module.md`
-6. `code_index/*`
-7. 必要代码
-8. 动手前 `python3 scripts/pre_mutation_check.py`
+- 默认先按 `AGENTS.md` 的真相源地图进入对应主源，不在本文件重复维护完整阅读顺序
+- AI 进入执行前至少应补齐：
+  - 当前任务文件
+  - 相关 `module.md`
+  - `code_index/*`
+  - `python3 scripts/pre_mutation_check.py`
 
 ## 任务驱动开发
 
@@ -180,6 +171,13 @@ def render_ai_operating_model() -> str:
 - 任务是 scope 和验收边界，不是可有可无的备注
 - 任务的目标是让团队高效协作，而不是制造更多流程负担
 - 每个执行 task 都应绑定短分支，并在任务中记录最近提交和是否并入 `main`
+
+## AI 特有协作约束
+
+- 默认沟通结构和页面交付契约以 `AGENTS.md` 为唯一高频归宿，不在这里重复维护一整套模板
+- AI 特有的附加约束只有两条：
+  - 若用户尚未确认任务方案，不得直接进入实现阶段
+  - 若任务 companion、task 或 release 主源出现冲突，先修主源，再继续执行
 
 ## 工作模式
 

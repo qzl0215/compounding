@@ -4,13 +4,13 @@ doc_role: memory
 update_mode: manual
 owner_role: Foreman
 status: active
-last_reviewed_at: 2026-03-20
+last_reviewed_at: 2026-03-22
 source_of_truth: memory/project/current-state.md
 related_docs:
   - AGENTS.md
   - memory/project/roadmap.md
   - memory/project/operating-blueprint.md
-  - tasks/queue/task-025-multi-agent-coordination-init.md
+  - docs/DEV_WORKFLOW.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 当前状态
@@ -44,18 +44,9 @@ related_docs:
 
 ## 当前焦点
 
-- [x] 完成 gstack 七项实践里程碑（t-019~t-024）
-- [x] 落地 Multi-Agent Coordination Layer（t-025/t-026/t-027）
-- [x] 推进真相源收口与交付快照统一（t-028）
-- [x] 收口 `roadmap` 与 `current-state` 的职责边界，并继续收敛交付快照（t-029）
-- [x] 完成 `t-030`：产出 `gstack -> Compounding` 对齐矩阵，并锁定下一阶段只吸收流程与门禁层高 ROI 能力
-- [x] 推进 `t-031`：把规划链、执行链、交付链收口成清晰的工作模式入口与 runbook，并已发布到 main 与本地生产
-- [x] 推进 `t-032`：差异感知 QA / Review / Retro 产物，并已发布到 main 与本地生产
-- [x] 完成 `t-033`：补齐 pre-task 安全护栏，并已发布到 main 与本地生产
-- [x] 完成 `t-034`：收口 task resolver、release cutover、roadmap frontmatter 与交付快照展示层，并已发布到 main 与本地生产
-- [x] 完成 `t-035`：锁定 Delivery Framework 第一阶段边界，并把主线切到 `t-036`
-- [x] 完成 `t-036`：让 companion 成为 create / pre-task / handoff / review / release handoff 的统一交付契约，并已发布到 main 与本地生产
-- [x] 完成 `t-037`：将运营后台首页简化为决策板，只保留阶段、运行态、阻塞与下一步入口，并保留任务页 / 发布页 / 当前状态快捷入口
+- 本地 production 当前稳定运行在 `3010`；`main` 已发布，但常驻进程仍需要人工确认是否在线。
+- 当前正在执行 `t-038`：收口 task identity、规则层与 cockpit 残余冗余，避免旧规则和旧读模型继续长回。
+- 当前阶段不扩 orchestration UI、数据库或新运行时，只做单一真相与 AI 自主链路的继续减熵。
 
 ## 当前推荐校验顺序
 
@@ -76,19 +67,9 @@ related_docs:
 
 ## 下一检查点
 
-- [x] 完成 `t-032` 的差异感知 QA / Review / Retro 产物
-- [x] 完成 `t-033` 的预任务安全护栏补全
-- [x] 完成 `t-034` 的高 ROI 收敛修复
-- [x] 完成 `t-035`，把 Delivery Framework 第一阶段固定为“任务伴随体与交付契约闭环”
-- [x] 完成 `t-036`，并已将 companion-driven delivery contract 的最小闭环发布到 main 与本地生产
-- [x] 完成 `t-037`：将运营后台首页简化为决策板并收口首屏信息
-- [ ] 评估下一阶段主线候选，确认首个实现 task
-- 保持运营快照与战略真相分工清楚
-- 保持 `pnpm validate:release` 持续绿色通过
-
-## 证据边界
-
-- 本地离线证据：`pnpm lint`、`pnpm test`、`pnpm build`、`scripts/ai/validate-change-trace.ts`、`scripts/ai/validate-task-git-link.ts`
-- 服务器真实证据：本地生产 active release 以 `/releases` 页面与 release registry 为准
-- 当前结论适用边界：`t-036` 已完成并且当前无 pending dev；当前主线已结束 Delivery Framework Phase 1 的实现窗口，下一阶段进入候选评估与规划收口。规划依据与阶段结果同步沉淀在 `memory/experience/exp-006-delivery-framework-phase-one-boundary.md`
+- `pnpm validate:static`
+- `pnpm validate:build`
+- `pnpm preview:check`
+- `pnpm prod:check`
+- `pnpm coord:check:pre-task`
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

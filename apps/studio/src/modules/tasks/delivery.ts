@@ -48,11 +48,7 @@ function matchesTask(task: TaskCard, release: ReleaseRecord) {
   if (release.primary_task_id === task.id || release.linked_task_ids.includes(task.id)) {
     return true;
   }
-  const commit = sanitizeCommit(task.git.recentCommit || task.recentCommit);
-  if (!commit) {
-    return false;
-  }
-  return release.commit_sha.startsWith(commit) || release.change_summary.some((item) => item.startsWith(commit));
+  return explicitReleaseRefs(task).includes(release.release_id);
 }
 
 function resolveDeliveryStatus(
@@ -94,6 +90,9 @@ function inferReleaseLabel(
   if (latestProd?.release_id) {
     return latestProd.release_id;
   }
+  if (task.companionLatestRelease) {
+    return task.companionLatestRelease;
+  }
   if (task.primaryRelease && task.primaryRelease !== "未生成") {
     return task.primaryRelease;
   }
@@ -106,6 +105,16 @@ function inferReleaseLabel(
     return `main@${commit}`;
   }
   return "未生成";
+}
+
+function explicitReleaseRefs(task: TaskCard) {
+  return Array.from(
+    new Set(
+      [task.primaryRelease, ...task.linkedReleases, ...task.companionReleaseIds]
+        .map((value) => String(value || "").trim())
+        .filter((value) => Boolean(value) && value !== "未生成" && value !== "无")
+    )
+  );
 }
 
 function deliveryOrder(status: TaskDeliveryStatus) {

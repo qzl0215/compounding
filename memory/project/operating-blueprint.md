@@ -9,55 +9,51 @@ related_docs:
   - AGENTS.md
   - memory/project/roadmap.md
   - memory/project/current-state.md
-  - tasks/queue/task-025-multi-agent-coordination-init.md
-last_reviewed_at: 2026-03-20
+  - docs/DEV_WORKFLOW.md
+last_reviewed_at: 2026-03-22
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 运营蓝图
 
 ## 当前里程碑
 
-Delivery Framework Phase 1 已完成，下一阶段待定，当前聚焦下一阶段主线候选评估与首页决策板稳定
+AI 自主系统反熵收敛：短编号唯一、规则层瘦身与 cockpit 真相继续收口
 
 ## 关键子目标
 
-### 子目标 1：保持首页决策板的最小信息面稳定
+### 子目标 1：让 task identity 彻底显式且唯一
+
+- 发布标准：
+  - 所有 queue task 都显式填写 `t-xxx` 短编号
+  - 历史冲突短编号被消除，但 task id 与文件名保持稳定
+  - release、resolver、UI 与 companion 不再依赖序号推导
+
+### 子目标 2：把运营快照与战略计划继续拆开
+
+- 发布标准：
+  - `current-state` 只保留运营快照、冻结项与检查点
+  - `roadmap` 独占当前优先级与执行待办
+  - 两份文档不再并行维护同一份推进清单
+
+### 子目标 3：保持首页决策板的最小信息面稳定
 
 - 发布标准：
   - 首页首屏只保留当前阶段、运行与发布、当前阻塞与下一步
-  - 不再在首页平铺任务细节、证据列表或长篇项目说明
+  - 不再在首页平铺任务细节、证据列表、旧证据网格或假状态卡
 
-### 子目标 2：评估下一阶段主线候选
-
-- 发布标准：
-  - 明确下一阶段主线候选和首个实现 task
-  - 不在候选未定前扩展 Delivery Framework Phase 1 的实现范围
-
-### 子目标 3：维持任务页、发布页与知识库的详情承载职责
+### 子目标 4：压缩重复规则与空洞模板
 
 - 发布标准：
-  - 任务页继续承接任务摘要、交付风险、复盘和详情
-  - 发布页继续承接 release 台账、运行态和回滚 / 验收入口
-  - 知识库继续承接文档原文与主源沉淀
+  - live 文档、AI preamble 与 bootstrap 渲染器不再重复空洞证据边界
+  - 沟通契约与任务前阅读顺序只保留唯一高频归宿，不再在多份 live 文档中平行复制
 
 ## 当前阻塞
 
-- 当前主要风险不是底座缺失，而是新阶段未定前容易把首页决策板的稳定结构重新做重，破坏“先判断、再下钻”的结构。
+- 当前主要风险不是底座缺失，而是结构收口不彻底：若 task identity、文档模板和 cockpit 残余冗余继续并存，AI 自主链路会再次被旧规则噪声拖慢。
 
 ## 下一检查点
 
-- [x] 完成 `t-031` 的工作模式入口与 runbook 收口
-- [x] 完成 `t-032` 的差异感知 QA / Review / Retro 产物
-- [x] 完成 `t-033` 的预任务安全护栏补全
-- [x] 完成 `t-034` 的高 ROI 收敛修复
-- [x] 完成 `t-035` 的边界规划与主线切换
-- [x] 完成 `t-036` 的 companion contract 实现
-- [x] 完成 `t-037`：将首页收口为决策板
-- [ ] 评估下一阶段主线候选，确认首个实现 task
-
-## 证据边界
-
-- 本地离线证据：`t-037` 首页决策板任务、`memory/experience/exp-006-delivery-framework-phase-one-boundary.md`
-- 服务器真实证据：本地生产 active release 与 `/releases` 页面应显示 `t-037` 已完成
-- 当前结论适用边界：当前里程碑已从“边界定义”和“Phase 1 实现”切到收口完成；当前处于下一阶段候选评估期，尚未确认新的实现主线
+- [ ] 完成 `t-038` 的短编号唯一性、规则层瘦身与 cockpit 收口
+- [ ] 保持任务页、发布页与知识库继续承接详情，不把首页重新做重
+- [ ] 在 preview / prod 两条链上确认结构收口没有破坏现有发布闭环
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

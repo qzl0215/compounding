@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from .renderers_docs import evidence_boundary_block
+from .renderers_base_docs import bullet_list
 
 
 def render_system_overview() -> str:
-    return f"""# 系统总览
+    return """# 系统总览
 
 ## 系统目标
 
@@ -47,23 +47,18 @@ def render_system_overview() -> str:
 - 禁止跨模块直接依赖私有实现
 - 禁止继续堆巨型 `engine.py`
 - 禁止未过 preflight 就进入改动
-
-{evidence_boundary_block()}
 """
 
 
 def render_current_state(resolved: dict[str, Any]) -> str:
-    must_protect = "，".join(str(item) for item in resolved["must_protect"])
+    must_protect = [str(item) for item in resolved["must_protect"]]
     return f"""# 当前状态
 
 ## 项目概览
 
 - 项目名称：{resolved["project_name"]}
-- 当前阶段：知识库富文本直编与两步 AI 文档重构收口
-- 当前优先级：{resolved["current_priority"]}
-- 成功定义：{resolved["success_definition"]}
-- 必须保护：{must_protect}
-- 运行边界：{resolved["runtime_boundary"]}
+- 战略真相请看 `memory/project/roadmap.md`
+- 这里仅记录当前运营快照、冻结项和运行边界
 
 ## 使命与愿景
 
@@ -76,33 +71,48 @@ def render_current_state(resolved: dict[str, Any]) -> str:
 - 持续抓重点，不过度优化
 - 少条条框框，但井井有条
 
+## 本地入口
+
+- 本地生产默认端口：`3010`
+- dev 预览默认端口：`3011`
+- `main` 已更新不等于本地生产自动在线；需要手动拉起本地常驻进程
+
+## 运行边界
+
+- {resolved["runtime_boundary"]}
+
 ## 当前焦点
 
-- 知识库默认在阅读界面中直接编辑正文，而不是切到原始源码编辑器
-- 为带 frontmatter 或 managed block 的文档保留高级模式，避免日常编辑误触系统元数据
-- 把 AI 文档重构收口为“先提关键问题，再重构正文”的两步流程
-- 让 prompt 文档具备预览、保存生效与上一版本回退能力，保证后续输出稳定
+- 本地 production 默认在 `3010` 提供服务；主线更新后仍需人工确认常驻进程与 `pnpm prod:check`。
+- 当前运营焦点跟随 `roadmap` 的当前优先级：{resolved["current_priority"]}
+- 当前阶段默认优先收口单一真相、最小闭环与高 ROI 结构改动，不扩新平台。
+
+## 当前推荐校验顺序
+
+- 静态门禁：`pnpm validate:static`
+- 构建门禁：`pnpm validate:build`
+- 运行时门禁：
+  - `pnpm preview:check`
+  - `pnpm prod:check`
+- AI 输出门禁：`pnpm validate:ai-output`（仅在 prompt / AI 重构链路变动时进入）
+- 多 Agent 协调：`pnpm coord:check:pre-task`（在 task 变更前执行）
 
 ## 关键冻结项
 
-- 不恢复旧 workflow 前台和重型多步骤表单
-- 不把 task 演化成审批流或重型工单系统
-- 不新增平行读模型或后台数据库
+{bullet_list(must_protect + ['不以一次大改替代批次推进与逐步验收'])}
 
 ## 下一检查点
 
-- `pnpm build`
-- `pnpm test`
-- `python3 scripts/init_project_compounding.py audit --config bootstrap/project_brief.yaml --target .`
-- `node --experimental-strip-types scripts/ai/validate-change-trace.ts`
-- `node --experimental-strip-types scripts/ai/validate-task-git-link.ts`
-
-{evidence_boundary_block()}
+- `pnpm validate:static`
+- `pnpm validate:build`
+- `pnpm preview:check`
+- `pnpm prod:check`
+- `pnpm coord:check:pre-task`
 """
 
 
 def render_tech_debt() -> str:
-    return f"""# 技术债
+    return """# 技术债
 
 ## 当前技术债
 
@@ -117,8 +127,6 @@ def render_tech_debt() -> str:
 - 任何仍然保留的 legacy 文本或兼容路径，都要在下一轮重构中删除或归档
 - 任何新增临时层都必须写清删除触发条件
 - 若后续验证 `systemctl restart` 对当前流量影响仍偏大，再评估更细粒度的 reload / socket activation 策略
-
-{evidence_boundary_block()}
 """
 
 
@@ -127,19 +135,18 @@ def render_roadmap(resolved: dict[str, Any]) -> str:
 
 ## 当前阶段
 
-知识库富文本直编与两步 AI 文档重构收口
+围绕当前主线持续收口结构、规则与交付闭环
 
 ## 下个里程碑
 
-知识库进入长期可维护状态：默认在富文本阅读界面内直接编辑正文，并支持基于项目背景的两步 AI 文档重构，让人和 AI 都能更高质量地维护 Markdown 真相源。
+围绕当前优先级完成一轮可发布、可复盘、可继续复利的主线交付。
 
 ## 里程碑成功标准
 
-- `/knowledge-base` 默认在原阅读界面内直接编辑正文，而不是源码加预览双栏
-- 带托管区块的文档在默认模式下只回写正文，高级模式下才允许编辑完整 Markdown
-- AI 先提出最关键补充问题，再基于用户补充重构正文
-- prompt 文档可预览、保存生效并回退到上一版本
-- `roadmap / operating-blueprint / task / memory / index` 的边界继续清晰
+- {resolved["success_definition"]}
+- `roadmap / current-state / operating-blueprint` 的职责边界持续清晰
+- 当前主线的 task / release / memory / code_index 口径一致
+- 这轮推进不新增新的持久化真相源
 
 ## 当前优先级
 
@@ -147,13 +154,10 @@ def render_roadmap(resolved: dict[str, Any]) -> str:
 
 ## 当前执行待办
 
-- [x] 知识库默认进入正文富文本直编，而不是原始源码编辑
-- [x] 保留高级模式，用于全文 Markdown / frontmatter / managed block 编辑
-- [x] 接入“两步 AI 重构”链路：先提问题，再重构正文
-- [x] 新增 prompt 文档预览、保存生效与上一版本回退
-- [x] task / memory / docs / roadmap 与当前主线保持同步
-
-{evidence_boundary_block()}
+- [ ] 围绕当前优先级创建或推进当前主线 task
+- [ ] 保持 `roadmap / current-state / operating-blueprint` 口径一致
+- [ ] 完成最小可验证改动，并同步 task / memory / docs / code_index
+- [ ] 通过 release build、smoke gate 与必要的 review
 """
 
 
@@ -162,51 +166,45 @@ def render_operating_blueprint(resolved: dict[str, Any]) -> str:
 
 ## 当前里程碑
 
-知识库富文本直编与两步 AI 文档重构收口
+围绕当前优先级把主线拆成可执行、可验收、可发布的战术子目标
 
 ## 关键子目标
 
-### 正文富文本直编
+### 子目标 1：明确当前主线与交付边界
 
 - 发布标准：
-  - 文档默认在原阅读界面内直接编辑正文
-  - 标题、段落、列表、引用、代码块、表格单元格都可直接修改
-- 关联任务：
-  - `tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md`
+  - 当前主线对应的任务边界明确
+  - 范围外与冻结项写清，不边做边改主线
+  - 任务、路线图与发布说明使用同一口径
 
-### 正文与系统元数据分层
-
-- 发布标准：
-  - 默认编辑模式不暴露 frontmatter 与 managed block
-  - 高级模式才允许编辑完整 Markdown 原文
-- 关联任务：
-  - `tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md`
-
-### 两步 AI 文档重构
+### 子目标 2：让改动走完整门禁链
 
 - 发布标准：
-  - 第一步只提出关键补充问题，不直接改文
-  - 第二步基于用户补充重构正文，并给出结构摘要与缺失提示
-- 关联任务：
-  - `tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md`
+  - 改动前过 preflight 与 `coord:check:pre-task`
+  - 改动后通过静态、构建、运行态与必要的 AI 输出门禁
+  - `dev → main → prod` 验收链保持可解释和可回滚
 
-### Prompt 资产治理
+### 子目标 3：保持真相源与投影收口
 
 - 发布标准：
-  - prompt 文档可在 UI 中预览与编辑
-  - prompt 变更后可保存生效，并支持回退到上一版本
-- 关联任务：
-  - `tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md`
+  - `task / release / memory / docs / code_index` 的职责边界清晰
+  - 页面只消费共享投影，不继续复制状态或再造真相
+  - 经验先写 memory，稳定后再升格到 docs 或 AGENTS
+
+### 子目标 4：控制结构性熵增
+
+- 发布标准：
+  - 不新增新的 orchestration UI、数据库或重型审批流
+  - 规则只保留高频主源，不在多份文档里平行复制
+  - 临时兼容层必须写清删除条件
 
 ## 当前阻塞
 
-- 暂无结构性阻塞；当前主要风险是复杂 Markdown 结构在正文模式下可能丢失格式细节，需要继续用测试守住序列化边界。
+- 若当前主线的任务边界、发布标准或运行态条件不清晰，AI 仍会被迫回到多处猜测与重复解释。
 
 ## 下一检查点
 
-- 正文直编、保存与高级模式切换在知识库页面可用
-- AI 补充问题与正文重构两步链路可用
-- prompt 预览、保存与回退链路可用
-
-{evidence_boundary_block()}
+- [ ] 当前优先级对应的 task 进入 `doing`
+- [ ] 当前主线的发布标准和 review 口径明确
+- [ ] preview / prod 两条链都验证通过，且回写到任务与记忆
 """

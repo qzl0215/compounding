@@ -1,7 +1,9 @@
 import { listDocsUnder, readDoc } from "@/modules/docs";
+import { readTaskCompanionReleaseInfo } from "./companion";
 import { resolveTaskGitInfo } from "./git";
 import { parseTaskCard } from "./parsing";
 import type { TaskCard, TaskGroup, TaskStatus } from "./types";
+import { assertUniqueTaskIdentities } from "../../../../../shared/task-identity";
 
 export const TASK_STATUS_ORDER: TaskStatus[] = ["todo", "doing", "blocked", "done"];
 export const TASK_STATUS_LABELS: Record<TaskStatus, string> = {
@@ -27,14 +29,19 @@ export function groupTaskCardsByStatus(taskCards: TaskCard[]): TaskGroup[] {
 export async function listTaskCards(): Promise<TaskCard[]> {
   const taskPaths = await listDocsUnder("tasks/queue");
   const docs = await Promise.all(taskPaths.map((path) => readDoc(path)));
-
-  return taskPaths
+  const taskCards = taskPaths
     .map((taskPath, index) => {
       const parsed = parseTaskCard(taskPath, docs[index].content);
+      const companion = readTaskCompanionReleaseInfo(parsed.id);
       return {
         ...parsed,
+        companionReleaseIds: companion.releaseIds,
+        companionLatestRelease: companion.latestReleaseId,
         git: resolveTaskGitInfo(parsed.status, parsed.branch, parsed.recentCommit),
       };
     })
     .sort((left, right) => TASK_STATUS_ORDER.indexOf(left.status) - TASK_STATUS_ORDER.indexOf(right.status) || left.path.localeCompare(right.path));
+
+  assertUniqueTaskIdentities(taskCards.map((task) => ({ id: task.id, shortId: task.shortId, path: task.path })));
+  return taskCards;
 }
