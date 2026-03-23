@@ -33,12 +33,12 @@ Search Before Building / Autoplan / Diff-based Test Selection（推进中）
 
 ## 当前优先级
 
-推进 `t-048`：先把 task 合同模板收口成唯一可渲染来源，再继续压缩规则和兼容层。
+推进 `t-049`：先把 AGENTS、AI_OPERATING_MODEL 与 DEV_WORKFLOW 的重复语义收口成单一职责。
 
 ## 下一阶段方向
 
 - 用真实 task 验证 Search Before Building、Autoplan、Diff-based test selection 是否稳定带来复利
 - 继续吸收轻思想与判断规则，而不是复制外部框架的基础设施形态
 - 在不增加新状态源的前提下，继续退休重复 provenance 和低价值门禁
-- 先做模板单点化，再继续规则去重与兼容层清理
+- 先做规则文档去重，再继续兼容层清理
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->
