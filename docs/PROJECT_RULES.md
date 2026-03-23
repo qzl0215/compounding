@@ -2,7 +2,6 @@
 title: PROJECT_RULES
 doc_role: reference
 update_mode: promote_only
-owner_role: Architect
 status: active
 last_reviewed_at: 2026-03-22
 source_of_truth: AGENTS.md

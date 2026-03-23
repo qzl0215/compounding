@@ -2,7 +2,6 @@
 title: ADR_003_NO_NEW_GIANT_UTILS
 doc_role: memory
 update_mode: append_only
-owner_role: Architect
 status: active
 source_of_truth: docs/PROJECT_RULES.md
 related_docs:

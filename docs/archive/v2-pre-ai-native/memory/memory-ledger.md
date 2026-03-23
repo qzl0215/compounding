@@ -2,7 +2,6 @@
 title: MEMORY_LEDGER
 doc_role: memory
 update_mode: append_only
-owner_role: Auditor
 status: active
 last_reviewed_at: 2026-03-12
 source_of_truth: docs/memory/memory-ledger.md

@@ -1,6 +1,5 @@
 ---
 title: AI_AGENT_AUTOMATION_REPORTING_SPEC_V1
-owner_role: Builder
 status: active
 last_reviewed_at: 2026-03-11
 source_of_truth: bootstrap/project_bootstrap.yaml

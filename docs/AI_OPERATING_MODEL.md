@@ -2,7 +2,6 @@
 title: AI_OPERATING_MODEL
 doc_role: reference
 update_mode: manual
-owner_role: Foreman
 status: active
 last_reviewed_at: 2026-03-23
 source_of_truth: AGENTS.md

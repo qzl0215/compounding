@@ -2,7 +2,6 @@
 title: TECH_DEBT
 doc_role: memory
 update_mode: append_only
-owner_role: Architect
 status: active
 last_reviewed_at: 2026-03-12
 source_of_truth: docs/memory/tech-debt.md

@@ -5,7 +5,7 @@
 - 短编号：`t-049`
 - 父计划：`memory/project/operating-blueprint.md`
 - 任务摘要：
-  把 AGENTS、AI_OPERATING_MODEL 与 DEV_WORKFLOW 的重复语义收口成单一职责，并清掉活跃角色概念与无挂钩文档噪音。
+  把 AGENTS、AI_OPERATING_MODEL 与 DEV_WORKFLOW 的重复语义收口成单一职责，并清掉活跃职责概念、文档前言分类字段与无挂钩文档噪音。
 - 为什么现在：
   这三份文档当前都在解释同一批行为，读起来像三份同义说明书；继续这样写只会增加 token 和维护熵。
 - 承接边界：
@@ -20,11 +20,12 @@
 - 删掉 AGENTS 中能从 AI_OPERATING_MODEL / DEV_WORKFLOW 直接推导的重复解释句，只保留会改变执行动作的硬规则。
 - 收口 AI_OPERATING_MODEL 中重复的工作流语义，保留 AI 行为原则、需求成熟度判断与最小测试治理。
 - 收口 DEV_WORKFLOW 中重复的理念句，保留 runbook、命令顺序与进入退出条件。
-- 删除 docs/ORG_MODEL.md 的活跃地位，并清掉 WORK_MODES / ARCHITECTURE / AI 重写上下文中的角色依赖。
+- 删除 docs/ORG_MODEL.md 的活跃地位，并清掉 WORK_MODES / ARCHITECTURE / AI 重写上下文中的职责依赖与文档前言分类字段。
 - 清理无活跃引用但仍在讲旧驾驶舱/旧组织镜头的资料页，例如 docs/UIUX_CURRENT_PACKAGE.md。
-- 收掉 README.md 中指向旧角色源的入口。
-- 收掉 docs/prompts/ai-doc-rewrite-system.md 中的角色定位段。
-- 收掉 bootstrap/project_bootstrap.yaml 和 bootstrap schema 里的角色结构壳。
+- 收掉 README.md 中指向旧职责源的入口。
+- 收掉 docs/prompts/ai-doc-rewrite-system.md 中的职责定位段。
+- 收掉 bootstrap/project_bootstrap.yaml 和 bootstrap schema 里的职责结构壳。
+- 清掉活跃文档 frontmatter 里的静态分类字段，并移除 bootstrap heading alias 中的 `operating_roles` 别名。
 - 把当前 plan / task / memory 的波次状态更新到 t-049。
 
 ### 不做
@@ -55,8 +56,8 @@
 
 - 状态：doing
 - 体验验收结果：
-  已完成活跃角色概念删除与无挂钩静态噪音清理，待继续验收文档去重是否保持单一职责。
+  已完成活跃职责概念删除、文档前言分类字段清理与无挂钩静态噪音清理，待继续验收文档去重是否保持单一职责。
 - 交付结果：
-  交付范围已扩展并继续推进中，新增 README / prompt / bootstrap 角色壳清理。
+  交付范围已扩展并继续推进中，新增 README / prompt / bootstrap 职责壳清理与前言分类字段删除。
 - 复盘：
-  这轮收口显示：不带执行挂钩的角色概念、无活跃引用的资料页，以及 legacy bootstrap 里的角色结构，都是可优先删除的高 ROI 噪音。
+  这轮收口显示：不带执行挂钩的职责概念、无活跃引用的资料页、legacy bootstrap 里的职责结构，以及静态分类字段，都是可优先删除的高 ROI 噪音。

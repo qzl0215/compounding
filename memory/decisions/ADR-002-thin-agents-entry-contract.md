@@ -2,7 +2,6 @@
 title: ADR_002_THIN_AGENTS_ENTRY_CONTRACT
 doc_role: memory
 update_mode: append_only
-owner_role: Foreman
 status: active
 source_of_truth: AGENTS.md
 related_docs:

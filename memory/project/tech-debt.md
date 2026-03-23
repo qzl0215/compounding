@@ -2,7 +2,6 @@
 title: TECH_DEBT
 doc_role: memory
 update_mode: append_only
-owner_role: Auditor
 status: active
 last_reviewed_at: 2026-03-16
 source_of_truth: docs/REFACTOR_PLAN.md

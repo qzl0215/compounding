@@ -1464,6 +1464,22 @@
     "exported": true
   },
   {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/subtask-table.ts",
+    "symbol": "buildSubtaskTableRows",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/subtask-table.ts",
+    "symbol": "parseShortId",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
     "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/audit.py",
     "symbol": "has_bundled_source_of_truth",

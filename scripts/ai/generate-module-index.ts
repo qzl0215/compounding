@@ -11,7 +11,6 @@ const meta = {
     title: "模块索引",
     doc_role: "reference",
     update_mode: "generated",
-    owner_role: "Builder",
     status: "active",
     source_of_truth: "scripts/ai/generate-module-index.ts",
     related_docs: ["docs/ARCHITECTURE.md", "code_index/dependency-map.md", "code_index/function-index.json"]
@@ -20,7 +19,6 @@ const meta = {
     title: "依赖图",
     doc_role: "reference",
     update_mode: "generated",
-    owner_role: "Builder",
     status: "active",
     source_of_truth: "scripts/ai/generate-module-index.ts",
     related_docs: ["code_index/module-index.md", "docs/ARCHITECTURE.md"]
@@ -63,7 +61,6 @@ function renderManagedDoc(relPath, body) {
     `title: ${frontmatter.title}`,
     `doc_role: ${frontmatter.doc_role}`,
     `update_mode: ${frontmatter.update_mode}`,
-    `owner_role: ${frontmatter.owner_role}`,
     `status: ${frontmatter.status}`,
     `last_reviewed_at: ${currentDateFor(relPath)}`,
     `source_of_truth: ${frontmatter.source_of_truth}`,

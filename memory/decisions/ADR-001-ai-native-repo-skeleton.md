@@ -2,7 +2,6 @@
 title: ADR_001_AI_NATIVE_REPO_SKELETON
 doc_role: memory
 update_mode: append_only
-owner_role: Foreman
 status: active
 source_of_truth: docs/ARCHITECTURE.md
 related_docs:

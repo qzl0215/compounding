@@ -2,7 +2,6 @@
 title: EXP_003_DELETE_LEGACY_UI_FIRST
 doc_role: memory
 update_mode: append_only
-owner_role: Builder
 status: active
 source_of_truth: memory/experience/README.md
 related_docs:
@@ -27,7 +26,7 @@ last_reviewed_at: 2026-03-15
 
 ## 影响
 
-清理后只剩首页和文档页，Studio 角色更清楚。
+清理后只剩首页和文档页，Studio 职责边界更清楚。
 
 ## 复用
 

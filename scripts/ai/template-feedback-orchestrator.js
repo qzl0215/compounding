@@ -18,7 +18,6 @@ const EXPERIENCE_TEMPLATE = `---
 title: {title}
 doc_role: memory
 update_mode: append_only
-owner_role: Auditor
 status: active
 last_reviewed_at: {date}
 source_of_truth: AGENTS.md
@@ -58,7 +57,7 @@ related_docs:
 const TOOL_FEEDBACK_TEMPLATE = `---
 timestamp: {timestamp}
 context: {context}
-user_role: {user_role}
+reporter: {reporter}
 tool_name: {tool_name}
 ---
 
@@ -139,7 +138,7 @@ class TemplateGenerator {
     const defaults = {
       timestamp: new Date().toISOString(),
       context: '任务执行过程中',
-      user_role: '开发者',
+      reporter: '开发者',
       tool_name: '待补充',
       experience_description: '待补充',
       pain_points: '待补充',
@@ -416,7 +415,7 @@ function recordToolFeedback(feedbackManager) {
   const feedbackData = {
     tool_name: 'diff-aware-qa-orchestrator',
     context: 't-023 任务实施过程中',
-    user_role: 'AI Assistant',
+    reporter: 'AI Assistant',
     experience_description: 'diff-aware QA 编排器能有效分析改动影响面，但需要手动指定参数',
     pain_points: '需要手动运行，不能自动集成到现有流程\n健康评分算法需要更多调优',
     improvement_suggestions: '集成到 pre-landing 检查流程\n提供配置文件自定义评分权重',

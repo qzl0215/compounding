@@ -2,7 +2,6 @@
 title: SYSTEM_OVERVIEW
 doc_role: memory
 update_mode: promote_only
-owner_role: Architect
 status: active
 last_reviewed_at: 2026-03-22
 source_of_truth: docs/ARCHITECTURE.md

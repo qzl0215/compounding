@@ -1,7 +1,7 @@
 ---
 timestamp: 2026-03-17T14:47:25.275Z
 context: t-023 任务实施过程中
-user_role: AI Assistant
+reporter: AI Assistant
 tool_name: diff-aware-qa-orchestrator
 ---
 

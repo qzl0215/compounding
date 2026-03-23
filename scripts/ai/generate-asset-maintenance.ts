@@ -59,7 +59,6 @@ function renderAssetMaintenanceDoc(root) {
     "title: ASSET_MAINTENANCE",
     "doc_role: reference",
     "update_mode: generated",
-    "owner_role: Architect",
     "status: active",
     `last_reviewed_at: ${currentDateFor(outputPath)}`,
     "source_of_truth: scripts/ai/generate-asset-maintenance.ts",

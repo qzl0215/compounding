@@ -2,7 +2,6 @@
 title: WORK_MODES
 doc_role: reference
 update_mode: manual
-owner_role: Foreman
 status: active
 source_of_truth: AGENTS.md
 related_docs:
@@ -18,7 +17,7 @@ last_reviewed_at: 2026-03-22
 
 - 需求环节优先于 task 与工作模式入口；若事情仍处于 `待思考 / 待规划`，不得直接切到工程执行
 - 工作模式决定当前工作入口，回答“现在处于哪种业务状态”
-- 工作模式只描述输入、输出、进入退出条件，不承载组织角色
+- 工作模式只描述输入、输出、进入退出条件，不承载组织分工标签
 - 详细模式定义以本文为准
 
 ## 业务链

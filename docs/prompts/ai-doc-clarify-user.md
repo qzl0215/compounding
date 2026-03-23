@@ -2,7 +2,6 @@
 title: AI_DOC_CLARIFY_USER
 doc_role: reference
 update_mode: manual
-owner_role: Product
 status: active
 last_reviewed_at: 2026-03-16
 source_of_truth: docs/prompts/ai-doc-clarify-user.md

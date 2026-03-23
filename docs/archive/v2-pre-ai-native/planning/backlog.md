@@ -2,7 +2,6 @@
 title: BACKLOG
 doc_role: planning
 update_mode: manual
-owner_role: Foreman
 status: active
 last_reviewed_at: 2026-03-12
 source_of_truth: bootstrap/project_brief.yaml

@@ -2,7 +2,6 @@
 title: ADR_004_EXPERIENCE_COMPARABLE_ASSETS
 doc_role: memory
 update_mode: append_only
-owner_role: Foreman
 status: active
 source_of_truth: tasks/queue/task-013-memory-assets-comparison-layer.md
 related_docs:

@@ -2,7 +2,6 @@
 title: DEV_WORKFLOW
 doc_role: operation
 update_mode: manual
-owner_role: Builder
 status: active
 last_reviewed_at: 2026-03-23
 source_of_truth: AGENTS.md

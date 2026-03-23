@@ -2,7 +2,6 @@
 title: ROADMAP
 doc_role: planning
 update_mode: manual
-owner_role: Foreman
 status: active
 last_reviewed_at: 2026-03-23
 source_of_truth: memory/project/roadmap.md

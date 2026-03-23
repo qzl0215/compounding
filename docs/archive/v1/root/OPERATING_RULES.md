@@ -1,6 +1,5 @@
 ---
 title: OPERATING_RULES
-owner_role: Architect
 status: active
 last_reviewed_at: 2026-03-12
 source_of_truth: AGENTS.md

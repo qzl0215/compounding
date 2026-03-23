@@ -2,7 +2,6 @@
 title: TEMPLATE_REPORT_DEFAULT
 doc_role: operation
 update_mode: manual
-owner_role: Builder
 status: active
 last_reviewed_at: 2026-03-12
 source_of_truth: docs/operations/reporting-contract.md

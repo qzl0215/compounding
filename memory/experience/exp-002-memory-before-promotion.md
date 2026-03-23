@@ -2,7 +2,6 @@
 title: EXP_002_MEMORY_BEFORE_PROMOTION
 doc_role: memory
 update_mode: append_only
-owner_role: Auditor
 status: active
 source_of_truth: memory/experience/README.md
 related_docs:

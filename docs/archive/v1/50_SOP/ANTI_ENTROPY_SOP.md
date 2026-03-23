@@ -1,6 +1,5 @@
 ---
 title: ANTI_ENTROPY_SOP
-owner_role: Auditor
 status: active
 last_reviewed_at: 2026-03-11
 source_of_truth: bootstrap/project_bootstrap.yaml

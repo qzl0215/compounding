@@ -2,7 +2,6 @@
 title: ASSET_MAINTENANCE
 doc_role: reference
 update_mode: generated
-owner_role: Architect
 status: active
 last_reviewed_at: 2026-03-17
 source_of_truth: scripts/ai/generate-asset-maintenance.ts

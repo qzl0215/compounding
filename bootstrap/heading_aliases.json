@@ -79,7 +79,6 @@
   "primary_module_domains": ["Primary Module Domains", "核心模块域"],
   "dependency_direction": ["Dependency Direction", "依赖方向", "允许的依赖方向"],
   "production_release_runtime": ["Production Release Runtime", "生产发布运行时"],
-  "operating_roles": ["Operating Roles", "角色职责", "组织职责映射"],
   "first_refactor_batch": ["First Refactor Batch", "第一批重构"],
   "forbidden_call_patterns": ["Forbidden Call Patterns", "禁止调用方式"],
   "main_release_rule": ["Main Release Rule", "主发布规则"],

@@ -2,7 +2,6 @@
 title: EXP_005_DIFF_AWARE_QA_REVIEW_RETRO
 doc_role: memory
 update_mode: append_only
-owner_role: Foreman
 status: active
 source_of_truth: memory/experience/README.md
 related_docs:

@@ -2,7 +2,6 @@
 title: OPERATING_BLUEPRINT
 doc_role: planning
 update_mode: manual
-owner_role: PMO
 status: active
 source_of_truth: memory/project/operating-blueprint.md
 related_docs:

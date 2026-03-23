@@ -1,6 +1,5 @@
 ---
 title: NAMING_CONVENTIONS
-owner_role: Architect
 status: active
 last_reviewed_at: 2026-03-11
 source_of_truth: bootstrap/project_bootstrap.yaml

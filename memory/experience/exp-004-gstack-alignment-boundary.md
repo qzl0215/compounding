@@ -2,7 +2,6 @@
 title: EXP_004_GSTACK_ALIGNMENT_BOUNDARY
 doc_role: memory
 update_mode: append_only
-owner_role: Foreman
 status: active
 source_of_truth: memory/experience/README.md
 related_docs:
@@ -27,7 +26,7 @@ last_reviewed_at: 2026-03-19
 | 直接吸收 | 历史沉淀可比较 | 避免 memory 只记录、不支撑后续判断 | 已有 experience-index 和 ADR | `memory/experience/*` | 继续吸收 |
 | 改造后吸收 | diff-aware QA / review / retro | 让检查和 review 更贴近改动范围 | 现有门禁链已稳定，但 diff-aware 产物还弱 | `scripts/ai/*`、`memory/experience/*`、`/releases` 摘要 | 改造后吸收 |
 | 改造后吸收 | 预任务安全链 | 在动手前暴露范围越界和高风险决策 | 已有 coordination / pre-task check 基础 | `agent-coordination/*`、`scripts/ai/*` | 改造后吸收 |
-| 改造后吸收 | work modes 的产品化入口 | 把模式从文档提升为更明确入口 | 角色与模式已拆开，但高频入口仍弱 | `docs/WORK_MODES.md`、`scripts/ai/*` | 改造后吸收 |
+| 改造后吸收 | work modes 的产品化入口 | 把模式从文档提升为更明确入口 | 旧职责说明与模式已拆开，但高频入口仍弱 | `docs/WORK_MODES.md`、`scripts/ai/*` | 改造后吸收 |
 | 明确不吸收 | Bun 浏览器 daemon | 强化浏览器自动化和长会话基础设施 | 当前项目并不以浏览器运行时为核心 | 无 | 不吸收 |
 | 明确不吸收 | Claude 专属 slash-skill 生态 | 深度绑定单一客户端和命令面板 | 当前项目强调模型/客户端无关 | 无 | 不吸收 |
 | 明确不吸收 | 重型本地浏览器运行时 | 为客户端会话而重做基础设施 | 当前发布与运行态模型已够用 | 无 | 不吸收 |

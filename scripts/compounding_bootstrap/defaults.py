@@ -18,7 +18,6 @@ REQUIRED_FRONTMATTER = [
     "title",
     "doc_role",
     "update_mode",
-    "owner_role",
     "status",
     "last_reviewed_at",
     "source_of_truth",

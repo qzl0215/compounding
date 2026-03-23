@@ -2,7 +2,6 @@
 title: CURRENT_STATE
 doc_role: memory
 update_mode: manual
-owner_role: Foreman
 status: active
 last_reviewed_at: 2026-03-23
 source_of_truth: memory/project/current-state.md

@@ -2,7 +2,6 @@
 title: AGENTS
 doc_role: source
 update_mode: manual
-owner_role: Foreman
 status: active
 source_of_truth: AGENTS.md
 related_docs:

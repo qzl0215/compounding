@@ -2,7 +2,6 @@
 title: ARCHITECTURE
 doc_role: reference
 update_mode: promote_only
-owner_role: Architect
 status: active
 last_reviewed_at: 2026-03-22
 source_of_truth: AGENTS.md
@@ -82,7 +81,7 @@ related_docs:
 - `memory/project/*` 负责计划、状态与经验
 - `tasks/*` 负责执行边界与交付合同
 - `release` 负责验收、运行态与回滚事实
-- 执行判断只看场景、状态、上下文、允许动作和验收标准，不按角色标签路由
+- 执行判断只看场景、状态、上下文、允许动作和验收标准，不按身份标签路由
 
 ## 当前重构批次
 

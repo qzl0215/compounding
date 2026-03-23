@@ -2,7 +2,6 @@
 title: EXPERIENCE_README
 doc_role: memory
 update_mode: append_only
-owner_role: Auditor
 status: active
 last_reviewed_at: 2026-03-15
 source_of_truth: AGENTS.md
