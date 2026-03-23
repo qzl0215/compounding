@@ -1,6 +1,5 @@
 ---
 title: ARCHITECTURE
-doc_role: reference
 update_mode: promote_only
 status: active
 last_reviewed_at: 2026-03-22
@@ -17,7 +16,7 @@ related_docs:
 
 - `apps/studio/`: 只读文档门户
 - `scripts/compounding_bootstrap/`: scaffold / audit / proposal 引擎
-- `docs/`: 规则层、架构层、流程层、AI operating model、重构计划
+- `docs/`: 规则层、架构层、流程层、AI operating model
 - `memory/`: 架构记忆、项目状态、运营蓝图、经验、ADR
 - `code_index/`: 模块索引、依赖图、函数索引
 - `tasks/`: 模板、队列、归档
@@ -47,7 +46,6 @@ related_docs:
 - `scripts/compounding_bootstrap/renderers_base_docs.py`
 - `scripts/compounding_bootstrap/renderers_experience_docs.py`
 - `scripts/compounding_bootstrap/renderers_index.py`
-- `scripts/compounding_bootstrap/renderers_refactor_docs.py`
 - `scripts/compounding_bootstrap/repo_scan.py`
 - `scripts/compounding_bootstrap/scaffold.py`
 - `scripts/compounding_bootstrap/scaffold_assets.py`

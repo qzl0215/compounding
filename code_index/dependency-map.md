@@ -1,6 +1,5 @@
 ---
 title: 依赖图
-doc_role: reference
 update_mode: generated
 status: active
 last_reviewed_at: 2026-03-16

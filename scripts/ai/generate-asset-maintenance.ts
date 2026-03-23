@@ -57,7 +57,6 @@ function renderAssetMaintenanceDoc(root) {
   return [
     "---",
     "title: ASSET_MAINTENANCE",
-    "doc_role: reference",
     "update_mode: generated",
     "status: active",
     `last_reviewed_at: ${currentDateFor(outputPath)}`,

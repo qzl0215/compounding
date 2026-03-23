@@ -1,6 +1,5 @@
 ---
 title: 模块索引
-doc_role: reference
 update_mode: generated
 status: active
 last_reviewed_at: 2026-03-16
@@ -36,7 +35,6 @@ related_docs:
 - `scripts/compounding_bootstrap/renderers_base_docs.py`
 - `scripts/compounding_bootstrap/renderers_experience_docs.py`
 - `scripts/compounding_bootstrap/renderers_index.py`
-- `scripts/compounding_bootstrap/renderers_refactor_docs.py`
 - `scripts/compounding_bootstrap/repo_scan.py`
 - `scripts/compounding_bootstrap/scaffold.py`
 - `scripts/compounding_bootstrap/scaffold_assets.py`

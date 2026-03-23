@@ -1,6 +1,5 @@
 ---
 title: EXP_001_THIN_AGENTS_ENTRY
-doc_role: memory
 update_mode: append_only
 status: active
 source_of_truth: memory/experience/README.md

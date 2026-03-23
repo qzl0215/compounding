@@ -1,6 +1,5 @@
 ---
 title: PROJECT_RULES
-doc_role: reference
 update_mode: promote_only
 status: active
 last_reviewed_at: 2026-03-22
@@ -78,13 +77,9 @@ related_docs:
 - prompt 资产必须通过单一注册表被运行时代码与校验器共同读取；不允许两边各自维护一份路径列表
 - `code_index/*` 由脚本生成；人工补充说明应写回 `docs/ARCHITECTURE.md`、`module.md` 或 task，不直接手改生成索引
 
-## 高效组织原则
+## 高效协作原则
 
-- 规则服务于效率，不服务于自我扩张
-- task 是项目管理清单，不是审批流
-- roadmap 只反映主线、优先级和阶段变化；运营蓝图负责拆解当前里程碑
-- 记忆只沉淀可复用经验或明确裁决，不写流水账
-- 组织结构服务于高效协作，不服务于部门扩张和流程表演
+- 规则、task、roadmap、记忆和协作结构都只服务于主线效率，不服务于自我扩张和流程表演；roadmap 只反映主线、优先级和阶段变化，运营蓝图负责拆解当前里程碑。
 
 ## 兼容层规则
 

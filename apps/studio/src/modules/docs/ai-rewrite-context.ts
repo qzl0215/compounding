@@ -13,13 +13,11 @@ const CULTURE_PRINCIPLES = [
 export async function buildRewriteContext(args: {
   path: string;
   title: string;
-  docRole: string;
   content: string;
   intensity: RewriteIntensity;
   answers: string;
 }) {
-  const [agents, roadmap, currentState, blueprint, workModes, projectRules] = await Promise.all([
-    readDoc("AGENTS.md"),
+  const [roadmap, currentState, blueprint, workModes, projectRules] = await Promise.all([
     readDoc("memory/project/roadmap.md"),
     readDoc("memory/project/current-state.md"),
     readDoc("memory/project/operating-blueprint.md"),
@@ -48,8 +46,7 @@ export async function buildRewriteContext(args: {
     document: {
       path: args.path,
       title: args.title,
-      doc_role: args.docRole,
-      doc_type: classifyDocType(args.path, args.docRole),
+      doc_type: classifyDocType(args.path),
       body_markdown: args.content,
     },
     culture_principles: CULTURE_PRINCIPLES,
@@ -74,15 +71,15 @@ function buildBestPracticeConstraints(pathname: string, projectRules: string, wo
     return [...shared, "任务文档要保留执行合同：为什么现在、承接边界、完成定义、要做/不做、关键风险、测试策略与交付结果"];
   }
   if (pathname.includes("WORK_MODES")) {
-    return [...shared, "工作模式文档要强调输入、输出、进入退出条件与边界，不得混入角色职责正文", stripMarkdown(workModes).slice(0, 600)];
+    return [...shared, "工作模式文档要强调输入、输出、进入退出条件与边界，不得混入无关说明", stripMarkdown(workModes).slice(0, 600)];
   }
   if (pathname.includes("ARCHITECTURE")) {
-    return [...shared, "架构文档要强调模块边界、依赖与禁止调用方式，不得混入角色职责正文", stripMarkdown(projectRules).slice(0, 600)];
+    return [...shared, "架构文档要强调模块边界、依赖与禁止调用方式，不得混入无关说明", stripMarkdown(projectRules).slice(0, 600)];
   }
   return [...shared, stripMarkdown(projectRules).slice(0, 600)];
 }
 
-function classifyDocType(pathname: string, docRole: string) {
+function classifyDocType(pathname: string) {
   if (pathname === "AGENTS.md") return "agents";
   if (pathname.includes("roadmap")) return "roadmap";
   if (pathname.includes("operating-blueprint")) return "operating-blueprint";
@@ -90,5 +87,5 @@ function classifyDocType(pathname: string, docRole: string) {
   if (pathname.includes("WORK_MODES")) return "work-modes";
   if (pathname.includes("ARCHITECTURE")) return "architecture";
   if (pathname.includes("memory/")) return "memory";
-  return docRole || "generic";
+  return "generic";
 }

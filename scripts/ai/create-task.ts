@@ -4,9 +4,17 @@ const { listTaskRecords } = require("./lib/task-resolver.ts");
 const { ensureCompanion } = require("../coord/lib/task-meta.ts");
 const { renderTaskTemplate } = require("./lib/task-template.js");
 
-const [taskId, summary, whyNow] = process.argv.slice(2);
+const [taskId, summary, whyNow] = process.argv.slice(2, 5);
+const argv = parseOptions(process.argv.slice(5));
 if (!taskId || !summary || !whyNow) {
-  console.error("Usage: node --experimental-strip-types scripts/ai/create-task.ts <task-id> <summary> <why-now>");
+  console.error(
+    [
+      "Usage: node --experimental-strip-types scripts/ai/create-task.ts <task-id> <summary> <why-now>",
+      "Optional flags: --parentPlan=... --boundary=... --doneWhen=... --inScope=... --outOfScope=... --constraints=...",
+      "                --risk=... --testReason=... --testScope=... --testSkip=... --testRoi=... --status=...",
+      "                --acceptanceResult=... --deliveryResult=... --retro=...",
+    ].join("\n")
+  );
   process.exit(1);
 }
 
@@ -28,8 +36,23 @@ const body = renderTaskTemplate(
   {
     task_id: taskId,
     short_id: shortId,
-    summary,
-    why_now: whyNow,
+    parent_plan: argv.parentPlan || argv.parent_plan,
+    summary: argv.summary || summary,
+    why_now: argv.whyNow || argv.why_now || whyNow,
+    boundary: argv.boundary,
+    done_when: argv.doneWhen || argv.done_when,
+    in_scope: argv.inScope || argv.in_scope,
+    out_of_scope: argv.outOfScope || argv.out_of_scope,
+    constraints: argv.constraints,
+    risk: argv.risk,
+    test_reason: argv.testReason || argv.test_reason,
+    test_scope: argv.testScope || argv.test_scope,
+    test_skip: argv.testSkip || argv.test_skip,
+    test_roi: argv.testRoi || argv.test_roi,
+    status: argv.status,
+    acceptance_result: argv.acceptanceResult || argv.acceptance_result,
+    delivery_result: argv.deliveryResult || argv.delivery_result,
+    retro: argv.retro,
   },
   root
 );
@@ -38,3 +61,19 @@ fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, body);
 ensureCompanion(taskId);
 console.log(outputPath);
+
+function parseOptions(args) {
+  const parsed = {};
+  for (const arg of args) {
+    if (!arg.startsWith("--")) {
+      continue;
+    }
+    const [key, ...rest] = arg.slice(2).split("=");
+    if (!key) {
+      continue;
+    }
+    const value = rest.length > 0 ? rest.join("=") : "";
+    parsed[key] = value;
+  }
+  return parsed;
+}

@@ -1,6 +1,5 @@
 ---
 title: ASSET_MAINTENANCE
-doc_role: reference
 update_mode: generated
 status: active
 last_reviewed_at: 2026-03-17
@@ -69,7 +68,5 @@ related_docs:
 
 ## 默认维护原则
 
-- 先明确真相源，再决定生成、校验或人工维护。
-- 生成产物不承载判断性内容；判断性内容继续留在人工主源。
-- 只有高频、高漂移且易校验的资产，才优先进入防漂移机制。
+- 先明确真相源，再决定生成、校验或人工维护；只有高频、高漂移且易校验的资产，才优先进入防漂移机制。
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

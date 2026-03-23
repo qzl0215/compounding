@@ -1913,14 +1913,6 @@
   },
   {
     "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/renderers_refactor_docs.py",
-    "symbol": "render_refactor_plan",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/repo_scan.py",
     "symbol": "slugify",
     "kind": "function",

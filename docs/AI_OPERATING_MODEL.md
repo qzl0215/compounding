@@ -1,6 +1,5 @@
 ---
 title: AI_OPERATING_MODEL
-doc_role: reference
 update_mode: manual
 status: active
 last_reviewed_at: 2026-03-23
@@ -26,27 +25,14 @@ related_docs:
 - AI 默认先做三步：扩选项 → 收决策 → 产出 task。
 - 遇到 unfamiliar pattern / infra / runtime capability，先搜已有实现、主源与成熟解，再决定是否自建。
 - `Boil the Lake` 只适用于小而边界清楚的 task；大而跨阶段的事项留在 plan。
+- `scripts/ai/create-task.ts` 可直接接收 `boundary / doneWhen / outOfScope / constraints / testStrategy`，把已收口的决策写成 task 合同，而不是只写摘要。
 - task 只承接可执行边界；companion 只保留机器执行上下文；release 只保留验收与运行事实。
 - 用户可感知变化默认走 `dev` 验收；内部低风险改动可由 AI 自验收并直接闭环。
-
-## 需求环节
-
-- `待思考`：只扩问题、价值、时机、替代方案与失败方式，不创建执行 task。
-- `待规划`：只收目标、范围外、取舍、优先级和体验验收标准；需要时才创建规划 task。
-- `待执行`：确认 task 边界后进入工程执行。
-- `执行中`：围绕 task、阻塞与风险推进，不回到模糊讨论。
-- `待验收`：先给验收入口和判断标准，不继续堆新改动。
-- `已发布`：先做复盘与后续影响判断。
 
 ## 工作模式
 
 - 业务链固定为：`需求提出 → 战略澄清 → 方案评审 → 工程执行 → 质量验收 → 发布复盘`
-- 详细定义、输入输出与进入退出条件以 `docs/WORK_MODES.md` 为准。
-- 若路线图、蓝图或成功标准不清，先进入战略澄清。
-- 若目标已清、边界未定，先进入方案评审。
-- 若 task 已明确、准备动手，进入工程执行。
-- 若实现已完成但结果是否达标不明，进入质量验收。
-- 若准备并入 `main` 或切换 release，进入发布复盘。
+- 详细定义、输入输出与进入退出条件以 `docs/WORK_MODES.md` 为准，这里不重复展开。
 
 ## 最小脚本契约
 

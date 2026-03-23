@@ -9,7 +9,6 @@ CANONICAL_DOCS = [
     "docs/DEV_WORKFLOW.md",
     "docs/AI_OPERATING_MODEL.md",
     "docs/ASSET_MAINTENANCE.md",
-    "docs/REFACTOR_PLAN.md",
 ]
 
 PROMPT_DOCS = [

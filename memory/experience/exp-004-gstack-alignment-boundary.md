@@ -1,6 +1,5 @@
 ---
 title: EXP_004_GSTACK_ALIGNMENT_BOUNDARY
-doc_role: memory
 update_mode: append_only
 status: active
 source_of_truth: memory/experience/README.md

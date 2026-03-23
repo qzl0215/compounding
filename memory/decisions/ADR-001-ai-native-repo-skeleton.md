@@ -1,11 +1,9 @@
 ---
 title: ADR_001_AI_NATIVE_REPO_SKELETON
-doc_role: memory
 update_mode: append_only
 status: active
 source_of_truth: docs/ARCHITECTURE.md
 related_docs:
-  - docs/REFACTOR_PLAN.md
   - memory/project/roadmap.md
 last_reviewed_at: 2026-03-15
 ---

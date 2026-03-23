@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-23T02:32:32.056Z",
+  "generated_at": "2026-03-23T13:16:23.587Z",
   "source_of_truth": "memory/experience/exp-*.md",
   "source_script": "scripts/ai/generate-experience-index.ts",
   "items": [
@@ -24,7 +24,7 @@
       "title": "先删除半活旧前台",
       "decision": "优先删除半活前台，再谈新骨架。",
       "reuse": "以后凡是退役前台，都应该先从构建入口清掉，再决定是否归档。",
-      "related_docs": "docs/REFACTOR_PLAN.md, memory/project/tech-debt.md",
+      "related_docs": "memory/project/tech-debt.md",
       "path": "memory/experience/exp-003-delete-legacy-ui-first.md"
     },
     {

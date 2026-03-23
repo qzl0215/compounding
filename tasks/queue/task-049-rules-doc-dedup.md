@@ -27,6 +27,7 @@
 - 收掉 bootstrap/project_bootstrap.yaml 和 bootstrap schema 里的职责结构壳。
 - 清掉活跃文档 frontmatter 里的静态分类字段，并移除 bootstrap heading alias 中的 `operating_roles` 别名。
 - 把当前 plan / task / memory 的波次状态更新到 t-049。
+- 在这条分支上继续收口 gstack 低噪音吸收后的最小实现，不额外长出新说明书或新状态源。
 
 ### 不做
 

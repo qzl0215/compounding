@@ -47,10 +47,10 @@
 
 ## 交付结果
 
-- 状态：todo
+- 状态：doing
 - 体验验收结果：
-  待验收
+  待验收：AI 进入 task 前默认按“扩选项 → 收决策 → 产出 task”执行；创建 task 时可直接写入 boundary / doneWhen / outOfScope / constraints / testStrategy。
 - 交付结果：
-  未交付
+  Autoplan 式的任务草案收口与人类 taste decision 边界已接入现有 task 创建链。
 - 复盘：
-  未复盘
+  低价值确认已明显减少；后续继续守住“只问价值和取舍，不问实现细节”的边界。

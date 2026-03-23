@@ -1,6 +1,5 @@
 ---
 title: AI_DOC_CLARIFY_USER
-doc_role: reference
 update_mode: manual
 status: active
 last_reviewed_at: 2026-03-16

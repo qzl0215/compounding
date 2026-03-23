@@ -34,10 +34,14 @@ function create(args) {
     process.exit(1);
   }
   const id = taskId.startsWith("task-") ? taskId : `task-${taskId.replace(/^t-/, "")}`;
-  const result = spawnSync("node", ["--experimental-strip-types", "scripts/ai/create-task.ts", id, summary, why], {
-    cwd: ROOT,
-    encoding: "utf8",
-  });
+  const result = spawnSync(
+    "node",
+    ["--experimental-strip-types", "scripts/ai/create-task.ts", id, summary, why, ...buildCreateTaskFlags(args)],
+    {
+      cwd: ROOT,
+      encoding: "utf8",
+    }
+  );
   if (result.status !== 0) {
     console.error(JSON.stringify({ ok: false, error: result.stderr || result.stdout }));
     process.exit(1);
@@ -50,6 +54,30 @@ function create(args) {
   }
   recordCreated(id, { source: "coord:task:create" });
   console.log(JSON.stringify({ ok: true, task_file: outPath, companion_path: require("./lib/task-meta.ts").getCompanionPath(id) }));
+}
+
+function buildCreateTaskFlags(args) {
+  const flagMap = {
+    parentPlan: "parentPlan",
+    boundary: "boundary",
+    doneWhen: "doneWhen",
+    inScope: "inScope",
+    outOfScope: "outOfScope",
+    constraints: "constraints",
+    risk: "risk",
+    testReason: "testReason",
+    testScope: "testScope",
+    testSkip: "testSkip",
+    testRoi: "testRoi",
+    status: "status",
+    acceptanceResult: "acceptanceResult",
+    deliveryResult: "deliveryResult",
+    retro: "retro",
+  };
+
+  return Object.entries(flagMap)
+    .filter(([argKey]) => typeof args[argKey] === "string" && String(args[argKey]).trim() !== "")
+    .map(([argKey, flagName]) => `--${flagName}=${args[argKey]}`);
 }
 
 function start(args) {
@@ -159,7 +187,11 @@ else if (cmd === "search") search(args);
 else if (cmd === "merge") merge(args);
 else {
   console.error(
-    JSON.stringify({ ok: false, error: "Usage: task.ts create|start|search|handoff|merge [--taskId=...] [--summary=...] [--why=...]" })
+    JSON.stringify({
+      ok: false,
+      error:
+        "Usage: task.ts create|start|search|handoff|merge [--taskId=...] [--summary=...] [--why=...] [--boundary=...] [--doneWhen=...] ...",
+    })
   );
   process.exit(1);
 }

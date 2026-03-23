@@ -1,6 +1,5 @@
 ---
 title: SYSTEM_OVERVIEW
-doc_role: memory
 update_mode: promote_only
 status: active
 last_reviewed_at: 2026-03-22

@@ -2,9 +2,7 @@ import type { DocKind } from "./content";
 
 export type DocMeta = {
   title?: string;
-  doc_role?: string;
   update_mode?: string;
-  owner_role?: string;
   status?: string;
   last_reviewed_at?: string;
   source_of_truth?: string;

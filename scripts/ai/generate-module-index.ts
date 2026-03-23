@@ -9,7 +9,6 @@ const today = new Date().toISOString().slice(0, 10);
 const meta = {
   "code_index/module-index.md": {
     title: "模块索引",
-    doc_role: "reference",
     update_mode: "generated",
     status: "active",
     source_of_truth: "scripts/ai/generate-module-index.ts",
@@ -17,7 +16,6 @@ const meta = {
   },
   "code_index/dependency-map.md": {
     title: "依赖图",
-    doc_role: "reference",
     update_mode: "generated",
     status: "active",
     source_of_truth: "scripts/ai/generate-module-index.ts",
@@ -59,7 +57,6 @@ function renderManagedDoc(relPath, body) {
   return [
     "---",
     `title: ${frontmatter.title}`,
-    `doc_role: ${frontmatter.doc_role}`,
     `update_mode: ${frontmatter.update_mode}`,
     `status: ${frontmatter.status}`,
     `last_reviewed_at: ${currentDateFor(relPath)}`,

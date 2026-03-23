@@ -138,7 +138,6 @@ def render_manifest(target: Path) -> None:
             "docs/WORK_MODES.md",
             "docs/DEV_WORKFLOW.md",
             "docs/AI_OPERATING_MODEL.md",
-            "docs/REFACTOR_PLAN.md",
             "docs/prompts/ai-doc-rewrite-system.md",
             "docs/prompts/ai-doc-clarify-user.md",
             "docs/prompts/ai-doc-rewrite-user.md",

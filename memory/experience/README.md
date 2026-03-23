@@ -1,6 +1,5 @@
 ---
 title: EXPERIENCE_README
-doc_role: memory
 update_mode: append_only
 status: active
 last_reviewed_at: 2026-03-15

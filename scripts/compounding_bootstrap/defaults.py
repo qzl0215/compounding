@@ -16,7 +16,6 @@ OUTPUT_PROPOSALS_DIR = Path("output/proposals")
 
 REQUIRED_FRONTMATTER = [
     "title",
-    "doc_role",
     "update_mode",
     "status",
     "last_reviewed_at",

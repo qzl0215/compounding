@@ -1,6 +1,5 @@
 ---
 title: ROADMAP
-doc_role: planning
 update_mode: manual
 status: active
 last_reviewed_at: 2026-03-23
@@ -20,7 +19,7 @@ High-ROI Gstack Absorption（推进中）
 
 ## 当前里程碑
 
-Search Before Building / Autoplan / Diff-based Test Selection（推进中）
+Search Before Building / Autoplan / Diff-based Test Selection（已落地，进入主线验证）
 
 ## 里程碑成功标准
 

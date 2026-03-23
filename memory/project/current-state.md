@@ -1,6 +1,5 @@
 ---
 title: CURRENT_STATE
-doc_role: memory
 update_mode: manual
 status: active
 last_reviewed_at: 2026-03-23
@@ -48,7 +47,7 @@ related_docs:
 - `t-043` 已完成 gstack ROI 吸收刷新；新的高 ROI 执行主线已固定为 `t-044 ~ t-046`。
 - `t-044` 已完成并进入 `main / production`；Search Before Building 与 Boil the Lake 已落到 AI 行为链、task 边界与 companion 机器事实。
 - 当前运营重点切到 `t-049`：收口 AGENTS、AI_OPERATING_MODEL 与 DEV_WORKFLOW 的重复语义，先让规则文档职责单一。
-- `t-045` 与 `t-046` 继续保留为下一批高 ROI 吸收项，但先让模板单点化落地，避免后续再在多处同步 task 合同骨架。
+- `t-045` 与 `t-046` 已完成最小实现并回收到主线，后续只需继续验收与保持轻量化，避免把这些思想重新做成新 paperwork。
 - `t-047` 已完成并发布，任务页已收成单一子任务表格。
 - `t-048` 已完成并发布；task 合同模板已收口成唯一可渲染来源。
 - 当前阶段不扩 orchestration UI、数据库或新运行时；继续只吸收轻流程、轻门禁、轻测试治理思想，并开始清理规则文档重复。

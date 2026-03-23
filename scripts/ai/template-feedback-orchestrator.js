@@ -16,7 +16,6 @@ const root = process.cwd();
 // 经验记录模板定义
 const EXPERIENCE_TEMPLATE = `---
 title: {title}
-doc_role: memory
 update_mode: append_only
 status: active
 last_reviewed_at: {date}

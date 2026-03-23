@@ -23,7 +23,6 @@ export async function runDocRewriteAction(args: {
   const context = await buildRewriteContext({
     path: args.path,
     title: doc.meta.title ?? path.basename(args.path),
-    docRole: doc.meta.doc_role ?? "unknown",
     content: args.content,
     intensity: args.intensity,
     answers: args.answers ?? "",

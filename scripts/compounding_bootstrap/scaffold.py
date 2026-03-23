@@ -54,7 +54,6 @@ def render_markdown_docs(target: Path, resolved: dict[str, Any]) -> None:
         "docs/DEV_WORKFLOW.md",
         "docs/AI_OPERATING_MODEL.md",
         "docs/ASSET_MAINTENANCE.md",
-        "docs/REFACTOR_PLAN.md",
         "memory/architecture/system-overview.md",
         "memory/project/current-state.md",
         "memory/project/operating-blueprint.md",

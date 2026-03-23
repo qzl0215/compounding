@@ -1,6 +1,5 @@
 ---
 title: DEV_WORKFLOW
-doc_role: operation
 update_mode: manual
 status: active
 last_reviewed_at: 2026-03-23
@@ -50,6 +49,7 @@ related_docs:
 - 先读 `memory/project/operating-blueprint.md`，再对齐 `memory/project/roadmap.md`。
 - 先扩选项，再收关键决策。
 - 只有规划工作本身明确时，才用 `scripts/ai/create-task.ts` 生成规划 task。
+- 生成 task 时，优先把 `boundary / doneWhen / outOfScope / constraints / testStrategy` 一次写入合同，避免 task 继续停留在摘要层。
 
 ## 执行链
 

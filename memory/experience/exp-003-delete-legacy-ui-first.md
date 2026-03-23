@@ -1,11 +1,9 @@
 ---
 title: EXP_003_DELETE_LEGACY_UI_FIRST
-doc_role: memory
 update_mode: append_only
 status: active
 source_of_truth: memory/experience/README.md
 related_docs:
-  - docs/REFACTOR_PLAN.md
   - memory/project/tech-debt.md
 last_reviewed_at: 2026-03-15
 ---
