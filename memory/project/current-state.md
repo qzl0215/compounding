@@ -45,9 +45,10 @@ related_docs:
 ## 当前焦点
 
 - 本地 production 当前稳定运行在 `3010`；`main` 已发布，但常驻进程仍需要人工确认是否在线。
-- `t-041` 已完成并发布到 `main / production`；task 已收口成执行合同，机器 provenance 已下沉到 companion / release / projection。
-- 当前运营重点切到 `t-042`：继续把 `plan / task / companion / release` 收口成四个稳定对象，各自只负责一类真相。
-- 当前阶段不扩 orchestration UI、数据库或新运行时；先稳住单层 plan、执行合同、机器上下文与最小 release 快照。
+- `t-042` 已完成并发布到 `main / production`；Plan / Task / Companion / Release 的最简边界已进入生产主线。
+- `t-043` 已完成 gstack ROI 吸收刷新；新的高 ROI 执行主线已固定为 `t-044 ~ t-046`。
+- 当前运营重点切到 `t-044`：先把 Search Before Building 与 Boil the Lake 两条高 ROI 规则落到 AI 行为链与 task 边界。
+- 当前阶段不扩 orchestration UI、数据库或新运行时；继续只吸收轻流程、轻门禁、轻测试治理思想。
 
 ## 当前推荐校验顺序
 
@@ -72,7 +73,7 @@ related_docs:
 - `pnpm validate:build`
 - `pnpm prod:check`
 - `pnpm coord:check:pre-task`
-- 验证 companion 原始 shape 不再镜像 task 正文，且 `contract_hash` 变化后仍能稳定重同步 scope
-- 验证 release 页在 task 仍存在时优先解析 task 合同，只在历史兼容时回退到最小 `delivery_snapshot`
-- 验证历史 task、历史 release 与既有 companion 在不重写文档的情况下仍能被兼容解析
+- 确认当前无 `pending dev`，本地 production 继续稳定运行在最新 active release
+- 启动 `t-044` 的 task 创建前置逻辑与 Search Before Building 规则落地
+- 验证 `t-043` 产出的 `t-044 ~ t-046` 边界是否足够清楚，不会再次长成大而散 backlog
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

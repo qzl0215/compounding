@@ -17,27 +17,27 @@ related_docs:
 
 ## 当前阶段
 
-Single-Plan Boundary Simplification（推进中）
+High-ROI Gstack Absorption（推进中）
 
 ## 当前里程碑
 
-Plan / Task / Companion / Release 最简边界（进行中）
+Search Before Building / Autoplan / Diff-based Test Selection（待执行）
 
 ## 里程碑成功标准
 
-- `operating-blueprint` 成为唯一 plan 主源，`roadmap` 只保留战略摘要与方向
-- task 继续只保留执行合同，不再回流机器 provenance
-- companion 只保留机器执行上下文，不再持久化 task 正文镜像
-- release 只保留验收与运行事实，task 摘要只在历史兼容时回退到最小 `delivery_snapshot`
-- `/tasks` 与 `/releases` 默认优先从 task 合同解析人类语义，历史数据仍可兼容读取
+- AI 在 unfamiliar pattern / infra / runtime capability 前默认先搜仓库、搜主源、再决定是否自建
+- 小而边界清楚的 task 默认做完整闭环，大而跨阶段事项继续留在 plan
+- AI 先扩选项、再收决策、最后产出 task，只把价值判断和体验取舍抛给人
+- 测试与验证能按 diff 范围选取，不再靠继续膨胀门禁数量
+- 全程不新增第二层 plan、新状态源或重型基础设施
 
 ## 当前优先级
 
-完成 `t-042`：把 `plan / task / companion / release` 的边界彻底切开，避免 AI 再在四类对象之间来回猜真相。
+启动 `t-044`：把 Search Before Building 与 Boil the Lake 两条高 ROI 规则落到 task 创建、pre-task 与 AI 行为链。
 
 ## 下一阶段方向
 
-- 验证这套最简边界在真实任务、release 和 companion 生命周期里的长期稳定性
-- 在不增加第二层 plan 或新状态源的前提下，继续压缩多余 provenance 和重复文案
-- 继续用风险驱动最小测试集保护结构主线，而不是扩张门禁数量
+- 用真实 task 验证 Search Before Building、Autoplan、Diff-based test selection 是否稳定带来复利
+- 继续吸收轻思想与判断规则，而不是复制外部框架的基础设施形态
+- 在不增加新状态源的前提下，继续退休重复 provenance 和低价值门禁
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

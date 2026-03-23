@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-19T17:14:42.741Z",
+  "generated_at": "2026-03-23T02:32:32.056Z",
   "source_of_truth": "memory/experience/exp-*.md",
   "source_script": "scripts/ai/generate-experience-index.ts",
   "items": [
@@ -50,6 +50,14 @@
       "reuse": "当系统已经具备多条零散脚本链时，下一阶段最值得做的通常不是新平台，而是把现有骨架收成闭环",
       "related_docs": "memory/project/roadmap.md, memory/project/operating-blueprint.md, tasks/queue/task-035-next-phase-planning.md, tasks/queue/task-036-delivery-framework-phase-one.md",
       "path": "memory/experience/exp-006-delivery-framework-phase-one-boundary.md"
+    },
+    {
+      "id": "exp-007-gstack-roi-refresh",
+      "title": "gstack 高 ROI 吸收刷新",
+      "decision": "当前阶段继续吸收 4 类轻思想：",
+      "reuse": "若一项外部经验不能直接落到当前已有对象边界，就先不吸收。",
+      "related_docs": "memory/project/roadmap.md, memory/project/operating-blueprint.md, tasks/queue/task-043-gstack-roi-absorption-refresh.md, tasks/queue/task-044-search-before-building-and-boil-the-lake.md, tasks/queue/task-045-autoplan-human-judgment-contract.md, tasks/queue/task-046-diff-based-test-roi-selection.md",
+      "path": "memory/experience/exp-007-gstack-roi-refresh.md"
     }
   ]
 }

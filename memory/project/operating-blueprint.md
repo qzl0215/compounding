@@ -17,20 +17,19 @@ last_reviewed_at: 2026-03-23
 
 ## 需求总览
 
-把当前仓库收口成单层 Plan、阶段优先、价值判断优先的 AI 自主系统。AI 先通过多轮详尽沟通扩展选项，再收敛关键决策，最后把执行与发布对准体验级验收结果；Plan 负责想清楚，Task 负责做清楚，Companion 负责机器执行上下文，Release 负责验收与运行事实。
+在已经完成单层 Plan、Task 执行合同、最小 Companion 与最小 Release 边界的基础上，只继续吸收 gstack 中高真实 ROI、且不会制造新熵增的轻思想：Search Before Building、Boil the Lake、Autoplan、Diff-based test selection。目标不是复制外部基础设施，而是继续提高 AI 的判断质量、自主性和长期复利。
 
 ## 待思考
 
-- 大而杂的想法怎样在不引入第二层 plan 的前提下，稳定留在主源里持续收敛
-- AI 如何更系统地补“想到的”和“没想到但重要的”，避免一上来就给过早方案
-- 用户可感知验收结果怎样写得更具体，既不空泛，也不把人拉进实现细节
+- Search Before Building 的最小“搜索证据”该长什么样，才能证明 AI 先搜过，又不变成新 paperwork
+- “Boil the Lake” 的边界如何定义，才能让小 task 做透而不让 task 膨胀失控
+- Diff-based test selection 怎样在不新增验证层的前提下，提高命中率并减少重复测试
 
 ## 待规划
 
-- 单层 plan 下，什么情况允许直接建 task，什么情况必须先留在 plan 里继续收边界
-- `父计划 / 承接边界 / 完成定义 / 测试策略` 的最小 task 合同，需要继续用真实任务验证
-- test 的引入、优化和退休规则，需要继续验证是否足够轻且足够能抓关键错误
-- companion 和 release 的最小字段集，需要继续验证是否已经足够支撑任务页、发布页和闭环脚本
+- Search Before Building 与 Boil the Lake 应如何嵌入 task 创建、pre-task 和 AI 行为规则
+- Autoplan 的“扩选项 → 收决策 → 产出 task”要落在哪些主源与工作流里，才能不再把低价值确认抛给人
+- Diff-based test selection 的 `SelectedChecks / CheckSelectionReason` 最小读模型该放在哪里，才能既可解释又不造新状态源
 
 ## 计划边界
 
@@ -41,24 +40,28 @@ last_reviewed_at: 2026-03-23
 - `release` 只保留验收与运行事实；task 摘要只在历史兼容时回退到最小 `delivery_snapshot`
 - 首页只保留需求总览，不展开细节工作台
 - 不新增独立想法池文件、数据库、第二套工单系统或新的发布状态源
+- 不吸收 Bun daemon、重型浏览器运行时、Claude 绑定生态或多会话 orchestration 基础设施
 
 ## 计划产出任务
 
 - `t-040`：单层 Plan、阶段优先与首页需求总览收口（已完成）
 - `t-041`：把 task 重构成共享执行合同，并把机器 provenance 下沉到 companion / release / 投影层（已完成）
-- `t-042`：把 `plan / task / companion / release` 收口成四个稳定对象，各自只负责一类真相（进行中）
-- 后续结构性 task 只在边界清楚后由本计划产出；未成熟事项继续留在本计划内，不偷渡进执行链
+- `t-042`：把 `plan / task / companion / release` 收口成四个稳定对象，各自只负责一类真相（已完成）
+- `t-043`：刷新 gstack 的高 ROI 吸收清单，并产出下一批低熵增执行 task（已完成）
+- `t-044`：Search Before Building 与 Boil the Lake 规则落地（待执行）
+- `t-045`：Autoplan 式人机决策收口（待执行）
+- `t-046`：Diff-based test ROI 优化（待执行）
 
 ## 下一步对话
 
 - 先扩选项：补问题定义、价值、时机、替代方案、范围外和失败方式
 - 再收决策：只收目标、取舍、优先级、成功标准和验收标准
 - 最后产出 task：只有边界清楚后才进入执行 task
-- 已进入待验收时，先完成体验判断，不继续堆新改动
+- 涉及 unfamiliar pattern / infra / runtime capability 时，先搜仓库、搜主源、再决定是否自建
 
 ## 当前阻塞
 
-- 当前主要风险不是底座缺失，而是若 `task / companion / release` 继续互相镜像摘要和 provenance，AI 会重新在多份对象间猜真相，边界又会变脏。
+- 当前主要风险不是底座缺失，而是若把 Search Before Building、Autoplan 或 Diff-based selection 做成额外 paperwork，它们会从“提高判断质量”变回“新的流程负担”。
 
 ## 测试策略
 
@@ -68,15 +71,15 @@ last_reviewed_at: 2026-03-23
 - `待验收`：补 smoke、运行时检查和用户可感知验收
 - `已发布`：保留仍能保护活跃行为的测试，退休重复、死掉或长期不抓独特错误的测试
 - 默认优先级：静态门禁 → 构建/集成 → 运行时 smoke → 用户可感知体验验收 → AI 输出门禁
+- 新增原则：测试与验证优先按 diff 范围选，不再靠堆数量表达质量
 
 ## 下一检查点
 
 - [x] 确认 `operating-blueprint` 已成为唯一 plan 主源
-- [x] 确认 task 只承接清晰执行项，并显式绑定父计划
-- [x] 确认 task 主体不再手工维护分支、提交、release 和 update trace
-- [x] 确认首页只保留需求总览，细节全部下沉
-- [x] 确认测试策略在 task 中可追踪，且不引入重复门禁
-- [ ] 确认 companion 原始 shape 不再持久化 task 摘要、风险和完成定义
-- [ ] 确认 release 页面默认优先从 task 合同取摘要、风险和完成定义
-- [ ] 确认 release registry 只保留最小 `delivery_snapshot` 作为历史兼容回退
+- [x] 确认 `t-042` 已把 Plan / Task / Companion / Release 的最简边界切开
+- [x] 确认 gstack 的高 ROI 增量吸收项已刷新，并形成 `t-044 ~ t-046`
+- [ ] 确认 Search Before Building 能在不制造新 paperwork 的前提下落地
+- [ ] 确认 Boil the Lake 只约束小而边界清楚的 task，不让 task 膨胀
+- [ ] 确认 Autoplan 只把价值判断和体验取舍抛给人
+- [ ] 确认 Diff-based test selection 能提高命中率且不增加验证层
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

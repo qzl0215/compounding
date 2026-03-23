@@ -49,10 +49,10 @@
 
 ## 交付结果
 
-- 状态：doing
+- 状态：done
 - 体验验收结果：
-  待验收
+  `dev` 预览与本地 production 均已通过；`/tasks` 与 `/releases` 已优先从 task 合同读取人类语义，companion 与 release 的职责边界已生效。
 - 交付结果：
-  未交付
+  Plan / Task / Companion / Release 的最简边界已落地到主线：plan 只留在 `operating-blueprint`，task 只保留执行合同，companion 只承接机器执行上下文，release 只保留验收与运行事实。
 - 复盘：
-  未复盘
+  先把四类对象的真相边界切干净，再吸收外部方法论，才不会把好思想重新做成多份副本。
