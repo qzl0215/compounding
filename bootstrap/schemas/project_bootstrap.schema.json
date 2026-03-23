@@ -15,8 +15,6 @@
     "company_vision",
     "company_values",
     "operating_principles",
-    "org_structure",
-    "decision_policy",
     "reporting_contract",
     "north_star_metric",
     "short_term_priorities",
@@ -151,20 +149,6 @@
       "description": "治理原则，每行一项。",
       "items": { "type": "string" },
       "x-group": "Governance"
-    },
-    "org_structure": {
-      "type": "array",
-      "title": "Org Structure",
-      "description": "组织结构角色列表。",
-      "items": { "type": "object" },
-      "x-group": "Governance"
-    },
-    "decision_policy": {
-      "type": "object",
-      "title": "Decision Policy",
-      "description": "决策分层 JSON 对象。",
-      "x-group": "Governance",
-      "x-widget": "textarea"
     },
     "rewrite_policy": {
       "type": "string",

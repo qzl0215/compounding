@@ -22,6 +22,9 @@
 - 收口 DEV_WORKFLOW 中重复的理念句，保留 runbook、命令顺序与进入退出条件。
 - 删除 docs/ORG_MODEL.md 的活跃地位，并清掉 WORK_MODES / ARCHITECTURE / AI 重写上下文中的角色依赖。
 - 清理无活跃引用但仍在讲旧驾驶舱/旧组织镜头的资料页，例如 docs/UIUX_CURRENT_PACKAGE.md。
+- 收掉 README.md 中指向旧角色源的入口。
+- 收掉 docs/prompts/ai-doc-rewrite-system.md 中的角色定位段。
+- 收掉 bootstrap/project_bootstrap.yaml 和 bootstrap schema 里的角色结构壳。
 - 把当前 plan / task / memory 的波次状态更新到 t-049。
 
 ### 不做
@@ -54,6 +57,6 @@
 - 体验验收结果：
   已完成活跃角色概念删除与无挂钩静态噪音清理，待继续验收文档去重是否保持单一职责。
 - 交付结果：
-  交付范围已扩展并继续推进中。
+  交付范围已扩展并继续推进中，新增 README / prompt / bootstrap 角色壳清理。
 - 复盘：
-  这轮收口显示：不带执行挂钩的角色概念和无活跃引用的资料页，都是可优先删除的高 ROI 噪音。
+  这轮收口显示：不带执行挂钩的角色概念、无活跃引用的资料页，以及 legacy bootstrap 里的角色结构，都是可优先删除的高 ROI 噪音。
