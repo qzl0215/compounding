@@ -41,8 +41,8 @@ last_reviewed_at: 2026-03-22
 
 ## 计划产出任务
 
-- `t-040`：单层 Plan、阶段优先与首页需求总览收口
-- `t-041`：把 task 重构成共享执行合同，并把机器 provenance 下沉到 companion / release / 投影层
+- `t-040`：单层 Plan、阶段优先与首页需求总览收口（已完成）
+- `t-041`：把 task 重构成共享执行合同，并把机器 provenance 下沉到 companion / release / 投影层（已完成）
 - 后续结构性 task 只在边界清楚后由本计划产出；未成熟事项继续留在本计划内，不偷渡进执行链
 
 ## 下一步对话
@@ -54,7 +54,7 @@ last_reviewed_at: 2026-03-22
 
 ## 当前阻塞
 
-- 当前主要风险不是能力不足，而是若 `roadmap / blueprint / task` 重新混写计划和执行，AI 与人会回到边聊边猜、过早开工的状态。
+- 当前主要风险不是底座缺失，而是若 `roadmap / blueprint / task` 重新混写计划和执行，AI 与人会回到边聊边猜、过早开工的状态。
 
 ## 测试策略
 
@@ -67,9 +67,9 @@ last_reviewed_at: 2026-03-22
 
 ## 下一检查点
 
-- [ ] 确认 `operating-blueprint` 已成为唯一 plan 主源
-- [ ] 确认 task 只承接清晰执行项，并显式绑定父计划
-- [ ] 确认 task 主体不再手工维护分支、提交、release 和 update trace
-- [ ] 确认首页只保留需求总览，细节全部下沉
-- [ ] 确认测试策略在 task 中可追踪，且不引入重复门禁
+- [x] 确认 `operating-blueprint` 已成为唯一 plan 主源
+- [x] 确认 task 只承接清晰执行项，并显式绑定父计划
+- [x] 确认 task 主体不再手工维护分支、提交、release 和 update trace
+- [x] 确认首页只保留需求总览，细节全部下沉
+- [x] 确认测试策略在 task 中可追踪，且不引入重复门禁
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

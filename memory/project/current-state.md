@@ -45,8 +45,9 @@ related_docs:
 ## 当前焦点
 
 - 本地 production 当前稳定运行在 `3010`；`main` 已发布，但常驻进程仍需要人工确认是否在线。
-- 当前运营重点是把 task 收口成执行合同，避免 `task / release / companion` 再次混写边界、结果和机器台账。
-- 当前阶段不扩 orchestration UI、数据库或新运行时；先把 task 合同、机器 provenance 下沉和高 ROI test 治理对齐。
+- `t-041` 已完成并发布到 `main / production`；task 已收口成执行合同，机器 provenance 已下沉到 companion / release / projection。
+- 当前运营重点转为观察这套合同结构在真实任务、任务页和发布页里的稳定性，再决定下一条结构主线。
+- 当前阶段不扩 orchestration UI、数据库或新运行时；先稳住单层 plan、执行合同和高 ROI test 治理。
 
 ## 当前推荐校验顺序
 
@@ -69,10 +70,9 @@ related_docs:
 
 - `pnpm validate:static`
 - `pnpm validate:build`
-- `pnpm preview:check`
 - `pnpm prod:check`
 - `pnpm coord:check:pre-task`
-- 验证新 task 是否只保留执行合同字段
-- 验证历史 task 是否仍能被兼容解析
-- 验证 `/tasks` 是否改成合同视角而不是 provenance 视角
+- 验证 production 中的 task 文档与任务页继续保持合同视角
+- 验证历史 task 在不重写文档时仍可被兼容解析
+- 评估下一条结构主线是否继续收 companion / release provenance
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

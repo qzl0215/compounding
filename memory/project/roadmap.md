@@ -17,11 +17,11 @@ related_docs:
 
 ## 当前阶段
 
-Single-Plan Demand Operating Model（推进中）
+Single-Plan Demand Operating Model（已收口）
 
 ## 当前里程碑
 
-Task 执行合同与机器台账下沉
+Task 执行合同与机器台账下沉（已完成）
 
 ## 里程碑成功标准
 
@@ -32,11 +32,11 @@ Task 执行合同与机器台账下沉
 
 ## 当前优先级
 
-把 task 从“全量档案”收口成执行合同，让 plan 负责想清楚、task 负责做清楚、release / companion 负责机器台账。
+稳住“plan 负责想清楚、task 负责做清楚、release / companion 负责机器台账”这条边界，评估下一条高 ROI 结构主线。
 
 ## 下一阶段方向
 
-- 让 task 页、release 页和 companion 继续围绕同一份执行合同投影
-- 让 AI 默认读 plan 与 task 合同，不再被 task 档案噪声拖慢
+- 继续验证 task 页、release 页和 companion 是否都围绕同一份执行合同投影
+- 继续减少对 task 文档的机器字段依赖，避免 provenance 回流
 - 继续用风险驱动最小测试集保护结构改动，而不是追加重复门禁
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

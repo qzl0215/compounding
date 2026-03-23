@@ -52,10 +52,10 @@
 
 ## 交付结果
 
-- 状态：doing
+- 状态：done
 - 体验验收结果：
-  待验收：确认 task 文档读起来像执行合同而不是档案；确认 `/tasks` 先展示结果与边界，不再把分支和提交当首要信息。
+  已验收通过：task 文档已切到执行合同结构，`/tasks` 主表先展示为什么现在、完成定义、关键风险和交付结果，机器 provenance 已下沉到 companion / release / projection。
 - 交付结果：
-  进行中：合同结构、解析器、任务页和校验器已切换到合同视角；companion 同步现在会保留已声明的 scope 与执行 mode，不再在 `ensureCompanion()` 时回滚成“只有 task 文档 + 默认方案评审”。
+  已完成：新建 task 默认生成执行合同；历史 task 仍可被兼容解析；`/tasks` 主表和展开态已按合同视角与机器事实分层显示；校验器只再要求合同核心字段。
 - 复盘：
-  未复盘
+  task 只保留执行合同，人和 AI 在执行时真正需要的信息留在正文；分支、提交、release、trace 等机器事实应继续留在 companion / release / projection，不再回流到 task 文档。
