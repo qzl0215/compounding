@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-03-22T12:45:37.558Z",
-  "report_only": false,
-  "total_files": 320,
+  "generated_at": "2026-03-23T14:59:38.946Z",
+  "report_only": true,
+  "total_files": 336,
   "by_risk": {
     "core": 22,
-    "high_conflict": 60,
-    "normal": 238,
+    "high_conflict": 61,
+    "normal": 253,
     "generated": 0,
     "test_only": 0,
     "docs_only": 0
   },
   "by_source": {
     "hard_rule": 10,
-    "heuristic": 310,
+    "heuristic": 326,
     "override": 0
   },
   "high_risk_files": [
@@ -254,6 +254,10 @@
     },
     {
       "path": "scripts/ai/lib/task-resolver.ts",
+      "risk_level": "high_conflict"
+    },
+    {
+      "path": "scripts/ai/lib/task-template.js",
       "risk_level": "high_conflict"
     },
     {
@@ -682,6 +686,10 @@
       "risk_level": "normal",
       "source": "heuristic"
     },
+    "apps/studio/src/modules/portal/__tests__/stage-model.test.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
     "apps/studio/src/modules/portal/builders.ts": {
       "risk_level": "normal",
       "source": "heuristic"
@@ -702,11 +710,19 @@
       "risk_level": "high_conflict",
       "source": "heuristic"
     },
+    "apps/studio/src/modules/portal/overview-items.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
     "apps/studio/src/modules/portal/parsing.ts": {
       "risk_level": "normal",
       "source": "heuristic"
     },
     "apps/studio/src/modules/portal/service.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/portal/stage-model.ts": {
       "risk_level": "normal",
       "source": "heuristic"
     },
@@ -762,6 +778,10 @@
       "risk_level": "normal",
       "source": "heuristic"
     },
+    "apps/studio/src/modules/releases/release-summary.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
     "apps/studio/src/modules/releases/runtime-status.ts": {
       "risk_level": "normal",
       "source": "heuristic"
@@ -771,6 +791,10 @@
       "source": "heuristic"
     },
     "apps/studio/src/modules/releases/service.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/releases/task-summary.ts": {
       "risk_level": "normal",
       "source": "heuristic"
     },
@@ -787,6 +811,10 @@
       "source": "heuristic"
     },
     "apps/studio/src/modules/tasks/__tests__/service.test.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/tasks/__tests__/subtask-table.test.ts": {
       "risk_level": "normal",
       "source": "heuristic"
     },
@@ -827,6 +855,10 @@
       "source": "heuristic"
     },
     "apps/studio/src/modules/tasks/service.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "apps/studio/src/modules/tasks/subtask-table.ts": {
       "risk_level": "normal",
       "source": "heuristic"
     },
@@ -938,19 +970,7 @@
       "risk_level": "normal",
       "source": "heuristic"
     },
-    "docs/ORG_MODEL.md": {
-      "risk_level": "normal",
-      "source": "heuristic"
-    },
     "docs/PROJECT_RULES.md": {
-      "risk_level": "normal",
-      "source": "heuristic"
-    },
-    "docs/REFACTOR_PLAN.md": {
-      "risk_level": "normal",
-      "source": "heuristic"
-    },
-    "docs/UIUX_CURRENT_PACKAGE.md": {
       "risk_level": "normal",
       "source": "heuristic"
     },
@@ -1023,6 +1043,10 @@
       "source": "heuristic"
     },
     "memory/experience/exp-006-delivery-framework-phase-one-boundary.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "memory/experience/exp-007-gstack-roi-refresh.md": {
       "risk_level": "normal",
       "source": "heuristic"
     },
@@ -1107,6 +1131,10 @@
       "source": "heuristic"
     },
     "scripts/ai/lib/task-resolver.ts": {
+      "risk_level": "high_conflict",
+      "source": "heuristic"
+    },
+    "scripts/ai/lib/task-template.js": {
       "risk_level": "high_conflict",
       "source": "heuristic"
     },
@@ -1199,10 +1227,6 @@
       "source": "heuristic"
     },
     "scripts/compounding_bootstrap/renderers_index.py": {
-      "risk_level": "normal",
-      "source": "heuristic"
-    },
-    "scripts/compounding_bootstrap/renderers_refactor_docs.py": {
       "risk_level": "normal",
       "source": "heuristic"
     },
@@ -1426,6 +1450,10 @@
       "risk_level": "normal",
       "source": "heuristic"
     },
+    "shared/task-contract.ts": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
     "shared/task-identity.ts": {
       "risk_level": "normal",
       "source": "heuristic"
@@ -1591,6 +1619,46 @@
       "source": "heuristic"
     },
     "tasks/queue/task-039-truth-source-and-autonomy-subtraction.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-040-demand-stage-visualization.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-041-task-execution-contract.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-042-minimal-boundaries.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-043-gstack-roi-absorption-refresh.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-044-search-before-building-and-boil-the-lake.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-045-autoplan-human-judgment-contract.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-046-diff-based-test-roi-selection.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-047-task-page-subtask-table.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-048-task-template-single-source.md": {
+      "risk_level": "normal",
+      "source": "heuristic"
+    },
+    "tasks/queue/task-049-rules-doc-dedup.md": {
       "risk_level": "normal",
       "source": "heuristic"
     },

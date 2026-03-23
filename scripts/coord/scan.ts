@@ -19,7 +19,7 @@ const ROOT = process.cwd();
 const REPORT_ONLY = process.argv.includes("--report-only");
 
 const IGNORE_DIRS = new Set([".git", "node_modules", "__pycache__", ".next", ".compounding-runtime"]);
-const IGNORE_PREFIXES = ["output/", "docs/archive/"];
+const IGNORE_PREFIXES = ["output/"];
 
 function walk(dir: string): string[] {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
