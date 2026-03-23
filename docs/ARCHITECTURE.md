@@ -81,13 +81,6 @@ related_docs:
 - `release` 负责验收、运行态与回滚事实
 - 执行判断只看场景、状态、上下文、允许动作和验收标准，不按身份标签路由
 
-## 当前重构批次
-
-- 删除旧 workflow 前台和对应 API
-- 把 Studio 收口为 `portal / docs / git-health`
-- 把 bootstrap 引擎拆成可维护的 Python 微模块
-- 补齐 `memory / tasks / code_index / scripts/ai` 骨架
-
 ## 禁止调用方式
 
 - 禁止从 UI 组件跨层读取任意文件系统状态而不经过模块仓储层
