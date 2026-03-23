@@ -28,11 +28,7 @@ related_docs:
 - `scripts/ai/create-task.ts` 可直接接收 `boundary / doneWhen / outOfScope / constraints / testStrategy`，把已收口的决策写成 task 合同，而不是只写摘要。
 - task 只承接可执行边界；companion 只保留机器执行上下文；release 只保留验收与运行事实。
 - 用户可感知变化默认走 `dev` 验收；内部低风险改动可由 AI 自验收并直接闭环。
-
-## 工作模式
-
-- 业务链固定为：`需求提出 → 战略澄清 → 方案评审 → 工程执行 → 质量验收 → 发布复盘`
-- 详细定义、输入输出与进入退出条件以 `docs/WORK_MODES.md` 为准，这里不重复展开。
+- 业务链与进入退出条件以 `docs/WORK_MODES.md` 为准，这里只保留 AI 应如何处理问题，不重复展开模式定义。
 
 ## 最小脚本契约
 
