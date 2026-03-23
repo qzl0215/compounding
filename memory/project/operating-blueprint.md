@@ -51,7 +51,7 @@ last_reviewed_at: 2026-03-23
 - `t-044`：Search Before Building 与 Boil the Lake 规则落地（待执行）
 - `t-045`：Autoplan 式人机决策收口（待执行）
 - `t-046`：Diff-based test ROI 优化（待执行）
-- `t-047`：把任务页收成单一子任务表格清单（进行中）
+- `t-047`：把任务页收成单一子任务表格清单（已完成）
 
 ## 下一步对话
 
