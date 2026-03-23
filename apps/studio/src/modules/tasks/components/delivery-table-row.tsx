@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Fragment, type ReactNode } from "react";
+import { DEMAND_STAGE_LABELS, resolveTaskDemandStage } from "@/modules/portal/stage-model";
 import { TASK_DELIVERY_LABELS } from "../delivery";
 import type { TaskDeliveryRow, TaskDeliveryStatus } from "../types";
 
@@ -14,6 +15,14 @@ const DELIVERY_TONE: Record<TaskDeliveryStatus, string> = {
   blocked: "border-red-400/20 bg-red-400/10 text-red-100",
 };
 
+const STAGE_TONE: Record<string, string> = {
+  planning: "border-sky-400/20 bg-sky-400/10 text-sky-100",
+  ready: "border-emerald-400/20 bg-emerald-400/10 text-emerald-100",
+  doing: "border-amber-400/20 bg-amber-400/10 text-amber-100",
+  acceptance: "border-fuchsia-400/20 bg-fuchsia-400/10 text-fuchsia-100",
+  released: "border-white/12 bg-white/[0.05] text-white/78",
+};
+
 type Props = {
   row: TaskDeliveryRow;
   isExpanded: boolean;
@@ -24,16 +33,26 @@ type Props = {
 };
 
 export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept, onRollback }: Props) {
+  const stage = resolveTaskDemandStage(row);
+
   return (
     <Fragment>
       <tr className="align-top">
         <Cell className="min-w-[260px]">
           <button type="button" className="space-y-1 text-left" onClick={onToggle}>
             <p className="font-medium text-white">{`${row.shortId || row.id} ${row.title}`.trim()}</p>
+            <p className="text-xs text-white/45" title={row.whyNow}>
+              {truncate(row.whyNow || "未记录", 52)}
+            </p>
           </button>
         </Cell>
-        <Cell className="min-w-[240px] text-white/76">
-          <div title={row.whyNow}>{truncate(row.whyNow || "未记录", 52)}</div>
+        <Cell className="min-w-[140px]">
+          <div className="space-y-2">
+            <span className={`inline-flex rounded-full border px-3 py-1 text-xs ${STAGE_TONE[stage] || STAGE_TONE.ready}`}>
+              {DEMAND_STAGE_LABELS[stage]}
+            </span>
+            {row.currentMode ? <p className="text-xs text-white/45">{row.currentMode}</p> : null}
+          </div>
         </Cell>
         <Cell className="min-w-[260px] text-white/72">
           <div title={row.doneWhen}>{truncate(row.doneWhen || "未记录", 52)}</div>
@@ -45,13 +64,6 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
         </Cell>
         <Cell className="min-w-[220px] text-white/68">
           <div title={row.risk}>{truncate(row.risk || "未记录", 40)}</div>
-        </Cell>
-        <Cell className="min-w-[220px] text-white/76">
-          <div className="space-y-1">
-            <p title={row.deliveryResult}>{truncate(row.deliveryResult || "未记录", 40)}</p>
-            <p className="text-xs text-white/45">{row.versionLabel}</p>
-            {row.linkedTaskIds.length > 0 ? <p className="text-xs text-white/45">关联 task：{row.linkedTaskIds.join(", ")}</p> : null}
-          </div>
         </Cell>
         <Cell className="min-w-[230px]">
           <div className="flex flex-wrap gap-2">
@@ -86,9 +98,10 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
       </tr>
       {isExpanded ? (
         <tr>
-          <td colSpan={7} className="bg-white/[0.03] px-4 py-4">
+          <td colSpan={6} className="bg-white/[0.03] px-4 py-4">
             <div className="grid gap-4 text-sm text-white/68 lg:grid-cols-3">
               <DetailBlock title="任务摘要">
+                <p>为什么现在：{row.whyNow || "未记录"}</p>
                 <p>父计划：{row.parentPlan || "未标注"}</p>
                 <p>承接边界：{row.boundary || "未记录"}</p>
                 <p>完成定义：{row.doneWhen || "未记录"}</p>
@@ -103,6 +116,8 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
                 <p>体验验收结果：{row.acceptanceResult || "待验收"}</p>
                 <p>交付结果：{row.deliveryResult || "未记录"}</p>
                 <p>复盘：{row.retro || "未复盘"}</p>
+                <p>版本：{row.versionLabel}</p>
+                {row.linkedTaskIds.length > 0 ? <p>关联 task：{row.linkedTaskIds.join(", ")}</p> : null}
               </DetailBlock>
               <DetailBlock title="机器事实">
                 <p>任务路径：{row.path}</p>

@@ -88,12 +88,11 @@ export function DeliveryTable({
           <table className="min-w-full divide-y divide-white/8 text-left text-sm">
             <thead className="bg-white/[0.04] text-white/52">
               <tr>
-                <HeadCell>任务</HeadCell>
-                <HeadCell>为什么现在</HeadCell>
+                <HeadCell>子任务</HeadCell>
+                <HeadCell>阶段</HeadCell>
                 <HeadCell>完成定义</HeadCell>
                 <HeadCell>状态</HeadCell>
                 <HeadCell>关键风险</HeadCell>
-                <HeadCell>交付结果</HeadCell>
                 <HeadCell>操作</HeadCell>
               </tr>
             </thead>
@@ -115,7 +114,7 @@ export function DeliveryTable({
                 })
               ) : (
                 <tr>
-                  <td colSpan={7} className="px-4 py-5 text-white/58">
+                  <td colSpan={6} className="px-4 py-5 text-white/58">
                     {emptyText}
                   </td>
                 </tr>
