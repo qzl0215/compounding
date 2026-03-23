@@ -49,7 +49,7 @@ last_reviewed_at: 2026-03-23
 - `t-042`：把 `plan / task / companion / release` 收口成四个稳定对象，各自只负责一类真相（已完成）
 - `t-043`：刷新 gstack 的高 ROI 吸收清单，并产出下一批低熵增执行 task（已完成）
 - `t-044`：Search Before Building 与 Boil the Lake 规则落地（已完成）
-- `t-045`：Autoplan 式人机决策收口（待执行）
+- `t-045`：Autoplan 式人机决策收口（进行中）
 - `t-046`：Diff-based test ROI 优化（待执行）
 - `t-047`：把任务页收成单一子任务表格清单（已完成）
 

@@ -14,7 +14,7 @@ related_docs:
   - docs/ASSET_MAINTENANCE.md
   - memory/project/current-state.md
   - memory/project/roadmap.md
-last_reviewed_at: 2026-03-22
+last_reviewed_at: 2026-03-23
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 ## 硬规则
@@ -25,9 +25,10 @@ last_reviewed_at: 2026-03-22
 - 人只做价值判断、需求澄清和结果验收；AI 默认负责执行闭环。
 - 只允许一层 plan；`memory/project/operating-blueprint.md` 是唯一 plan 主源，`memory/project/roadmap.md` 只保留战略摘要与里程碑。
 - Plan 只负责想清楚；task 只负责执行合同；companion 只负责机器执行上下文；release 只负责验收与运行事实。
-- AI 进入 task 前，默认先扩选项，再收关键决策，最后对准体验级验收结果。
+- AI 进入 task 前，固定先扩选项、再收关键决策、最后产出 task；能从仓库、主源或成熟方案回答的实现问题，不向人追问。
 - 涉及 unfamiliar pattern / infra / runtime capability 时，先搜仓库、搜主源、再看成熟解，最后才决定是否自建；只记录最小 search evidence，不写长报告。
 - 小而边界清楚的 task 默认做到最小完整闭环；跨阶段、多目标或仍未收口的事项留在 plan，不偷渡进 task。
+- 只有价值不清、取舍分叉、用户可感知结果待验收，或高风险不可逆动作时，才等待人回复。
 - 改动门禁固定分级：`light` 只覆盖 `docs/*`、`memory/*`、`code_index/*`、现有 `tasks/queue/*`；`structural` 覆盖代码、脚本、模板与依赖；`release` 覆盖发布和运行时链路。
 - 任何结构性改动都必须绑定任务、更新相关记忆，并在进入 `main` 前完成 review。
 - 每个执行 task 对应一条短分支；任务状态、最近提交与是否并入 `main` 必须可追踪。
@@ -66,10 +67,8 @@ last_reviewed_at: 2026-03-22
   - 环境说明
   - 页面链接
   - 如何验收
-- 在 `待思考 / 待规划`，AI 默认先做两件事：
-  - 扩展可选项与隐藏约束
-  - 收敛关键决策与体验验收标准
-- 若只是已有模式延伸且边界清楚，AI 直接执行；只有涉及价值分叉、用户可感知变化或高风险不可逆动作时，才把判断抛给人。
+- 在 `待思考 / 待规划`，AI 默认按 `扩选项 → 收决策 → task 草案` 推进；只把价值判断、体验取舍和结果验收抛给人。
+- 若只是已有模式延伸且边界清楚，AI 直接执行；实现级确认、仓库可解问题和低风险内改不再默认抛给人。
 - 进入下一候选事项时，只有在 `待思考 / 待规划`、存在用户可感知分叉，或涉及高风险不可逆动作时，才先提供：
   - 中文任务摘要
   - 可执行方案

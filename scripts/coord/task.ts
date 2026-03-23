@@ -34,7 +34,13 @@ function create(args) {
     process.exit(1);
   }
   const id = taskId.startsWith("task-") ? taskId : `task-${taskId.replace(/^t-/, "")}`;
-  const result = spawnSync("node", ["--experimental-strip-types", "scripts/ai/create-task.ts", id, summary, why], {
+  const extraArgs = [
+    args.boundary ? `--boundary=${args.boundary}` : null,
+    args.doneWhen ? `--doneWhen=${args.doneWhen}` : null,
+    args.outOfScope ? `--outOfScope=${args.outOfScope}` : null,
+    args.constraints ? `--constraints=${args.constraints}` : null,
+  ].filter(Boolean);
+  const result = spawnSync("node", ["--experimental-strip-types", "scripts/ai/create-task.ts", id, summary, why, ...extraArgs], {
     cwd: ROOT,
     encoding: "utf8",
   });
@@ -49,7 +55,17 @@ function create(args) {
     process.exit(1);
   }
   recordCreated(id, { source: "coord:task:create" });
-  console.log(JSON.stringify({ ok: true, task_file: outPath, companion_path: require("./lib/task-meta.ts").getCompanionPath(id) }));
+  console.log(
+    JSON.stringify({
+      ok: true,
+      task_file: outPath,
+      companion_path: require("./lib/task-meta.ts").getCompanionPath(id),
+      autoplan_contract: {
+        sequence: ["扩选项", "收决策", "产出 task"],
+        human_only_for: ["价值判断", "体验取舍", "结果验收", "高风险不可逆动作"],
+      },
+    })
+  );
 }
 
 function start(args) {

@@ -4,7 +4,7 @@ doc_role: operation
 update_mode: manual
 owner_role: Builder
 status: active
-last_reviewed_at: 2026-03-22
+last_reviewed_at: 2026-03-23
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -34,6 +34,7 @@ related_docs:
 - `task` 是执行边界，不承接未成熟需求；模糊事项继续留在 `roadmap / operating-blueprint`
 - 当前只允许一层 plan；`memory/project/operating-blueprint.md` 是唯一 plan 主源，`roadmap` 只记录战略摘要与里程碑
 - 人只做价值判断、需求澄清和结果验收；AI 默认负责其余执行闭环
+- `待思考 / 待规划` 默认按 `扩选项 → 收决策 → task 草案` 推进；只有价值不清、取舍分叉、用户可感知结果待验收，或高风险不可逆动作时，才等待人回复
 
 ## 预任务护栏
 
@@ -56,9 +57,10 @@ related_docs:
 
 - 触发：方向成立但边界、取舍、优先级、成功标准或体验验收标准不清。
 - 最小动作：
-  1. 先读 `memory/project/operating-blueprint.md`，再对齐 `memory/project/roadmap.md` 的战略摘要。
-  2. 先扩选项，再收关键决策；若涉及 unfamiliar pattern / infra / runtime capability，先搜仓库、主源与成熟解，再决定是否产出 task。
-  3. 只有规划工作本身明确时，才用 `scripts/ai/create-task.ts` 生成规划 task。
+1. 先读 `memory/project/operating-blueprint.md`，再对齐 `memory/project/roadmap.md` 的战略摘要。
+ 2. 先扩选项，再收关键决策；若涉及 unfamiliar pattern / infra / runtime capability，先搜仓库、主源与成熟解，再决定是否产出 task。
+ 3. 只把价值判断、体验取舍和最终验收标准抛给人；实现细节默认由 AI 收口。
+ 4. 只有规划工作本身明确时，才用 `scripts/ai/create-task.ts` 生成规划 task 或执行 task 草案。
 - 输出：单层 plan、体验验收标准、必要时产出的 task。
 
 ### 执行链
@@ -68,6 +70,7 @@ related_docs:
   1. 先读当前 task、相关 `module.md`、`code_index/*`。
   2. 需要上下文压缩时，用 `scripts/ai/build-context.ts`；默认只拉 `AGENTS.md`、`docs/PROJECT_RULES.md`、`docs/ARCHITECTURE.md`、当前 task、相关 `module.md` 与命中的 `code_index/*`。
   3. 动手前先跑 `python3 scripts/pre_mutation_check.py`；若 task 小而边界清楚，默认做到最小完整闭环；若边界重新变大，退回 plan。
+  4. 执行链只处理已经说清的合同；若实现过程中暴露的是 taste decision，而不是实现问题，再抛给人。
 - 输出：最小可验证改动、task 回写、必要的 memory / docs / index 回写。
 
 ### 交付链
@@ -204,6 +207,7 @@ related_docs:
 - 每个 task 还必须包含短编号；短编号格式固定为 `t-xxx`
 - 不是每个 task 都必须新增测试，但每个结构性 task 都必须写清测试策略：为什么要测、测什么、不测什么、为什么当前最划算
 - 修改结束后要同步更新任务状态和验收结果
+- `scripts/ai/create-task.ts` 生成的只是 task 草案；若 `完成定义 / 范围外 / 体验取舍` 仍未收口，先回到 plan，不要硬开工
 - 每个 task 对应一条短分支；进入 `main` 后，任务状态与 Git 状态必须一致，但分支、最近提交、release 版本、planned files、review 与 handoff 等机器事实不再手工写入 task 正文
 - task 默认挂到当前工作模式，而不是挂到角色名称；若页面需要显示机器事实，统一从 companion / release / delivery projection 读取
 - 若 roadmap、blueprint 或发布标准不清，task 只能进入 `战略澄清`

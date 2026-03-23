@@ -3,9 +3,20 @@ const path = require("node:path");
 const { listTaskRecords } = require("./lib/task-resolver.ts");
 const { ensureCompanion } = require("../coord/lib/task-meta.ts");
 
-const [taskId, summary, whyNow] = process.argv.slice(2);
+const argv = process.argv.slice(2);
+const [taskId, summary, whyNow, ...rest] = argv;
+const options = Object.fromEntries(
+  rest
+    .filter((arg) => arg.startsWith("--"))
+    .map((arg) => {
+      const [key, value] = arg.slice(2).split("=");
+      return [key, value ?? ""];
+    })
+);
 if (!taskId || !summary || !whyNow) {
-  console.error("Usage: node --experimental-strip-types scripts/ai/create-task.ts <task-id> <summary> <why-now>");
+  console.error(
+    "Usage: node --experimental-strip-types scripts/ai/create-task.ts <task-id> <summary> <why-now> [--boundary=...] [--doneWhen=...] [--outOfScope=...] [--constraints=...]"
+  );
   process.exit(1);
 }
 
@@ -23,6 +34,13 @@ if (existingTaskRecords.some((record) => record.shortId === shortId)) {
   process.exit(1);
 }
 
+const boundary = options.boundary || "待补充：写明这个 task 从 plan 承接的那一段清晰边界；若价值判断、范围外或 taste decision 仍未收口，请先回到 plan。";
+const doneWhen =
+  options.doneWhen || "待补充：写明体验级交付结果，而不是实现动作；若仍是实现动作，说明决策未收口。";
+const outOfScope = options.outOfScope || "- 待补充：列出这次明确不做的事项。";
+const constraints =
+  options.constraints || "- 待补充：列出必须遵守的边界、依赖和冻结项；仍需人判断的只允许是价值判断、体验取舍或最终验收。";
+
 const body = `# 任务 ${taskId}
 
 ## 任务摘要
@@ -34,9 +52,9 @@ const body = `# 任务 ${taskId}
 - 为什么现在：
   ${whyNow}
 - 承接边界：
-  待补充：写明这个 task 从 plan 承接的那一段清晰边界；若仍跨阶段或多目标，请先回到 plan。
+  ${boundary}
 - 完成定义：
-  待补充：写明体验级交付结果，而不是实现动作；小而边界清楚的 task 默认写成最小完整闭环。
+  ${doneWhen}
 
 ## 执行合同
 
@@ -46,11 +64,11 @@ const body = `# 任务 ${taskId}
 
 ### 不做
 
-- 待补充：列出这次明确不做的事项。
+${outOfScope}
 
 ### 约束
 
-- 待补充：列出必须遵守的边界、依赖和冻结项；若涉及 unfamiliar pattern / infra / runtime capability，先说明为什么现成方案不够。
+${constraints}
 
 ### 关键风险
 

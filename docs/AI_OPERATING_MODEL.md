@@ -4,7 +4,7 @@ doc_role: reference
 update_mode: manual
 owner_role: Foreman
 status: active
-last_reviewed_at: 2026-03-22
+last_reviewed_at: 2026-03-23
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -42,6 +42,20 @@ related_docs:
 - 当前 Delivery Framework 默认把 task companion 视为派生的 machine-readable delivery contract；`create / start / handoff / merge / release handoff` 围绕同一份 companion 回写，但发布主状态仍只认 release registry
 - task 合同是唯一人类执行语义；companion 只保留机器执行上下文，release 只保留验收与运行事实，不再各自镜像 task 正文
 
+## Autoplan 契约
+
+- 进入 task 前，AI 固定先做三步：
+  1. 扩选项：补问题定义、时机、替代方案、范围外和失败方式
+  2. 收决策：只收目标、取舍、优先级、成功标准和体验验收标准
+  3. 产出 task：只有边界清楚后才生成执行 task 草案
+- 只有 4 类问题需要等人：
+  - 价值不清
+  - 取舍分叉
+  - 用户可感知结果需要验收
+  - 高风险或不可逆动作
+- 能从仓库、主源、经验或成熟方案回答的实现级问题，AI 自行收口，不再把低价值确认抛给人。
+- task 草案默认对齐体验级完成定义，而不是实现动作；若 `完成定义 / 范围外 / taste decision` 仍未收口，先回到 plan。
+
 ## Search Before Building 与 Boil the Lake
 
 - `Search Before Building` 只解决一个问题：在 unfamiliar pattern / infra / runtime capability 上，先搜已有，再决定是否自己造。
@@ -66,9 +80,8 @@ related_docs:
 - 默认沟通结构和页面交付契约以 `AGENTS.md` 为唯一高频归宿，不在这里重复维护一整套模板
 - AI 特有的附加约束固定为：
   - 若当前事项仍处于 `待思考 / 待规划`，且价值、边界或成功标准未清，不得直接进入实现阶段
-  - AI 在进入 task 前，默认先做三步：扩选项 → 收决策 → 产出 task
+  - AI 只把价值判断、体验取舍和结果验收抛给人；实现细节、仓库可解问题和低价值确认默认自行处理
   - 若当前事项是已有模式的直接延伸，AI 直接执行；若涉及 unfamiliar pattern / infra / runtime capability，先补最小 search evidence
-  - 人只做价值判断、需求澄清和结果验收；AI 默认负责读仓库、建上下文、实现、校验、回写和非感知性收口
   - 用户可感知变化默认走 `dev` 验收；内部低风险改动可由 AI 自验收并直接闭环
   - 若任务 companion、task 或 release 主源出现冲突，先修主源，再继续执行
 

@@ -6,6 +6,25 @@ from tests.coord_support import ROOT, CoordCliTestCase, SAMPLE_TASK_MARKDOWN
 
 class CoordCliTests(CoordCliTestCase):
 
+    def test_create_task_accepts_autoplan_contract_fields(self) -> None:
+        completed = self.run_script(
+            "scripts/ai/create-task.ts",
+            "task-123-autoplan",
+            "收口 autoplan 合同",
+            "需要把价值判断和实现级确认切开。",
+            "--boundary=只接走对话节奏与 task 草案生成这一段，不扩新 UI。",
+            "--doneWhen=AI 先扩选项、再收决策、最后生成 task 草案，只把价值判断抛给人。",
+            "--outOfScope=- 不做新的 planner 页面。",
+            "--constraints=- 仍需人判断的只允许是价值判断和体验取舍。",
+        )
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        created = (self.target / "tasks" / "queue" / "task-123-autoplan.md").read_text(encoding="utf8")
+        self.assertIn("只接走对话节奏与 task 草案生成这一段，不扩新 UI。", created)
+        self.assertIn("AI 先扩选项、再收决策、最后生成 task 草案，只把价值判断抛给人。", created)
+        self.assertIn("- 不做新的 planner 页面。", created)
+        self.assertIn("- 仍需人判断的只允许是价值判断和体验取舍。", created)
+
     def test_companion_lifecycle_records_pre_task_review_and_release_handoff(self) -> None:
         script_root = ROOT.as_posix()
         payload = self.run_node(
