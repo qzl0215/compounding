@@ -10,6 +10,7 @@ import {
   collectEvidencePoints,
   selectSuggestedChecks,
 } from "./diff-aware-analysis";
+import { buildRetirementSuggestions, buildSelectedChecks } from "./diff-aware-summaries";
 import { readDiffSnapshot, type DiffStats } from "./diff-aware-source";
 import type { DiffAwareArtifact } from "./types";
 
@@ -23,12 +24,14 @@ export function buildDiffAwareArtifactFromFiles(changedFiles: string[], stats: D
   const categories = buildCategories(impacts);
   const healthScore = calculateHealthScore(changedFiles, impacts, stats);
   const suggestedChecks = selectSuggestedChecks(impacts);
+  const selectedChecks = buildSelectedChecks(suggestedChecks, categories, healthScore);
   const scopeSummary = buildScopeSummary(changedFiles, categories, stats);
   const reviewSummary = buildReviewSummary(scopeSummary, healthScore, suggestedChecks, categories);
   const retroSummary = buildRetroSummary(categories, healthScore);
   const shipLog = buildShipLog(scopeSummary, suggestedChecks, reviewSummary, retroSummary, healthScore);
   const evidencePoints = collectEvidencePoints(impacts, suggestedChecks);
   const nextActions = buildNextActions(healthScore, suggestedChecks, changedFiles.length);
+  const retirementSuggestions = buildRetirementSuggestions(categories, selectedChecks, healthScore);
 
   return {
     state: changedFiles.length === 0 ? "clean" : "dirty",
@@ -41,6 +44,8 @@ export function buildDiffAwareArtifactFromFiles(changedFiles: string[], stats: D
     retroSummary,
     shipLog,
     suggestedChecks,
+    selectedChecks,
+    retirementSuggestions,
     evidencePoints,
     nextActions,
     changedFiles,

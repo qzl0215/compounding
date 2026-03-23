@@ -25,6 +25,36 @@ class CoordCliTests(CoordCliTestCase):
         self.assertIn("## 执行合同（单点模板）", created)
         self.assertNotIn("{{", created)
 
+    def test_create_task_accepts_plan_contract_fields(self) -> None:
+        completed = self.run_script(
+            "scripts/ai/create-task.ts",
+            "task-124-contract-draft",
+            "把边界说清",
+            "先把关键决策收口，再进入执行",
+            "--parentPlan=memory/project/operating-blueprint.md",
+            "--boundary=只补执行合同字段，不扩到页面或运行时",
+            "--doneWhen=体验级验收标准已经清楚，且 task 可直接进入执行",
+            "--inScope=- 补 boundary\n- 补 done_when\n- 补 test_strategy",
+            "--outOfScope=- 不改页面\n- 不改运行态",
+            "--constraints=- 只允许一层 plan\n- 不引入新状态源",
+            "--risk=- 边界写散会把 task 再做回说明书",
+            "--testReason=验证 Autoplan 可以把关键决策直接落到 task 合同。",
+            "--testScope=task 模板输出、字段回写、默认值覆盖。",
+            "--testSkip=不测页面渲染。",
+            "--testRoi=只锁最小合同字段，不扩大校验面。",
+            "--status=doing",
+            "--acceptanceResult=待验收",
+            "--deliveryResult=任务合同已可直接承接执行。",
+            "--retro=未复盘",
+        )
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        created = (self.target / "tasks" / "queue" / "task-124-contract-draft.md").read_text(encoding="utf8")
+        self.assertIn("只补执行合同字段，不扩到页面或运行时", created)
+        self.assertIn("体验级验收标准已经清楚，且 task 可直接进入执行", created)
+        self.assertIn("验证 Autoplan 可以把关键决策直接落到 task 合同。", created)
+        self.assertNotIn("{{", created)
+
     def test_template_feedback_orchestrator_uses_canonical_task_template(self) -> None:
         template_path = self.target / "tasks" / "templates" / "task-template.md"
         template_path.write_text(

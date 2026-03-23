@@ -47,6 +47,25 @@ export function DiffAwarePanel({ artifact, variant = "full" }: Props) {
         </div>
       </div>
 
+      <div className="space-y-3">
+        <p className="text-xs uppercase tracking-[0.22em] text-accent">选择原因</p>
+        {artifact.selectedChecks.length > 0 ? (
+          <ul className="space-y-2">
+            {artifact.selectedChecks.map((layer) => (
+              <li key={layer.id} className="rounded-2xl border border-white/8 bg-black/20 px-3 py-2 text-sm text-white/72">
+                <span className="font-medium text-white">{layer.title}</span>
+                <span className="mx-2 text-white/32">·</span>
+                <span>{layer.reason}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-white/52">
+            暂无新增检查原因
+          </span>
+        )}
+      </div>
+
       <div className="space-y-2 text-sm text-white/72">
         <p className="text-xs uppercase tracking-[0.22em] text-accent">Ship Log</p>
         <ul className="space-y-2">
@@ -70,6 +89,21 @@ export function DiffAwarePanel({ artifact, variant = "full" }: Props) {
           </ul>
         </div>
       ) : null}
+
+      <div className="space-y-2 text-sm text-white/72">
+        <p className="text-xs uppercase tracking-[0.22em] text-accent">退休建议</p>
+        {artifact.retirementSuggestions.length > 0 ? (
+          <ul className="space-y-2">
+            {artifact.retirementSuggestions.map((item) => (
+              <li key={item} className="rounded-2xl border border-white/8 bg-black/20 px-3 py-2">
+                {item}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-white/52">暂无可退休项；当前最小检查集仍然划算。</p>
+        )}
+      </div>
 
       {!compact ? (
         <div className="space-y-2 text-sm text-white/72">

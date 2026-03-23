@@ -1,4 +1,4 @@
-import type { DiffAwareCategory, DiffAwareCheckLayer } from "./types";
+import type { DiffAwareCategory, DiffAwareCheckLayer, SelectedDiffAwareCheck } from "./types";
 import type { DiffStats } from "./diff-aware-source";
 import { categoryLabel, dedupe, type FileImpact } from "./diff-aware-impact";
 
@@ -111,4 +111,64 @@ export function buildNextActions(
   }
   actions.push("收集 review / retro 结果，沉淀到 experience 或 release 摘要");
   return dedupe(actions);
+}
+
+export function buildSelectedChecks(
+  suggestedChecks: DiffAwareCheckLayer[],
+  categories: DiffAwareCategory[],
+  healthScore: { score: number; grade: string; reason: string },
+): SelectedDiffAwareCheck[] {
+  const categoryNames = categories.map((item) => categoryLabel(item.name));
+  return suggestedChecks.map((layer) => ({
+    ...layer,
+    reason: buildCheckSelectionReason(layer.id, categoryNames, healthScore),
+  }));
+}
+
+export function buildRetirementSuggestions(
+  categories: DiffAwareCategory[],
+  selectedChecks: SelectedDiffAwareCheck[],
+  healthScore: { score: number; grade: string; reason: string },
+) {
+  const categoryNames = categories.map((item) => item.name);
+  const suggestions: string[] = [];
+
+  if (categoryNames.some((name) => ["documentation", "memory", "experience"].includes(name))) {
+    suggestions.push("若本次只改说明、经验或状态文本，优先保留链接/渲染/静态检查，退休重复的页面级回归。");
+  }
+  if (categoryNames.some((name) => ["ai-assets"].includes(name))) {
+    suggestions.push("仅在 prompt / AI 脚本变化时保留 ai-output 门禁，其他改动不必重复跑这层。");
+  }
+  if (categoryNames.some((name) => ["source-code", "config", "dependencies"].includes(name))) {
+    suggestions.push("若 build / runtime smoke 已稳定覆盖同类改动，可合并重复的细粒度测试，保留能抓独特错误的那一层。");
+  }
+  if (selectedChecks.length === 0) {
+    suggestions.push("当前没有新增检查，可沿用上一轮已验证的最小测试集。");
+  }
+  if (healthScore.score >= 90) {
+    suggestions.push("高健康分改动不需要堆测试数量，优先保留最小可复用检查链。");
+  }
+
+  return dedupe(suggestions);
+}
+
+function buildCheckSelectionReason(
+  layerId: DiffAwareCheckLayer["id"],
+  categoryNames: string[],
+  healthScore: { score: number; grade: string; reason: string },
+) {
+  const categoryList = categoryNames.join("、") || "通用改动";
+  if (layerId === "static") {
+    return `所有变更先过静态门禁，优先拦住 ${categoryList} 里的结构漂移。`;
+  }
+  if (layerId === "build") {
+    return `构建门禁用来确认 ${categoryList} 没有引入类型、依赖或打包层回归。`;
+  }
+  if (layerId === "runtime") {
+    return `运行时门禁用来确认 ${categoryList} 在真实预览/生产环境里仍然可用。`;
+  }
+  if (layerId === "ai-output") {
+    return `AI 输出门禁只在 prompt / AI 脚本变化时跑，避免把输出验证扩成默认负担。`;
+  }
+  return `根据 ${categoryList} 与当前健康评分 ${healthScore.score}/100 (${healthScore.grade}) 选择这一层检查。`;
 }
