@@ -39,7 +39,6 @@ last_reviewed_at: 2026-03-22
 - 战略真相：`memory/project/roadmap.md`
 - 运营快照：`memory/project/current-state.md`
 - 计划主源：`memory/project/operating-blueprint.md`
-- 角色定义：`docs/ORG_MODEL.md`
 - 工作模式：`docs/WORK_MODES.md`
 - 工作流：`docs/DEV_WORKFLOW.md`
 - AI 行为：`docs/AI_OPERATING_MODEL.md`

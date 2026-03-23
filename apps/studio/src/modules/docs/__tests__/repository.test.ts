@@ -16,7 +16,6 @@ describe("docs repository", () => {
     const docsNode = tree.find((node) => node.path === "docs");
     const memoryNode = tree.find((node) => node.path === "memory");
     expect(docsNode?.children?.some((node) => node.path === "docs/PROJECT_RULES.md")).toBe(true);
-    expect(docsNode?.children?.some((node) => node.path === "docs/ORG_MODEL.md")).toBe(true);
     expect(docsNode?.children?.some((node) => node.path === "docs/WORK_MODES.md")).toBe(true);
     expect(memoryNode?.children?.some((node) => node.path === "memory/project")).toBe(true);
   });

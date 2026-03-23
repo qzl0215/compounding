@@ -5,7 +5,6 @@ AGENTS_SOURCE = "AGENTS.md"
 CANONICAL_DOCS = [
     "docs/PROJECT_RULES.md",
     "docs/ARCHITECTURE.md",
-    "docs/ORG_MODEL.md",
     "docs/WORK_MODES.md",
     "docs/DEV_WORKFLOW.md",
     "docs/AI_OPERATING_MODEL.md",

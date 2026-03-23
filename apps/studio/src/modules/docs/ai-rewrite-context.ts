@@ -18,12 +18,11 @@ export async function buildRewriteContext(args: {
   intensity: RewriteIntensity;
   answers: string;
 }) {
-  const [agents, roadmap, currentState, blueprint, orgModel, workModes, projectRules] = await Promise.all([
+  const [agents, roadmap, currentState, blueprint, workModes, projectRules] = await Promise.all([
     readDoc("AGENTS.md"),
     readDoc("memory/project/roadmap.md"),
     readDoc("memory/project/current-state.md"),
     readDoc("memory/project/operating-blueprint.md"),
-    readDoc("docs/ORG_MODEL.md"),
     readDoc("docs/WORK_MODES.md"),
     readDoc("docs/PROJECT_RULES.md"),
   ]);
@@ -54,13 +53,13 @@ export async function buildRewriteContext(args: {
       body_markdown: args.content,
     },
     culture_principles: CULTURE_PRINCIPLES,
-    best_practice_constraints: buildBestPracticeConstraints(args.path, args.docRole, projectRules.content, orgModel.content, workModes.content),
+    best_practice_constraints: buildBestPracticeConstraints(args.path, projectRules.content, workModes.content),
     rewrite_intensity: args.intensity,
     user_supplement: args.answers,
   };
 }
 
-function buildBestPracticeConstraints(pathname: string, docRole: string, projectRules: string, orgModel: string, workModes: string) {
+function buildBestPracticeConstraints(pathname: string, projectRules: string, workModes: string) {
   const shared = [
     "提高人类与 AI 的易读性",
     "避免重复与口语化表达",
@@ -77,8 +76,8 @@ function buildBestPracticeConstraints(pathname: string, docRole: string, project
   if (pathname.includes("WORK_MODES")) {
     return [...shared, "工作模式文档要强调输入、输出、进入退出条件与边界，不得混入角色职责正文", stripMarkdown(workModes).slice(0, 600)];
   }
-  if (pathname.includes("ORG_MODEL") || docRole === "reference") {
-    return [...shared, "组织文档要强调职责、产物和介入时机，避免散文式描述", stripMarkdown(orgModel).slice(0, 600)];
+  if (pathname.includes("ARCHITECTURE")) {
+    return [...shared, "架构文档要强调模块边界、依赖与禁止调用方式，不得混入角色职责正文", stripMarkdown(projectRules).slice(0, 600)];
   }
   return [...shared, stripMarkdown(projectRules).slice(0, 600)];
 }
@@ -88,7 +87,6 @@ function classifyDocType(pathname: string, docRole: string) {
   if (pathname.includes("roadmap")) return "roadmap";
   if (pathname.includes("operating-blueprint")) return "operating-blueprint";
   if (pathname.includes("tasks/")) return "task";
-  if (pathname.includes("ORG_MODEL")) return "org";
   if (pathname.includes("WORK_MODES")) return "work-modes";
   if (pathname.includes("ARCHITECTURE")) return "architecture";
   if (pathname.includes("memory/")) return "memory";

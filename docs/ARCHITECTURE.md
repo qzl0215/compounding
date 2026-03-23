@@ -75,14 +75,14 @@ related_docs:
 - 新版本先在 `releases/<release-id>` 完成构建与 smoke check，再原子切换 `current`
 - 本机或内网管理页通过 `apps/studio/src/modules/releases` 读取 registry，并触发 deploy / rollback
 
-## 组织职责映射
+## 协作边界映射
 
-- 组织角色的唯一真相源在 `docs/ORG_MODEL.md`
 - 工作模式的唯一真相源在 `docs/WORK_MODES.md`
-- `总经办 / Foreman Office` 负责主线、优先级、发布裁决和组织设计
-- `PMO / 产品 / 设计` 负责需求边界、交付节奏、方案与体验质量
-- `架构 / 工程` 负责模块边界、实现、重构和发布准备
-- `质量与度量` 负责验收、回归、量化评估和 ROI 判断
+- `AGENTS.md` 负责硬规则、门禁和执行契约
+- `memory/project/*` 负责计划、状态与经验
+- `tasks/*` 负责执行边界与交付合同
+- `release` 负责验收、运行态与回滚事实
+- 执行判断只看场景、状态、上下文、允许动作和验收标准，不按角色标签路由
 
 ## 当前重构批次
 

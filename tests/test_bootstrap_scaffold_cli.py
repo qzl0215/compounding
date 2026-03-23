@@ -19,7 +19,7 @@ class BootstrapScaffoldCliTests(BootstrapWorkspaceTestCase):
         self.assertTrue(result.passed, msg=result.errors)
         self.assertTrue((self.target / AGENTS_PATH).exists())
         self.assertTrue((self.target / "docs" / "PROJECT_RULES.md").exists())
-        self.assertTrue((self.target / "docs" / "ORG_MODEL.md").exists())
+        self.assertFalse((self.target / "docs" / "ORG_MODEL.md").exists())
         self.assertTrue((self.target / "docs" / "ASSET_MAINTENANCE.md").exists())
         self.assertTrue((self.target / "memory" / "project" / "current-state.md").exists())
         self.assertTrue((self.target / "memory" / "project" / "operating-blueprint.md").exists())

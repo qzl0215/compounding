@@ -7,7 +7,6 @@ status: active
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
-  - docs/ORG_MODEL.md
   - docs/AI_OPERATING_MODEL.md
   - memory/project/roadmap.md
 last_reviewed_at: 2026-03-22
@@ -18,11 +17,9 @@ last_reviewed_at: 2026-03-22
 ## 定位
 
 - 需求环节优先于 task 与工作模式入口；若事情仍处于 `待思考 / 待规划`，不得直接切到工程执行
-- 角色决定长期职责归属，回答“谁负责什么”
 - 工作模式决定当前工作入口，回答“现在处于哪种业务状态”
-- 同一个角色可以参与多个工作模式
-- 同一个工作模式可能涉及多个角色协同
-- 详细模式定义以本文为准；角色定义以 `docs/ORG_MODEL.md` 为准
+- 工作模式只描述输入、输出、进入退出条件，不承载组织角色
+- 详细模式定义以本文为准
 
 ## 业务链
 
