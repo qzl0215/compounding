@@ -9,60 +9,9 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const { renderTaskTemplate } = require("./lib/task-template.js");
 
 const root = process.cwd();
-
-// 任务文件模板定义
-const TASK_TEMPLATE = `# 任务 {task_id}
-
-## 任务摘要
-
-- 短编号：\`{short_id}\`
-- 父计划：\`memory/project/operating-blueprint.md\`
-- 任务摘要：
-  {objective}
-- 为什么现在：
-  {why}
-- 承接边界：
-  {boundary}
-- 完成定义：
-  {done_definition}
-
-## 执行合同
-
-### 要做
-
-{scope}
-
-### 不做
-
-{out_of_scope}
-
-### 约束
-
-{constraints}
-
-### 关键风险
-
-{implementation_risks}
-
-### 测试策略
-
-- 为什么测：{test_reason}
-- 测什么：{test_scope}
-- 不测什么：{test_skip}
-- 当前最小集理由：{test_roi}
-
-## 交付结果
-
-- 状态：todo
-- 体验验收结果：
-  待验收
-- 交付结果：
-  {delivery_result}
-- 复盘：
-  未复盘
-`;
 
 // 经验记录模板定义
 const EXPERIENCE_TEMPLATE = `---
@@ -141,33 +90,32 @@ tool_name: {tool_name}
 class TemplateGenerator {
   constructor() {
     this.templates = {
-      task: TASK_TEMPLATE,
       experience: EXPERIENCE_TEMPLATE,
       tool_feedback: TOOL_FEEDBACK_TEMPLATE
     };
   }
 
   generateTaskFile(params) {
-    const defaults = {
-      task_id: 'task-XXX',
-      short_id: 't-XXX',
-      objective: '待补充',
-      why: '待补充',
-      boundary: '待补充',
-      done_definition: '待补充',
-      scope: '- 待补充',
-      out_of_scope: '- 待补充',
-      constraints: '- 待补充',
-      implementation_risks: '- 待补充',
-      test_reason: '待补充',
-      test_scope: '待补充',
-      test_skip: '待补充',
-      test_roi: '待补充',
-      delivery_result: '未交付',
-    };
-
-    const merged = { ...defaults, ...params };
-    return this.fillTemplate('task', merged);
+    return renderTaskTemplate(
+      {
+        task_id: params.task_id,
+        short_id: params.short_id,
+        summary: params.summary,
+        why_now: params.why_now,
+        boundary: params.boundary,
+        done_when: params.done_when,
+        in_scope: params.in_scope,
+        out_of_scope: params.out_of_scope,
+        constraints: params.constraints,
+        risk: params.risk,
+        test_reason: params.test_reason,
+        test_scope: params.test_scope,
+        test_skip: params.test_skip,
+        test_roi: params.test_roi,
+        delivery_result: params.delivery_result,
+      },
+      root
+    );
   }
 
   generateExperienceRecord(params) {
@@ -223,7 +171,7 @@ class TemplateGenerator {
     const issues = [];
     
     // 检查是否有未填充的占位符
-    const placeholderRegex = /\\{[^}]+\\}/g;
+    const placeholderRegex = /\{\{[^}]+\}\}/g;
     const placeholders = content.match(placeholderRegex) || [];
     if (placeholders.length > 0) {
       issues.push(`发现未填充占位符: ${placeholders.join(', ')}`);
@@ -236,9 +184,9 @@ class TemplateGenerator {
 
     // 模板特定的验证
     if (templateName === 'task') {
-      const requiredSections = ['任务摘要', '执行合同', '交付结果', '要做', '不做', '关键风险', '测试策略'];
+      const requiredSections = ['## 任务摘要', '## 执行合同', '## 交付结果', '### 要做', '### 不做', '### 关键风险', '### 测试策略'];
       const missingSections = requiredSections.filter(section => 
-        !content.includes(`## ${section}`) && !content.includes(`## ${section}（已填写）`)
+        !content.includes(section)
       );
       if (missingSections.length > 0) {
         issues.push(`缺失必要章节: ${missingSections.join(', ')}`);
@@ -424,14 +372,14 @@ function generateTaskTemplate(generator) {
   const params = {
     task_id: 'task-XXX',
     short_id: 't-XXX',
-    objective: '建立模板生成与反馈闭环机制，防止关键资产漂移',
-    why: '规则与执行文档最容易在迭代中漂移，需要标准化模板和反馈机制',
+    summary: '建立模板生成与反馈闭环机制，防止关键资产漂移',
+    why_now: '规则与执行文档最容易在迭代中漂移，需要标准化模板和反馈机制',
     boundary: '从模板治理里承接“任务文档如何稳定生成并被校验”这一段，不扩到整个平台改造。',
-    done_definition: '模板生成器能稳定产出执行合同结构，且校验器能识别缺项。',
-    scope: '- 创建任务文件、经验记录、工具反馈的标准化模板\n- 实现模板内容一致性校验\n- 建立工具体验反馈收集与分析机制',
+    done_when: '模板生成器能稳定产出执行合同结构，且校验器能识别缺项。',
+    in_scope: '- 创建任务文件、经验记录、工具反馈的标准化模板\n- 实现模板内容一致性校验\n- 建立工具体验反馈收集与分析机制',
     out_of_scope: '- 不重做整套任务系统',
     constraints: '- 保持模板与主源口径一致',
-    implementation_risks: '- 模板与主源脱节会重新制造漂移',
+    risk: '- 模板与主源脱节会重新制造漂移',
     test_reason: '需要锁住模板结构和校验行为',
     test_scope: '模板生成与校验逻辑',
     test_skip: '不做 UI 层验证',
@@ -509,14 +457,14 @@ function validateTemplateContent(generator) {
   const validContent = generator.generateTaskFile({
     task_id: 'task-validate-test',
     short_id: 't-validate',
-    objective: '验证模板内容',
-    why: '确保模板生成质量',
+    summary: '验证模板内容',
+    why_now: '确保模板生成质量',
     boundary: '只验证模板生成和字段完整性',
-    done_definition: '模板验证能发现关键缺项',
-    scope: '- 测试模板验证功能',
+    done_when: '模板验证能发现关键缺项',
+    in_scope: '- 测试模板验证功能',
     out_of_scope: '- 不做 UI 预览',
     constraints: '- 保持当前模板契约',
-    implementation_risks: '- 漏检会让旧结构混回系统',
+    risk: '- 漏检会让旧结构混回系统',
     test_reason: '需要验证模板校验器本身',
     test_scope: '生成内容与必填章节',
     test_skip: '不测经验模板',

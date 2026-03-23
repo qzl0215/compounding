@@ -101,6 +101,7 @@ def task_001(resolved: dict[str, Any]) -> str:
 
 def render_ai_scripts(target: Path) -> None:
     for relative_path in (
+        "scripts/ai/lib/task-template.js",
         "scripts/ai/scan-code-health.ts",
         "scripts/ai/generate-module-index.ts",
         "scripts/ai/build-context.ts",

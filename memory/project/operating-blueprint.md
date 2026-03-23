@@ -52,6 +52,7 @@ last_reviewed_at: 2026-03-23
 - `t-045`：Autoplan 式人机决策收口（待执行）
 - `t-046`：Diff-based test ROI 优化（待执行）
 - `t-047`：把任务页收成单一子任务表格清单（已完成）
+- `t-048`：把 task 合同模板收口成唯一可渲染来源（进行中）
 
 ## 下一步对话
 
@@ -81,6 +82,7 @@ last_reviewed_at: 2026-03-23
 - [x] 确认 gstack 的高 ROI 增量吸收项已刷新，并形成 `t-044 ~ t-046`
 - [x] 确认 Search Before Building 已变成最小 search evidence，而不是新 paperwork
 - [x] 确认 Boil the Lake 只约束小而边界清楚的 task，不让 task 膨胀
+- [ ] 确认 task 合同模板已经成为单点真相，不再需要多处同步骨架
 - [ ] 确认 Autoplan 只把价值判断和体验取舍抛给人
 - [ ] 确认 Diff-based test selection 能提高命中率且不增加验证层
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

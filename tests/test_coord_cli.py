@@ -6,6 +6,42 @@ from tests.coord_support import ROOT, CoordCliTestCase, SAMPLE_TASK_MARKDOWN
 
 class CoordCliTests(CoordCliTestCase):
 
+    def test_create_task_renders_from_canonical_template(self) -> None:
+        template_path = self.target / "tasks" / "templates" / "task-template.md"
+        template_path.write_text(
+            template_path.read_text(encoding="utf8").replace("## 执行合同", "## 执行合同（单点模板）"),
+            encoding="utf8",
+        )
+
+        completed = self.run_script(
+            "scripts/ai/create-task.ts",
+            "task-123-generated",
+            "建立单点模板",
+            "避免 task 合同骨架继续多处漂移",
+        )
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        created = (self.target / "tasks" / "queue" / "task-123-generated.md").read_text(encoding="utf8")
+        self.assertIn("## 执行合同（单点模板）", created)
+        self.assertNotIn("{{", created)
+
+    def test_template_feedback_orchestrator_uses_canonical_task_template(self) -> None:
+        template_path = self.target / "tasks" / "templates" / "task-template.md"
+        template_path.write_text(
+            template_path.read_text(encoding="utf8").replace("## 交付结果", "## 交付结果（单点模板）"),
+            encoding="utf8",
+        )
+
+        completed = subprocess.run(
+            ["node", str(ROOT / "scripts/ai/template-feedback-orchestrator.js"), "generate-task"],
+            cwd=self.target,
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertIn("## 交付结果（单点模板）", completed.stdout)
+
     def test_companion_lifecycle_records_pre_task_review_and_release_handoff(self) -> None:
         script_root = ROOT.as_posix()
         payload = self.run_node(

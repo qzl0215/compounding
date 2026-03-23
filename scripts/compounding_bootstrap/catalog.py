@@ -47,6 +47,7 @@ TASK_DOCS = [
 ]
 
 AI_SCRIPT_PATHS = [
+    "scripts/ai/lib/task-template.js",
     "scripts/ai/scan-code-health.ts",
     "scripts/ai/generate-module-index.ts",
     "scripts/ai/build-context.ts",
