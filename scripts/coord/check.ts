@@ -91,6 +91,7 @@ function preTask(args) {
   }
 
   const preflightCheck = summarizePreflight(preflight);
+  const searchCheck = collectSearchCheck(changePolicy, compResult.companion);
   const runtimeCheck = collectRuntimeStatuses();
   const scopeCheck = runScopeGuard(taskId);
   const lockCheck = checkLocks(taskId, compResult.companion.planned_files);
@@ -130,6 +131,7 @@ function preTask(args) {
       changed_files: changePolicy.changed_files,
       blockers,
       preflight_check: preflightCheck,
+      search_check: searchCheck,
       runtime_check: runtimeCheck,
       scope_check: scopeCheck,
       lock_check: {
@@ -154,12 +156,32 @@ function preTask(args) {
     preflight: preflight.preflight,
     companion: compResult.companion,
     preflight_check: preflightCheck,
+    search_check: searchCheck,
     runtime_check: runtimeCheck,
     scope_check: scopeCheck,
     lock_check: { ok: true, conflicts: [], suggested_execution_mode: null },
   };
   recordPreTaskResult(taskId, output);
   console.log(JSON.stringify(output, null, 2));
+}
+
+function collectSearchCheck(changePolicy, companion) {
+  const evidence = companion?.artifacts?.search_evidence || [];
+  const latest = evidence.length > 0 ? evidence[evidence.length - 1] : null;
+  const required = changePolicy.change_class === "release" || changePolicy.change_class === "structural";
+  return {
+    required,
+    recorded: Boolean(latest),
+    completion_mode: companion?.completion_mode || "close_full_contract",
+    sources: latest?.sources || [],
+    conclusion: latest?.conclusion || "",
+    note:
+      required && !latest
+        ? "若这次涉及 unfamiliar pattern / infra / runtime capability，先用 coord:task:search 记录最小搜索结论；若只是已有模式延伸，可继续。"
+        : latest
+          ? "已记录最小 search evidence。"
+          : "当前无需 search evidence。",
+  };
 }
 
 const { cmd, args } = parseArgs();

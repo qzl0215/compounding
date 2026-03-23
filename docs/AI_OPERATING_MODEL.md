@@ -42,12 +42,32 @@ related_docs:
 - 当前 Delivery Framework 默认把 task companion 视为派生的 machine-readable delivery contract；`create / start / handoff / merge / release handoff` 围绕同一份 companion 回写，但发布主状态仍只认 release registry
 - task 合同是唯一人类执行语义；companion 只保留机器执行上下文，release 只保留验收与运行事实，不再各自镜像 task 正文
 
+## Search Before Building 与 Boil the Lake
+
+- `Search Before Building` 只解决一个问题：在 unfamiliar pattern / infra / runtime capability 上，先搜已有，再决定是否自己造。
+- 默认搜索顺序只有 3 层：
+  1. 仓库已有实现与任务经验
+  2. 当前主源与稳定规则
+  3. 成熟外部方案或第一性原理
+- 搜索只记录最小证据：
+  - 搜了什么来源
+  - 为什么现成方案不够
+  - 当前决定是什么
+- 搜索证据写入 companion 机器事实，不回写成长篇 task 正文，也不新增调研文档。
+- `Boil the Lake` 只适用于小而边界清楚的 task，含义是“把当前合同做完整”，不是把大需求一口吃掉。
+- 若事项跨阶段、多目标、范围外还在变，应该留在 plan；不要为了推进感把海洋伪装成湖。
+- 对 task 来说，做透的最低要求是：
+  - 合同字段填实
+  - 最小必要测试到位
+  - 结果、文档和台账一起收口
+
 ## AI 特有协作约束
 
 - 默认沟通结构和页面交付契约以 `AGENTS.md` 为唯一高频归宿，不在这里重复维护一整套模板
 - AI 特有的附加约束固定为：
   - 若当前事项仍处于 `待思考 / 待规划`，且价值、边界或成功标准未清，不得直接进入实现阶段
   - AI 在进入 task 前，默认先做三步：扩选项 → 收决策 → 产出 task
+  - 若当前事项是已有模式的直接延伸，AI 直接执行；若涉及 unfamiliar pattern / infra / runtime capability，先补最小 search evidence
   - 人只做价值判断、需求澄清和结果验收；AI 默认负责读仓库、建上下文、实现、校验、回写和非感知性收口
   - 用户可感知变化默认走 `dev` 验收；内部低风险改动可由 AI 自验收并直接闭环
   - 若任务 companion、task 或 release 主源出现冲突，先修主源，再继续执行

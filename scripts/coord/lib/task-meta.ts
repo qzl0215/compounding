@@ -63,19 +63,24 @@ function parseTaskToCompanion(taskLike, content) {
     plannedFiles.unshift(record.path);
   }
 
-  return normalizeCompanion({
+  const companion = normalizeCompanion({
     schema_version: "3",
     task_id: record.shortId,
     task_path: record.path,
     contract_hash: taskContractFingerprint(parsed),
     current_mode: currentMode || undefined,
     branch_name: branch || `codex/${record.id}`,
+    completion_mode: "close_full_contract",
     planned_files: plannedFiles,
     planned_modules: modules.filter((item) => !plannedFiles.includes(item)),
     locks: [],
     lifecycle: createEmptyLifecycle(),
     artifacts: createEmptyArtifacts(),
   });
+  if (!currentMode) {
+    companion.current_mode = "";
+  }
+  return companion;
 }
 
 function mergeCompanion(existing, parsed) {
@@ -89,6 +94,7 @@ function mergeCompanion(existing, parsed) {
     contract_hash: next.contract_hash || current.contract_hash,
     current_mode: explicitCurrentMode || current.current_mode || next.current_mode,
     branch_name: next.branch_name || current.branch_name,
+    completion_mode: next.completion_mode || current.completion_mode,
     planned_files: uniqueStrings([...(current.planned_files || []), ...(next.planned_files || [])]),
     planned_modules: uniqueStrings([...(current.planned_modules || []), ...(next.planned_modules || [])]),
     locks: next.locks?.length ? next.locks : current.locks || [],
@@ -101,6 +107,7 @@ function mergeCompanion(existing, parsed) {
       handoff_notes: mergeArtifactList(current.artifacts?.handoff_notes, next.artifacts?.handoff_notes, "recorded_at"),
       review_notes: mergeArtifactList(current.artifacts?.review_notes, next.artifacts?.review_notes, "recorded_at"),
       release_notes: mergeArtifactList(current.artifacts?.release_notes, next.artifacts?.release_notes, "release_id"),
+      search_evidence: mergeArtifactList(current.artifacts?.search_evidence, next.artifacts?.search_evidence, "recorded_at"),
     },
   });
 }

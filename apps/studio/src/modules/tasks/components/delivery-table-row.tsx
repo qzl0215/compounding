@@ -122,6 +122,8 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
               <DetailBlock title="机器事实">
                 <p>任务路径：{row.path}</p>
                 <p>当前模式：{row.currentMode || "未标注"}</p>
+                <p>完成策略：{row.machine.completionMode === "close_full_contract" ? "做透当前合同" : row.machine.completionMode || "未标注"}</p>
+                <p>搜索结论：{row.machine.latestSearchEvidence || "未记录"}</p>
                 <p>合同哈希：{row.machine.contractHash || "未生成"}</p>
                 <p>分支：{row.machine.branch || "未绑定"}</p>
                 <p>最近提交：{row.machine.git.recentCommit || row.machine.recentCommit || "pending"}</p>

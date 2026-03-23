@@ -38,9 +38,11 @@ related_docs:
 ## 预任务护栏
 
 - `light` 改动默认跳过 `coord:check:pre-task`；`structural / release` task 真正开始动手前，默认先跑 `coord:check:pre-task`
+- 若这次属于 unfamiliar pattern / infra / runtime capability，先用 `coord:task:search` 记录最小 search evidence；若只是已有模式延伸，可跳过
 - `pre-task` 默认同时检查：
   - 工作区是否干净
   - 任务 companion
+  - search evidence 是否已记录
   - scope guard
   - 运行态状态
   - file/module 锁状态
@@ -55,7 +57,7 @@ related_docs:
 - 触发：方向成立但边界、取舍、优先级、成功标准或体验验收标准不清。
 - 最小动作：
   1. 先读 `memory/project/operating-blueprint.md`，再对齐 `memory/project/roadmap.md` 的战略摘要。
-  2. 先扩选项，再收关键决策，最后决定是否产出 task。
+  2. 先扩选项，再收关键决策；若涉及 unfamiliar pattern / infra / runtime capability，先搜仓库、主源与成熟解，再决定是否产出 task。
   3. 只有规划工作本身明确时，才用 `scripts/ai/create-task.ts` 生成规划 task。
 - 输出：单层 plan、体验验收标准、必要时产出的 task。
 
@@ -65,7 +67,7 @@ related_docs:
 - 最小动作：
   1. 先读当前 task、相关 `module.md`、`code_index/*`。
   2. 需要上下文压缩时，用 `scripts/ai/build-context.ts`；默认只拉 `AGENTS.md`、`docs/PROJECT_RULES.md`、`docs/ARCHITECTURE.md`、当前 task、相关 `module.md` 与命中的 `code_index/*`。
-  3. 动手前先跑 `python3 scripts/pre_mutation_check.py`。
+  3. 动手前先跑 `python3 scripts/pre_mutation_check.py`；若 task 小而边界清楚，默认做到最小完整闭环；若边界重新变大，退回 plan。
 - 输出：最小可验证改动、task 回写、必要的 memory / docs / index 回写。
 
 ### 交付链
@@ -182,6 +184,7 @@ related_docs:
 - 每个 `structural / release` 改动必须绑定 `tasks/queue/*`
 - 默认先更新 task 执行合同，再改代码；机器台账改由 companion、release 与投影层回写
 - 任何 `structural / release` repo-tracked 改动若没有 task 文件变更，视为硬失败
+- 小而边界清楚的 task 默认做完整闭环；若事项跨阶段、多目标、范围外仍在变，必须留在 plan，不得硬塞进 task
 - 每个 task 至少包含：
   - `短编号`
   - `父计划`

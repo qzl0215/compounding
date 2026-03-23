@@ -112,6 +112,7 @@ describe("tasks service", () => {
         contractHash: "hash-038",
         branch: "codex/task-038-autonomy-entropy-reduction",
         recentCommit: "abc1234",
+        completionMode: "close_full_contract",
         primaryRelease: "未生成",
         linkedReleases: [],
         companionReleaseIds: [],
@@ -125,6 +126,7 @@ describe("tasks service", () => {
         },
         locks: [],
         artifactRefs: [],
+        latestSearchEvidence: "",
         git: {
           branch: "codex/task-038-autonomy-entropy-reduction",
           recentCommit: "abc1234",

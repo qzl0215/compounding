@@ -37,6 +37,7 @@ function createEmptyArtifacts() {
     handoff_notes: [],
     review_notes: [],
     release_notes: [],
+    search_evidence: [],
   };
 }
 
@@ -87,6 +88,7 @@ function normalizeCompanion(companion = {}) {
     contract_hash: cleanString(companion.contract_hash),
     current_mode: cleanString(companion.current_mode, "方案评审"),
     branch_name: cleanString(companion.branch_name || companion.contract?.branch_name, ""),
+    completion_mode: cleanString(companion.completion_mode, "close_full_contract"),
     planned_files: uniqueStrings(companion.planned_files || companion.contract?.planned_files || []),
     planned_modules: uniqueStrings(companion.planned_modules || companion.contract?.planned_modules || []),
     locks: normalizeLocks(companion.locks),
@@ -99,6 +101,7 @@ function normalizeCompanion(companion = {}) {
       handoff_notes: mergeArtifactList(companion.artifacts?.handoff_notes, [], "recorded_at"),
       review_notes: mergeArtifactList(companion.artifacts?.review_notes, [], "recorded_at"),
       release_notes: mergeArtifactList(companion.artifacts?.release_notes, [], "release_id"),
+      search_evidence: mergeArtifactList(companion.artifacts?.search_evidence, [], "recorded_at"),
     },
   };
 

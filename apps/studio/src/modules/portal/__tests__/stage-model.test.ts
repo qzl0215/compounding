@@ -24,8 +24,10 @@ function buildRow(overrides: Partial<TaskDeliveryRow> = {}): TaskDeliveryRow {
     retro: "示例复盘",
     currentMode: "工程执行",
     machine: {
+      contractHash: "hash-999",
       branch: "codex/task-999-example",
       recentCommit: "abc1234",
+      completionMode: "close_full_contract",
       primaryRelease: "未生成",
       linkedReleases: [],
       companionReleaseIds: [],
@@ -37,6 +39,9 @@ function buildRow(overrides: Partial<TaskDeliveryRow> = {}): TaskDeliveryRow {
         roadmap: "no change: test fixture",
         docs: "no change: test fixture",
       },
+      locks: [],
+      artifactRefs: [],
+      latestSearchEvidence: "",
       git: {
         branch: "codex/task-999-example",
         recentCommit: "abc1234",

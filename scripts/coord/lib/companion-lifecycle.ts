@@ -30,6 +30,7 @@ function latestDiffSummary(diffSummary) {
 
 function recordCreated(taskId, payload = {}) {
   return updateCompanion(taskId, (companion) => {
+    companion.completion_mode = payload.completion_mode || companion.completion_mode || "close_full_contract";
     companion.lifecycle.created = {
       recorded_at: now(),
       source: payload.source || "coord:task:create",
@@ -42,6 +43,20 @@ function recordCreated(taskId, payload = {}) {
   });
 }
 
+function recordSearchEvidence(taskId, payload = {}) {
+  return updateCompanion(taskId, (companion) => {
+    const note = {
+      recorded_at: payload.recorded_at || now(),
+      source: payload.source || "coord:task:search",
+      scope: payload.scope || "unfamiliar_pattern",
+      sources: Array.isArray(payload.sources) ? payload.sources.map((item) => String(item || "").trim()).filter(Boolean) : [],
+      conclusion: payload.conclusion || "",
+    };
+    companion.artifacts.search_evidence.push(note);
+    return companion;
+  });
+}
+
 function recordPreTaskResult(taskId, result) {
   return updateCompanion(taskId, (companion) => {
     const decision = latestDecision(result.decision_card);
@@ -49,6 +64,7 @@ function recordPreTaskResult(taskId, result) {
       recorded_at: now(),
       ok: Boolean(result.ok),
       preflight_check: result.preflight_check || null,
+      search_check: result.search_check || null,
       runtime_check: result.runtime_check || null,
       scope_check: result.scope_check || null,
       lock_check: result.lock_check || null,
@@ -128,4 +144,5 @@ module.exports = {
   recordPreTaskResult,
   recordReleaseHandoff,
   recordReviewResult,
+  recordSearchEvidence,
 };

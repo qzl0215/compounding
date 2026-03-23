@@ -23,6 +23,7 @@ export type TaskMachineFacts = {
   contractHash: string;
   branch: string;
   recentCommit: string;
+  completionMode: string;
   primaryRelease: string;
   linkedReleases: string[];
   companionReleaseIds: string[];
@@ -31,6 +32,7 @@ export type TaskMachineFacts = {
   updateTrace: TaskUpdateTrace;
   locks: string[];
   artifactRefs: string[];
+  latestSearchEvidence: string;
   git: TaskGitInfo;
 };
 

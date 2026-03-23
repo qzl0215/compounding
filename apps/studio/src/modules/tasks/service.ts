@@ -44,6 +44,7 @@ export async function listTaskCards(): Promise<TaskCard[]> {
           contractHash: companion.contractHash,
           branch,
           recentCommit,
+          completionMode: companion.completionMode,
           primaryRelease: parsedMachine.primaryRelease || companion.latestReleaseId || "未生成",
           linkedReleases: uniqueStrings([...parsedMachine.linkedReleases, ...companion.releaseIds]),
           companionReleaseIds: companion.releaseIds,
@@ -52,6 +53,7 @@ export async function listTaskCards(): Promise<TaskCard[]> {
           updateTrace: parsedMachine.updateTrace,
           locks: companion.locks,
           artifactRefs: companion.artifactRefs,
+          latestSearchEvidence: companion.latestSearchEvidence,
           git: resolveTaskGitInfo(parsed.status, branch, recentCommit),
         },
       };

@@ -6,7 +6,7 @@
 
 const { spawnSync } = require("node:child_process");
 const { ensureCompanion } = require("./lib/task-meta.ts");
-const { recordCreated, recordHandoff } = require("./lib/companion-lifecycle.ts");
+const { recordCreated, recordHandoff, recordSearchEvidence } = require("./lib/companion-lifecycle.ts");
 
 const ROOT = process.cwd();
 
@@ -98,6 +98,38 @@ function handoff(args) {
   );
 }
 
+function search(args) {
+  const taskId = args.taskId;
+  const conclusion = String(args.conclusion || "").trim();
+  const sources = String(args.sources || "")
+    .split(/[|,]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+  if (!taskId || !conclusion) {
+    console.error(JSON.stringify({ ok: false, error: "taskId and conclusion required. Use --taskId=t-044 --sources=repo|docs --conclusion=..." }));
+    process.exit(1);
+  }
+  const comp = ensureCompanion(taskId);
+  if (!comp.ok) {
+    console.error(JSON.stringify({ ok: false, error: comp.error }));
+    process.exit(1);
+  }
+  const recorded = recordSearchEvidence(taskId, {
+    source: "coord:task:search",
+    scope: args.scope || "unfamiliar_pattern",
+    sources,
+    conclusion,
+  });
+  console.log(
+    JSON.stringify({
+      ok: true,
+      task_id: taskId,
+      search_evidence: recorded.ok ? recorded.companion.artifacts?.search_evidence?.slice(-1)[0] || null : null,
+      message: "Search evidence recorded.",
+    })
+  );
+}
+
 function merge(args) {
   const taskId = args.taskId;
   if (!taskId) {
@@ -123,10 +155,11 @@ const { cmd, args } = parseArgs();
 if (cmd === "create") create(args);
 else if (cmd === "start") start(args);
 else if (cmd === "handoff") handoff(args);
+else if (cmd === "search") search(args);
 else if (cmd === "merge") merge(args);
 else {
   console.error(
-    JSON.stringify({ ok: false, error: "Usage: task.ts create|start|handoff|merge [--taskId=...] [--summary=...] [--why=...]" })
+    JSON.stringify({ ok: false, error: "Usage: task.ts create|start|search|handoff|merge [--taskId=...] [--summary=...] [--why=...]" })
   );
   process.exit(1);
 }

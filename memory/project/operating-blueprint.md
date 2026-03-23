@@ -48,7 +48,7 @@ last_reviewed_at: 2026-03-23
 - `t-041`：把 task 重构成共享执行合同，并把机器 provenance 下沉到 companion / release / 投影层（已完成）
 - `t-042`：把 `plan / task / companion / release` 收口成四个稳定对象，各自只负责一类真相（已完成）
 - `t-043`：刷新 gstack 的高 ROI 吸收清单，并产出下一批低熵增执行 task（已完成）
-- `t-044`：Search Before Building 与 Boil the Lake 规则落地（待执行）
+- `t-044`：Search Before Building 与 Boil the Lake 规则落地（进行中）
 - `t-045`：Autoplan 式人机决策收口（待执行）
 - `t-046`：Diff-based test ROI 优化（待执行）
 - `t-047`：把任务页收成单一子任务表格清单（已完成）
@@ -79,7 +79,7 @@ last_reviewed_at: 2026-03-23
 - [x] 确认 `operating-blueprint` 已成为唯一 plan 主源
 - [x] 确认 `t-042` 已把 Plan / Task / Companion / Release 的最简边界切开
 - [x] 确认 gstack 的高 ROI 增量吸收项已刷新，并形成 `t-044 ~ t-046`
-- [ ] 确认 Search Before Building 能在不制造新 paperwork 的前提下落地
+- [ ] 确认 Search Before Building 已变成最小 search evidence，而不是新 paperwork
 - [ ] 确认 Boil the Lake 只约束小而边界清楚的 task，不让 task 膨胀
 - [ ] 确认 Autoplan 只把价值判断和体验取舍抛给人
 - [ ] 确认 Diff-based test selection 能提高命中率且不增加验证层

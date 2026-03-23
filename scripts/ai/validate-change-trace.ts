@@ -18,8 +18,9 @@ function readTask(taskPath) {
   return parseTaskContract(taskPath, fs.readFileSync(path.join(root, taskPath), "utf8"));
 }
 
-function validateTask(taskPath, errors) {
+function validateTask(taskPath, errors, options = {}) {
   const task = readTask(taskPath);
+  const strictPlaceholders = Boolean(options.strictPlaceholders);
   const requiredFields = [
     ["短编号", task.shortId],
     ["父计划", task.parentPlan],
@@ -38,7 +39,18 @@ function validateTask(taskPath, errors) {
     if (!String(value || "").trim()) {
       errors.push(`${taskPath}: 缺少必填字段“${label}”。`);
     }
+    if (strictPlaceholders && isPlaceholderValue(value)) {
+      errors.push(`${taskPath}: 字段“${label}”仍是待补充占位内容。`);
+    }
   }
+}
+
+function isPlaceholderValue(value) {
+  const normalized = String(value || "").trim();
+  if (!normalized) {
+    return false;
+  }
+  return /^(待补充|未记录|未交付|未复盘|待验收)([:：。]|$)/.test(normalized);
 }
 
 function main() {
@@ -69,7 +81,8 @@ function main() {
     errors.push("存在 repo-tracked 改动，但没有任何 tasks/queue/*.md 变更。");
   }
 
-  changedTaskFiles.forEach((taskPath) => validateTask(taskPath, errors));
+  const strictPlaceholders = changePolicy.policy.requires_task || activeBranch.startsWith("codex/");
+  changedTaskFiles.forEach((taskPath) => validateTask(taskPath, errors, { strictPlaceholders }));
 
   if (changePolicy.policy.strict_task_binding && activeBranch.startsWith("codex/") && changedTaskFiles.length > 0) {
     const branchTaskId = activeBranch.replace(/^codex\//, "");

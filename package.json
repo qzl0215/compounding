@@ -48,6 +48,7 @@
     "coord:manifest:report": "node --experimental-strip-types scripts/coord/scan.ts --report-only",
     "coord:task:create": "node --experimental-strip-types scripts/coord/task.ts create",
     "coord:task:start": "node --experimental-strip-types scripts/coord/task.ts start",
+    "coord:task:search": "node --experimental-strip-types scripts/coord/task.ts search",
     "coord:task:handoff": "node --experimental-strip-types scripts/coord/task.ts handoff",
     "coord:task:merge": "node --experimental-strip-types scripts/coord/task.ts merge",
     "coord:lock:acquire": "node --experimental-strip-types scripts/coord/lock.ts acquire",

@@ -1,7 +1,7 @@
 import json
 import subprocess
 import unittest
-from tests.coord_support import ROOT, CoordCliTestCase
+from tests.coord_support import ROOT, CoordCliTestCase, SAMPLE_TASK_MARKDOWN
 
 
 class CoordCliTests(CoordCliTestCase):
@@ -18,9 +18,16 @@ const {{
   recordHandoff,
   recordReviewResult,
   recordReleaseHandoff,
+  recordSearchEvidence,
 }} = require("{script_root}/scripts/coord/lib/companion-lifecycle.ts");
 ensureCompanion("t-999");
 recordCreated("t-999", {{ source: "test:create" }});
+recordSearchEvidence("t-999", {{
+  source: "test:search",
+  scope: "runtime_capability",
+  sources: ["repo", "docs"],
+  conclusion: "现有 runtime 机制足够，无需新增基础设施。"
+}});
 recordPreTaskResult("t-999", {{
   ok: false,
   preflight_check: {{ ok: false }},
@@ -69,10 +76,12 @@ console.log(JSON.stringify({{
         self.assertEqual(companion["lifecycle"]["release_handoff"]["release_id"], "20260320-abc-prod")
         self.assertEqual(companion["artifacts"]["decision_cards"][-1]["decision_id"], "dec-test")
         self.assertEqual(companion["artifacts"]["diff_summaries"][-1]["path"], "agent-coordination/reports/diff-summary-main-head.json")
+        self.assertEqual(companion["artifacts"]["search_evidence"][-1]["conclusion"], "现有 runtime 机制足够，无需新增基础设施。")
         self.assertEqual(raw["task_id"], "t-999")
         self.assertEqual(raw["task_path"], "tasks/queue/task-999-sample.md")
         self.assertTrue(bool(raw["contract_hash"]))
         self.assertEqual(raw["branch_name"], "codex/task-999-sample")
+        self.assertEqual(raw["completion_mode"], "close_full_contract")
         self.assertEqual(raw["planned_files"], ["tasks/queue/task-999-sample.md"])
         self.assertEqual(raw["planned_modules"], [])
         self.assertEqual(raw["locks"], [])
@@ -120,6 +129,29 @@ console.log(JSON.stringify(readCompanionReleaseContext("t-999"), null, 2));
         self.assertEqual(payload["change_class"], "light")
         self.assertEqual(payload["changed_tasks"], [])
 
+    def test_validate_change_trace_rejects_placeholder_task_contract_fields(self) -> None:
+        scripts_dir = self.target / "scripts"
+        scripts_dir.mkdir(parents=True, exist_ok=True)
+        (scripts_dir / "sample.ts").write_text("export const value = 1;\n", encoding="utf8")
+        self.init_git_repo()
+        subprocess.run(["git", "checkout", "-b", "codex/task-999-sample"], cwd=self.target, check=True)
+        task_path = self.target / "tasks" / "queue" / "task-999-sample.md"
+        (scripts_dir / "sample.ts").write_text("export const value = 2;\n", encoding="utf8")
+        task_path.write_text(
+            SAMPLE_TASK_MARKDOWN.replace(
+                "需要确认 companion 生命周期与 release handoff 还能围绕统一合同运作。",
+                "待补充：说明为什么现在要做。",
+            ),
+            encoding="utf8",
+        )
+
+        completed = self.run_script("scripts/ai/validate-change-trace.ts")
+        payload = json.loads(completed.stdout)
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertFalse(payload["ok"])
+        self.assertTrue(any("待补充占位内容" in error for error in payload["errors"]))
+
     def test_ensure_companion_updates_contract_hash_when_task_contract_changes(self) -> None:
         script_root = ROOT.as_posix()
         first = self.run_node(
@@ -144,6 +176,23 @@ console.log(JSON.stringify({{
         self.assertTrue(first["first_hash"])
         self.assertTrue(first["second_hash"])
         self.assertNotEqual(first["first_hash"], first["second_hash"])
+
+    def test_update_companion_current_mode_survives_ensure_companion_refresh(self) -> None:
+        script_root = ROOT.as_posix()
+        payload = self.run_node(
+            f"""
+const {{ ensureCompanion, readCompanion, updateCompanion }} = require("{script_root}/scripts/coord/lib/task-meta.ts");
+ensureCompanion("t-999");
+updateCompanion("t-999", (companion) => {{
+  companion.current_mode = "工程执行";
+  return companion;
+}});
+ensureCompanion("t-999");
+console.log(JSON.stringify(readCompanion("t-999"), null, 2));
+"""
+        )
+
+        self.assertEqual(payload["current_mode"], "工程执行")
 
     def test_validate_change_trace_rejects_structural_change_without_task_update(self) -> None:
         scripts_dir = self.target / "scripts"

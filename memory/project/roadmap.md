@@ -21,7 +21,7 @@ High-ROI Gstack Absorption（推进中）
 
 ## 当前里程碑
 
-Search Before Building / Autoplan / Diff-based Test Selection（待执行）
+Search Before Building / Autoplan / Diff-based Test Selection（推进中）
 
 ## 里程碑成功标准
 
@@ -33,7 +33,7 @@ Search Before Building / Autoplan / Diff-based Test Selection（待执行）
 
 ## 当前优先级
 
-启动 `t-044`：把 Search Before Building 与 Boil the Lake 两条高 ROI 规则落到 task 创建、pre-task 与 AI 行为链。
+推进 `t-044`：把 Search Before Building 与 Boil the Lake 两条高 ROI 规则落到 task 创建、pre-task 与 AI 行为链。
 
 ## 下一阶段方向
 

@@ -6,6 +6,12 @@ type CompanionReleaseNote = {
   recorded_at?: string | null;
 };
 
+type CompanionSearchEvidence = {
+  recorded_at?: string | null;
+  sources?: string[];
+  conclusion?: string | null;
+};
+
 type CompanionLifecycle = {
   handoff?: {
     git_head?: string | null;
@@ -23,6 +29,7 @@ type TaskCompanionShape = {
   contract_hash?: string | null;
   current_mode?: string | null;
   branch_name?: string | null;
+  completion_mode?: string | null;
   planned_files?: string[];
   planned_modules?: string[];
   locks?: CompanionLock[];
@@ -31,6 +38,7 @@ type TaskCompanionShape = {
     decision_cards?: { path?: string | null }[];
     diff_summaries?: { path?: string | null }[];
     release_notes?: CompanionReleaseNote[];
+    search_evidence?: CompanionSearchEvidence[];
   };
 };
 
@@ -39,12 +47,14 @@ export type TaskCompanionFacts = {
   contractHash: string;
   branch: string;
   recentCommit: string;
+  completionMode: string;
   releaseIds: string[];
   latestReleaseId: string | null;
   plannedFiles: string[];
   plannedModules: string[];
   locks: string[];
   artifactRefs: string[];
+  latestSearchEvidence: string;
 };
 
 export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
@@ -55,18 +65,22 @@ export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
       contractHash: "",
       branch: "",
       recentCommit: "",
+      completionMode: "close_full_contract",
       releaseIds: [],
       latestReleaseId: null,
       plannedFiles: [],
       plannedModules: [],
       locks: [],
       artifactRefs: [],
+      latestSearchEvidence: "",
     };
   }
 
   try {
     const companion = JSON.parse(fs.readFileSync(companionPath, "utf8")) as TaskCompanionShape;
     const notes = companion.artifacts?.release_notes ?? [];
+    const searchEvidence = companion.artifacts?.search_evidence ?? [];
+    const latestSearch = searchEvidence.at(-1);
     const releaseIds = Array.from(
       new Set(
         notes
@@ -79,6 +93,7 @@ export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
       contractHash: String(companion.contract_hash || "").trim(),
       branch: String(companion.branch_name || "").trim(),
       recentCommit: sanitizeCommit(companion.lifecycle?.handoff?.git_head),
+      completionMode: String(companion.completion_mode || "").trim() || "close_full_contract",
       releaseIds,
       latestReleaseId: String(companion.lifecycle?.release_handoff?.release_id || "").trim() || releaseIds.at(-1) || null,
       plannedFiles: uniqueStrings(companion.planned_files ?? []),
@@ -88,6 +103,7 @@ export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
         ...(companion.artifacts?.decision_cards ?? []).map((item) => String(item?.path || "").trim()),
         ...(companion.artifacts?.diff_summaries ?? []).map((item) => String(item?.path || "").trim()),
       ]),
+      latestSearchEvidence: String(latestSearch?.conclusion || "").trim(),
     };
   } catch {
     return {
@@ -95,12 +111,14 @@ export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
       contractHash: "",
       branch: "",
       recentCommit: "",
+      completionMode: "close_full_contract",
       releaseIds: [],
       latestReleaseId: null,
       plannedFiles: [],
       plannedModules: [],
       locks: [],
       artifactRefs: [],
+      latestSearchEvidence: "",
     };
   }
 }
