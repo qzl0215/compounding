@@ -3,13 +3,7 @@ const path = require("node:path");
 const { getKnowledgeAssets } = require("./lib/knowledge-assets.ts");
 
 function currentDateFor(filePath) {
-  const today = new Date().toISOString().slice(0, 10);
-  if (!fs.existsSync(filePath)) {
-    return today;
-  }
-  const raw = fs.readFileSync(filePath, "utf8");
-  const match = raw.match(/last_reviewed_at:\s*(.+)/);
-  return match ? match[1].trim() : today;
+  return new Date().toISOString().slice(0, 10);
 }
 
 function renderBody(root) {
@@ -27,9 +21,8 @@ function renderBody(root) {
     lines.push(`- 真相源：\`${asset.source_of_truth}\``);
     lines.push(`- 入口：\`${asset.generation_or_validation}\``);
     lines.push(`- 文件：${asset.files.map((file) => `\`${file}\``).join("、")}`);
-    lines.push("- 边界：");
-    for (const boundary of asset.boundaries) {
-      lines.push(`  - ${boundary}`);
+    if (asset.boundaries.length > 0) {
+      lines.push(`- 边界：${asset.boundaries.join("；")}`);
     }
     lines.push("");
   }

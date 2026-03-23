@@ -2,7 +2,7 @@
 title: PROJECT_RULES
 update_mode: promote_only
 status: active
-last_reviewed_at: 2026-03-22
+last_reviewed_at: 2026-03-23
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -63,19 +63,12 @@ related_docs:
 
 ## 知识资产维护
 
-- 高频知识资产固定分为：
-  - `generated`
-  - `validated`
-  - `manual`
-- 进入三分法前，先明确真相源，再决定是生成、校验还是人工维护
-- 生成产物不得承载判断性内容；判断性说明继续留在人工主源
-- prompt、索引与关键说明文档的当前维护方式以 `docs/ASSET_MAINTENANCE.md` 为准
-- prompt 资产必须通过单一注册表被运行时代码与校验器共同读取；不允许两边各自维护一份路径列表
-- `code_index/*` 由脚本生成；人工补充说明应写回 `docs/ARCHITECTURE.md`、`module.md` 或 task，不直接手改生成索引
+- 高频知识资产分为 `generated`、`validated`、`manual`；维护方式以 `docs/ASSET_MAINTENANCE.md` 为准
+- 生成产物只做导航与承载，不放判断性内容；判断性说明留在人工主源
+- prompt 资产由单一注册表供运行时代码与校验器共同读取
+- `code_index/*` 由脚本生成；人工补充说明写回 `docs/ARCHITECTURE.md`、`module.md` 或 task
 
 ## 兼容层规则
 
-- 旧 workflow 前台、旧 API、旧 docs 树不允许再作为 live 结构继续扩张
-- 必须收敛到 `AGENTS + docs + memory + code_index + tasks`
-- 需要保留的过渡逻辑必须写入 `memory/project/tech-debt.md`
+- 旧 workflow 前台、旧 API、旧 docs 树不允许继续扩张；必要过渡逻辑写入 `memory/project/tech-debt.md`
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->
