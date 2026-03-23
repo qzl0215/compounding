@@ -33,7 +33,7 @@ Search Before Building / Autoplan / Diff-based Test Selection（推进中）
 
 ## 当前优先级
 
-推进 `t-044`：把 Search Before Building 与 Boil the Lake 两条高 ROI 规则落到 task 创建、pre-task 与 AI 行为链。
+推进 `t-045`：把 Autoplan 的“扩选项 → 收决策 → 产出 task”收口到单层 plan 与人机分工链。
 
 ## 下一阶段方向
 
