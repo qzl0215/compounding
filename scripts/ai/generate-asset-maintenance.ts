@@ -17,37 +17,22 @@ function renderBody(root) {
   const lines = [
     "# 资产维护矩阵",
     "",
-    "## 三分法",
-    "",
-    "- `generated`：由脚本生成，人不直接手改生成产物。",
-    "- `validated`：正文人工维护，但运行时与校验器共用注册表或结构检查。",
-    "- `manual`：保留人工维护，通过 task 回写和 review 控制质量。",
-    "",
     "## 当前高频资产",
     "",
   ];
 
   for (const asset of assets) {
     lines.push(`### ${asset.title}`, "");
-    lines.push(`- 维护方式：\`${asset.maintenance_mode}\``);
+    lines.push(`- 方式：\`${asset.maintenance_mode}\``);
     lines.push(`- 真相源：\`${asset.source_of_truth}\``);
-    lines.push(`- 入口命令：\`${asset.generation_or_validation}\``);
-    lines.push("- 资产文件：");
-    for (const file of asset.files) {
-      lines.push(`  - \`${file}\``);
-    }
+    lines.push(`- 入口：\`${asset.generation_or_validation}\``);
+    lines.push(`- 文件：${asset.files.map((file) => `\`${file}\``).join("、")}`);
     lines.push("- 边界：");
     for (const boundary of asset.boundaries) {
       lines.push(`  - ${boundary}`);
     }
     lines.push("");
   }
-
-  lines.push("## 默认维护原则", "");
-  lines.push("- 先明确真相源，再决定生成、校验或人工维护。");
-  lines.push("- 生成产物不承载判断性内容；判断性内容继续留在人工主源。");
-  lines.push("- 只有高频、高漂移且易校验的资产，才优先进入防漂移机制。");
-  lines.push("");
   return lines.join("\n");
 }
 

@@ -12,10 +12,6 @@ related_docs:
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 项目规则
 
-## 目标
-
-这份文档定义当前仓库的代码治理规则。目标不是增加流程，而是降低 AI 理解成本、降低重复逻辑和隐式依赖、稳定支撑多 agent 并行。
-
 ## 文件体量限制
 
 - TypeScript / TSX / Python 文件软上限：250 LOC
@@ -76,10 +72,6 @@ related_docs:
 - prompt、索引与关键说明文档的当前维护方式以 `docs/ASSET_MAINTENANCE.md` 为准
 - prompt 资产必须通过单一注册表被运行时代码与校验器共同读取；不允许两边各自维护一份路径列表
 - `code_index/*` 由脚本生成；人工补充说明应写回 `docs/ARCHITECTURE.md`、`module.md` 或 task，不直接手改生成索引
-
-## 高效协作原则
-
-- 规则、task、roadmap、记忆和协作结构都只服务于主线效率，不服务于自我扩张和流程表演；roadmap 只反映主线、优先级和阶段变化，运营蓝图负责拆解当前里程碑。
 
 ## 兼容层规则
 
