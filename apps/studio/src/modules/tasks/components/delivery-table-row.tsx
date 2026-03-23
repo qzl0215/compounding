@@ -107,10 +107,13 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
               <DetailBlock title="机器事实">
                 <p>任务路径：{row.path}</p>
                 <p>当前模式：{row.currentMode || "未标注"}</p>
+                <p>合同哈希：{row.machine.contractHash || "未生成"}</p>
                 <p>分支：{row.machine.branch || "未绑定"}</p>
                 <p>最近提交：{row.machine.git.recentCommit || row.machine.recentCommit || "pending"}</p>
                 <p>Git 状态：{row.machine.git.detail}</p>
                 <p>主发布版本：{row.machine.primaryRelease || "未生成"}</p>
+                <p>锁：{row.machine.locks.length > 0 ? row.machine.locks.join("，") : "无锁冲突"}</p>
+                <p>执行产物：{row.machine.artifactRefs.length > 0 ? row.machine.artifactRefs.join("，") : "无"}</p>
               </DetailBlock>
               <DetailBlock title="模块与痕迹">
                 {row.machine.relatedModules.length > 0 ? row.machine.relatedModules.map((item) => <p key={item}>{item}</p>) : <p>无关联模块</p>}

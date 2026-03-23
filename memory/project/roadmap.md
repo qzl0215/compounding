@@ -4,7 +4,7 @@ doc_role: planning
 update_mode: manual
 owner_role: Foreman
 status: active
-last_reviewed_at: 2026-03-22
+last_reviewed_at: 2026-03-23
 source_of_truth: memory/project/roadmap.md
 related_docs:
   - AGENTS.md
@@ -17,26 +17,27 @@ related_docs:
 
 ## 当前阶段
 
-Single-Plan Demand Operating Model（已收口）
+Single-Plan Boundary Simplification（推进中）
 
 ## 当前里程碑
 
-Task 执行合同与机器台账下沉（已完成）
+Plan / Task / Companion / Release 最简边界（进行中）
 
 ## 里程碑成功标准
 
-- task 重构成共享执行合同，只保留边界、结果、风险和测试策略
-- 分支、提交、release、trace 等机器台账从 task 主体下沉到 companion / release / 投影层
-- 历史 task 在不重写文档的情况下仍可被兼容解析
-- `/tasks` 主表默认展示合同字段，而不是机器 provenance
+- `operating-blueprint` 成为唯一 plan 主源，`roadmap` 只保留战略摘要与方向
+- task 继续只保留执行合同，不再回流机器 provenance
+- companion 只保留机器执行上下文，不再持久化 task 正文镜像
+- release 只保留验收与运行事实，task 摘要只在历史兼容时回退到最小 `delivery_snapshot`
+- `/tasks` 与 `/releases` 默认优先从 task 合同解析人类语义，历史数据仍可兼容读取
 
 ## 当前优先级
 
-稳住“plan 负责想清楚、task 负责做清楚、release / companion 负责机器台账”这条边界，评估下一条高 ROI 结构主线。
+完成 `t-042`：把 `plan / task / companion / release` 的边界彻底切开，避免 AI 再在四类对象之间来回猜真相。
 
 ## 下一阶段方向
 
-- 继续验证 task 页、release 页和 companion 是否都围绕同一份执行合同投影
-- 继续减少对 task 文档的机器字段依赖，避免 provenance 回流
-- 继续用风险驱动最小测试集保护结构改动，而不是追加重复门禁
+- 验证这套最简边界在真实任务、release 和 companion 生命周期里的长期稳定性
+- 在不增加第二层 plan 或新状态源的前提下，继续压缩多余 provenance 和重复文案
+- 继续用风险驱动最小测试集保护结构主线，而不是扩张门禁数量
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

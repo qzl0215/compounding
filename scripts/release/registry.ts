@@ -6,13 +6,30 @@ function emptyRegistry() {
   return { active_release_id: null, pending_dev_release_id: null, updated_at: null, releases: [] };
 }
 
+function normalizeDeliverySnapshot(snapshot, summary = null, risks = null) {
+  const normalized = {
+    summary: snapshot?.summary || summary || null,
+    risk: snapshot?.risk || risks || null,
+    done_when: snapshot?.done_when || null,
+  };
+  if (!normalized.summary && !normalized.risk && !normalized.done_when) {
+    return null;
+  }
+  return normalized;
+}
+
 function normalizeReleaseRecord(record) {
   const normalized = { ...record };
   normalized.primary_task_id = normalized.primary_task_id || null;
   normalized.linked_task_ids = Array.isArray(normalized.linked_task_ids) ? normalized.linked_task_ids : [];
-  normalized.delivery_summary = normalized.delivery_summary || null;
-  normalized.delivery_benefit = normalized.delivery_benefit || null;
-  normalized.delivery_risks = normalized.delivery_risks || null;
+  normalized.delivery_snapshot = normalizeDeliverySnapshot(
+    normalized.delivery_snapshot,
+    normalized.delivery_summary,
+    normalized.delivery_risks
+  );
+  delete normalized.delivery_summary;
+  delete normalized.delivery_benefit;
+  delete normalized.delivery_risks;
   normalized.channel = normalized.channel === "dev" ? "dev" : "prod";
   normalized.acceptance_status =
     normalized.acceptance_status ||

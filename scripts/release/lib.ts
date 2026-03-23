@@ -2,7 +2,6 @@ const fs = require("node:fs");
 const { execFileSync } = require("node:child_process");
 const { releaseReload: releaseReloadImpl } = require("./reload.ts");
 const { resolveTaskId, resolveTaskRecord } = require("../ai/lib/task-resolver.ts");
-const { readCompanionReleaseContext } = require("../coord/lib/task-meta.ts");
 const { parseTaskContract } = require("../../shared/task-contract.ts");
 const {
   ensureLayout,
@@ -93,16 +92,16 @@ function readTaskDeliveryMetadata(taskId) {
   const parsed = parseTaskContract(record.path, content);
   const shortId = parsed.shortId || record.shortId;
   const title = parsed.title || record.title;
-  const companionContext = readCompanionReleaseContext(record.id);
   return {
     id: record.id,
     path: record.path,
     short_id: shortId,
     title,
-    delivery_summary: companionContext?.delivery_summary || `${shortId} ${title}`.trim(),
-    delivery_benefit:
-      companionContext?.delivery_benefit || firstMeaningfulLine(parsed.deliveryResult || parsed.doneWhen || parsed.summary) || null,
-    delivery_risks: companionContext?.delivery_risks || firstMeaningfulLine(parsed.risk) || null,
+    delivery_snapshot: {
+      summary: firstMeaningfulLine(parsed.summary) || `${shortId} ${title}`.trim(),
+      risk: firstMeaningfulLine(parsed.risk) || null,
+      done_when: firstMeaningfulLine(parsed.doneWhen) || null,
+    },
   };
 }
 

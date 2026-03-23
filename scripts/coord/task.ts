@@ -24,13 +24,17 @@ function parseArgs() {
 }
 
 function create(args) {
-  const { taskId, goal, why } = args;
-  if (!taskId || !goal || !why) {
-    console.error(JSON.stringify({ ok: false, error: "taskId, goal, why required. Use --taskId=... --goal=... --why=..." }));
+  const taskId = args.taskId;
+  const summary = args.summary || args.goal;
+  const why = args.why;
+  if (!taskId || !summary || !why) {
+    console.error(
+      JSON.stringify({ ok: false, error: "taskId, summary, why required. Use --taskId=... --summary=... --why=..." })
+    );
     process.exit(1);
   }
   const id = taskId.startsWith("task-") ? taskId : `task-${taskId.replace(/^t-/, "")}`;
-  const result = spawnSync("node", ["--experimental-strip-types", "scripts/ai/create-task.ts", id, goal, why], {
+  const result = spawnSync("node", ["--experimental-strip-types", "scripts/ai/create-task.ts", id, summary, why], {
     cwd: ROOT,
     encoding: "utf8",
   });
@@ -121,6 +125,8 @@ else if (cmd === "start") start(args);
 else if (cmd === "handoff") handoff(args);
 else if (cmd === "merge") merge(args);
 else {
-  console.error(JSON.stringify({ ok: false, error: "Usage: task.ts create|start|handoff|merge [--taskId=...] [--goal=...] [--why=...]" }));
+  console.error(
+    JSON.stringify({ ok: false, error: "Usage: task.ts create|start|handoff|merge [--taskId=...] [--summary=...] [--why=...]" })
+  );
   process.exit(1);
 }

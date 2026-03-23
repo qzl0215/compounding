@@ -1,4 +1,3 @@
-const fs = require("node:fs");
 const path = require("node:path");
 const { recordReleaseHandoff } = require("../coord/lib/companion-lifecycle.ts");
 const {
@@ -9,13 +8,13 @@ const {
   parseTaskIdList,
   pendingDevRelease,
   previewBaseUrl,
-    productionBaseUrl,
-    readTaskDeliveryMetadata,
-    releaseIdFor,
-    resolveCanonicalTaskIds,
-    resolveCommit,
-    setPendingDevRelease,
-    updateChannelSymlink,
+  productionBaseUrl,
+  readTaskDeliveryMetadata,
+  releaseIdFor,
+  resolveCanonicalTaskIds,
+  resolveCommit,
+  setPendingDevRelease,
+  updateChannelSymlink,
   upsertRelease,
   withReleaseLock,
 } = require("./lib.ts");
@@ -124,9 +123,6 @@ function main() {
             release_path: releasePath,
             commit_sha: commitSha,
             preview_url: prepared.preview_url,
-            delivery_summary: prepared.delivery_summary,
-            delivery_benefit: prepared.delivery_benefit,
-            delivery_risks: prepared.delivery_risks,
             linked_task_ids: normalizedLinkedTaskIds,
             change_summary: summary,
             status: prepared.status,
@@ -189,9 +185,7 @@ function main() {
       source_ref: ref,
       primary_task_id: primaryTaskId || null,
       linked_task_ids: linkedTaskIds.filter((taskId) => taskId !== primaryTaskId).slice(0, 2),
-      delivery_summary: null,
-      delivery_benefit: null,
-      delivery_risks: null,
+      delivery_snapshot: null,
       channel,
       acceptance_status: channel === "dev" ? "rejected" : "accepted",
       preview_url: channel === "dev" ? previewBaseUrl() : null,

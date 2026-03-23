@@ -84,6 +84,7 @@ related_docs:
   - `coord:task:handoff` 写回 `handoff`
   - `coord:task:merge` 通过 review 写回 `review`
   - release prepare / accept / switch 写回 `release_handoff`
+  - companion 只承接机器执行上下文，不再镜像 task 正文；task 摘要、风险和完成定义默认从 task 合同读取
 
 ### 模式契约
 
@@ -205,6 +206,7 @@ related_docs:
 - 若 roadmap、blueprint 或发布标准不清，task 只能进入 `战略澄清`
 - 只有 `质量验收` 通过，task 才能进入 `发布复盘`
 - `更新痕迹`、`关联模块`、`主发布版本`、`关联发布版本` 等 provenance 不再作为 task 合同正文必填项；它们由 companion / release registry / 校验器生成物负责
+- release 只保留环境与验收事实；task 摘要只在历史兼容时回退到最小 `delivery_snapshot`
 
 ## 文档编辑规则
 

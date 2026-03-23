@@ -1113,6 +1113,14 @@
   },
   {
     "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/release-summary.ts",
+    "symbol": "resolveReleaseContractSummary",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
     "file": "apps/studio/src/modules/releases/runtime-status.ts",
     "symbol": "getRuntimeStatusExplanation",
     "kind": "function",
@@ -1152,9 +1160,57 @@
     "exported": true
   },
   {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/task-summary.ts",
+    "symbol": "firstMeaningful",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/task-summary.ts",
+    "symbol": "resolveWorkspacePath",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/task-summary.ts",
+    "symbol": "normalizeDeliverySnapshot",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/releases",
+    "file": "apps/studio/src/modules/releases/task-summary.ts",
+    "symbol": "resolveTaskContractSummary",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
     "module": "apps/studio/src/modules/tasks",
     "file": "apps/studio/src/modules/tasks/companion.ts",
-    "symbol": "readTaskCompanionReleaseInfo",
+    "symbol": "readTaskCompanionFacts",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/companion.ts",
+    "symbol": "sanitizeCommit",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/companion.ts",
+    "symbol": "uniqueStrings",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -1346,31 +1402,7 @@
   {
     "module": "apps/studio/src/modules/tasks",
     "file": "apps/studio/src/modules/tasks/parsing.ts",
-    "symbol": "parseRelatedModules",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/tasks",
-    "file": "apps/studio/src/modules/tasks/parsing.ts",
-    "symbol": "parseUpdateTrace",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/tasks",
-    "file": "apps/studio/src/modules/tasks/parsing.ts",
-    "symbol": "parseLinkedReleases",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/tasks",
-    "file": "apps/studio/src/modules/tasks/parsing.ts",
-    "symbol": "extractTraceValue",
+    "symbol": "parseTaskMachineFields",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -1403,6 +1435,30 @@
     "module": "apps/studio/src/modules/tasks",
     "file": "apps/studio/src/modules/tasks/service.ts",
     "symbol": "listTaskCards",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/service.ts",
+    "symbol": "mergeMachineModules",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/service.ts",
+    "symbol": "uniqueStrings",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/service.ts",
+    "symbol": "defaultModeForStatus",
     "kind": "function",
     "language": "TypeScript",
     "exported": true

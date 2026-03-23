@@ -5,14 +5,13 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { resolveTaskRecord } = require("../../ai/lib/task-resolver.ts");
-const { parseTaskContract } = require("../../../shared/task-contract.ts");
+const { parseTaskContract, taskContractFingerprint } = require("../../../shared/task-contract.ts");
 const {
   buildCompatView,
   createEmptyArtifacts,
   createEmptyLifecycle,
   mergeArtifactList,
   normalizeCompanion,
-  normalizeTaskStatus,
   uniqueStrings,
 } = require("./companion-shape.ts");
 
@@ -56,10 +55,8 @@ function parseTaskToCompanion(taskLike, content) {
   if (!record) return null;
 
   const parsed = parseTaskContract(record.path, content);
-  const goal = parsed.summary || record.title;
   const branch = parsed.branch;
   const currentMode = parsed.currentMode;
-  const taskStatus = normalizeTaskStatus(parsed.status);
   const modules = uniqueStrings(parsed.relatedModules);
   const plannedFiles = modules.filter((item) => item.includes("/") || /\.(md|ts|tsx|js|json|yaml|yml)$/.test(item));
   if (!plannedFiles.includes(record.path)) {
@@ -67,32 +64,15 @@ function parseTaskToCompanion(taskLike, content) {
   }
 
   return normalizeCompanion({
-    schema_version: "2",
+    schema_version: "3",
     task_id: record.shortId,
-    short_id: record.shortId,
-    task_record_id: record.id,
     task_path: record.path,
-    title: record.title,
-    goal,
-    owner_agent: "default",
-    human_decision_needed: false,
-    human_decision_reason: null,
+    contract_hash: taskContractFingerprint(parsed),
     current_mode: currentMode || undefined,
-    task_status: taskStatus,
-    truth_boundaries: {
-      task_document: record.path,
-      release_registry: "runtime registry.json",
-      companion_role: "derived machine-readable delivery contract",
-    },
-    contract: {
-      branch_name: branch || `codex/${record.id}`,
-      base_branch: "dev",
-      planned_files: plannedFiles,
-      planned_modules: modules.filter((item) => !plannedFiles.includes(item)),
-      risk_assessment: "medium",
-      execution_mode: "direct_edit",
-      ui_validation_required: false,
-    },
+    branch_name: branch || `codex/${record.id}`,
+    planned_files: plannedFiles,
+    planned_modules: modules.filter((item) => !plannedFiles.includes(item)),
+    locks: [],
     lifecycle: createEmptyLifecycle(),
     artifacts: createEmptyArtifacts(),
   });
@@ -105,23 +85,13 @@ function mergeCompanion(existing, parsed) {
   return normalizeCompanion({
     ...current,
     task_id: next.task_id || current.task_id,
-    short_id: next.short_id || current.short_id,
-    task_record_id: next.task_record_id || current.task_record_id,
     task_path: next.task_path || current.task_path,
-    title: next.title || current.title,
-    goal: next.goal || current.goal,
+    contract_hash: next.contract_hash || current.contract_hash,
     current_mode: explicitCurrentMode || current.current_mode || next.current_mode,
-    task_status: next.task_status || current.task_status,
-    truth_boundaries: { ...(current.truth_boundaries || {}), ...(next.truth_boundaries || {}) },
-    contract: {
-      ...(current.contract || {}),
-      ...(next.contract || {}),
-      planned_files: uniqueStrings([...(current.contract?.planned_files || []), ...(next.contract?.planned_files || [])]),
-      planned_modules: uniqueStrings([
-        ...(current.contract?.planned_modules || []),
-        ...(next.contract?.planned_modules || []),
-      ]),
-    },
+    branch_name: next.branch_name || current.branch_name,
+    planned_files: uniqueStrings([...(current.planned_files || []), ...(next.planned_files || [])]),
+    planned_modules: uniqueStrings([...(current.planned_modules || []), ...(next.planned_modules || [])]),
+    locks: next.locks?.length ? next.locks : current.locks || [],
     lifecycle: { ...createEmptyLifecycle(), ...(current.lifecycle || {}) },
     artifacts: {
       ...createEmptyArtifacts(),
@@ -132,9 +102,6 @@ function mergeCompanion(existing, parsed) {
       review_notes: mergeArtifactList(current.artifacts?.review_notes, next.artifacts?.review_notes, "recorded_at"),
       release_notes: mergeArtifactList(current.artifacts?.release_notes, next.artifacts?.release_notes, "release_id"),
     },
-    human_decision_needed: Boolean(current.human_decision_needed),
-    human_decision_reason: current.human_decision_reason || null,
-    owner_agent: current.owner_agent || next.owner_agent || "default",
   });
 }
 
@@ -176,14 +143,10 @@ function updateCompanion(taskLike, updater) {
 function readCompanionReleaseContext(taskLike) {
   const companion = readCompanionFile(taskLike);
   if (!companion) return null;
-  const handoff = companion.lifecycle?.handoff || null;
   const review = companion.lifecycle?.review || null;
   const releaseHandoff = companion.lifecycle?.release_handoff || null;
   return {
-    delivery_summary:
-      releaseHandoff?.delivery_summary || handoff?.summary || `${companion.short_id} ${companion.title}`.trim(),
-    delivery_benefit: releaseHandoff?.delivery_benefit || handoff?.delivery_benefit || null,
-    delivery_risks: releaseHandoff?.delivery_risks || review?.merge_decision_explanation || null,
+    latest_release_id: releaseHandoff?.release_id || companion.artifacts?.release_notes?.slice(-1)[0]?.release_id || null,
     latest_diff_summary_path: review?.diff_summary_path || null,
     latest_decision_card_path: companion.artifacts?.decision_cards?.slice(-1)[0]?.path || null,
   };

@@ -20,6 +20,7 @@ export type TaskGitInfo = {
 };
 
 export type TaskMachineFacts = {
+  contractHash: string;
   branch: string;
   recentCommit: string;
   primaryRelease: string;
@@ -28,6 +29,8 @@ export type TaskMachineFacts = {
   companionLatestRelease: string | null;
   relatedModules: string[];
   updateTrace: TaskUpdateTrace;
+  locks: string[];
+  artifactRefs: string[];
   git: TaskGitInfo;
 };
 

@@ -1,4 +1,5 @@
 import { getRuntimeStatusExplanation } from "../runtime-status";
+import { resolveReleaseContractSummary } from "../release-summary";
 import type { LocalRuntimeStatus, ReleaseRecord, ReleaseTaskOption } from "../types";
 
 type ControlBarProps = {
@@ -122,6 +123,7 @@ export function ReleaseSummaryGrid({
   previewUrl,
   productionUrl,
 }: SummaryProps) {
+  const pendingSummary = pendingDevRelease ? resolveReleaseContractSummary(pendingDevRelease) : null;
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <article className="rounded-3xl border border-white/8 bg-white/[0.03] p-5">
@@ -131,7 +133,7 @@ export function ReleaseSummaryGrid({
             ? `当前待验收版本为 ${pendingDevRelease.release_id}。请先验收这个 dev，再决定是否发布到 main。`
             : "当前没有待验收 dev，可以继续生成新的预览。"}
         </p>
-        {pendingDevRelease?.delivery_summary ? <p className="mt-3 text-sm text-white/62">交付摘要：{pendingDevRelease.delivery_summary}</p> : null}
+        {pendingSummary?.summary ? <p className="mt-3 text-sm text-white/62">交付摘要：{pendingSummary.summary}</p> : null}
         <p className="mt-3 text-xs text-white/52">预览链接：{previewUrl}</p>
       </article>
       <article className="rounded-3xl border border-white/8 bg-white/[0.03] p-5">

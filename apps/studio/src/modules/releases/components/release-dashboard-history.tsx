@@ -1,4 +1,5 @@
 import type { ReleaseRecord } from "../types";
+import { resolveReleaseContractSummary } from "../release-summary";
 
 type HistoryProps = {
   releases: ReleaseRecord[];
@@ -20,6 +21,7 @@ export function ReleaseHistoryList({
       {releases.map((release) => {
         const isActive = release.release_id === activeReleaseId;
         const isPendingDev = pendingDevRelease?.release_id === release.release_id;
+        const contractSummary = resolveReleaseContractSummary(release);
         return (
           <article key={release.release_id} className="rounded-3xl border border-white/8 bg-white/[0.03] p-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
@@ -52,11 +54,11 @@ export function ReleaseHistoryList({
               <Meta title="切换时间" value={release.cutover_at || release.promoted_to_main_at || "未切换"} />
             </dl>
 
-            {release.delivery_summary || release.delivery_benefit || release.delivery_risks ? (
+            {contractSummary.summary || contractSummary.doneWhen || contractSummary.risk ? (
               <div className="mt-4 grid gap-3 text-sm text-white/72 md:grid-cols-3">
-                <Meta title="交付摘要" value={release.delivery_summary || "未记录"} />
-                <Meta title="交付收益" value={release.delivery_benefit || "未记录"} />
-                <Meta title="交付风险" value={release.delivery_risks || "未记录"} />
+                <Meta title="交付摘要" value={contractSummary.summary || "未记录"} />
+                <Meta title="完成定义" value={contractSummary.doneWhen || "未记录"} />
+                <Meta title="交付风险" value={contractSummary.risk || "未记录"} />
               </div>
             ) : null}
 

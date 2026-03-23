@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import type { ReleaseDashboard, ReleaseRecord, ReleaseRegistry } from "./types";
 import { getChannelBaseUrl, getLocalRuntimeStatus, getReleaseRuntimeRoot } from "./runtime";
+import { normalizeDeliverySnapshot, resolveTaskContractSummary } from "./task-summary";
 
 const EMPTY_REGISTRY: ReleaseRegistry = {
   active_release_id: null,
@@ -52,13 +53,17 @@ export function getReleaseDashboard(): ReleaseDashboard {
 }
 
 function normalizeReleaseRecord(release: ReleaseRecord): ReleaseRecord {
+  const deliverySnapshot = normalizeDeliverySnapshot(
+    (release as ReleaseRecord & { delivery_snapshot?: ReleaseRecord["delivery_snapshot"] }).delivery_snapshot,
+    (release as ReleaseRecord & { delivery_summary?: string | null }).delivery_summary,
+    (release as ReleaseRecord & { delivery_risks?: string | null }).delivery_risks
+  );
   return {
     ...release,
     primary_task_id: release.primary_task_id ?? null,
     linked_task_ids: Array.isArray(release.linked_task_ids) ? release.linked_task_ids : [],
-    delivery_summary: release.delivery_summary ?? null,
-    delivery_benefit: release.delivery_benefit ?? null,
-    delivery_risks: release.delivery_risks ?? null,
+    delivery_snapshot: deliverySnapshot,
+    resolved_task_contract: resolveTaskContractSummary(release.primary_task_id ?? null),
     channel: release.channel === "dev" ? "dev" : "prod",
     acceptance_status:
       release.acceptance_status || (release.status === "failed" ? "rejected" : release.channel === "dev" ? "pending" : "accepted"),

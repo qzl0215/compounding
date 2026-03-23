@@ -1,4 +1,5 @@
 import { createRequire } from "node:module";
+import { createHash } from "node:crypto";
 
 const require = createRequire(import.meta.url);
 const { deriveShortId, taskIdFromPath } = require("./task-identity.ts");
@@ -37,6 +38,25 @@ export type ParsedTaskContract = {
   linkedReleases: string[];
   updateTrace: TaskUpdateTrace;
 };
+
+type TaskContractFingerprintSource = Pick<
+  ParsedTaskContract,
+  | "shortId"
+  | "parentPlan"
+  | "summary"
+  | "whyNow"
+  | "boundary"
+  | "doneWhen"
+  | "inScope"
+  | "outOfScope"
+  | "constraints"
+  | "risk"
+  | "testStrategy"
+  | "status"
+  | "acceptanceResult"
+  | "deliveryResult"
+  | "retro"
+>;
 
 export function parseTaskContract(path: string, content: string): ParsedTaskContract {
   const id = taskIdFromPath(path);
@@ -133,6 +153,30 @@ export function parseTaskContract(path: string, content: string): ParsedTaskCont
     linkedReleases: parseLinkedReleases(content),
     updateTrace: parseUpdateTrace(content),
   };
+}
+
+export function taskContractFingerprint(contract: TaskContractFingerprintSource) {
+  return createHash("sha256")
+    .update(
+      JSON.stringify({
+        shortId: contract.shortId,
+        parentPlan: contract.parentPlan,
+        summary: contract.summary,
+        whyNow: contract.whyNow,
+        boundary: contract.boundary,
+        doneWhen: contract.doneWhen,
+        inScope: contract.inScope,
+        outOfScope: contract.outOfScope,
+        constraints: contract.constraints,
+        risk: contract.risk,
+        testStrategy: contract.testStrategy,
+        status: contract.status,
+        acceptanceResult: contract.acceptanceResult,
+        deliveryResult: contract.deliveryResult,
+        retro: contract.retro,
+      })
+    )
+    .digest("hex");
 }
 
 function extractFirstHeading(markdown: string) {

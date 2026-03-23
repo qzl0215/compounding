@@ -3,6 +3,22 @@ export type ReleaseResult = "pending" | "passed" | "failed";
 export type ReleaseChannel = "dev" | "prod";
 export type AcceptanceStatus = "pending" | "accepted" | "rejected";
 
+export type ReleaseDeliverySnapshot = {
+  summary: string | null;
+  risk: string | null;
+  done_when: string | null;
+};
+
+export type ResolvedTaskContractSummary = {
+  task_id: string;
+  task_path: string;
+  short_id: string;
+  title: string;
+  summary: string | null;
+  risk: string | null;
+  done_when: string | null;
+};
+
 export type ReleaseRecord = {
   release_id: string;
   commit_sha: string;
@@ -10,9 +26,8 @@ export type ReleaseRecord = {
   source_ref: string;
   primary_task_id: string | null;
   linked_task_ids: string[];
-  delivery_summary: string | null;
-  delivery_benefit: string | null;
-  delivery_risks: string | null;
+  delivery_snapshot: ReleaseDeliverySnapshot | null;
+  resolved_task_contract: ResolvedTaskContractSummary | null;
   channel: ReleaseChannel;
   acceptance_status: AcceptanceStatus;
   preview_url: string | null;

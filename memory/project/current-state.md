@@ -4,7 +4,7 @@ doc_role: memory
 update_mode: manual
 owner_role: Foreman
 status: active
-last_reviewed_at: 2026-03-22
+last_reviewed_at: 2026-03-23
 source_of_truth: memory/project/current-state.md
 related_docs:
   - AGENTS.md
@@ -46,8 +46,8 @@ related_docs:
 
 - 本地 production 当前稳定运行在 `3010`；`main` 已发布，但常驻进程仍需要人工确认是否在线。
 - `t-041` 已完成并发布到 `main / production`；task 已收口成执行合同，机器 provenance 已下沉到 companion / release / projection。
-- 当前运营重点转为观察这套合同结构在真实任务、任务页和发布页里的稳定性，再决定下一条结构主线。
-- 当前阶段不扩 orchestration UI、数据库或新运行时；先稳住单层 plan、执行合同和高 ROI test 治理。
+- 当前运营重点切到 `t-042`：继续把 `plan / task / companion / release` 收口成四个稳定对象，各自只负责一类真相。
+- 当前阶段不扩 orchestration UI、数据库或新运行时；先稳住单层 plan、执行合同、机器上下文与最小 release 快照。
 
 ## 当前推荐校验顺序
 
@@ -72,7 +72,7 @@ related_docs:
 - `pnpm validate:build`
 - `pnpm prod:check`
 - `pnpm coord:check:pre-task`
-- 验证 production 中的 task 文档与任务页继续保持合同视角
-- 验证历史 task 在不重写文档时仍可被兼容解析
-- 评估下一条结构主线是否继续收 companion / release provenance
+- 验证 companion 原始 shape 不再镜像 task 正文，且 `contract_hash` 变化后仍能稳定重同步 scope
+- 验证 release 页在 task 仍存在时优先解析 task 合同，只在历史兼容时回退到最小 `delivery_snapshot`
+- 验证历史 task、历史 release 与既有 companion 在不重写文档的情况下仍能被兼容解析
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

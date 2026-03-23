@@ -50,9 +50,6 @@ recordReviewResult("t-999", {{
 recordReleaseHandoff("t-999", {{
   channel: "prod",
   release_id: "20260320-abc-prod",
-  delivery_summary: "t-999 示例任务",
-  delivery_benefit: "benefit",
-  delivery_risks: "risk",
   production_url: "http://127.0.0.1:3010",
   status: "active"
 }});
@@ -70,11 +67,18 @@ console.log(JSON.stringify({{
         self.assertEqual(companion["lifecycle"]["handoff"]["summary"], "handoff summary")
         self.assertEqual(companion["lifecycle"]["review"]["merge_decision"], "auto_merge")
         self.assertEqual(companion["lifecycle"]["release_handoff"]["release_id"], "20260320-abc-prod")
-        self.assertTrue(companion["human_decision_needed"] is False)
         self.assertEqual(companion["artifacts"]["decision_cards"][-1]["decision_id"], "dec-test")
         self.assertEqual(companion["artifacts"]["diff_summaries"][-1]["path"], "agent-coordination/reports/diff-summary-main-head.json")
-        self.assertNotIn("branch_name", raw)
-        self.assertNotIn("planned_files", raw)
+        self.assertEqual(raw["task_id"], "t-999")
+        self.assertEqual(raw["task_path"], "tasks/queue/task-999-sample.md")
+        self.assertTrue(bool(raw["contract_hash"]))
+        self.assertEqual(raw["branch_name"], "codex/task-999-sample")
+        self.assertEqual(raw["planned_files"], ["tasks/queue/task-999-sample.md"])
+        self.assertEqual(raw["planned_modules"], [])
+        self.assertEqual(raw["locks"], [])
+        self.assertNotIn("title", raw)
+        self.assertNotIn("goal", raw)
+        self.assertNotIn("contract", raw)
         self.assertNotIn("status", raw)
         self.assertNotIn("companion_phase", raw)
         self.assertNotIn("summary_artifacts", raw)
@@ -89,9 +93,6 @@ ensureCompanion("t-999");
 recordReleaseHandoff("t-999", {{
   channel: "dev",
   release_id: "20260320-abc-dev",
-  delivery_summary: "t-999 companion summary",
-  delivery_benefit: "benefit from companion",
-  delivery_risks: "risk from companion",
   preview_url: "http://127.0.0.1:3011",
   status: "preview"
 }});
@@ -99,9 +100,9 @@ console.log(JSON.stringify(readCompanionReleaseContext("t-999"), null, 2));
 """
         )
 
-        self.assertEqual(payload["delivery_summary"], "t-999 companion summary")
-        self.assertEqual(payload["delivery_benefit"], "benefit from companion")
-        self.assertEqual(payload["delivery_risks"], "risk from companion")
+        self.assertEqual(payload["latest_release_id"], "20260320-abc-dev")
+        self.assertIsNone(payload["latest_diff_summary_path"])
+        self.assertIsNone(payload["latest_decision_card_path"])
 
     def test_validate_change_trace_allows_light_docs_without_task_update(self) -> None:
         docs_dir = self.target / "docs"
@@ -118,6 +119,31 @@ console.log(JSON.stringify(readCompanionReleaseContext("t-999"), null, 2));
         self.assertTrue(payload["ok"])
         self.assertEqual(payload["change_class"], "light")
         self.assertEqual(payload["changed_tasks"], [])
+
+    def test_ensure_companion_updates_contract_hash_when_task_contract_changes(self) -> None:
+        script_root = ROOT.as_posix()
+        first = self.run_node(
+            f"""
+const fs = require("node:fs");
+const path = require("node:path");
+const {{ ensureCompanion, getCompanionPath }} = require("{script_root}/scripts/coord/lib/task-meta.ts");
+ensureCompanion("t-999");
+const firstRaw = JSON.parse(fs.readFileSync(getCompanionPath("t-999"), "utf8"));
+const taskPath = path.join(process.cwd(), "tasks", "queue", "task-999-sample.md");
+const source = fs.readFileSync(taskPath, "utf8");
+fs.writeFileSync(taskPath, source.replace("验证 companion lifecycle。", "验证 companion contract hash。"));
+ensureCompanion("t-999");
+const secondRaw = JSON.parse(fs.readFileSync(getCompanionPath("t-999"), "utf8"));
+console.log(JSON.stringify({{
+  first_hash: firstRaw.contract_hash,
+  second_hash: secondRaw.contract_hash,
+}}, null, 2));
+"""
+        )
+
+        self.assertTrue(first["first_hash"])
+        self.assertTrue(first["second_hash"])
+        self.assertNotEqual(first["first_hash"], first["second_hash"])
 
     def test_validate_change_trace_rejects_structural_change_without_task_update(self) -> None:
         scripts_dir = self.target / "scripts"

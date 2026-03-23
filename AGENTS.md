@@ -25,6 +25,7 @@ last_reviewed_at: 2026-03-22
 - 默认先做高 ROI 动作，不做过度工程和抽象炫技。
 - 人只做价值判断、需求澄清和结果验收；AI 默认负责执行闭环。
 - 只允许一层 plan；`memory/project/operating-blueprint.md` 是唯一 plan 主源，`memory/project/roadmap.md` 只保留战略摘要与里程碑。
+- Plan 只负责想清楚；task 只负责执行合同；companion 只负责机器执行上下文；release 只负责验收与运行事实。
 - AI 进入 task 前，默认先扩选项，再收关键决策，最后对准体验级验收结果。
 - 改动门禁固定分级：`light` 只覆盖 `docs/*`、`memory/*`、`code_index/*`、现有 `tasks/queue/*`；`structural` 覆盖代码、脚本、模板与依赖；`release` 覆盖发布和运行时链路。
 - 任何结构性改动都必须绑定任务、更新相关记忆，并在进入 `main` 前完成 review。

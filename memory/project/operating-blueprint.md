@@ -10,14 +10,14 @@ related_docs:
   - memory/project/roadmap.md
   - memory/project/current-state.md
   - docs/DEV_WORKFLOW.md
-last_reviewed_at: 2026-03-22
+last_reviewed_at: 2026-03-23
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 运营蓝图
 
 ## 需求总览
 
-把当前仓库收口成单层 Plan、阶段优先、价值判断优先的 AI 自主系统。AI 先通过多轮详尽沟通扩展选项，再收敛关键决策，最后把执行与发布对准体验级验收结果；task 只作为共享执行合同存在。
+把当前仓库收口成单层 Plan、阶段优先、价值判断优先的 AI 自主系统。AI 先通过多轮详尽沟通扩展选项，再收敛关键决策，最后把执行与发布对准体验级验收结果；Plan 负责想清楚，Task 负责做清楚，Companion 负责机器执行上下文，Release 负责验收与运行事实。
 
 ## 待思考
 
@@ -30,12 +30,15 @@ last_reviewed_at: 2026-03-22
 - 单层 plan 下，什么情况允许直接建 task，什么情况必须先留在 plan 里继续收边界
 - `父计划 / 承接边界 / 完成定义 / 测试策略` 的最小 task 合同，需要继续用真实任务验证
 - test 的引入、优化和退休规则，需要继续验证是否足够轻且足够能抓关键错误
+- companion 和 release 的最小字段集，需要继续验证是否已经足够支撑任务页、发布页和闭环脚本
 
 ## 计划边界
 
 - 只允许一层 plan，唯一主源是 `memory/project/operating-blueprint.md`
 - `roadmap` 只保留阶段、里程碑、优先级、方向和成功标准
 - `task` 只承接可执行事项与执行合同，不承接模糊想法，也不承接机器台账
+- `companion` 只保留机器执行上下文，不再镜像 task 正文
+- `release` 只保留验收与运行事实；task 摘要只在历史兼容时回退到最小 `delivery_snapshot`
 - 首页只保留需求总览，不展开细节工作台
 - 不新增独立想法池文件、数据库、第二套工单系统或新的发布状态源
 
@@ -43,6 +46,7 @@ last_reviewed_at: 2026-03-22
 
 - `t-040`：单层 Plan、阶段优先与首页需求总览收口（已完成）
 - `t-041`：把 task 重构成共享执行合同，并把机器 provenance 下沉到 companion / release / 投影层（已完成）
+- `t-042`：把 `plan / task / companion / release` 收口成四个稳定对象，各自只负责一类真相（进行中）
 - 后续结构性 task 只在边界清楚后由本计划产出；未成熟事项继续留在本计划内，不偷渡进执行链
 
 ## 下一步对话
@@ -54,7 +58,7 @@ last_reviewed_at: 2026-03-22
 
 ## 当前阻塞
 
-- 当前主要风险不是底座缺失，而是若 `roadmap / blueprint / task` 重新混写计划和执行，AI 与人会回到边聊边猜、过早开工的状态。
+- 当前主要风险不是底座缺失，而是若 `task / companion / release` 继续互相镜像摘要和 provenance，AI 会重新在多份对象间猜真相，边界又会变脏。
 
 ## 测试策略
 
@@ -72,4 +76,7 @@ last_reviewed_at: 2026-03-22
 - [x] 确认 task 主体不再手工维护分支、提交、release 和 update trace
 - [x] 确认首页只保留需求总览，细节全部下沉
 - [x] 确认测试策略在 task 中可追踪，且不引入重复门禁
+- [ ] 确认 companion 原始 shape 不再持久化 task 摘要、风险和完成定义
+- [ ] 确认 release 页面默认优先从 task 合同取摘要、风险和完成定义
+- [ ] 确认 release registry 只保留最小 `delivery_snapshot` 作为历史兼容回退
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

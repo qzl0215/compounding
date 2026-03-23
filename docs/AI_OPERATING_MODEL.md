@@ -40,6 +40,7 @@ related_docs:
 - 任务页默认优先展示交付摘要，而不是工程明细；工程信息在需要时再展开
 - `light` 改动可跳过 `coord:check:pre-task`；`structural / release` task 动手前默认先跑 `coord:check:pre-task`，它会同时检查任务 companion、scope guard、运行态和锁状态；高风险时会产出决策卡
 - 当前 Delivery Framework 默认把 task companion 视为派生的 machine-readable delivery contract；`create / start / handoff / merge / release handoff` 围绕同一份 companion 回写，但发布主状态仍只认 release registry
+- task 合同是唯一人类执行语义；companion 只保留机器执行上下文，release 只保留验收与运行事实，不再各自镜像 task 正文
 
 ## AI 特有协作约束
 

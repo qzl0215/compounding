@@ -13,29 +13,38 @@ type CompanionLifecycle = {
   release_handoff?: CompanionReleaseNote | null;
 };
 
-type CompanionContract = {
-  branch_name?: string | null;
-  planned_files?: string[];
-  planned_modules?: string[];
+type CompanionLock = {
+  target?: string | null;
 };
 
 type TaskCompanionShape = {
+  task_id?: string | null;
+  task_path?: string | null;
+  contract_hash?: string | null;
   current_mode?: string | null;
+  branch_name?: string | null;
+  planned_files?: string[];
+  planned_modules?: string[];
+  locks?: CompanionLock[];
   lifecycle?: CompanionLifecycle;
-  contract?: CompanionContract;
   artifacts?: {
+    decision_cards?: { path?: string | null }[];
+    diff_summaries?: { path?: string | null }[];
     release_notes?: CompanionReleaseNote[];
   };
 };
 
 export type TaskCompanionFacts = {
   currentMode: string;
+  contractHash: string;
   branch: string;
   recentCommit: string;
   releaseIds: string[];
   latestReleaseId: string | null;
   plannedFiles: string[];
   plannedModules: string[];
+  locks: string[];
+  artifactRefs: string[];
 };
 
 export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
@@ -43,12 +52,15 @@ export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
   if (!fs.existsSync(companionPath)) {
     return {
       currentMode: "",
+      contractHash: "",
       branch: "",
       recentCommit: "",
       releaseIds: [],
       latestReleaseId: null,
       plannedFiles: [],
       plannedModules: [],
+      locks: [],
+      artifactRefs: [],
     };
   }
 
@@ -64,22 +76,31 @@ export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
     );
     return {
       currentMode: String(companion.current_mode || "").trim(),
-      branch: String(companion.contract?.branch_name || "").trim(),
+      contractHash: String(companion.contract_hash || "").trim(),
+      branch: String(companion.branch_name || "").trim(),
       recentCommit: sanitizeCommit(companion.lifecycle?.handoff?.git_head),
       releaseIds,
       latestReleaseId: String(companion.lifecycle?.release_handoff?.release_id || "").trim() || releaseIds.at(-1) || null,
-      plannedFiles: uniqueStrings(companion.contract?.planned_files ?? []),
-      plannedModules: uniqueStrings(companion.contract?.planned_modules ?? []),
+      plannedFiles: uniqueStrings(companion.planned_files ?? []),
+      plannedModules: uniqueStrings(companion.planned_modules ?? []),
+      locks: uniqueStrings((companion.locks ?? []).map((lock) => String(lock?.target || "").trim())),
+      artifactRefs: uniqueStrings([
+        ...(companion.artifacts?.decision_cards ?? []).map((item) => String(item?.path || "").trim()),
+        ...(companion.artifacts?.diff_summaries ?? []).map((item) => String(item?.path || "").trim()),
+      ]),
     };
   } catch {
     return {
       currentMode: "",
+      contractHash: "",
       branch: "",
       recentCommit: "",
       releaseIds: [],
       latestReleaseId: null,
       plannedFiles: [],
       plannedModules: [],
+      locks: [],
+      artifactRefs: [],
     };
   }
 }

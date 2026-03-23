@@ -40,13 +40,18 @@ function createEmptyArtifacts() {
   };
 }
 
-function normalizeTaskStatus(value) {
-  const normalized = cleanString(value).toLowerCase();
-  if (normalized === "已完成" || normalized === "done" || normalized === "merged") return "done";
-  if (normalized === "阻塞中" || normalized === "blocked") return "blocked";
-  if (normalized === "进行中" || normalized === "doing" || normalized === "in_progress") return "doing";
-  if (normalized === "待开始" || normalized === "todo" || normalized === "planned") return "todo";
-  return normalized || "todo";
+function normalizeLocks(locks = []) {
+  return (Array.isArray(locks) ? locks : [])
+    .filter((lock) => lock && typeof lock === "object")
+    .map((lock) => ({
+      lock_id: cleanString(lock.lock_id),
+      target_type: cleanString(lock.target_type || "file"),
+      target: cleanString(lock.target),
+      owner_task_id: cleanString(lock.owner_task_id),
+      owner_agent: cleanString(lock.owner_agent),
+      status: cleanString(lock.status || "active"),
+    }))
+    .filter((lock) => lock.target);
 }
 
 function normalizeLegacyStatus(taskStatus) {
@@ -74,44 +79,17 @@ function collectSummaryArtifacts(companion) {
   ]);
 }
 
-function normalizeContract(companion = {}) {
-  const contract = companion.contract || {};
-  return {
-    branch_name: cleanString(contract.branch_name || companion.branch_name, ""),
-    base_branch: cleanString(contract.base_branch || companion.base_branch, "dev"),
-    planned_files: uniqueStrings(contract.planned_files || companion.planned_files || []),
-    planned_modules: uniqueStrings(contract.planned_modules || companion.planned_modules || []),
-    risk_assessment: cleanString(contract.risk_assessment || companion.risk_assessment, "medium"),
-    execution_mode: cleanString(contract.execution_mode || companion.execution_mode, "direct_edit"),
-    ui_validation_required: Boolean(
-      contract.ui_validation_required ?? companion.ui_validation_required ?? false
-    ),
-  };
-}
-
 function normalizeCompanion(companion = {}) {
   const normalized = {
-    schema_version: cleanString(companion.schema_version, "2"),
+    schema_version: cleanString(companion.schema_version, "3"),
     task_id: cleanString(companion.short_id || companion.task_id),
-    short_id: cleanString(companion.short_id || companion.task_id),
-    task_record_id: cleanString(companion.task_record_id),
     task_path: cleanString(companion.task_path),
-    title: cleanString(companion.title),
-    goal: cleanString(companion.goal || companion.title),
-    owner_agent: cleanString(companion.owner_agent, "default"),
-    human_decision_needed: Boolean(companion.human_decision_needed),
-    human_decision_reason: companion.human_decision_reason ? cleanString(companion.human_decision_reason) : null,
+    contract_hash: cleanString(companion.contract_hash),
     current_mode: cleanString(companion.current_mode, "方案评审"),
-    task_status: normalizeTaskStatus(companion.task_status || companion.status),
-    truth_boundaries: {
-      task_document: cleanString(companion.truth_boundaries?.task_document || companion.task_path),
-      release_registry: cleanString(companion.truth_boundaries?.release_registry, "runtime registry.json"),
-      companion_role: cleanString(
-        companion.truth_boundaries?.companion_role,
-        "derived machine-readable delivery contract"
-      ),
-    },
-    contract: normalizeContract(companion),
+    branch_name: cleanString(companion.branch_name || companion.contract?.branch_name, ""),
+    planned_files: uniqueStrings(companion.planned_files || companion.contract?.planned_files || []),
+    planned_modules: uniqueStrings(companion.planned_modules || companion.contract?.planned_modules || []),
+    locks: normalizeLocks(companion.locks),
     lifecycle: { ...createEmptyLifecycle(), ...(companion.lifecycle || {}) },
     artifacts: {
       ...createEmptyArtifacts(),
@@ -124,13 +102,6 @@ function normalizeCompanion(companion = {}) {
     },
   };
 
-  if (!normalized.task_id && normalized.task_record_id) {
-    normalized.task_id = normalized.task_record_id;
-  }
-  if (!normalized.short_id && normalized.task_id) {
-    normalized.short_id = normalized.task_id;
-  }
-
   return normalized;
 }
 
@@ -138,14 +109,13 @@ function buildCompatView(companion) {
   const normalized = normalizeCompanion(companion);
   return {
     ...normalized,
-    branch_name: normalized.contract.branch_name,
-    base_branch: normalized.contract.base_branch,
-    planned_files: normalized.contract.planned_files,
-    planned_modules: normalized.contract.planned_modules,
-    risk_assessment: normalized.contract.risk_assessment,
-    execution_mode: normalized.contract.execution_mode,
-    ui_validation_required: normalized.contract.ui_validation_required,
-    status: normalizeLegacyStatus(normalized.task_status),
+    short_id: normalized.task_id,
+    branch_name: normalized.branch_name,
+    planned_files: normalized.planned_files,
+    planned_modules: normalized.planned_modules,
+    status: normalizeLegacyStatus(
+      normalized.lifecycle?.release_handoff?.channel === "prod" ? "done" : normalized.lifecycle?.handoff ? "doing" : "todo"
+    ),
     companion_phase: buildCompanionPhase(normalized),
     summary_artifacts: collectSummaryArtifacts(normalized),
   };
@@ -161,6 +131,5 @@ module.exports = {
   mergeArtifactList,
   normalizeCompanion,
   normalizeLegacyStatus,
-  normalizeTaskStatus,
   uniqueStrings,
 };

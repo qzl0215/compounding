@@ -98,6 +98,87 @@ describe("releases service", () => {
     expect(getReleaseDashboard().releases[0]?.release_id).toBe("rel-003");
   });
 
+  it("prefers task contract summary and falls back to delivery snapshot", () => {
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "compounding-release-summary-"));
+    const registryPath = path.join(tempRoot, "registry.json");
+    process.env.AI_OS_RELEASE_ROOT = tempRoot;
+    fs.writeFileSync(
+      registryPath,
+      JSON.stringify(
+        {
+          active_release_id: "rel-fallback",
+          pending_dev_release_id: "rel-task",
+          updated_at: "2026-03-23T10:00:00Z",
+          releases: [
+            {
+              release_id: "rel-task",
+              commit_sha: "1111111",
+              tag: null,
+              source_ref: "HEAD",
+              primary_task_id: "task-041-task-execution-contract",
+              linked_task_ids: [],
+              delivery_snapshot: {
+                summary: "旧快照摘要",
+                risk: "旧快照风险",
+                done_when: "旧快照完成定义"
+              },
+              channel: "dev",
+              acceptance_status: "pending",
+              preview_url: "http://127.0.0.1:3011",
+              promoted_to_main_at: null,
+              promoted_from_dev_release_id: null,
+              created_at: "2026-03-23T10:00:00Z",
+              status: "preview",
+              build_result: "passed",
+              smoke_result: "passed",
+              cutover_at: null,
+              rollback_from: null,
+              release_path: "/tmp/rel-task",
+              change_summary: [],
+              notes: []
+            },
+            {
+              release_id: "rel-fallback",
+              commit_sha: "2222222",
+              tag: null,
+              source_ref: "HEAD",
+              primary_task_id: "task-missing",
+              linked_task_ids: [],
+              delivery_snapshot: {
+                summary: "仅快照摘要",
+                risk: "仅快照风险",
+                done_when: "仅快照完成定义"
+              },
+              channel: "prod",
+              acceptance_status: "accepted",
+              preview_url: null,
+              promoted_to_main_at: null,
+              promoted_from_dev_release_id: null,
+              created_at: "2026-03-23T09:00:00Z",
+              status: "active",
+              build_result: "passed",
+              smoke_result: "passed",
+              cutover_at: "2026-03-23T09:05:00Z",
+              rollback_from: null,
+              release_path: "/tmp/rel-fallback",
+              change_summary: [],
+              notes: []
+            }
+          ]
+        },
+        null,
+        2
+      )
+    );
+
+    const dashboard = getReleaseDashboard();
+    expect(dashboard.pending_dev_release?.resolved_task_contract?.task_id).toBe("task-041-task-execution-contract");
+    expect(dashboard.pending_dev_release?.resolved_task_contract?.summary).toBeTruthy();
+    expect(dashboard.pending_dev_release?.delivery_snapshot?.summary).toBe("旧快照摘要");
+    expect(dashboard.active_release?.resolved_task_contract).toBeNull();
+    expect(dashboard.active_release?.delivery_snapshot?.summary).toBe("仅快照摘要");
+  });
+
   it("exposes the fixed validation layer order", () => {
     expect(RELEASE_VALIDATION_ORDER).toEqual(["static", "build", "runtime", "ai-output"]);
     expect(VALIDATION_LAYERS).toHaveLength(4);
