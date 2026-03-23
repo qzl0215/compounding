@@ -5,8 +5,9 @@
     "title": "文档重构系统提示词",
     "required_sections": [
       "# 文档重构系统提示词",
-      "## 核心原则",
-      "## 输出要求"
+      "## 原则",
+      "## 输出要求",
+      "## 风险边界"
     ],
     "consumers": [
       "apps/studio/src/modules/docs/ai-rewrite.ts",
@@ -34,7 +35,8 @@
     "required_sections": [
       "# 文档重构执行提示词",
       "## 输出 JSON 结构",
-      "## 重构要求"
+      "## 重构要求",
+      "## 约束"
     ],
     "consumers": [
       "apps/studio/src/modules/docs/ai-rewrite.ts",
