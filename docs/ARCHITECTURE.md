@@ -74,12 +74,7 @@ related_docs:
 
 ## 协作边界映射
 
-- 工作模式的唯一真相源在 `docs/WORK_MODES.md`
-- `AGENTS.md` 负责硬规则、门禁和执行契约
-- `memory/project/*` 负责计划、状态与经验
-- `tasks/*` 负责执行边界与交付合同
-- `release` 负责验收、运行态与回滚事实
-- 执行判断只看场景、状态、上下文、允许动作和验收标准，不按身份标签路由
+- 协作边界按 `AGENTS.md`、`docs/WORK_MODES.md`、`memory/project/*`、`tasks/*` 和 `release` 分层；执行判断只看场景、状态、上下文、允许动作和验收标准。
 
 ## 禁止调用方式
 
