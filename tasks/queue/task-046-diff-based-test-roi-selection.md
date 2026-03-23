@@ -47,9 +47,9 @@
 
 ## 交付结果
 
-- 状态：doing
+- 状态：done
 - 体验验收结果：
-  待验收：diff-aware 现已显式输出 selectedChecks、选择原因和 retirementSuggestions，发布页可直接看到最小检查集与退休提示。
+  已验收：diff-aware 已显式输出 selectedChecks、选择原因和 retirementSuggestions，发布页可直接看到最小检查集与退休提示。
 - 交付结果：
   测试与验证现在可以按 diff 范围选择，不再只靠固定层级和人工经验猜。
 - 复盘：
