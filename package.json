@@ -13,6 +13,7 @@
     "preflight": "python3 scripts/pre_mutation_check.py",
     "ai:scan-health": "node --experimental-strip-types scripts/ai/scan-code-health.ts",
     "ai:scan-health:strict": "node --experimental-strip-types scripts/ai/scan-code-health.ts --strict",
+    "ai:generate-code-volume": "node --experimental-strip-types scripts/ai/generate-code-volume.ts",
     "ai:generate-index": "node --experimental-strip-types scripts/ai/generate-module-index.ts",
     "ai:generate-experience-index": "node --experimental-strip-types scripts/ai/generate-experience-index.ts",
     "ai:generate-assets": "node --experimental-strip-types scripts/ai/generate-asset-maintenance.ts",
