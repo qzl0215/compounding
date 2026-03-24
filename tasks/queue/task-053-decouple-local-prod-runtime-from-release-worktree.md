@@ -50,6 +50,6 @@
 - 体验验收结果：
   本地 production 已从固定 runtime 副本目录启动，`cwd` 不再指向 release worktree；`git worktree list` 只剩主工作区。
 - 交付结果：
-  新增 prod runtime materialize/prune 逻辑，并接入 `accept-dev-release`、`switch-release`、`rollback-release`；当前 active prod 已成功切到 `.compounding-runtime/live/prod/20260324144838-9b553a5-prod`。
+  新增 prod runtime materialize/prune 逻辑，并接入 `accept-dev-release`、`switch-release`、`rollback-release`；materialize 后会补一轮 install，确保 runtime 副本不依赖 release worktree 或临时 worktree 的 node_modules 链接；当前 active prod 已成功切到 `.compounding-runtime/live/prod/20260324144838-9b553a5-prod` 并通过健康检查。
 - 复盘：
-  真正需要删除的不是 worktree 本身，而是 runtime 对 release worktree 的运行依赖；先解耦运行 cwd，再清理 worktree，路径最稳。
+  真正需要删除的不是 worktree 本身，而是 runtime 对 release worktree 的运行依赖；release cutover 必须产出自包含 runtime 副本，否则 pnpm 链接会把运行时悄悄绑回临时源目录。
