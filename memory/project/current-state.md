@@ -27,6 +27,7 @@ related_docs:
 - `t-053` 正在把本地 production 从 release worktree 运行 cwd 中解耦：active prod 先 materialize 到固定 runtime 副本，再由本地生产进程从该副本启动。
 - 当前目标是让 release worktree 只承担构建与切换输入，不再承担本地 production 常驻运行目录。
 - `t-054` 已补上 `single-kernel + project-shell` 的 MVP 闭环：当前仓库可作为老项目跑通 `attach / audit / proposal`，空目录可跑最小 `bootstrap`，`apply-proposal` 只自动处理 `auto_apply` 协议资产。
+- `t-054` 已用第二个老项目 `qianfamily` 完成真实验证：`bootstrap/project_brief.yaml` 已生成并落分支，缺失协议资产已通过 kernel proposal `auto_apply` 补齐，`qianfamily` 的 `audit / typecheck / build` 均已通过。
 - 当前阶段不扩新页面、新状态源、新运行时系统或远端部署模型；继续只做 release/runtime 边界收口。
 
 ## 当前阻塞

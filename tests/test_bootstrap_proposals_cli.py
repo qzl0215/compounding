@@ -69,6 +69,52 @@ class BootstrapProposalCliTests(BootstrapWorkspaceTestCase):
         self.assertTrue((self.target / "docs" / "WORK_MODES.md").exists())
         self.assertFalse((self.target / "AGENTS.md").exists())
 
+    def test_proposal_moves_existing_task_template_diff_to_proposal_required(self) -> None:
+        (self.target / "memory" / "project").mkdir(parents=True, exist_ok=True)
+        (self.target / "tasks" / "queue").mkdir(parents=True, exist_ok=True)
+        (self.target / "tasks" / "templates").mkdir(parents=True, exist_ok=True)
+        (self.target / "tasks" / "templates" / "task-template.md").write_text("# local template\n", encoding="utf8")
+        (self.target / "README.md").write_text("# Legacy Repo\n\nlegacy app\n", encoding="utf8")
+
+        subprocess.run(
+            ["python3", str(ROOT / "scripts" / "init_project_compounding.py"), "attach", "--target", str(self.target)],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+
+        proposal_id = create_proposal(self.target)
+        payload = load_yaml(self.target / "output" / "proposals" / proposal_id / "proposal.yaml")
+
+        self.assertNotIn("tasks/templates/task-template.md", payload["changes"]["auto_apply"])
+        self.assertIn("tasks/templates/task-template.md", payload["changes"]["proposal_required"])
+
+    def test_proposal_auto_applies_missing_operating_blueprint(self) -> None:
+        (self.target / "memory" / "project").mkdir(parents=True, exist_ok=True)
+        (self.target / "memory" / "project" / "roadmap.md").write_text("# 路线图\n", encoding="utf8")
+        (self.target / "memory" / "project" / "current-state.md").write_text("# 当前状态\n", encoding="utf8")
+        (self.target / "memory" / "project" / "tech-debt.md").write_text("# 技术债\n", encoding="utf8")
+        (self.target / "tasks" / "queue").mkdir(parents=True, exist_ok=True)
+        (self.target / "README.md").write_text("# Legacy Repo\n\nlegacy app\n", encoding="utf8")
+
+        subprocess.run(
+            ["python3", str(ROOT / "scripts" / "init_project_compounding.py"), "attach", "--target", str(self.target)],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        self.init_git_repo()
+        subprocess.run(["git", "add", "."], cwd=self.target, check=True, capture_output=True, text=True)
+        subprocess.run(["git", "commit", "-m", "baseline"], cwd=self.target, check=True, capture_output=True, text=True)
+
+        proposal_id = create_proposal(self.target)
+        payload = load_yaml(self.target / "output" / "proposals" / proposal_id / "proposal.yaml")
+        self.assertIn("memory/project/operating-blueprint.md", payload["changes"]["auto_apply"])
+
+        result = apply_proposal(self.target, proposal_id)
+        self.assertEqual(result["status"], "applied")
+        self.assertTrue((self.target / "memory" / "project" / "operating-blueprint.md").exists())
+
     def test_apply_proposal_rejects_when_no_auto_apply_exists(self) -> None:
         bootstrap(self.brief_path, self.target)
         self.init_git_repo()

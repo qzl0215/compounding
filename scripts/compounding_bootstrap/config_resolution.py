@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any
 
@@ -22,6 +23,56 @@ from .defaults import (
 from .repo_scan import scan_repo, slugify
 from .schema_validation import validate_payload
 from .yaml_io import load_yaml, save_yaml
+
+GENERIC_ONE_LINERS = {
+    "一个已经接入 kernel + shell 协议的项目壳子。",
+    "把现有项目接入单主干 kernel + project shell 的个人 AI 工程底盘。",
+    "把当前仓库升级成适合 AI 长期协作、任务驱动、可持续重构与自进化的 AI-Native Repo。",
+}
+
+GENERIC_APP_TYPES = {
+    "",
+    "project-shell",
+}
+
+GENERIC_DEPLOY_TARGETS = {
+    "",
+    "unknown",
+    "custom-deploy",
+}
+
+GENERIC_CRITICAL_PATHS = {
+    "AGENTS.md",
+    "memory/project/operating-blueprint.md",
+    "scripts/compounding_bootstrap/*",
+}
+
+
+def load_package_json(target: Path) -> dict[str, Any]:
+    path = target / "package.json"
+    if not path.exists():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf8"))
+    except json.JSONDecodeError:
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
+def has_dependency(package_json: dict[str, Any], package_name: str) -> bool:
+    for section in ("dependencies", "devDependencies", "peerDependencies"):
+        deps = package_json.get(section)
+        if isinstance(deps, dict) and package_name in deps:
+            return True
+    return False
+
+
+def text_contains(target: Path, relative_path: str, needles: list[str]) -> bool:
+    path = target / relative_path
+    if not path.exists():
+        return False
+    content = path.read_text(encoding="utf8").lower()
+    return any(needle.lower() in content for needle in needles)
 
 
 def default_brief_payload(project_name: str, adoption_mode: str = "attach") -> dict[str, Any]:
@@ -63,13 +114,15 @@ def infer_one_liner(target: Path, payload: dict[str, Any] | None = None) -> str:
         existing.get("project_one_liner"),
     ]
     for candidate in candidates:
-        if isinstance(candidate, str) and candidate.strip():
-            return candidate.strip()
+        if isinstance(candidate, str):
+            value = candidate.strip()
+            if value and value not in GENERIC_ONE_LINERS:
+                return value
     readme_path = target / "README.md"
     if readme_path.exists():
         for raw in readme_path.read_text(encoding="utf8").splitlines():
             line = raw.strip()
-            if line and not line.startswith("#"):
+            if line and not line.startswith("#") and not line.startswith("```"):
                 return line
     return "把现有项目接入单主干 kernel + project shell 的个人 AI 工程底盘。"
 
@@ -89,6 +142,13 @@ def infer_project_name(target: Path, payload: dict[str, Any] | None = None) -> s
 
 
 def infer_deploy_target(target: Path) -> str:
+    package_json = load_package_json(target)
+    if has_dependency(package_json, "next"):
+        if text_contains(target, "next.config.ts", ['output: "export"', "output: 'export'"]) and (
+            (target / "deploy").exists() or text_contains(target, "README.md", ["nginx", "静态导出"])
+        ):
+            return "nginx-static-export"
+        return "next-runtime"
     if (target / "scripts" / "local-runtime").exists():
         return "local-runtime"
     if (target / "deploy").exists():
@@ -97,6 +157,11 @@ def infer_deploy_target(target: Path) -> str:
 
 
 def infer_app_type(target: Path) -> str:
+    package_json = load_package_json(target)
+    if has_dependency(package_json, "next"):
+        if text_contains(target, "next.config.ts", ['output: "export"', "output: 'export'"]):
+            return "nextjs-static-site"
+        return "nextjs-app"
     if (target / "apps").exists() and (target / "tasks").exists() and (target / "memory").exists():
         return "ai-native-repo"
     if (target / "apps").exists():
@@ -104,13 +169,118 @@ def infer_app_type(target: Path) -> str:
     return "project-shell"
 
 
+def should_refresh_app_type(target: Path, current_app_type: str) -> bool:
+    value = current_app_type.strip()
+    if value in GENERIC_APP_TYPES:
+        return True
+    package_json = load_package_json(target)
+    if has_dependency(package_json, "next") and value == "ai-native-repo":
+        return True
+    return False
+
+
 def infer_critical_paths(target: Path) -> list[str]:
     paths = [
         "AGENTS.md",
+        "README.md",
+        "docs/PROJECT_RULES.md",
+        "docs/ARCHITECTURE.md",
+        "memory/project/roadmap.md",
+        "memory/project/current-state.md",
         "memory/project/operating-blueprint.md",
         "scripts/compounding_bootstrap/*",
     ]
+    if (target / "src" / "app").exists():
+        paths.append("src/app/**")
+    if (target / "src" / "modules").exists():
+        paths.append("src/modules/**")
+    if (target / "deploy").exists():
+        paths.append("deploy/**")
     return [path for path in paths if _path_exists_for_pattern(target, path)]
+
+
+def should_refresh_critical_paths(target: Path, current_paths: Any) -> bool:
+    if not isinstance(current_paths, list) or not current_paths:
+        return True
+    normalized = [str(item).strip() for item in current_paths if str(item).strip()]
+    if not normalized:
+        return True
+    if set(normalized).issubset(GENERIC_CRITICAL_PATHS):
+        if (target / "src" / "app").exists() or (target / "src" / "modules").exists() or (target / "deploy").exists():
+            return True
+    return False
+
+
+def infer_owned_paths(target: Path) -> list[str]:
+    candidates = [
+        "memory/**",
+        "tasks/queue/**",
+        "apps/**",
+        "src/**",
+        "app/**",
+        "pages/**",
+        "components/**",
+        "lib/**",
+        "public/**",
+        "code_index/**",
+    ]
+    owned = [pattern for pattern in candidates if _path_exists_for_pattern(target, pattern)]
+    return owned or DEFAULT_OWNED_PATHS.copy()
+
+
+def should_refresh_owned_paths(target: Path, current_paths: Any) -> bool:
+    if not isinstance(current_paths, list) or not current_paths:
+        return True
+    normalized = [str(item).strip() for item in current_paths if str(item).strip()]
+    if not normalized:
+        return True
+    if normalized == DEFAULT_OWNED_PATHS:
+        return True
+    if "apps/**" in normalized and not _path_exists_for_pattern(target, "apps/**"):
+        if any(_path_exists_for_pattern(target, path) for path in ("src/**", "app/**", "pages/**", "components/**", "lib/**")):
+            return True
+    return False
+
+
+def infer_blocked_paths(target: Path) -> list[str]:
+    candidates = [
+        "src/**",
+        "app/**",
+        "pages/**",
+        "components/**",
+        "lib/**",
+        "public/**",
+        "scripts/release/**",
+        "scripts/local-runtime/**",
+        "deploy/**",
+        ".github/workflows/**",
+    ]
+    blocked = [pattern for pattern in candidates if _path_exists_for_pattern(target, pattern)]
+    return blocked or DEFAULT_BLOCKED_PATHS.copy()
+
+
+def should_refresh_deploy_target(target: Path, current_deploy_target: str) -> bool:
+    value = current_deploy_target.strip()
+    if value in GENERIC_DEPLOY_TARGETS:
+        return True
+    package_json = load_package_json(target)
+    if has_dependency(package_json, "next") and value == "local-runtime":
+        return True
+    return False
+
+
+def should_refresh_blocked_paths(target: Path, current_paths: Any) -> bool:
+    if not isinstance(current_paths, list) or not current_paths:
+        return True
+    normalized = [str(item).strip() for item in current_paths if str(item).strip()]
+    if not normalized:
+        return True
+    if normalized == DEFAULT_BLOCKED_PATHS:
+        return True
+    if "apps/**" in normalized and not _path_exists_for_pattern(target, "apps/**"):
+        if any(_path_exists_for_pattern(target, path) for path in ("src/**", "app/**", "pages/**", "components/**", "lib/**")):
+            return True
+    return False
 
 
 def _path_exists_for_pattern(target: Path, pattern: str) -> bool:
@@ -144,15 +314,23 @@ def normalize_brief_payload(payload: dict[str, Any], target: Path, adoption_mode
     }
 
     runtime_boundary = payload.get("runtime_boundary") if isinstance(payload.get("runtime_boundary"), dict) else {}
+    current_app_type = str(runtime_boundary.get("app_type") or "").strip()
+    current_deploy_target = str(runtime_boundary.get("deploy_target") or "").strip()
     normalized["runtime_boundary"] = {
-        "app_type": str(runtime_boundary.get("app_type") or infer_app_type(target)),
-        "deploy_target": str(runtime_boundary.get("deploy_target") or infer_deploy_target(target)),
-        "critical_paths": runtime_boundary.get("critical_paths") or infer_critical_paths(target),
+        "app_type": infer_app_type(target) if should_refresh_app_type(target, current_app_type) else current_app_type,
+        "deploy_target": infer_deploy_target(target)
+        if should_refresh_deploy_target(target, current_deploy_target)
+        else current_deploy_target,
+        "critical_paths": infer_critical_paths(target)
+        if should_refresh_critical_paths(target, runtime_boundary.get("critical_paths"))
+        else runtime_boundary.get("critical_paths"),
     }
 
     local_overrides = payload.get("local_overrides") if isinstance(payload.get("local_overrides"), dict) else {}
     normalized["local_overrides"] = {
-        "owned_paths": local_overrides.get("owned_paths") or DEFAULT_OWNED_PATHS.copy(),
+        "owned_paths": infer_owned_paths(target)
+        if should_refresh_owned_paths(target, local_overrides.get("owned_paths"))
+        else local_overrides.get("owned_paths"),
         "protected_rules": local_overrides.get("protected_rules") or DEFAULT_PROTECTED_RULES.copy(),
     }
 
@@ -160,7 +338,9 @@ def normalize_brief_payload(payload: dict[str, Any], target: Path, adoption_mode
     normalized["upgrade_policy"] = {
         "auto_apply_paths": upgrade_policy.get("auto_apply_paths") or DEFAULT_AUTO_APPLY_PATHS.copy(),
         "proposal_required_paths": upgrade_policy.get("proposal_required_paths") or DEFAULT_PROPOSAL_REQUIRED_PATHS.copy(),
-        "blocked_paths": upgrade_policy.get("blocked_paths") or DEFAULT_BLOCKED_PATHS.copy(),
+        "blocked_paths": infer_blocked_paths(target)
+        if should_refresh_blocked_paths(target, upgrade_policy.get("blocked_paths"))
+        else upgrade_policy.get("blocked_paths"),
     }
     return normalized, migrated
 
@@ -266,8 +446,10 @@ __all__ = [
     "default_brief_payload",
     "ensure_brief",
     "infer_app_type",
+    "infer_blocked_paths",
     "infer_critical_paths",
     "infer_deploy_target",
+    "infer_owned_paths",
     "infer_one_liner",
     "infer_project_name",
     "kernel_version",

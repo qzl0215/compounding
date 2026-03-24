@@ -81,7 +81,12 @@ def _write_if_missing(target: Path, relative_path: str, content: str, created: l
 
 def _write_minimal_shell(target: Path, project_name: str, created: list[str]) -> None:
     _write_if_missing(target, AGENTS_PATH, render_agents(project_name), created)
-    for relative_path, content in {
+    for relative_path, content in minimal_shell_assets(project_name).items():
+        _write_if_missing(target, relative_path, content, created)
+
+
+def minimal_shell_assets(project_name: str) -> dict[str, str]:
+    return {
         "docs/WORK_MODES.md": render_work_modes(),
         "docs/DEV_WORKFLOW.md": render_dev_workflow(),
         "docs/ARCHITECTURE.md": render_architecture(),
@@ -94,8 +99,15 @@ def _write_minimal_shell(target: Path, project_name: str, created: list[str]) ->
         "memory/project/tech-debt.md": render_tech_debt(),
         "tasks/queue/.gitkeep": "",
         "output/proposals/.gitkeep": "",
-    }.items():
-        _write_if_missing(target, relative_path, content, created)
+    }
+
+
+def write_shell_asset(target: Path, relative_path: str, project_name: str) -> bool:
+    content = minimal_shell_assets(project_name).get(relative_path)
+    if content is None:
+        return False
+    _write_if_missing(target, relative_path, content, [])
+    return True
 
 
 def render_agents(project_name: str) -> str:
@@ -244,4 +256,4 @@ def render_tech_debt() -> str:
 """
 
 
-__all__ = ["bootstrap"]
+__all__ = ["bootstrap", "minimal_shell_assets", "write_shell_asset"]

@@ -7,12 +7,14 @@ from pathlib import Path
 from typing import Any
 
 from .attach import attach, pattern_exists
+from .bootstrap import write_shell_asset
 from .config_resolution import ensure_brief
 from .defaults import (
     BOOTSTRAP_REPORT_PATH,
     BRIEF_PATH,
     DIFF_CATEGORIES,
     KERNEL_MANIFEST_PATH,
+    MINIMAL_MEMORY_DOCS,
     OUTPUT_PROPOSALS_DIR,
     PROPOSAL_SCHEMA_PATH,
     SOURCE_ROOT,
@@ -77,17 +79,17 @@ def classify_managed_asset(target: Path, entry: dict[str, Any], brief: dict[str,
         if path_matches(relative_path, auto_apply_paths) or sync_mode == "auto":
             return "auto_apply", None
         return "proposal_required", None
-    if path_matches(relative_path, auto_apply_paths):
-        if canonical_file_differs(target, relative_path):
-            return "auto_apply", None
-        return None, None
-    if path_matches(relative_path, proposal_required_paths):
-        if canonical_file_differs(target, relative_path):
-            return "proposal_required", "managed path diverges from kernel"
-        return None, None
     if canonical_file_differs(target, relative_path):
         return "proposal_required", "managed path diverges from kernel"
+    if path_matches(relative_path, auto_apply_paths):
+        return None, None
+    if path_matches(relative_path, proposal_required_paths):
+        return None, None
     return None, None
+
+
+def missing_shell_protocol_assets(target: Path) -> list[str]:
+    return [path for path in MINIMAL_MEMORY_DOCS if not pattern_exists(target, path)]
 
 
 def build_conflicts(manifest: dict[str, Any], brief: dict[str, Any], target: Path) -> list[dict[str, str]]:
@@ -163,6 +165,9 @@ def create_proposal(target: Path, config_path: Path | None = None) -> str:
         path = str(entry.get("path") or "")
         if pattern_exists(target, path):
             changes["blocked"].append(path)
+
+    for path in missing_shell_protocol_assets(target):
+        changes["auto_apply"].append(path)
 
     conflicts = build_conflicts(manifest, brief, target)
     must_confirm = sorted(set(changes["proposal_required"] + [item["path"] for item in conflicts]))
@@ -242,6 +247,8 @@ def copy_source_asset(target: Path, relative_path: str) -> list[str]:
     if relative_path == BRIEF_PATH:
         ensure_brief(target / BRIEF_PATH, target)
         return [BRIEF_PATH]
+    if write_shell_asset(target, relative_path, target.resolve().name):
+        return [relative_path]
     for source_path in expand_source_paths(relative_path):
         destination = target / source_path.relative_to(SOURCE_ROOT)
         destination.parent.mkdir(parents=True, exist_ok=True)

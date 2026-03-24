@@ -52,9 +52,9 @@
 
 - 状态：done
 - 体验验收结果：
-  当前仓库已能作为老项目 attach 示例运行；空目录能生成最小 project shell；低风险 auto-apply 只会补齐协议层资产。
+  当前仓库已能作为老项目 attach 示例运行；空目录能生成最小 project shell；`qianfamily` 已完成真实老项目 `attach -> proposal -> auto_apply -> audit` 验证，且 `typecheck / build` 继续通过；低风险 auto-apply 只会补齐协议层资产。
 - 交付结果：
-  新增 schema/template/kernel manifest、attach/audit/proposal/bootstrap/apply-proposal 链路、当前仓库示例产物和 MVP 实施说明；同时把 task template/create-task 补到默认带最小 machine facts，避免 structural task 再靠手工补 `关联模块` 才能通过 scope guard。
+  新增 schema/template/kernel manifest、attach/audit/proposal/bootstrap/apply-proposal 链路、当前仓库示例产物和 MVP 实施说明；同时把 task template/create-task 补到默认带最小 machine facts，避免 structural task 再靠手工补 `关联模块` 才能通过 scope guard，并把 attach 推导与 proposal 分类修到能正确处理 `qianfamily` 这类 Next.js 静态站老项目。
 - 复盘：
   真正值钱的不是再造一套抽象，而是先把老项目接协议层和新项目最小起壳做成低风险闭环；`apply` 必须严格限制在 `auto_apply`，否则很容易重新把 proposal 变成隐性重写。
 

@@ -30,10 +30,36 @@ class BootstrapKernelShellTests(BootstrapWorkspaceTestCase):
         report = attach(self.brief_path, self.target)
 
         self.assertEqual(report["kernel"]["adoption_mode"], "attach")
-        self.assertIn("memory/project/**", report["detected"]["local_overrides"])
+        self.assertIn("memory/**", report["detected"]["local_overrides"])
         self.assertIn("tasks/queue/**", report["detected"]["local_overrides"])
         self.assertIn("apps/**", report["detected"]["local_overrides"])
         self.assertTrue((self.target / "output" / "bootstrap" / "bootstrap_report.yaml").exists())
+
+    def test_attach_infers_next_static_site_runtime_and_owned_paths(self) -> None:
+        (self.target / "memory" / "project").mkdir(parents=True, exist_ok=True)
+        (self.target / "tasks" / "queue").mkdir(parents=True, exist_ok=True)
+        (self.target / "src" / "app").mkdir(parents=True, exist_ok=True)
+        (self.target / "src" / "modules").mkdir(parents=True, exist_ok=True)
+        (self.target / "deploy").mkdir(parents=True, exist_ok=True)
+        (self.target / "README.md").write_text(
+            "# qianfamily\n\n`qianfamily.online` 当前是静态中文宗亲门户站。\n",
+            encoding="utf8",
+        )
+        (self.target / "next.config.ts").write_text('export default { output: "export" };\n', encoding="utf8")
+        (self.target / "package.json").write_text(
+            '{"dependencies":{"next":"15.0.0","react":"19.0.0","react-dom":"19.0.0"}}\n',
+            encoding="utf8",
+        )
+
+        attach(self.brief_path, self.target)
+        brief = load_yaml(self.brief_path)
+
+        self.assertEqual(brief["project_identity"]["one_liner"], "`qianfamily.online` 当前是静态中文宗亲门户站。")
+        self.assertEqual(brief["runtime_boundary"]["app_type"], "nextjs-static-site")
+        self.assertEqual(brief["runtime_boundary"]["deploy_target"], "nginx-static-export")
+        self.assertIn("src/**", brief["local_overrides"]["owned_paths"])
+        self.assertIn("src/**", brief["upgrade_policy"]["blocked_paths"])
+        self.assertIn("src/app/**", brief["runtime_boundary"]["critical_paths"])
 
     def test_validate_config_file_fails_for_invalid_adoption_mode(self) -> None:
         self.brief_path.write_text(
