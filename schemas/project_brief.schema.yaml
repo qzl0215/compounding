@@ -1,0 +1,82 @@
+type: object
+required:
+  - project_identity
+  - kernel
+  - runtime_boundary
+  - local_overrides
+  - upgrade_policy
+properties:
+  project_identity:
+    type: object
+    required:
+      - name
+      - one_liner
+      - success_criteria
+    properties:
+      name:
+        type: string
+      one_liner:
+        type: string
+      success_criteria:
+        type: array
+        items:
+          type: string
+  kernel:
+    type: object
+    required:
+      - version
+      - adoption_mode
+    properties:
+      version:
+        type: string
+      adoption_mode:
+        type: string
+        enum: [new, attach, reattach]
+  runtime_boundary:
+    type: object
+    required:
+      - app_type
+      - deploy_target
+      - critical_paths
+    properties:
+      app_type:
+        type: string
+      deploy_target:
+        type: string
+      critical_paths:
+        type: array
+        items:
+          type: string
+  local_overrides:
+    type: object
+    required:
+      - owned_paths
+      - protected_rules
+    properties:
+      owned_paths:
+        type: array
+        items:
+          type: string
+      protected_rules:
+        type: array
+        items:
+          type: string
+  upgrade_policy:
+    type: object
+    required:
+      - auto_apply_paths
+      - proposal_required_paths
+      - blocked_paths
+    properties:
+      auto_apply_paths:
+        type: array
+        items:
+          type: string
+      proposal_required_paths:
+        type: array
+        items:
+          type: string
+      blocked_paths:
+        type: array
+        items:
+          type: string

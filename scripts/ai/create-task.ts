@@ -12,7 +12,9 @@ if (!taskId || !summary || !whyNow) {
       "Usage: node --experimental-strip-types scripts/ai/create-task.ts <task-id> <summary> <why-now>",
       "Optional flags: --parentPlan=... --boundary=... --doneWhen=... --inScope=... --outOfScope=... --constraints=...",
       "                --risk=... --testReason=... --testScope=... --testSkip=... --testRoi=... --status=...",
-      "                --acceptanceResult=... --deliveryResult=... --retro=...",
+      "                --acceptanceResult=... --deliveryResult=... --retro=... --currentMode=... --branch=...",
+      "                --relatedModules='- `path/file`\\n- `dir/`' --updateTraceMemory=... --updateTraceIndex=...",
+      "                --updateTraceRoadmap=... --updateTraceDocs=...",
     ].join("\n")
   );
   process.exit(1);
@@ -53,6 +55,13 @@ const body = renderTaskTemplate(
     acceptance_result: argv.acceptanceResult || argv.acceptance_result,
     delivery_result: argv.deliveryResult || argv.delivery_result,
     retro: argv.retro,
+    current_mode: argv.currentMode || argv.current_mode || "工程执行",
+    branch: argv.branch || `codex/${taskId}`,
+    related_modules: argv.relatedModules || argv.related_modules || "",
+    update_trace_memory: argv.updateTraceMemory || argv.update_trace_memory || "no change: 未更新",
+    update_trace_index: argv.updateTraceIndex || argv.update_trace_index || "no change: 未更新",
+    update_trace_roadmap: argv.updateTraceRoadmap || argv.update_trace_roadmap || "no change: 未更新",
+    update_trace_docs: argv.updateTraceDocs || argv.update_trace_docs || "no change: 未更新",
   },
   root
 );

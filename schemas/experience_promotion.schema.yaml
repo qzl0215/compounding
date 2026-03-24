@@ -1,0 +1,49 @@
+type: object
+required:
+  - experience_id
+  - source_project
+  - type
+  - status
+  - evidence
+  - reusability
+  - promotion_decision
+properties:
+  experience_id:
+    type: string
+  source_project:
+    type: string
+  type:
+    type: string
+    enum: [rule, template, audit, script]
+  status:
+    type: string
+    enum: [local, candidate, promoted, rejected]
+  evidence:
+    type: object
+    required:
+      - references
+    properties:
+      references:
+        type: array
+        items:
+          type: string
+  reusability:
+    type: object
+    required:
+      - scope
+      - why_reusable
+    properties:
+      scope:
+        type: string
+      why_reusable:
+        type: string
+  promotion_decision:
+    type: object
+    required:
+      - reason
+      - complexity_cost
+    properties:
+      reason:
+        type: string
+      complexity_cost:
+        type: string

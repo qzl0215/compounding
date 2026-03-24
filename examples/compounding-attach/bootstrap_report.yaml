@@ -1,0 +1,52 @@
+project:
+  name: Compounding AI Operating System
+  path: /Users/apple/Documents/GitHub/Compounding
+kernel:
+  version: 0.1.0
+  adoption_mode: attach
+status:
+  attached: true
+  attach_score: 100
+  summary: Legacy attach completed with kernel/shell boundaries recorded and proposal inputs prepared.
+detected:
+  managed_assets:
+    - AGENTS.md
+    - docs/WORK_MODES.md
+    - docs/DEV_WORKFLOW.md
+    - docs/ARCHITECTURE.md
+    - docs/PROJECT_RULES.md
+    - docs/AI_OPERATING_MODEL.md
+    - docs/ASSET_MAINTENANCE.md
+    - schemas/project_brief.schema.yaml
+    - schemas/kernel_manifest.schema.yaml
+    - schemas/bootstrap_report.schema.yaml
+    - schemas/proposal.schema.yaml
+    - schemas/experience_promotion.schema.yaml
+    - templates/project_brief.template.yaml
+    - templates/bootstrap_report.template.yaml
+    - templates/proposal.template.yaml
+    - templates/experience_promotion.template.yaml
+    - kernel/kernel_manifest.yaml
+    - tasks/templates/task-template.md
+    - scripts/init_project_compounding.py
+    - scripts/compounding_bootstrap/*
+  shell_assets:
+    - memory/project/**
+    - tasks/queue/**
+    - apps/**
+  protected_assets:
+    - apps/**
+    - scripts/release/**
+    - scripts/local-runtime/**
+    - deploy/**
+  local_overrides:
+    - memory/project/**
+    - tasks/queue/**
+    - apps/**
+actions:
+  created:
+    - output/bootstrap/bootstrap_report.yaml
+  skipped:
+    - bootstrap/project_brief.yaml (already normalized)
+  needs_proposal: []
+  warnings: []

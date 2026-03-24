@@ -22,6 +22,13 @@ const path = require("node:path");
  * @property {string} [acceptance_result]
  * @property {string} [delivery_result]
  * @property {string} [retro]
+ * @property {string} [current_mode]
+ * @property {string} [branch]
+ * @property {string} [related_modules]
+ * @property {string} [update_trace_memory]
+ * @property {string} [update_trace_index]
+ * @property {string} [update_trace_roadmap]
+ * @property {string} [update_trace_docs]
  */
 
 const DEFAULT_TASK_TEMPLATE_VALUES = Object.freeze({
@@ -44,6 +51,13 @@ const DEFAULT_TASK_TEMPLATE_VALUES = Object.freeze({
   acceptance_result: "待验收",
   delivery_result: "未交付",
   retro: "未复盘",
+  current_mode: "工程执行",
+  branch: "codex/task-XXX",
+  related_modules: "",
+  update_trace_memory: "no change: 未更新",
+  update_trace_index: "no change: 未更新",
+  update_trace_roadmap: "no change: 未更新",
+  update_trace_docs: "no change: 未更新",
 });
 
 function getTaskTemplatePath(root = process.cwd()) {

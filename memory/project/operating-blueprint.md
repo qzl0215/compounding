@@ -15,19 +15,22 @@ last_reviewed_at: 2026-03-24
 
 ## 需求总览
 
-继续把结构收口落到真正会制造熵增的边界上：在保留单一 plan 的前提下，让本地 production 脱离 release worktree 运行。release worktree 只负责构建与切换输入，固定 runtime 副本才承载常驻运行。
+继续把结构收口落到真正会制造熵增的边界上：在保留单一 plan 的前提下，一方面让本地 production 脱离 release worktree 运行，另一方面把 Compounding 收口成 `single-kernel + project-shell` 的个人 AI 工程底盘。当前优先级先打通老项目 `attach -> audit -> proposal`，再补新项目最小 `bootstrap` 与低风险 `apply`。
 
 ## 待思考
 
 - dev preview 是否也值得在未来脱离 release worktree，还是保持当前模式更划算
 - release/runtime 边界里是否还残留其它“看起来是状态，实际是运行 cwd”一类隐性耦合
 - 当执行边界和运行边界已经拆开后，下一轮更值钱的是收脚本编排，还是收 release 兼容壳
+- kernel proposal 的 `auto_apply` 是否还需要更细的文件级白名单，才能在扩展 legacy attach 时继续保持低风险
 
 ## 待规划
 
 - `scripts/ai` 的重复编排逻辑应先收哪一层，才能在不造框架的前提下减少维护成本
 - release/runtime 链里哪些历史兼容点还值得继续下沉，避免把 live runtime 和 release registry 再次绑死
 - `README`、文档门户和 bootstrap manifest 怎样继续表达主干 / 附录分层，而不增加新文档族
+- 第二个老项目 attach 样本应怎样选择，才能尽快验证 `project_brief / bootstrap_report / proposal` 在非本仓库上的复用性
+- 新项目最小 shell 里哪些协议入口应继续压缩，避免 bootstrap 又回到“复制整套仓库”的旧路
 
 ## 计划边界
 
@@ -55,6 +58,7 @@ last_reviewed_at: 2026-03-24
 - `t-051`：把 `AGENTS` 激进瘦身成真正的执行入口，并让迁出的内容在对应主源中各归其位（已完成）
 - `t-052`：保留单一 plan，废除规划 task，让 planning 只作为阶段动作留在 `operating-blueprint`（已完成）
 - `t-053`：让本地 production 从固定 runtime 副本启动，切断对 release worktree 的运行依赖（进行中）
+- `t-054`：把 Compounding 收口成 `single-kernel + project-shell` 的最小可运行闭环，优先打通老项目 `attach -> audit -> proposal`，再补新项目最小 `bootstrap` 与低风险 `apply`（已完成）
 
 ## 下一步对话
 
@@ -65,6 +69,7 @@ last_reviewed_at: 2026-03-24
 - 需要收口高频文档时，优先删掉默认第一跳里的重复入口和粗粒度说明，而不是再写新的导读或说明书
 - 下一轮若继续做结构收口，先看脚本重复与兼容壳，再决定是否进入新的实现任务
 - 若运行问题来自 worktree、软链或 cwd 耦合，优先把运行目录从输入目录中拆开，而不是继续堆 release 台账
+- 若下一轮继续推进 kernel/shell，先拿第二个老项目验证 attach/audit/proposal 的复用性，再决定是否扩大 `auto_apply`
 
 ## 测试策略
 

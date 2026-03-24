@@ -31,6 +31,13 @@ def render_task_template(values: dict[str, str], template_path: Path = TASK_TEMP
         "acceptance_result": "待验收",
         "delivery_result": "让 review 与 release 可以复用同一份 companion。",
         "retro": "未复盘",
+        "current_mode": "工程执行",
+        "branch": "codex/task-999-sample",
+        "related_modules": "",
+        "update_trace_memory": "no change: 未更新",
+        "update_trace_index": "no change: 未更新",
+        "update_trace_roadmap": "no change: 未更新",
+        "update_trace_docs": "no change: 未更新",
     }
     merged.update(values)
     content = template_path.read_text(encoding="utf8")

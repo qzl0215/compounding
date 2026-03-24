@@ -1,0 +1,91 @@
+version: 0.1.0
+managed_assets:
+  - path: AGENTS.md
+    ownership: kernel
+    sync_mode: proposal
+  - path: docs/WORK_MODES.md
+    ownership: kernel
+    sync_mode: auto
+  - path: docs/DEV_WORKFLOW.md
+    ownership: kernel
+    sync_mode: auto
+  - path: docs/ARCHITECTURE.md
+    ownership: kernel
+    sync_mode: auto
+  - path: docs/PROJECT_RULES.md
+    ownership: kernel
+    sync_mode: auto
+  - path: docs/AI_OPERATING_MODEL.md
+    ownership: kernel
+    sync_mode: auto
+  - path: docs/ASSET_MAINTENANCE.md
+    ownership: kernel
+    sync_mode: auto
+  - path: schemas/project_brief.schema.yaml
+    ownership: kernel
+    sync_mode: auto
+  - path: schemas/kernel_manifest.schema.yaml
+    ownership: kernel
+    sync_mode: auto
+  - path: schemas/bootstrap_report.schema.yaml
+    ownership: kernel
+    sync_mode: auto
+  - path: schemas/proposal.schema.yaml
+    ownership: kernel
+    sync_mode: auto
+  - path: schemas/experience_promotion.schema.yaml
+    ownership: kernel
+    sync_mode: auto
+  - path: templates/project_brief.template.yaml
+    ownership: kernel
+    sync_mode: auto
+  - path: templates/bootstrap_report.template.yaml
+    ownership: kernel
+    sync_mode: auto
+  - path: templates/proposal.template.yaml
+    ownership: kernel
+    sync_mode: auto
+  - path: templates/experience_promotion.template.yaml
+    ownership: kernel
+    sync_mode: auto
+  - path: kernel/kernel_manifest.yaml
+    ownership: kernel
+    sync_mode: auto
+  - path: tasks/templates/task-template.md
+    ownership: kernel
+    sync_mode: auto
+  - path: scripts/init_project_compounding.py
+    ownership: kernel
+    sync_mode: auto
+  - path: scripts/compounding_bootstrap/*
+    ownership: kernel
+    sync_mode: auto
+shell_assets:
+  - path: memory/project/**
+    ownership: project
+    sync_mode: suggest_only
+  - path: tasks/queue/**
+    ownership: project
+    sync_mode: suggest_only
+  - path: apps/**
+    ownership: project
+    sync_mode: suggest_only
+generated_assets:
+  - path: bootstrap/project_brief.yaml
+    source: templates/project_brief.template.yaml
+    regenerate_command: python3 scripts/init_project_compounding.py attach --target .
+  - path: output/bootstrap/bootstrap_report.yaml
+    source: templates/bootstrap_report.template.yaml
+    regenerate_command: python3 scripts/init_project_compounding.py attach --target .
+  - path: output/proposals/*/proposal.yaml
+    source: templates/proposal.template.yaml
+    regenerate_command: python3 scripts/init_project_compounding.py proposal --target .
+protected_assets:
+  - path: apps/**
+    reason: 核心业务代码默认只建议，不自动处理。
+  - path: scripts/release/**
+    reason: 发布主入口会改变交付语义，本轮禁止自动处理。
+  - path: scripts/local-runtime/**
+    reason: 生产与预览运行脚本默认禁止自动处理。
+  - path: deploy/**
+    reason: 部署配置默认视为项目特有资产。

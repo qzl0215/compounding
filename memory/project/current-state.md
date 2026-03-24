@@ -26,6 +26,7 @@ related_docs:
 - 本地 production 当前稳定运行在 `3010`；当前 active release 仍以 `pnpm prod:status` 输出为准。
 - `t-053` 正在把本地 production 从 release worktree 运行 cwd 中解耦：active prod 先 materialize 到固定 runtime 副本，再由本地生产进程从该副本启动。
 - 当前目标是让 release worktree 只承担构建与切换输入，不再承担本地 production 常驻运行目录。
+- `t-054` 已补上 `single-kernel + project-shell` 的 MVP 闭环：当前仓库可作为老项目跑通 `attach / audit / proposal`，空目录可跑最小 `bootstrap`，`apply-proposal` 只自动处理 `auto_apply` 协议资产。
 - 当前阶段不扩新页面、新状态源、新运行时系统或远端部署模型；继续只做 release/runtime 边界收口。
 
 ## 当前阻塞
@@ -57,8 +58,11 @@ related_docs:
 - `pnpm validate:build`
 - `pnpm prod:check`
 - `pnpm coord:check:pre-task`
+- `python3 scripts/init_project_compounding.py attach --target . --config bootstrap/project_brief.yaml`
+- `python3 scripts/init_project_compounding.py proposal --target . --config bootstrap/project_brief.yaml`
 - 确认当前无 `pending dev`，本地 production 继续稳定运行在最新 active release
 - 验证 `local-prod.json` 的 `cwd` 已切到 `.compounding-runtime/live/prod/*`
 - 验证 `git worktree list` 只剩主工作区
+- 验证 kernel proposal 的 `auto_apply` 只覆盖协议层资产，不会覆盖 `apps/**`、`scripts/release/**`、`scripts/local-runtime/**`
 - 验证 rollback 也复用同一条 runtime materialize 路径，不再回流到 release worktree
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

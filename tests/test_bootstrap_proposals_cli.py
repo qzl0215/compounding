@@ -4,79 +4,84 @@ import subprocess
 import unittest
 from unittest.mock import patch
 
-from scripts.compounding_bootstrap.engine import (
-    AGENTS_PATH,
-    apply_proposal,
-    baseline_commit_suggestion,
-    create_proposal,
-    scaffold,
-)
+from scripts.compounding_bootstrap.bootstrap import bootstrap
+from scripts.compounding_bootstrap.proposal import apply_proposal, create_proposal
 from scripts.compounding_bootstrap.proposal_generation import resolve_provider_config
+from scripts.compounding_bootstrap.yaml_io import load_yaml
 from tests.bootstrap_support import ROOT, BootstrapWorkspaceTestCase
 
 
 class BootstrapProposalCliTests(BootstrapWorkspaceTestCase):
-    def test_propose_and_apply(self) -> None:
-        scaffold(self.brief_path, self.target)
-        prompt_file = self.target / "prompt.md"
-        prompt_file.write_text("把 AGENTS 里的成功定义写得更清楚，并强化 review 规则。", encoding="utf8")
+    def test_kernel_proposal_generates_yaml(self) -> None:
+        bootstrap(self.brief_path, self.target)
 
-        proposal_id = create_proposal(self.brief_path, self.target, prompt_file)
-        proposal_root = self.target / "output" / "proposals" / proposal_id
-        metadata_path = proposal_root / "metadata.json"
-        metadata = json.loads(metadata_path.read_text(encoding="utf8"))
+        proposal_id = create_proposal(self.target)
+        proposal_path = self.target / "output" / "proposals" / proposal_id / "proposal.yaml"
+        payload = load_yaml(proposal_path)
 
-        self.assertEqual(metadata["status"], "pending")
-        self.assertEqual(metadata["action_type"], "canonical_update")
-        self.assertGreater(len(metadata["target_blocks"]), 0)
-        self.assertTrue((proposal_root / "diff.patch").exists())
-        self.assertIn("generation_provider", metadata)
-        self.assertIn("generation_model", metadata)
-        self.assertIn("generation_providers", metadata["validation_summary"])
+        self.assertEqual(payload["proposal_id"], proposal_id)
+        self.assertIn("changes", payload)
+        self.assertIn("proposal_required", payload["changes"])
+        self.assertTrue(proposal_path.exists())
 
-        with self.assertRaisesRegex(ValueError, "Baseline commit required"):
-            apply_proposal(self.target, proposal_id)
+    def test_proposal_blocks_runtime_and_business_paths(self) -> None:
+        bootstrap(self.brief_path, self.target)
+        (self.target / "apps" / "web").mkdir(parents=True, exist_ok=True)
+        (self.target / "apps" / "web" / "index.ts").write_text("export const app = true;\n", encoding="utf8")
+        (self.target / "scripts" / "release").mkdir(parents=True, exist_ok=True)
+        (self.target / "scripts" / "release" / "main.ts").write_text("export const release = true;\n", encoding="utf8")
 
-        self.init_git_repo()
-        subprocess.run(["git", "add", "."], cwd=self.target, check=True)
-        subprocess.run(["git", "commit", "-m", baseline_commit_suggestion().split('"')[1]], cwd=self.target, check=True)
+        proposal_id = create_proposal(self.target)
+        proposal_path = self.target / "output" / "proposals" / proposal_id / "proposal.yaml"
+        payload = load_yaml(proposal_path)
 
-        proposal_id = create_proposal(self.brief_path, self.target, prompt_file)
-        proposal_root = self.target / "output" / "proposals" / proposal_id
-        metadata_path = proposal_root / "metadata.json"
-        apply_proposal(self.target, proposal_id)
+        self.assertIn("apps/**", payload["changes"]["blocked"])
+        self.assertIn("scripts/release/**", payload["changes"]["blocked"])
 
-        updated_metadata = json.loads(metadata_path.read_text(encoding="utf8"))
-        self.assertEqual(updated_metadata["status"], "applied")
-
-        git_log = subprocess.check_output(
-            ["git", "log", "--max-count=1", "--pretty=%s"],
-            cwd=self.target,
+    def test_apply_proposal_copies_only_auto_apply_assets(self) -> None:
+        (self.target / "memory" / "project").mkdir(parents=True, exist_ok=True)
+        (self.target / "tasks" / "queue").mkdir(parents=True, exist_ok=True)
+        (self.target / "README.md").write_text("# Legacy Repo\n\nlegacy app\n", encoding="utf8")
+        subprocess.run(
+            ["python3", str(ROOT / "scripts" / "init_project_compounding.py"), "attach", "--target", str(self.target)],
+            check=True,
+            capture_output=True,
             text=True,
-        ).strip()
-        self.assertIn(proposal_id, git_log)
-
-        with self.assertRaises(ValueError):
-            apply_proposal(self.target, proposal_id)
-
-    def test_apply_proposal_rejects_dirty_worktree(self) -> None:
-        scaffold(self.brief_path, self.target)
+        )
         self.init_git_repo()
-        subprocess.run(["git", "add", "."], cwd=self.target, check=True)
-        subprocess.run(["git", "commit", "-m", baseline_commit_suggestion().split('"')[1]], cwd=self.target, check=True)
+        subprocess.run(["git", "add", "."], cwd=self.target, check=True, capture_output=True, text=True)
+        subprocess.run(["git", "commit", "-m", "baseline"], cwd=self.target, check=True, capture_output=True, text=True)
 
-        prompt_file = self.target / "prompt.md"
-        prompt_file.write_text("补一条更适合小白的 review 说明。", encoding="utf8")
-        proposal_id = create_proposal(self.brief_path, self.target, prompt_file)
+        proposal_id = create_proposal(self.target)
+        proposal_path = self.target / "output" / "proposals" / proposal_id / "proposal.yaml"
+        payload = load_yaml(proposal_path)
 
-        doc_path = self.target / AGENTS_PATH
-        doc_path.write_text(doc_path.read_text(encoding="utf8") + "\nmanual dirty change\n", encoding="utf8")
+        self.assertIn("schemas/project_brief.schema.yaml", payload["changes"]["auto_apply"])
+        self.assertIn("kernel/kernel_manifest.yaml", payload["changes"]["auto_apply"])
+        self.assertIn("docs/WORK_MODES.md", payload["changes"]["auto_apply"])
+        self.assertIn("AGENTS.md", payload["changes"]["proposal_required"])
 
-        with self.assertRaisesRegex(ValueError, "worktree is dirty"):
+        result = apply_proposal(self.target, proposal_id)
+
+        self.assertEqual(result["status"], "applied")
+        self.assertTrue((self.target / "schemas" / "project_brief.schema.yaml").exists())
+        self.assertTrue((self.target / "kernel" / "kernel_manifest.yaml").exists())
+        self.assertTrue((self.target / "docs" / "WORK_MODES.md").exists())
+        self.assertFalse((self.target / "AGENTS.md").exists())
+
+    def test_apply_proposal_rejects_when_no_auto_apply_exists(self) -> None:
+        bootstrap(self.brief_path, self.target)
+        self.init_git_repo()
+        subprocess.run(["git", "add", "."], cwd=self.target, check=True, capture_output=True, text=True)
+        subprocess.run(["git", "commit", "-m", "baseline"], cwd=self.target, check=True, capture_output=True, text=True)
+
+        proposal_id = create_proposal(self.target)
+
+        with self.assertRaisesRegex(ValueError, "no auto_apply"):
             apply_proposal(self.target, proposal_id)
 
     def test_pre_mutation_check_outputs_json(self) -> None:
-        scaffold(self.brief_path, self.target)
+        bootstrap(self.brief_path, self.target)
         subprocess.run(["git", "init"], cwd=self.target, check=True)
         completed = subprocess.run(
             ["python3", str(ROOT / "scripts" / "pre_mutation_check.py")],
@@ -194,6 +199,7 @@ fs.mkdirSync(path.join(releasePath, "apps", "studio", ".next"), { recursive: tru
 fs.mkdirSync(path.join(releasePath, ".git"), { recursive: true });
 fs.writeFileSync(path.join(releasePath, "apps", "studio", ".next", "BUILD_ID"), "sample-build\\n");
 fs.writeFileSync(path.join(releasePath, ".git", "HEAD"), "ref: refs/heads/main\\n");
+fs.writeFileSync(path.join(releasePath, "package.json"), JSON.stringify({ name: "sample-release", private: true }));
 const runtimePath = materializeProdRuntime(releasePath, "20260324150000-sample-prod");
 fs.mkdirSync(path.join(ensureLayout().prodLiveDir, "old-prod"), { recursive: true });
 pruneInactiveProdRuntimeCopies("20260324150000-sample-prod");

@@ -1,35 +1,177 @@
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
-from .defaults import BRIEF_PATH, LEGACY_CONFIG_PATH
+from .defaults import (
+    BOOTSTRAP_DIR,
+    BRIEF_PATH,
+    DEFAULT_AUTO_APPLY_PATHS,
+    DEFAULT_BLOCKED_PATHS,
+    DEFAULT_OWNED_PATHS,
+    DEFAULT_PROPOSAL_REQUIRED_PATHS,
+    DEFAULT_PROTECTED_RULES,
+    KERNEL_MANIFEST_PATH,
+    KERNEL_VERSION,
+    LEGACY_CONFIG_PATH,
+    PROJECT_BRIEF_SCHEMA_PATH,
+    PROJECT_BRIEF_TEMPLATE_PATH,
+    RESOLVED_CONFIG_PATH,
+    SOURCE_ROOT,
+)
 from .repo_scan import scan_repo, slugify
+from .schema_validation import validate_payload
 from .yaml_io import load_yaml, save_yaml
 
 
-def validate_brief_payload(payload: dict[str, Any]) -> dict[str, Any]:
-    required = [
-        "project_name",
-        "project_one_liner",
-        "success_definition",
-        "current_priority",
-        "must_protect",
-        "runtime_boundary",
+def default_brief_payload(project_name: str, adoption_mode: str = "attach") -> dict[str, Any]:
+    template = load_yaml(SOURCE_ROOT / PROJECT_BRIEF_TEMPLATE_PATH)
+    if not isinstance(template, dict):
+        raise ValueError("Project brief template must be a mapping.")
+    payload = dict(template)
+    payload["project_identity"] = dict(payload.get("project_identity") or {})
+    payload["project_identity"]["name"] = project_name
+    payload["kernel"] = dict(payload.get("kernel") or {})
+    payload["kernel"]["version"] = kernel_version()
+    payload["kernel"]["adoption_mode"] = adoption_mode
+    return payload
+
+
+def kernel_version() -> str:
+    manifest = load_yaml(SOURCE_ROOT / KERNEL_MANIFEST_PATH)
+    if isinstance(manifest, dict) and isinstance(manifest.get("version"), str):
+        return manifest["version"]
+    return KERNEL_VERSION
+
+
+def split_success_criteria(value: Any) -> list[str]:
+    if isinstance(value, list):
+        return [str(item).strip() for item in value if str(item).strip()]
+    if value is None:
+        return []
+    text = str(value).strip()
+    if not text:
+        return []
+    return [segment.strip() for segment in text.replace("；", "\n").replace("。", "\n").splitlines() if segment.strip()]
+
+
+def infer_one_liner(target: Path, payload: dict[str, Any] | None = None) -> str:
+    existing = payload or {}
+    project_identity = existing.get("project_identity") if isinstance(existing.get("project_identity"), dict) else {}
+    candidates = [
+        project_identity.get("one_liner"),
+        existing.get("project_one_liner"),
     ]
-    field_errors: dict[str, str] = {}
-    for key in required:
-        value = payload.get(key)
-        if value in (None, "", []):
-            field_errors[key] = "This field is required."
-    if "runtime_boundary" in payload and payload.get("runtime_boundary") not in {"server-only", "local-only", "hybrid"}:
-        field_errors["runtime_boundary"] = "Runtime boundary must be one of server-only, local-only, or hybrid."
-    if "must_protect" in payload and not isinstance(payload.get("must_protect"), list):
-        field_errors["must_protect"] = "Must protect must be a list."
+    for candidate in candidates:
+        if isinstance(candidate, str) and candidate.strip():
+            return candidate.strip()
+    readme_path = target / "README.md"
+    if readme_path.exists():
+        for raw in readme_path.read_text(encoding="utf8").splitlines():
+            line = raw.strip()
+            if line and not line.startswith("#"):
+                return line
+    return "把现有项目接入单主干 kernel + project shell 的个人 AI 工程底盘。"
+
+
+def infer_project_name(target: Path, payload: dict[str, Any] | None = None) -> str:
+    existing = payload or {}
+    project_identity = existing.get("project_identity") if isinstance(existing.get("project_identity"), dict) else {}
+    candidates = [
+        project_identity.get("name"),
+        existing.get("project_name"),
+        target.resolve().name.replace("-", " ").replace("_", " ").strip(),
+    ]
+    for candidate in candidates:
+        if isinstance(candidate, str) and candidate.strip():
+            return candidate.strip()
+    return "Untitled Project"
+
+
+def infer_deploy_target(target: Path) -> str:
+    if (target / "scripts" / "local-runtime").exists():
+        return "local-runtime"
+    if (target / "deploy").exists():
+        return "custom-deploy"
+    return "unknown"
+
+
+def infer_app_type(target: Path) -> str:
+    if (target / "apps").exists() and (target / "tasks").exists() and (target / "memory").exists():
+        return "ai-native-repo"
+    if (target / "apps").exists():
+        return "application"
+    return "project-shell"
+
+
+def infer_critical_paths(target: Path) -> list[str]:
+    paths = [
+        "AGENTS.md",
+        "memory/project/operating-blueprint.md",
+        "scripts/compounding_bootstrap/*",
+    ]
+    return [path for path in paths if _path_exists_for_pattern(target, path)]
+
+
+def _path_exists_for_pattern(target: Path, pattern: str) -> bool:
+    if "*" in pattern:
+        return any(target.glob(pattern))
+    return (target / pattern).exists()
+
+
+def is_new_brief(payload: dict[str, Any]) -> bool:
+    return isinstance(payload.get("project_identity"), dict) and isinstance(payload.get("kernel"), dict)
+
+
+def normalize_brief_payload(payload: dict[str, Any], target: Path, adoption_mode: str = "attach") -> tuple[dict[str, Any], bool]:
+    normalized = default_brief_payload(infer_project_name(target, payload), adoption_mode=adoption_mode)
+    migrated = not is_new_brief(payload)
+
+    project_identity = payload.get("project_identity") if isinstance(payload.get("project_identity"), dict) else {}
+    normalized["project_identity"] = {
+        "name": infer_project_name(target, payload),
+        "one_liner": infer_one_liner(target, payload),
+        "success_criteria": split_success_criteria(
+            project_identity.get("success_criteria") or payload.get("success_definition") or payload.get("north_star_metric")
+        )
+        or ["项目进入统一的 plan / task / release / memory 协议，并能稳定运行 attach / audit / proposal / bootstrap。"],
+    }
+
+    kernel = payload.get("kernel") if isinstance(payload.get("kernel"), dict) else {}
+    normalized["kernel"] = {
+        "version": str(kernel.get("version") or kernel_version()),
+        "adoption_mode": str(kernel.get("adoption_mode") or adoption_mode),
+    }
+
+    runtime_boundary = payload.get("runtime_boundary") if isinstance(payload.get("runtime_boundary"), dict) else {}
+    normalized["runtime_boundary"] = {
+        "app_type": str(runtime_boundary.get("app_type") or infer_app_type(target)),
+        "deploy_target": str(runtime_boundary.get("deploy_target") or infer_deploy_target(target)),
+        "critical_paths": runtime_boundary.get("critical_paths") or infer_critical_paths(target),
+    }
+
+    local_overrides = payload.get("local_overrides") if isinstance(payload.get("local_overrides"), dict) else {}
+    normalized["local_overrides"] = {
+        "owned_paths": local_overrides.get("owned_paths") or DEFAULT_OWNED_PATHS.copy(),
+        "protected_rules": local_overrides.get("protected_rules") or DEFAULT_PROTECTED_RULES.copy(),
+    }
+
+    upgrade_policy = payload.get("upgrade_policy") if isinstance(payload.get("upgrade_policy"), dict) else {}
+    normalized["upgrade_policy"] = {
+        "auto_apply_paths": upgrade_policy.get("auto_apply_paths") or DEFAULT_AUTO_APPLY_PATHS.copy(),
+        "proposal_required_paths": upgrade_policy.get("proposal_required_paths") or DEFAULT_PROPOSAL_REQUIRED_PATHS.copy(),
+        "blocked_paths": upgrade_policy.get("blocked_paths") or DEFAULT_BLOCKED_PATHS.copy(),
+    }
+    return normalized, migrated
+
+
+def validate_brief_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    schema = load_yaml(SOURCE_ROOT / PROJECT_BRIEF_SCHEMA_PATH)
+    errors = validate_payload(payload, schema)
+    field_errors = {error.split(":")[0].replace("root.", "", 1): error for error in errors}
     return {
-        "ok": not field_errors,
-        "message": "Config valid." if not field_errors else "Config validation failed.",
+        "ok": not errors,
+        "message": "Config valid." if not errors else "Config validation failed.",
         "field_errors": field_errors,
     }
 
@@ -37,58 +179,104 @@ def validate_brief_payload(payload: dict[str, Any]) -> dict[str, Any]:
 def validate_config_file(config_path: Path, target: Path) -> dict[str, Any]:
     path = config_path if config_path.exists() else target / BRIEF_PATH
     if not path.exists():
-        migrated = migrate_legacy_config(target)
-        path = migrated
+        path = migrate_legacy_config(target)
     payload = load_yaml(path)
-    return validate_brief_payload(payload)
+    if not isinstance(payload, dict):
+        return {"ok": False, "message": "Config must be an object.", "field_errors": {"root": "Config must be an object."}}
+    normalized, _ = normalize_brief_payload(payload, target)
+    return validate_brief_payload(normalized)
 
 
-def migrate_legacy_config(target: Path) -> Path:
+def migrate_legacy_config(target: Path, adoption_mode: str = "attach") -> Path:
     brief_path = target / BRIEF_PATH
     if brief_path.exists():
+        payload = load_yaml(brief_path)
+        if isinstance(payload, dict):
+            normalized, migrated = normalize_brief_payload(payload, target, adoption_mode=adoption_mode)
+            if migrated:
+                save_yaml(brief_path, normalized)
         return brief_path
+
     legacy_path = target / LEGACY_CONFIG_PATH
-    if not legacy_path.exists():
-        raise FileNotFoundError(f"Neither {brief_path} nor {legacy_path} exists.")
-    legacy = load_yaml(legacy_path)
-    goals = legacy.get("short_term_priorities") or legacy.get("primary_goals") or ["完成 AI-Native Repo 第一轮结构收敛。"]
-    frozen = legacy.get("frozen_items") or [
-        "AGENTS.md 是唯一主源",
-        "不引入平行规则体系",
-    ]
-    brief_payload = {
-        "project_name": legacy.get("project_name", "Untitled AI-Native Repo"),
-        "project_one_liner": legacy.get("project_one_liner", "让 AI 能高效理解、协作、删减和持续重构的仓库。"),
-        "success_definition": legacy.get(
-            "north_star_metric",
-            "任何新线程先读 AGENTS.md 即可进入统一执行协议，并在最小上下文内完成可信改动。",
-        ),
-        "current_priority": goals[0] if isinstance(goals, list) and goals else "完成 AI-Native Repo 第一轮结构收敛。",
-        "must_protect": frozen if isinstance(frozen, list) else [str(frozen)],
-        "runtime_boundary": legacy.get("runtime_boundary", "server-only"),
-    }
-    save_yaml(brief_path, brief_payload)
+    if legacy_path.exists():
+        payload = load_yaml(legacy_path)
+        if not isinstance(payload, dict):
+            raise ValueError(f"Legacy config must be an object: {legacy_path}")
+        normalized, _ = normalize_brief_payload(payload, target, adoption_mode=adoption_mode)
+        save_yaml(brief_path, normalized)
+        return brief_path
+
+    brief_path.parent.mkdir(parents=True, exist_ok=True)
+    normalized = default_brief_payload(infer_project_name(target), adoption_mode=adoption_mode)
+    normalized["project_identity"]["one_liner"] = infer_one_liner(target, normalized)
+    normalized["runtime_boundary"]["app_type"] = infer_app_type(target)
+    normalized["runtime_boundary"]["deploy_target"] = infer_deploy_target(target)
+    normalized["runtime_boundary"]["critical_paths"] = infer_critical_paths(target)
+    save_yaml(brief_path, normalized)
     return brief_path
 
 
+def ensure_brief(config_path: Path | None, target: Path, adoption_mode: str = "attach") -> tuple[Path, dict[str, Any], bool]:
+    path = config_path if config_path and config_path.exists() else target / BRIEF_PATH
+    created = False
+    if not path.exists():
+        path = migrate_legacy_config(target, adoption_mode=adoption_mode)
+        created = True
+    payload = load_yaml(path)
+    if not isinstance(payload, dict):
+        raise ValueError("Project brief must be an object.")
+    normalized, migrated = normalize_brief_payload(payload, target, adoption_mode=adoption_mode)
+    if created or migrated or normalized != payload:
+        save_yaml(path, normalized)
+    return path, normalized, created or migrated
+
+
 def resolve_project_config(brief_path: Path, target: Path) -> dict[str, Any]:
-    brief = load_yaml(brief_path)
+    payload = load_yaml(brief_path)
+    if not isinstance(payload, dict):
+        raise ValueError("Project brief must be an object.")
+    normalized, _ = normalize_brief_payload(payload, target)
     scan = scan_repo(target)
-    return {
-        "project_name": brief["project_name"],
-        "project_slug": slugify(brief["project_name"]),
-        "project_one_liner": brief["project_one_liner"],
-        "success_definition": brief["success_definition"],
-        "current_priority": brief["current_priority"],
-        "must_protect": brief["must_protect"],
-        "runtime_boundary": brief["runtime_boundary"],
+    resolved = {
+        "project_name": normalized["project_identity"]["name"],
+        "project_slug": slugify(normalized["project_identity"]["name"]),
+        "project_one_liner": normalized["project_identity"]["one_liner"],
+        "success_criteria": normalized["project_identity"]["success_criteria"],
+        "kernel_version": normalized["kernel"]["version"],
+        "adoption_mode": normalized["kernel"]["adoption_mode"],
+        "app_type": normalized["runtime_boundary"]["app_type"],
+        "deploy_target": normalized["runtime_boundary"]["deploy_target"],
+        "critical_paths": normalized["runtime_boundary"]["critical_paths"],
         "repo_scan": scan,
         "allowed_scopes": [
-            "apps/studio/**",
+            "apps/**",
             "scripts/**",
             "docs/**",
             "memory/**",
             "code_index/**",
             "tasks/**",
+            f"{BOOTSTRAP_DIR}/**",
         ],
     }
+    save_yaml(target / RESOLVED_CONFIG_PATH, resolved)
+    return resolved
+
+
+__all__ = [
+    "default_brief_payload",
+    "ensure_brief",
+    "infer_app_type",
+    "infer_critical_paths",
+    "infer_deploy_target",
+    "infer_one_liner",
+    "infer_project_name",
+    "kernel_version",
+    "load_yaml",
+    "migrate_legacy_config",
+    "normalize_brief_payload",
+    "resolve_project_config",
+    "save_yaml",
+    "split_success_criteria",
+    "validate_brief_payload",
+    "validate_config_file",
+]

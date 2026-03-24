@@ -1,0 +1,20 @@
+project:
+  name: Example Project
+  path: /path/to/project
+kernel:
+  version: 0.1.0
+  adoption_mode: attach
+status:
+  attached: true
+  attach_score: 100
+  summary: attach 完成，已具备 proposal 输入。
+detected:
+  managed_assets: []
+  shell_assets: []
+  protected_assets: []
+  local_overrides: []
+actions:
+  created: []
+  skipped: []
+  needs_proposal: []
+  warnings: []

@@ -22,9 +22,9 @@ class BootstrapWorkspaceTestCase(unittest.TestCase):
         return self.target / "bootstrap" / "project_brief.yaml"
 
     def init_git_repo(self) -> None:
-        subprocess.run(["git", "init"], cwd=self.target, check=True)
-        subprocess.run(["git", "config", "user.name", "AI Operating System"], cwd=self.target, check=True)
-        subprocess.run(["git", "config", "user.email", "ai-os@local"], cwd=self.target, check=True)
+        subprocess.run(["git", "init"], cwd=self.target, check=True, capture_output=True, text=True)
+        subprocess.run(["git", "config", "user.name", "AI Operating System"], cwd=self.target, check=True, capture_output=True, text=True)
+        subprocess.run(["git", "config", "user.email", "ai-os@local"], cwd=self.target, check=True, capture_output=True, text=True)
 
     def commit_bootstrap_baseline(self) -> None:
         self.init_git_repo()

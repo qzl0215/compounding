@@ -53,7 +53,40 @@ class CoordCliTests(CoordCliTestCase):
         self.assertIn("只补执行合同字段，不扩到页面或运行时", created)
         self.assertIn("体验级验收标准已经清楚，且 task 可直接进入执行", created)
         self.assertIn("验证 Autoplan 可以把关键决策直接落到 task 合同。", created)
+        self.assertIn("## 当前模式", created)
+        self.assertIn("工程执行", created)
+        self.assertIn("`codex/task-124-contract-draft`", created)
         self.assertNotIn("{{", created)
+
+    def test_create_task_can_seed_related_modules_into_companion_scope(self) -> None:
+        completed = self.run_script(
+            "scripts/ai/create-task.ts",
+            "task-125-machine-facts",
+            "让新 task 默认带最小 machine facts",
+            "避免 structural task 还要靠手工补 关联模块 才能通过 scope guard",
+            "--relatedModules=- `scripts/compounding_bootstrap/`\n- `package.json`\n- `schemas/`",
+        )
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        payload = self.run_node(
+            f"""
+const fs = require("node:fs");
+const path = require("node:path");
+const {{ getCompanionPath }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-meta.ts");
+const file = getCompanionPath("task-125-machine-facts");
+console.log(fs.readFileSync(file, "utf8"));
+"""
+        )
+
+        self.assertEqual(
+            payload["planned_files"],
+            [
+                "tasks/queue/task-125-machine-facts.md",
+                "scripts/compounding_bootstrap/",
+                "package.json",
+                "schemas/",
+            ],
+        )
 
     def test_template_feedback_orchestrator_uses_canonical_task_template(self) -> None:
         template_path = self.target / "tasks" / "templates" / "task-template.md"

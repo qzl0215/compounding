@@ -1,0 +1,71 @@
+type: object
+required:
+  - version
+  - managed_assets
+  - shell_assets
+  - generated_assets
+  - protected_assets
+properties:
+  version:
+    type: string
+  managed_assets:
+    type: array
+    items:
+      type: object
+      required:
+        - path
+        - ownership
+        - sync_mode
+      properties:
+        path:
+          type: string
+        ownership:
+          type: string
+          enum: [kernel]
+        sync_mode:
+          type: string
+          enum: [auto, proposal]
+  shell_assets:
+    type: array
+    items:
+      type: object
+      required:
+        - path
+        - ownership
+        - sync_mode
+      properties:
+        path:
+          type: string
+        ownership:
+          type: string
+          enum: [project]
+        sync_mode:
+          type: string
+          enum: [suggest_only]
+  generated_assets:
+    type: array
+    items:
+      type: object
+      required:
+        - path
+        - source
+        - regenerate_command
+      properties:
+        path:
+          type: string
+        source:
+          type: string
+        regenerate_command:
+          type: string
+  protected_assets:
+    type: array
+    items:
+      type: object
+      required:
+        - path
+        - reason
+      properties:
+        path:
+          type: string
+        reason:
+          type: string

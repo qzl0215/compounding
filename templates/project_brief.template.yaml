@@ -1,15 +1,14 @@
 project_identity:
-  name: Compounding AI Operating System
-  one_liner: 把当前仓库升级成适合 AI 长期协作、任务驱动、可持续重构与自进化的 AI-Native Repo。
+  name: Example Project
+  one_liner: 一个已经接入 kernel + shell 协议的项目壳子。
   success_criteria:
-    - 首页成为一页经营驾驶舱
-    - 用户与 AI 能快速看懂使命、路线图、运营蓝图、组织职责与认知资产边界，并能沿统一 task 闭环持续推进
+    - attach / audit / proposal / bootstrap 可以稳定运行
 kernel:
   version: 0.1.0
-  adoption_mode: attach
+  adoption_mode: new
 runtime_boundary:
-  app_type: ai-native-repo
-  deploy_target: local-runtime
+  app_type: project-shell
+  deploy_target: unknown
   critical_paths:
     - AGENTS.md
     - memory/project/operating-blueprint.md

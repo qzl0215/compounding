@@ -1,0 +1,28 @@
+proposal_id: "20260324172155264102"
+project:
+  name: Compounding AI Operating System
+  path: /Users/apple/Documents/GitHub/Compounding
+kernel_version_from: 0.1.0
+kernel_version_to: 0.1.0
+changes:
+  auto_apply: []
+  proposal_required: []
+  suggest_only:
+    - memory/project/**
+    - tasks/queue/**
+    - apps/**
+  blocked:
+    - apps/**
+    - scripts/release/**
+    - scripts/local-runtime/**
+    - deploy/**
+conflicts: []
+operator_actions:
+  must_confirm: []
+  optional_followups:
+    - apps/**
+    - deploy/**
+    - memory/project/**
+    - scripts/local-runtime/**
+    - scripts/release/**
+    - tasks/queue/**

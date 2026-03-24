@@ -1,145 +1,101 @@
 from __future__ import annotations
 
-import json
-import re
 from pathlib import Path
+from typing import Any
 
-from .config_resolution import load_yaml, migrate_legacy_config, validate_brief_payload
+from .attach import pattern_exists
+from .config_resolution import validate_config_file
 from .defaults import (
-    AGENTS_PATH,
-    AI_SCRIPT_PATHS,
+    BOOTSTRAP_REPORT_PATH,
+    BOOTSTRAP_REPORT_SCHEMA_PATH,
     BRIEF_PATH,
-    CANONICAL_DOCS,
-    CODE_INDEX_DOCS,
-    LEGACY_TERMS,
-    MEMORY_DOCS,
-    REQUIRED_FRONTMATTER,
-    SCAFFOLD_PATHS,
-    TASK_DOCS,
+    DIFF_CATEGORIES,
+    KERNEL_MANIFEST_PATH,
+    KERNEL_MANIFEST_SCHEMA_PATH,
+    PROJECT_BRIEF_SCHEMA_PATH,
+    SOURCE_ROOT,
     AuditResult,
 )
-from .managed_blocks import split_frontmatter
+from .schema_validation import validate_payload
+from .yaml_io import load_yaml
 
 
-def has_bundled_source_of_truth(value: object) -> bool:
-    return bool(re.search(r"[+,，]", str(value or "")))
+def load_object(path: Path) -> dict[str, Any]:
+    payload = load_yaml(path)
+    if not isinstance(payload, dict):
+        raise ValueError(f"Expected object YAML: {path}")
+    return payload
+
+
+def validate_target_file(path: Path, schema_path: Path, result: AuditResult) -> None:
+    if not path.exists():
+        result.errors.append(f"Missing required file: {path.as_posix()}")
+        return
+    payload = load_object(path)
+    schema = load_object(schema_path)
+    errors = validate_payload(payload, schema)
+    result.checked_files.append(path.as_posix())
+    result.errors.extend(f"{path.as_posix()}: {error}" for error in errors)
 
 
 def audit(config_path: Path, target: Path) -> AuditResult:
     result = AuditResult(passed=True)
-    brief_path = config_path if config_path.exists() else target / BRIEF_PATH
-    if not brief_path.exists():
-        brief_path = migrate_legacy_config(target)
-    payload = load_yaml(brief_path)
-    validation = validate_brief_payload(payload)
+
+    validation = validate_config_file(config_path, target)
     if not validation["ok"]:
-        result.errors.extend(f"{field}: {message}" for field, message in validation["field_errors"].items())
+        result.errors.extend(validation["field_errors"].values())
 
-    for relative_path in SCAFFOLD_PATHS:
-        path = target / relative_path
-        if not path.exists():
+    validate_target_file(target / BRIEF_PATH, SOURCE_ROOT / PROJECT_BRIEF_SCHEMA_PATH, result)
+    validate_target_file(SOURCE_ROOT / KERNEL_MANIFEST_PATH, SOURCE_ROOT / KERNEL_MANIFEST_SCHEMA_PATH, result)
+    validate_target_file(target / BOOTSTRAP_REPORT_PATH, SOURCE_ROOT / BOOTSTRAP_REPORT_SCHEMA_PATH, result)
+
+    manifest = load_object(SOURCE_ROOT / KERNEL_MANIFEST_PATH)
+    brief = load_object(target / BRIEF_PATH) if (target / BRIEF_PATH).exists() else {}
+    report = load_object(target / BOOTSTRAP_REPORT_PATH) if (target / BOOTSTRAP_REPORT_PATH).exists() else {}
+
+    for entry in manifest.get("managed_assets", []):
+        if not isinstance(entry, dict):
+            continue
+        relative_path = str(entry.get("path") or "")
+        if not relative_path:
+            continue
+        if not pattern_exists(target, relative_path):
             result.missing_assets.append(relative_path)
-            continue
-        result.checked_files.append(relative_path)
-        if path.is_file() and path.suffix in {".md", ".ts", ".json"} and not path.read_text(encoding="utf8").strip() and path.name != ".gitkeep":
-            result.errors.append(f"{relative_path} is empty.")
-
-    legacy_live_paths = [
-        "docs/reference",
-        "docs/operations",
-        "docs/planning",
-        "docs/memory",
-    ]
-    for relative_path in legacy_live_paths:
-        if (target / relative_path).exists():
-            result.errors.append(f"Legacy live docs path still exists: {relative_path}")
-
-    agents_path = target / AGENTS_PATH
-    if agents_path.exists():
-        agents_text = agents_path.read_text(encoding="utf8")
-        for required in [
-            "`memory/project/roadmap.md`",
-            "`memory/project/current-state.md`",
-            "`memory/project/operating-blueprint.md`",
-            "`docs/WORK_MODES.md`",
-            "`docs/DEV_WORKFLOW.md`",
-            "`docs/ARCHITECTURE.md`",
-        ]:
-            if required not in agents_text:
-                result.errors.append(f"AGENTS must require reading {required}.")
-        if "`memory/project/operating-blueprint.md` 是唯一 plan 主源" not in agents_text:
-            result.errors.append("AGENTS must declare memory/project/operating-blueprint.md as the single plan source.")
-
-    for relative_path in [AGENTS_PATH, *CANONICAL_DOCS, *MEMORY_DOCS, "code_index/module-index.md", "code_index/dependency-map.md"]:
-        path = target / relative_path
-        if not path.exists():
-            continue
-        meta, _ = split_frontmatter(path.read_text(encoding="utf8"))
-        missing = [field for field in REQUIRED_FRONTMATTER if field not in meta]
-        if missing:
-            result.errors.append(f"{relative_path} missing frontmatter fields: {', '.join(missing)}")
-        if has_bundled_source_of_truth(meta.get("source_of_truth")):
-            result.errors.append(f"{relative_path} must use a single source_of_truth owner.")
-
-    memory_readme = target / "memory/experience/README.md"
-    if memory_readme.exists():
-        memory_text = memory_readme.read_text(encoding="utf8")
-        if not extract_heading_block(target, memory_text, "promotion_candidates"):
-            result.errors.append("memory/experience/README.md missing section: ## 升格候选")
-
-    task_template = target / "tasks/templates/task-template.md"
-    if task_template.exists():
-        template_text = task_template.read_text(encoding="utf8")
-        for heading in [
-            "## 任务摘要",
-            "## 执行合同",
-            "## 交付结果",
-            "### 要做",
-            "### 不做",
-            "### 约束",
-            "### 关键风险",
-            "### 测试策略",
-        ]:
-            if heading not in template_text:
-                result.errors.append(f"task template missing heading: {heading}")
-
-    for relative_path in [AGENTS_PATH, *CANONICAL_DOCS, *MEMORY_DOCS]:
-        path = target / relative_path
-        if not path.exists():
-            continue
-        text = path.read_text(encoding="utf8")
-        for term in LEGACY_TERMS:
-            if term in text:
-                result.hardcoded_legacy_terms.append(f"{relative_path}: {term}")
 
     if result.missing_assets:
-        result.errors.append(f"Missing required assets: {', '.join(result.missing_assets)}")
-    if result.hardcoded_legacy_terms:
-        result.errors.extend(f"Legacy term leaked: {item}" for item in result.hardcoded_legacy_terms)
+        result.errors.append(f"Missing kernel-managed assets: {', '.join(result.missing_assets)}")
+
+    protected_paths = [str(item.get("path") or "") for item in manifest.get("protected_assets", []) if isinstance(item, dict)]
+    auto_apply_paths = (
+        brief.get("upgrade_policy", {}).get("auto_apply_paths")
+        if isinstance(brief.get("upgrade_policy"), dict) and isinstance(brief.get("upgrade_policy", {}).get("auto_apply_paths"), list)
+        else []
+    )
+    for protected_path in protected_paths:
+        if any(protected_path == path for path in auto_apply_paths):
+            result.conflicting_rules.append(f"Protected path in auto_apply_paths: {protected_path}")
+
+    if result.conflicting_rules:
+        result.errors.extend(result.conflicting_rules)
+
+    if isinstance(report.get("actions"), dict):
+        for field in DIFF_CATEGORIES:
+            pass
+        needs_proposal = report["actions"].get("needs_proposal")
+        if needs_proposal is not None and not isinstance(needs_proposal, list):
+            result.errors.append("output/bootstrap/bootstrap_report.yaml: actions.needs_proposal must be an array")
+
+    required_protocol = [
+        "memory/project/roadmap.md",
+        "memory/project/current-state.md",
+        "memory/project/operating-blueprint.md",
+    ]
+    for path in required_protocol:
+        if not (target / path).exists():
+            result.errors.append(f"Missing project protocol entry: {path}")
+
     result.passed = not result.errors
     return result
 
 
-def extract_heading_block(target: Path, text: str, heading_key: str) -> str | None:
-    for heading in heading_aliases(target, heading_key):
-        match = re.search(rf"## {re.escape(heading)}\n\n([\s\S]*?)(?=\n## |\Z)", text)
-        if match:
-            return match.group(1).strip()
-    return None
-
-
-def heading_aliases(target: Path, heading_key: str) -> list[str]:
-    aliases = load_heading_aliases(target)
-    if heading_key in aliases:
-        return aliases[heading_key]
-    for values in aliases.values():
-        if any(item.strip().lower() == heading_key.strip().lower() for item in values):
-            return values
-    return [heading_key]
-
-
-def load_heading_aliases(target: Path) -> dict[str, list[str]]:
-    alias_path = target / "bootstrap" / "heading_aliases.json"
-    if alias_path.exists():
-        return json.loads(alias_path.read_text(encoding="utf8"))
-    return {}
+__all__ = ["audit"]

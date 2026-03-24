@@ -47,3 +47,22 @@
   {{delivery_result}}
 - 复盘：
   {{retro}}
+
+## 当前模式
+
+{{current_mode}}
+
+## 分支
+
+`{{branch}}`
+
+## 关联模块
+
+{{related_modules}}
+
+## 更新痕迹
+
+- 记忆：{{update_trace_memory}}
+- 索引：{{update_trace_index}}
+- 路线图：{{update_trace_roadmap}}
+- 文档：{{update_trace_docs}}
