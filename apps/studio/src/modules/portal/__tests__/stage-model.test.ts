@@ -60,9 +60,9 @@ function buildRow(overrides: Partial<TaskDeliveryRow> = {}): TaskDeliveryRow {
 }
 
 describe("resolveTaskDemandStage", () => {
-  it("keeps strategic clarification and solution review tasks in planning when not started", () => {
-    expect(resolveTaskDemandStage(buildRow({ currentMode: "战略澄清", status: "todo" }))).toBe("planning");
-    expect(resolveTaskDemandStage(buildRow({ currentMode: "方案评审", status: "todo" }))).toBe("planning");
+  it("treats todo tasks as ready even when legacy planning modes still exist", () => {
+    expect(resolveTaskDemandStage(buildRow({ currentMode: "战略澄清", status: "todo" }))).toBe("ready");
+    expect(resolveTaskDemandStage(buildRow({ currentMode: "方案评审", status: "todo" }))).toBe("ready");
   });
 
   it("treats doing and blocked tasks as doing even if their mode is planning", () => {

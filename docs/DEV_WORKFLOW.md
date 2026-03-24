@@ -43,7 +43,7 @@ related_docs:
 
 - 先读 `memory/project/operating-blueprint.md`，再对齐 `memory/project/roadmap.md`。
 - 先扩选项，再收关键决策。
-- 只有规划工作本身明确时，才用 `scripts/ai/create-task.ts` 生成规划 task；生成时优先把 `boundary / doneWhen / outOfScope / constraints / testStrategy` 一次写入合同。
+- planning 只留在 `memory/project/operating-blueprint.md`；边界、范围外、完成定义和约束清楚后，再用 `scripts/ai/create-task.ts` 创建执行 task。
 
 ## 执行链
 

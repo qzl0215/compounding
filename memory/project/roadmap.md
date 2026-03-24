@@ -15,28 +15,27 @@ related_docs:
 
 ## 当前阶段
 
-High-Frequency Governance Rationalization（持续收口）
+Single-Plan Execution Boundary Simplification（持续收口）
 
 ## 当前里程碑
 
-4 文档主干 + 3 状态主源（已完成）
+废除规划 task，保留单一 plan
 
 ## 里程碑成功标准
 
-- `AGENTS` 只保留硬规则、默认读链与改动门禁
-- `WORK_MODES`、`DEV_WORKFLOW`、`ARCHITECTURE` 的职责彻底切开，不再重复解释同一条链
-- `roadmap`、`current-state`、`operating-blueprint` 分别只承接战略摘要、运营快照和唯一 plan 主源
-- `README`、`build-context`、`ai-rewrite-context` 与文档门户入口都按新读链读取主源
-- `PROJECT_RULES`、`AI_OPERATING_MODEL`、`ASSET_MAINTENANCE` 退出默认第一跳，降级为专项附录
+- `operating-blueprint` 继续作为唯一 plan 主源，承接待思考、待规划、计划边界和计划产出任务
+- planning 不再对应“规划 task”对象，模糊事项默认回到 plan
+- `task` 只表示可执行结果，不再默认落到 `战略澄清 / 方案评审`
+- `/tasks` 只展示执行事项，首页的 `planning` 只来自 `operating-blueprint`
+- 大 task 发现边界过大时，剩余范围回到 plan，再派生多个 sibling tasks
 
 ## 当前优先级
 
-评估下一轮高 ROI 结构收口：优先继续处理 `scripts/ai` 重复编排、兼容层残留与仍会放大默认读链的静态噪音。
+推进 `t-052`：保留单一 plan、废除规划 task，并把 planning 只保留为阶段动作。
 
 ## 下一阶段方向
 
-- 继续让附录文档退出默认高频链，只在专项场景补读
-- 继续把 `AGENTS` 之外的高频文档切成“一文一类问题”，避免主干重新变粗
-- 在不增加新状态源的前提下，继续退休低价值解释层和静态噪音
-- 先收脚本层重复编排和兼容层，再决定是否进入下一批结构性实现
+- 把大 task 拆分回 plan 的规则写清，避免执行层重新长成树
+- 再评估 `scripts/ai` 重复编排和兼容层残留，优先收真正会继续制造对象歧义的入口
+- 继续在不增加新状态源的前提下退休低价值解释层和静态噪音
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

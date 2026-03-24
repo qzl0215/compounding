@@ -10,6 +10,7 @@ describe("tasks service", () => {
     const first = tasks.find((task) => task.path === "tasks/queue/task-001-repo-refactor.md");
     const current = tasks.find((task) => task.path === "tasks/queue/task-006-rich-doc-edit-and-ai-rewrite.md");
     const planned = tasks.find((task) => task.path === "tasks/queue/task-009-ai-work-modes-productization.md");
+    const active = tasks.find((task) => task.path === "tasks/queue/task-052-drop-planning-task-model.md");
 
     expect(first).toBeTruthy();
     expect(first?.summary.length).toBeGreaterThan(0);
@@ -26,6 +27,8 @@ describe("tasks service", () => {
     expect(planned?.deliveryResult.length).toBeGreaterThan(0);
     expect(planned?.machine.branch).toBe("codex/task-009-ai-work-modes-productization");
     expect(planned?.machine.git.state).toBe("merged");
+    expect(active?.status).toBe("doing");
+    expect(active?.currentMode).toBe("工程执行");
     expect(Array.isArray(first?.machine.companionReleaseIds)).toBe(true);
   }, 15000);
 

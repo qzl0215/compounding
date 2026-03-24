@@ -36,7 +36,10 @@ export async function listTaskCards(): Promise<TaskCard[]> {
       const companion = readTaskCompanionFacts(parsed.id);
       const branch = parsedMachine.branch || companion.branch;
       const recentCommit = parsedMachine.recentCommit || companion.recentCommit;
-      const currentMode = companion.currentMode || parsedMachine.currentMode || defaultModeForStatus(parsed.status);
+      const currentMode = normalizeExecutionMode(
+        companion.currentMode || parsedMachine.currentMode || defaultModeForStatus(parsed.status),
+        parsed.status
+      );
       return {
         ...parsed,
         currentMode,
@@ -75,5 +78,13 @@ function uniqueStrings(values: string[]) {
 }
 
 function defaultModeForStatus(status: TaskStatus) {
-  return status === "todo" ? "方案评审" : "工程执行";
+  return status === "done" ? "质量验收" : "工程执行";
+}
+
+function normalizeExecutionMode(currentMode: string, status: TaskStatus) {
+  const normalized = String(currentMode || "").trim();
+  if (normalized === "战略澄清" || normalized === "方案评审") {
+    return status === "done" ? "质量验收" : "工程执行";
+  }
+  return normalized || defaultModeForStatus(status);
 }

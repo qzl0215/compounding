@@ -68,7 +68,6 @@ export async function getProjectOverview(): Promise<ProjectOverviewSnapshot> {
         source: "运营蓝图",
         evidenceHref: "/knowledge-base?path=memory/project/operating-blueprint.md",
       }),
-      ...stageBuckets.planning.map((row) => buildTaskItem(row)),
     ],
     readyItems: stageBuckets.ready.map((row) => buildTaskItem(row)),
     doingItems: stageBuckets.doing.map((row) => buildTaskItem(row)),

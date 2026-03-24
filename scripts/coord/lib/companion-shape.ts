@@ -86,7 +86,7 @@ function normalizeCompanion(companion = {}) {
     task_id: cleanString(companion.short_id || companion.task_id),
     task_path: cleanString(companion.task_path),
     contract_hash: cleanString(companion.contract_hash),
-    current_mode: cleanString(companion.current_mode, "方案评审"),
+    current_mode: cleanString(companion.current_mode, "工程执行"),
     branch_name: cleanString(companion.branch_name || companion.contract?.branch_name, ""),
     completion_mode: cleanString(companion.completion_mode, "close_full_contract"),
     planned_files: uniqueStrings(companion.planned_files || companion.contract?.planned_files || []),

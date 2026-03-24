@@ -20,7 +20,7 @@ last_reviewed_at: 2026-03-24
 - 人只做价值判断、需求澄清和结果验收；AI 默认负责执行闭环。
 - 只允许一层 plan；`memory/project/operating-blueprint.md` 是唯一 plan 主源，`memory/project/roadmap.md` 只保留战略摘要与里程碑，`memory/project/current-state.md` 只保留运营快照。
 - Plan 负责想清楚，task 负责执行合同，companion 负责机器执行上下文，release 负责验收与运行事实。
-- 需求不清、范围不清或发布标准不清时，先创建规划 task，再与用户共商。
+- 需求不清、范围不清或发布标准不清时，先回到 `memory/project/operating-blueprint.md` 收口，不得直接创建执行 task。
 - 任何 `structural / release` 改动都必须绑定任务，并在进入 `main` 前完成 review。
 - task 短编号必须全局唯一，并显式写入任务文档；不允许再靠文件名或序号隐式推导。
 - 生产发布只认 `main`；`dev` 只是 preview channel，不是长期 git 主分支；回滚通过 release 切换完成，不通过 `git reset` 改写线上状态。

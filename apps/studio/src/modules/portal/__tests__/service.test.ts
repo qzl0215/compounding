@@ -5,14 +5,15 @@ describe("project overview", () => {
   it("surfaces the stage-first snapshot from markdown sources and runtime state", async () => {
     const overview = await getProjectOverview();
 
-    expect(overview.overview.oneLiner).toContain("4 文档主干 + 3 状态主源");
-    expect(overview.overview.currentPhase).toContain("High-Frequency Governance Rationalization");
-    expect(overview.overview.currentMilestone).toContain("4 文档主干 + 3 状态主源");
+    expect(overview.overview.oneLiner).toContain("operating-blueprint");
+    expect(overview.overview.currentPhase).toContain("Single-Plan Execution Boundary Simplification");
+    expect(overview.overview.currentMilestone).toContain("废除规划 task");
     expect(overview.homepage.headline).toBe("先定问题，再定动作");
     expect(overview.homepage.primaryStats).toHaveLength(3);
     expect(overview.direction.summary.length).toBeGreaterThan(0);
     expect(overview.thinkingItems.length).toBeGreaterThan(0);
     expect(overview.planningItems.length).toBeGreaterThan(0);
+    expect(overview.planningItems.every((item) => item.source === "运营蓝图")).toBe(true);
     expect(
       overview.readyItems.length +
         overview.doingItems.length +

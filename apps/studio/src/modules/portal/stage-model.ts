@@ -1,9 +1,6 @@
 import type { TaskDeliveryRow } from "@/modules/tasks";
 import type { DemandStage } from "./types";
 
-const PLANNING_MODES = new Set(["战略澄清", "方案评审"]);
-const EXECUTION_MODES = new Set(["工程执行", "发布复盘"]);
-
 export const DEMAND_STAGE_LABELS: Record<DemandStage, string> = {
   thinking: "待思考",
   planning: "待规划",
@@ -59,26 +56,8 @@ export function resolveTaskDemandStage(row: TaskDeliveryRow): DemandStage {
   if (row.status === "doing" || row.status === "blocked") {
     return "doing";
   }
-  if (isPlanningMode(row.currentMode)) {
-    return "planning";
-  }
-  if (row.status === "todo" && isExecutionMode(row.currentMode)) {
-    return "ready";
-  }
   if (row.status === "todo") {
     return "ready";
   }
   return "released";
-}
-
-function isPlanningMode(value: string) {
-  return PLANNING_MODES.has(normalizeMode(value));
-}
-
-function isExecutionMode(value: string) {
-  return EXECUTION_MODES.has(normalizeMode(value));
-}
-
-function normalizeMode(value: string) {
-  return String(value || "").trim();
 }

@@ -24,15 +24,15 @@ related_docs:
 ## 当前焦点
 
 - 本地 production 当前稳定运行在 `3010`；当前 active release 仍以 `pnpm prod:status` 输出为准。
-- `t-042 ~ t-051` 已把单层 plan、task 执行合同、最小 companion / release、模板单点化、高频文档主干和 `AGENTS` 执行入口收回主线。
-- 当前运营重点切到下一轮高 ROI 收口候选评估：优先看 `scripts/ai` 重复编排逻辑、兼容层残留和仍会放大默认读链的静态噪音。
-- 当前阶段不扩新页面、新状态源、新运行时或新治理文档；继续只做减默认必读面、减重复解释、减错读主源。
+- `t-052` 正在把 planning 从对象层收回为阶段动作：需求不清时默认回到 `operating-blueprint`，task 只保留可执行事项。
+- 当前正在同时收口三处回流口：`AGENTS / WORK_MODES / DEV_WORKFLOW` 的 planning 语义、portal planning stage 来源、task 默认 currentMode。
+- 当前阶段不扩新页面、新状态源、新运行时或新治理文档；继续只做减对象类别、减默认必读面、减错读主源。
 
 ## 当前阻塞
 
-- `AGENTS` 已完成瘦身，当前阻塞不再是文档骨架，而是脚本层和兼容层里仍可能残留重复编排逻辑。
-- 如果 `scripts/ai` 继续各自维护参数解析、模板填充和失败出口，后续自动化会继续重复造轮子。
-- 如果 portal / task / release 的兼容壳不继续退出主读链，文档瘦身的收益会被模型层膨胀抵消。
+- 主要风险不是计划主源本身，而是 planning 语义仍可能从 task 默认 mode、portal stage 投影和旧文案回流。
+- 如果 `todo` task 继续默认落到 `方案评审`，即使文档收口了，任务页和首页仍会把 planning 错读成 task 对象。
+- 如果大 task 的剩余范围不明确退回 plan，后续很容易重新长出 task 树或隐性“规划 task”。
 
 ## 当前推荐校验顺序
 
@@ -58,7 +58,7 @@ related_docs:
 - `pnpm prod:check`
 - `pnpm coord:check:pre-task`
 - 确认当前无 `pending dev`，本地 production 继续稳定运行在最新 active release
-- 评估 `scripts/ai` 的重复编排逻辑是否值得进入下一轮高 ROI 收口
-- 评估 portal / task / release 兼容层是否还有可安全拔掉的旧别名和回退壳
-- 继续验证 `README`、`build-context` 与 `ai-rewrite-context` 没有把附录重新拉回默认第一跳
+- 验证 planning 只来自 `operating-blueprint`，`/tasks` 不再承担待规划对象展示
+- 验证新建或默认 task 不再落到 `战略澄清 / 方案评审`
+- 确认大 task 的剩余范围回到 plan，而不是继续在 task 内树化
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

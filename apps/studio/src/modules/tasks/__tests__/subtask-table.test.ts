@@ -60,7 +60,7 @@ function buildRow(overrides: Partial<TaskDeliveryRow>): TaskDeliveryRow {
 describe("buildSubtaskTableRows", () => {
   it("keeps only non-released rows and sorts by active stage priority", () => {
     const rows = buildSubtaskTableRows([
-      buildRow({ id: "task-047-planning", shortId: "t-047", currentMode: "战略澄清", status: "todo" }),
+      buildRow({ id: "task-047-legacy-ready", shortId: "t-047", currentMode: "战略澄清", status: "todo" }),
       buildRow({ id: "task-048-ready", shortId: "t-048", currentMode: "工程执行", status: "todo" }),
       buildRow({ id: "task-049-doing", shortId: "t-049", status: "doing" }),
       buildRow({ id: "task-050-acceptance", shortId: "t-050", deliveryStatus: "pending_acceptance", status: "done" }),
@@ -70,8 +70,8 @@ describe("buildSubtaskTableRows", () => {
     expect(rows.map((row) => row.id)).toEqual([
       "task-050-acceptance",
       "task-049-doing",
+      "task-047-legacy-ready",
       "task-048-ready",
-      "task-047-planning",
     ]);
   });
 });
