@@ -2,7 +2,7 @@
 title: PROJECT_RULES
 update_mode: promote_only
 status: active
-last_reviewed_at: 2026-03-23
+last_reviewed_at: 2026-03-24
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -24,6 +24,7 @@ related_docs:
 - 每个一等模块只做一件事
 - 模块必须通过明确 public API 对外暴露能力
 - 禁止跨模块直接访问内部私有实现
+- 巨型 `util / helper / common` 不允许继续扩张；新增逻辑必须伴随清理或明确删除计划
 - `apps/studio/src/modules/*` 与 `scripts/compounding_bootstrap/*` 是当前第一批高价值模块域
 
 ## 命名治理
@@ -37,6 +38,7 @@ related_docs:
 - 新增代码必须伴随清理
 - 替代旧逻辑时，必须删除旧逻辑、或在技术债中写明兼容层和删除计划
 - 任何结构性改动都必须同步更新 `task`、`memory`、`code_index`
+- 每个执行 task 对应一条短分支；任务状态、最近提交与是否并入 `main` 必须可追踪
 - task 短编号必须显式写入文档且全局唯一；不允许靠文件名或序号推导出隐式身份
 - 规则若限制主线效率，可直接更新，但必须同步回 `AGENTS.md`、相关文档和 ADR
 
@@ -64,6 +66,7 @@ related_docs:
 ## 知识资产维护
 
 - 高频知识资产分为 `generated`、`validated`、`manual`；维护方式以 `docs/ASSET_MAINTENANCE.md` 为准
+- 新经验先进入 `memory/experience/*`，稳定后再升格到 `docs/*` 或 `AGENTS.md`
 - 生成产物只做导航与承载，不放判断性内容；判断性说明留在人工主源
 - prompt 资产由单一注册表供运行时代码与校验器共同读取
 - `code_index/*` 由脚本生成；人工补充说明写回 `docs/ARCHITECTURE.md`、`module.md` 或 task

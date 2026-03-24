@@ -56,7 +56,7 @@ related_docs:
 ## 交付链
 
 - 先跑 `node --experimental-strip-types scripts/ai/validate-change-trace.ts` 与 `node --experimental-strip-types scripts/ai/validate-task-git-link.ts`。
-- 再准备 `dev` 预览：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`。
+- 再准备 `dev` 预览：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`；这一步默认同时完成 release build 与 smoke gate。
 - 若已有未验收 `dev`，先提醒用户验收上一个 `dev`。
 - 用户验收通过后，再晋升到 `main` 与本地生产。
 - 最后用 `pnpm prod:status`、`pnpm prod:check` 和 `/releases` 完成生产验收。
