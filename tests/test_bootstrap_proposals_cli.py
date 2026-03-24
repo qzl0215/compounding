@@ -67,6 +67,7 @@ class BootstrapProposalCliTests(BootstrapWorkspaceTestCase):
         self.assertTrue((self.target / "schemas" / "project_brief.schema.yaml").exists())
         self.assertTrue((self.target / "kernel" / "kernel_manifest.yaml").exists())
         self.assertTrue((self.target / "docs" / "WORK_MODES.md").exists())
+        self.assertIn("title: WORK_MODES", (self.target / "docs" / "WORK_MODES.md").read_text(encoding="utf8"))
         self.assertFalse((self.target / "AGENTS.md").exists())
 
     def test_proposal_moves_existing_task_template_diff_to_proposal_required(self) -> None:
@@ -114,6 +115,32 @@ class BootstrapProposalCliTests(BootstrapWorkspaceTestCase):
         result = apply_proposal(self.target, proposal_id)
         self.assertEqual(result["status"], "applied")
         self.assertTrue((self.target / "memory" / "project" / "operating-blueprint.md").exists())
+
+    def test_proposal_respects_explicit_local_override_for_managed_docs(self) -> None:
+        (self.target / "memory" / "project").mkdir(parents=True, exist_ok=True)
+        (self.target / "tasks" / "queue").mkdir(parents=True, exist_ok=True)
+        (self.target / "README.md").write_text("# Legacy Repo\n\nlegacy app\n", encoding="utf8")
+        (self.target / "AGENTS.md").write_text("# local agents\n", encoding="utf8")
+
+        subprocess.run(
+            ["python3", str(ROOT / "scripts" / "init_project_compounding.py"), "attach", "--target", str(self.target)],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        brief_path = self.target / "bootstrap" / "project_brief.yaml"
+        brief = load_yaml(brief_path)
+        brief["local_overrides"]["owned_paths"].append("AGENTS.md")
+        from scripts.compounding_bootstrap.yaml_io import save_yaml
+
+        save_yaml(brief_path, brief)
+
+        proposal_id = create_proposal(self.target)
+        payload = load_yaml(self.target / "output" / "proposals" / proposal_id / "proposal.yaml")
+
+        self.assertNotIn("AGENTS.md", payload["changes"]["proposal_required"])
+        self.assertIn("AGENTS.md", payload["changes"]["suggest_only"])
+        self.assertFalse(any(item["path"] == "AGENTS.md" for item in payload["conflicts"]))
 
     def test_apply_proposal_rejects_when_no_auto_apply_exists(self) -> None:
         bootstrap(self.brief_path, self.target)

@@ -28,6 +28,12 @@ def path_matches(path: str, patterns: list[str]) -> bool:
     return any(fnmatchcase(path, pattern) if "*" in pattern else path == pattern for pattern in patterns)
 
 
+def local_override_paths(brief: dict[str, Any]) -> list[str]:
+    overrides = brief.get("local_overrides") if isinstance(brief.get("local_overrides"), dict) else {}
+    owned_paths = overrides.get("owned_paths") if isinstance(overrides.get("owned_paths"), list) else []
+    return [str(item).strip() for item in owned_paths if isinstance(item, str) and str(item).strip()]
+
+
 def load_report(target: Path) -> dict[str, Any]:
     report_path = target / BOOTSTRAP_REPORT_PATH
     if not report_path.exists():
@@ -66,6 +72,7 @@ def classify_managed_asset(target: Path, entry: dict[str, Any], brief: dict[str,
     relative_path = str(entry.get("path") or "")
     sync_mode = str(entry.get("sync_mode") or "proposal")
     upgrade_policy = brief.get("upgrade_policy") if isinstance(brief.get("upgrade_policy"), dict) else {}
+    override_paths = local_override_paths(brief)
     auto_apply_paths = upgrade_policy.get("auto_apply_paths") if isinstance(upgrade_policy.get("auto_apply_paths"), list) else []
     proposal_required_paths = (
         upgrade_policy.get("proposal_required_paths") if isinstance(upgrade_policy.get("proposal_required_paths"), list) else []
@@ -74,6 +81,10 @@ def classify_managed_asset(target: Path, entry: dict[str, Any], brief: dict[str,
 
     if path_matches(relative_path, blocked_paths):
         return "blocked", "blocked by upgrade policy"
+    if path_matches(relative_path, override_paths):
+        if pattern_exists(target, relative_path):
+            return "suggest_only", "project-owned local override"
+        return None, None
     exists = pattern_exists(target, relative_path)
     if not exists:
         if path_matches(relative_path, auto_apply_paths) or sync_mode == "auto":
@@ -95,6 +106,7 @@ def missing_shell_protocol_assets(target: Path) -> list[str]:
 def build_conflicts(manifest: dict[str, Any], brief: dict[str, Any], target: Path) -> list[dict[str, str]]:
     conflicts: list[dict[str, str]] = []
     upgrade_policy = brief.get("upgrade_policy") if isinstance(brief.get("upgrade_policy"), dict) else {}
+    override_paths = local_override_paths(brief)
     auto_apply_paths = upgrade_policy.get("auto_apply_paths") if isinstance(upgrade_policy.get("auto_apply_paths"), list) else []
     proposal_required_paths = (
         upgrade_policy.get("proposal_required_paths") if isinstance(upgrade_policy.get("proposal_required_paths"), list) else []
@@ -107,6 +119,8 @@ def build_conflicts(manifest: dict[str, Any], brief: dict[str, Any], target: Pat
         if not isinstance(entry, dict):
             continue
         relative_path = str(entry.get("path") or "")
+        if path_matches(relative_path, override_paths):
+            continue
         if canonical_file_differs(target, relative_path):
             conflicts.append(
                 {
@@ -247,7 +261,7 @@ def copy_source_asset(target: Path, relative_path: str) -> list[str]:
     if relative_path == BRIEF_PATH:
         ensure_brief(target / BRIEF_PATH, target)
         return [BRIEF_PATH]
-    if write_shell_asset(target, relative_path, target.resolve().name):
+    if relative_path in MINIMAL_MEMORY_DOCS and write_shell_asset(target, relative_path, target.resolve().name):
         return [relative_path]
     for source_path in expand_source_paths(relative_path):
         destination = target / source_path.relative_to(SOURCE_ROOT)
