@@ -3,6 +3,7 @@ title: AI_OPERATING_MODEL
 update_mode: manual
 status: active
 last_reviewed_at: 2026-03-23
+last_reviewed_at: 2026-03-24
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -16,7 +17,7 @@ related_docs:
 
 ## 最小起步顺序
 
-- 先按 `AGENTS.md` 的真相源地图进入对应主源。
+- 先按 `AGENTS.md` 的默认读链进入对应主源。
 - 再补当前 task、相关 `module.md`、`code_index/*`，必要时先跑 `python3 scripts/pre_mutation_check.py`。
 
 ## 行为原则
@@ -27,6 +28,9 @@ related_docs:
 - `Boil the Lake` 只适用于小而边界清楚的 task；大而跨阶段的事项留在 plan。
 - `scripts/ai/create-task.ts` 可直接接收 `boundary / doneWhen / outOfScope / constraints / testStrategy`，把已收口的决策写成 task 合同，而不是只写摘要。
 - task 只承接可执行边界；companion 只保留机器执行上下文；release 只保留验收与运行事实。
+- 只把价值判断、体验取舍、结果验收和高风险不可逆动作抛给人；实现级细节默认不向人要确认。
+- 交付 `dev` 或 production 页面时，默认同时提供环境说明、页面链接和如何验收。
+- 任务在对话中默认使用“中文任务摘要 + `t-xxx`”表达。
 - 用户可感知变化默认走 `dev` 验收；内部低风险改动可由 AI 自验收并直接闭环。
 - 业务链与进入退出条件以 `docs/WORK_MODES.md` 为准，这里只保留 AI 应如何处理问题，不重复展开模式定义。
 

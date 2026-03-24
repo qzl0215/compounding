@@ -36,7 +36,7 @@ export async function listTaskCards(): Promise<TaskCard[]> {
       const companion = readTaskCompanionFacts(parsed.id);
       const branch = parsedMachine.branch || companion.branch;
       const recentCommit = parsedMachine.recentCommit || companion.recentCommit;
-      const currentMode = parsed.currentMode || companion.currentMode || defaultModeForStatus(parsed.status);
+      const currentMode = companion.currentMode || parsedMachine.currentMode || defaultModeForStatus(parsed.status);
       return {
         ...parsed,
         currentMode,

@@ -8,7 +8,7 @@ import {
   toRuntimeSignal,
 } from "./builders";
 import { buildAcceptanceReleaseItems, buildDocItems, buildReleasedItems, buildTaskItem } from "./overview-items";
-import { normalizeInline, parseBulletList, parseBulletMap } from "./parsing";
+import { normalizeInline, parseBulletList } from "./parsing";
 import { groupTaskRowsByDemandStage } from "./stage-model";
 import type { HomeEntryLink, ProjectOverviewSnapshot, SemanticEntry, SemanticEntryGroup } from "./types";
 
@@ -28,7 +28,7 @@ export async function getProjectOverview(): Promise<ProjectOverviewSnapshot> {
     getDeliverySnapshot(),
   ]);
 
-  const missionAndVision = parseBulletMap(extractSection(currentState.content, "mission_and_vision") ?? "");
+  const currentFocus = parseBulletList(extractSection(currentState.content, "current_focus") ?? "");
   const frozenItems = parseBulletList(extractSection(currentState.content, "frozen_items") ?? "");
   const blueprintOverview = normalizeInline(extractSection(blueprint.content, "plan_overview") ?? "");
   const roadmapPhase = normalizeInline(extractSection(roadmap.content, "current_phase") ?? "");
@@ -38,11 +38,12 @@ export async function getProjectOverview(): Promise<ProjectOverviewSnapshot> {
   const thinkingBacklog = parseBulletList(extractSection(blueprint.content, "thinking_backlog") ?? "");
   const nextConversation = parseBulletList(extractSection(blueprint.content, "next_conversation") ?? "");
   const planningBacklog = parseBulletList(extractSection(blueprint.content, "planning_backlog") ?? "");
+  const currentBlockers = parseBulletList(extractSection(currentState.content, "current_blockers") ?? "");
   const taskRows = deliverySnapshot.projections.taskRows;
   const releaseDashboard = deliverySnapshot.facts.releaseDashboard;
   const stageBuckets = groupTaskRowsByDemandStage(taskRows);
   const blockedItems = [
-    ...parseBulletList(extractSection(blueprint.content, "current_blockers") ?? ""),
+    ...currentBlockers,
     ...taskRows.filter((task) => task.status === "blocked").map((task) => `${task.shortId} ${task.title}（已阻塞）`),
   ];
   const nextCheckpoint = parseBulletList(extractSection(currentState.content, "next_checkpoint") ?? "");
@@ -51,7 +52,7 @@ export async function getProjectOverview(): Promise<ProjectOverviewSnapshot> {
     : "当前无待验收版本";
 
   const snapshot = {
-    overview: buildOverviewSummary(blueprintOverview || missionAndVision["使命"] || "", roadmapPhase, currentMilestone, currentPriority),
+    overview: buildOverviewSummary(blueprintOverview || currentFocus[0] || currentPriority, roadmapPhase, currentMilestone, currentPriority),
     direction: buildDirectionSummary(nextDirection || currentPriority),
     thinkingItems: buildDocItems({
       values: thinkingBacklog,
@@ -92,55 +93,44 @@ export async function getProjectOverview(): Promise<ProjectOverviewSnapshot> {
   };
 }
 
-export const getProjectCockpit = getProjectOverview;
-export const getPortalOverview = getProjectOverview;
-
 export async function getSemanticEntryGroups(): Promise<SemanticEntryGroup[]> {
   return [
     {
-      title: "项目全貌",
-      description: "先看需求总览、战略摘要和运营快照。",
+      title: "高频主干",
+      description: "默认先读 AGENTS，再读战略、快照和当前计划。",
       items: [
-        entryDoc("运营蓝图", "memory/project/operating-blueprint.md", "唯一 plan 主源"),
+        entryDoc("AGENTS", "AGENTS.md", "高频执行入口"),
         entryDoc("路线图", "memory/project/roadmap.md", "阶段、里程碑和方向"),
         entryDoc("当前状态", "memory/project/current-state.md", "当前运营快照"),
-        entryDoc("AGENTS 入口", "AGENTS.md", "高频执行入口"),
+        entryDoc("运营蓝图", "memory/project/operating-blueprint.md", "唯一 plan 主源"),
       ],
     },
     {
-      title: "待思考证据",
-      description: "还不能直接开工的问题、机会点和启发式追问。",
+      title: "按场景下钻",
+      description: "进入对应场景后，再补工作模式、runbook 和架构边界。",
       items: [
-        entryDoc("运营蓝图 · 待思考", "memory/project/operating-blueprint.md", "未成熟事项与下一步对话"),
-        entryDoc("当前状态", "memory/project/current-state.md", "当前焦点与冻结项"),
+        entryDoc("工作模式", "docs/WORK_MODES.md", "看场景语义、输入和退出条件"),
+        entryDoc("开发工作流", "docs/DEV_WORKFLOW.md", "看执行顺序、门禁和发布 runbook"),
+        entryDoc("架构", "docs/ARCHITECTURE.md", "看仓库拓扑、依赖方向和运行时边界"),
       ],
     },
     {
-      title: "待规划证据",
-      description: "已经成立但还没收口的方向与规划边界。",
+      title: "专项附录",
+      description: "这些文档仍有效，但不再是默认第一跳。",
       items: [
-        entryDoc("运营蓝图 · 待规划", "memory/project/operating-blueprint.md", "待验证的规划边界"),
-        entryDoc("运营蓝图 · 测试策略", "memory/project/operating-blueprint.md", "何时引入、优化和退休测试"),
-        entryLink("执行面板", "/tasks", "查看规划类 task 与可执行事项的分界"),
+        entryDoc("项目规则", "docs/PROJECT_RULES.md", "代码治理、兼容层和验证规则"),
+        entryDoc("AI 工作模型", "docs/AI_OPERATING_MODEL.md", "AI 行为原则和最小脚本契约"),
+        entryDoc("资产维护矩阵", "docs/ASSET_MAINTENANCE.md", "生成资产与维护方式"),
+        entryDoc("模块索引", "code_index/module-index.md", "按需补代码导航"),
       ],
     },
     {
-      title: "执行规则",
-      description: "当事情进入可执行边界后，再看这些规则和入口。",
+      title: "执行与发布",
+      description: "进入 task 或 release 后，再补这些事实入口。",
       items: [
-        entryDoc("项目规则", "docs/PROJECT_RULES.md", "代码与结构边界"),
-        entryDoc("开发工作流", "docs/DEV_WORKFLOW.md", "规划、执行、交付 runbook"),
-        entryDoc("AI 工作模型", "docs/AI_OPERATING_MODEL.md", "AI 如何判断需求环节"),
-        entryLink("执行面板", "/tasks", "查看可执行事项和执行事实"),
-      ],
-    },
-    {
-      title: "发布事实",
-      description: "运行态、版本和验收事实只在这些入口看。",
-      items: [
+        entryLink("执行面板", "/tasks", "查看真正可推进的事项"),
         entryLink("发布页", "/releases", "查看待验收版本、运行态和历史版本"),
-        entryDoc("当前状态", "memory/project/current-state.md", "当前运行边界与检查点"),
-        entryDoc("技术债", "memory/project/tech-debt.md", "发布前后的显性债务"),
+        entryDoc("技术债", "memory/project/tech-debt.md", "看显性债务与删除计划"),
       ],
     },
   ];

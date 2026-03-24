@@ -30,6 +30,9 @@ export type ParsedTaskContract = {
   acceptanceResult: string;
   deliveryResult: string;
   retro: string;
+};
+
+export type ParsedTaskMachineFacts = {
   currentMode: string;
   branch: string;
   recentCommit: string;
@@ -145,6 +148,11 @@ export function parseTaskContract(path: string, content: string): ParsedTaskCont
     acceptanceResult,
     deliveryResult,
     retro,
+  };
+}
+
+export function parseTaskMachineFacts(content: string): ParsedTaskMachineFacts {
+  return {
     currentMode: inline(extractLegacyField(content, ["当前模式"])),
     branch: inline(extractLegacyField(content, ["分支"])),
     recentCommit: inline(extractLegacyField(content, ["最近提交"])),

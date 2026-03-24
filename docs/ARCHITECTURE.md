@@ -2,7 +2,7 @@
 title: ARCHITECTURE
 update_mode: promote_only
 status: active
-last_reviewed_at: 2026-03-22
+last_reviewed_at: 2026-03-24
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -14,12 +14,14 @@ related_docs:
 
 ## 仓库结构
 
-- `apps/studio/`: 只读文档门户
+- `apps/studio/`: 只读门户与读模型投影层
+- `scripts/ai/`: 上下文构建、索引生成、任务创建、验证门禁
+- `scripts/coord/`: companion、pre-task、review / handoff 护栏
 - `scripts/compounding_bootstrap/`: scaffold / audit / proposal 引擎
-- `docs/`: 规则层、架构层、流程层、AI operating model
-- `memory/`: 架构记忆、项目状态、运营蓝图、经验、ADR
-- `code_index/`: 模块索引、依赖图、函数索引
-- `tasks/`: 模板、队列、归档
+- `docs/`: 4 文档主干 + 专项附录
+- `memory/`: 项目状态、架构记忆、经验、ADR
+- `code_index/`: 生成型导航缓存
+- `tasks/`: 模板与任务队列
 
 ## 核心模块域
 
@@ -53,15 +55,13 @@ related_docs:
 
 ## 依赖方向
 
-1. `AGENTS.md` 提供高频入口
-2. `memory/project/roadmap.md` 提供战略层真相
-3. `memory/project/operating-blueprint.md` 提供当前里程碑战术拆解
-4. `tasks/*` 给出当前变更边界
-5. `docs/*` 提供长期规则、架构和流程
-6. `code_index/*` 提供上下文导航
-7. 代码模块只依赖必要的邻近模块和共享基础层
+- `apps/studio/src/app/*` 只通过 `apps/studio/src/modules/*` 读取文件与投影事实。
+- `apps/studio/src/modules/*` 只依赖必要的邻近模块 public API 和共享解析层，不跨层读任意文件系统状态。
+- `scripts/ai/*` 与 `scripts/coord/*` 可以读取 `docs / memory / tasks / code_index`，但不把运行期临时事实回写成新的真相源。
+- `scripts/compounding_bootstrap/*` 只依赖 bootstrap 内部模块和 canonical assets，不继续堆单一巨型入口。
+- `code_index/*`、`docs/ASSET_MAINTENANCE.md`、代码量快照等生成物都是下游缓存，不反向充当主真相源。
 
-## 生产发布运行时
+## 运行时拓扑
 
 - 运行根目录由 `AI_OS_RELEASE_ROOT` 决定；默认是仓库同级的 `.compounding-runtime`
 - 目录约定固定为：
@@ -72,9 +72,11 @@ related_docs:
 - 新版本先在 `releases/<release-id>` 完成构建与 smoke check，再原子切换 `current`
 - 本机或内网管理页通过 `apps/studio/src/modules/releases` 读取 registry，并触发 deploy / rollback
 
-## 协作边界映射
+## 模块边界
 
-- 协作边界按 `AGENTS.md`、`docs/WORK_MODES.md`、`memory/project/*`、`tasks/*` 和 `release` 分层；执行判断只看场景、状态、上下文、允许动作和验收标准。
+- `TaskContract` 只保留人类执行语义；branch、commit、release、trace 等机器事实由 companion / release 投影承接。
+- 首页、任务页、发布页统一读取 `ProjectOverviewSnapshot` 与任务 / 发布投影，不再保留旧 cockpit 兼容层。
+- 文档与记忆主源保留人工维护；生成脚本只负责缓存、注册表和导航索引。
 
 ## 禁止调用方式
 

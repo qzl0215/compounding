@@ -58,15 +58,17 @@ def audit(config_path: Path, target: Path) -> AuditResult:
     if agents_path.exists():
         agents_text = agents_path.read_text(encoding="utf8")
         for required in [
-            "`docs/PROJECT_RULES.md`",
-            "`docs/ARCHITECTURE.md`",
+            "`memory/project/roadmap.md`",
+            "`memory/project/current-state.md`",
+            "`memory/project/operating-blueprint.md`",
+            "`docs/WORK_MODES.md`",
             "`docs/DEV_WORKFLOW.md`",
-            "`docs/AI_OPERATING_MODEL.md`",
+            "`docs/ARCHITECTURE.md`",
         ]:
             if required not in agents_text:
                 result.errors.append(f"AGENTS must require reading {required}.")
-        if "- 计划主源：`memory/project/operating-blueprint.md`" not in agents_text:
-            result.errors.append("AGENTS truth map must declare memory/project/operating-blueprint.md as the single plan source.")
+        if "`memory/project/operating-blueprint.md` 是唯一 plan 主源" not in agents_text:
+            result.errors.append("AGENTS must declare memory/project/operating-blueprint.md as the single plan source.")
 
     for relative_path in [AGENTS_PATH, *CANONICAL_DOCS, *MEMORY_DOCS, "code_index/module-index.md", "code_index/dependency-map.md"]:
         path = target / relative_path

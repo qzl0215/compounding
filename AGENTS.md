@@ -5,25 +5,22 @@ update_mode: manual
 status: active
 source_of_truth: AGENTS.md
 related_docs:
-  - docs/PROJECT_RULES.md
-  - docs/ARCHITECTURE.md
   - docs/WORK_MODES.md
   - docs/DEV_WORKFLOW.md
-  - docs/AI_OPERATING_MODEL.md
-  - docs/ASSET_MAINTENANCE.md
-  - memory/project/current-state.md
   - memory/project/roadmap.md
-last_reviewed_at: 2026-03-22
+  - memory/project/current-state.md
+  - memory/project/operating-blueprint.md
+  - docs/ARCHITECTURE.md
+last_reviewed_at: 2026-03-24
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 ## 硬规则
 
 - `AGENTS.md` 只保留会改变执行行为的高频硬规则；长文规则落在 `docs/*`，状态和经验落在 `memory/*`。
-- 任何改动前先读 `docs/PROJECT_RULES.md` 与 `docs/ARCHITECTURE.md`，再进入对应工作流文档。
 - 默认先做只读盘点，再做最小可验证改动。
 - 默认先做高 ROI 动作，不做过度工程和抽象炫技。
 - 人只做价值判断、需求澄清和结果验收；AI 默认负责执行闭环。
-- 只允许一层 plan；`memory/project/operating-blueprint.md` 是唯一 plan 主源，`memory/project/roadmap.md` 只保留战略摘要与里程碑。
+- 只允许一层 plan；`memory/project/operating-blueprint.md` 是唯一 plan 主源，`memory/project/roadmap.md` 只保留战略摘要与里程碑，`memory/project/current-state.md` 只保留运营快照。
 - Plan 负责想清楚，task 负责执行合同，companion 负责机器执行上下文，release 负责验收与运行事实。
 - 需求不清、范围不清或发布标准不清时，先创建规划 task，再与用户共商。
 - 任何结构性改动都必须绑定任务、更新相关记忆，并在进入 `main` 前完成 review。
@@ -33,30 +30,15 @@ last_reviewed_at: 2026-03-22
 - 经验先写入 `memory/experience/*`，稳定后再升格到 `docs/*` 或 `AGENTS.md`。
 - 生产发布只认 `main`；`dev` 只是 preview channel，不是长期 git 主分支；回滚通过 release 切换完成，不通过 `git reset` 改写线上状态。
 
-## 真相源地图
+## 默认读链
 
-- 战略真相：`memory/project/roadmap.md`
-- 运营快照：`memory/project/current-state.md`
-- 计划主源：`memory/project/operating-blueprint.md`
-- 工作模式：`docs/WORK_MODES.md`
-- 工作流：`docs/DEV_WORKFLOW.md`
-- AI 行为：`docs/AI_OPERATING_MODEL.md`
-- 代码导航：`code_index/*`
-- 任务入口：`tasks/queue/*.md`
-- 高频知识资产：`docs/ASSET_MAINTENANCE.md`
-
-## 默认回复格式
-
-1. 已完成清单
-2. 证据与当前结论适用边界
-3. 风险与待决策
-4. 下一步
-
-## 默认沟通契约
-
-- 交付 `dev` 或 production 页面时，默认同时提供环境说明、页面链接、如何验收。
-- 任务在对话中默认使用“中文任务摘要 + 短编号”表达；短编号格式固定为 `t-xxx`。
-- 页面、task、release 细节只在需要时展开，不在 AGENTS 重复铺开。
+- 先读 `AGENTS.md`。
+- 再读 `memory/project/roadmap.md`、`memory/project/current-state.md`、`memory/project/operating-blueprint.md`。
+- 需要判断当前处于什么场景时，读 `docs/WORK_MODES.md`。
+- 需要执行顺序、门禁和发布 runbook 时，读 `docs/DEV_WORKFLOW.md`。
+- 需要仓库拓扑、依赖方向和运行时边界时，读 `docs/ARCHITECTURE.md`。
+- 已进入 task 时再读 `tasks/queue/*.md`；需要代码导航时再读 `code_index/*`。
+- `docs/PROJECT_RULES.md`、`docs/AI_OPERATING_MODEL.md`、`docs/ASSET_MAINTENANCE.md` 是按需补读的专项附录，不作为默认第一跳。
 
 ## 改动门禁
 

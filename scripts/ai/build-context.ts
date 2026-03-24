@@ -1,6 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const { parseTaskContract } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
+const { parseTaskContract, parseTaskMachineFacts } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
 const { readCompanion } = require("../coord/lib/task-meta.ts");
 
 const args = process.argv.slice(2);
@@ -114,9 +114,10 @@ if (!taskContent) {
 }
 
 const taskContract = parseTaskContract(relTask, taskContent);
+const taskMachineFacts = parseTaskMachineFacts(taskContent);
 const companion = readCompanion(taskContract.id);
 const relatedModules = unique([
-  ...taskContract.relatedModules,
+  ...taskMachineFacts.relatedModules,
   ...((companion?.planned_files || []).filter((item) => item !== relTask).map(normalizeModuleToken)),
   ...((companion?.planned_modules || []).map(normalizeModuleToken)),
 ]);
@@ -131,7 +132,7 @@ const codeIndexFiles =
 
 const baseFiles = [
   "AGENTS.md",
-  "docs/PROJECT_RULES.md",
+  "memory/project/current-state.md",
   "docs/ARCHITECTURE.md",
   relTask,
 ];
@@ -141,9 +142,9 @@ const optionalFiles = [
   ...(includeAiModel ? ["docs/AI_OPERATING_MODEL.md"] : []),
   ...(includeProjectMemory
     ? [
-        "memory/project/current-state.md",
         "memory/project/roadmap.md",
         "memory/project/operating-blueprint.md",
+        "docs/WORK_MODES.md",
       ]
     : []),
 ];

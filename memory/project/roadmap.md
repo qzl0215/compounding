@@ -2,7 +2,7 @@
 title: ROADMAP
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-23
+last_reviewed_at: 2026-03-24
 source_of_truth: memory/project/roadmap.md
 related_docs:
   - AGENTS.md
@@ -15,28 +15,27 @@ related_docs:
 
 ## 当前阶段
 
-High-ROI Gstack Absorption（推进中）
+High-Frequency Governance Rationalization（推进中）
 
 ## 当前里程碑
 
-Search Before Building / Autoplan / Diff-based Test Selection（已落地，进入主线验证）
+4 文档主干 + 3 状态主源（进行中）
 
 ## 里程碑成功标准
 
-- AI 在 unfamiliar pattern / infra / runtime capability 前默认先搜仓库、搜主源、再决定是否自建
-- 小而边界清楚的 task 默认做完整闭环，大而跨阶段事项继续留在 plan
-- AI 先扩选项、再收决策、最后产出 task，只把价值判断和体验取舍抛给人
-- 测试与验证能按 diff 范围选取，不再靠继续膨胀门禁数量
-- 全程不新增第二层 plan、新状态源或重型基础设施
+- `AGENTS` 只保留硬规则、默认读链与改动门禁
+- `WORK_MODES`、`DEV_WORKFLOW`、`ARCHITECTURE` 的职责彻底切开，不再重复解释同一条链
+- `roadmap`、`current-state`、`operating-blueprint` 分别只承接战略摘要、运营快照和唯一 plan 主源
+- `README`、`build-context`、`ai-rewrite-context` 与文档门户入口都按新读链读取主源
+- `PROJECT_RULES`、`AI_OPERATING_MODEL`、`ASSET_MAINTENANCE` 退出默认第一跳，降级为专项附录
 
 ## 当前优先级
 
-推进 `t-049`：先把 AGENTS、AI_OPERATING_MODEL 与 DEV_WORKFLOW 的重复语义收口成单一职责。
+推进 `t-050`：先把高频文档收成 4 文档主干 + 3 状态主源，再同步默认读链与消费方。
 
 ## 下一阶段方向
 
-- 用真实 task 验证 Search Before Building、Autoplan、Diff-based test selection 是否稳定带来复利
-- 继续吸收轻思想与判断规则，而不是复制外部框架的基础设施形态
-- 在不增加新状态源的前提下，继续退休重复 provenance 和低价值门禁
-- 先做规则文档去重，再继续兼容层清理
+- 继续让附录文档退出默认高频链，只在专项场景补读
+- 在不增加新状态源的前提下，继续退休低价值解释层和静态噪音
+- 先收高频文档结构，再继续做兼容层清理与 `scripts/ai` 重复编排收口
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

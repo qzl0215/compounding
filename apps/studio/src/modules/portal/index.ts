@@ -3,8 +3,6 @@ export {
   HOME_ENTRY_LINKS,
   formatSyncStatus,
   formatWorktreeStatus,
-  getPortalOverview,
-  getProjectCockpit,
   getProjectOverview,
   getSemanticEntryGroups,
 } from "./service";
@@ -13,7 +11,6 @@ export type {
   DemandStage,
   DemandStageItem,
   HomeEntryLink,
-  ProjectCockpit,
   ProjectOverviewDirection,
   ProjectOverviewSnapshot,
   ProjectOverviewSummary,

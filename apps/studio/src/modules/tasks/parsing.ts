@@ -1,7 +1,7 @@
-import { parseTaskContract } from "../../../../../shared/task-contract";
-import type { TaskCard, TaskStatus } from "./types";
+import { parseTaskContract, parseTaskMachineFacts } from "../../../../../shared/task-contract";
+import type { TaskContract, TaskStatus } from "./types";
 
-export function parseTaskCard(path: string, content: string): Omit<TaskCard, "machine"> {
+export function parseTaskCard(path: string, content: string): TaskContract {
   const parsed = parseTaskContract(path, content);
 
   return {
@@ -23,13 +23,13 @@ export function parseTaskCard(path: string, content: string): Omit<TaskCard, "ma
     acceptanceResult: parsed.acceptanceResult,
     deliveryResult: parsed.deliveryResult,
     retro: parsed.retro,
-    currentMode: parsed.currentMode,
   };
 }
 
-export function parseTaskMachineFields(path: string, content: string) {
-  const parsed = parseTaskContract(path, content);
+export function parseTaskMachineFields(_path: string, content: string) {
+  const parsed = parseTaskMachineFacts(content);
   return {
+    currentMode: parsed.currentMode,
     branch: parsed.branch,
     recentCommit: parsed.recentCommit,
     primaryRelease: parsed.primaryRelease || "未生成",

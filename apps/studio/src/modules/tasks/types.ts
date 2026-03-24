@@ -55,11 +55,12 @@ export type TaskContract = {
   acceptanceResult: string;
   deliveryResult: string;
   retro: string;
+};
+
+export type TaskCard = TaskContract & {
   currentMode: string;
   machine: TaskMachineFacts;
 };
-
-export type TaskCard = TaskContract;
 
 export type TaskGroup = {
   status: TaskStatus;
@@ -67,7 +68,7 @@ export type TaskGroup = {
   tasks: TaskCard[];
 };
 
-export type TaskDeliveryRow = TaskContract & {
+export type TaskDeliveryRow = TaskCard & {
   deliveryStatus: TaskDeliveryStatus;
   versionLabel: string;
   acceptReleaseId: string | null;

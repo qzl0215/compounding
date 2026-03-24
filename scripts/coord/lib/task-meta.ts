@@ -5,7 +5,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { resolveTaskRecord } = require("../../ai/lib/task-resolver.ts");
-const { parseTaskContract, taskContractFingerprint } = require("../../../shared/task-contract.ts");
+const { parseTaskContract, parseTaskMachineFacts, taskContractFingerprint } = require("../../../shared/task-contract.ts");
 const {
   buildCompatView,
   createEmptyArtifacts,
@@ -55,9 +55,10 @@ function parseTaskToCompanion(taskLike, content) {
   if (!record) return null;
 
   const parsed = parseTaskContract(record.path, content);
-  const branch = parsed.branch;
-  const currentMode = parsed.currentMode;
-  const modules = uniqueStrings(parsed.relatedModules);
+  const parsedMachine = parseTaskMachineFacts(content);
+  const branch = parsedMachine.branch;
+  const currentMode = parsedMachine.currentMode;
+  const modules = uniqueStrings(parsedMachine.relatedModules);
   const plannedFiles = modules.filter((item) => item.includes("/") || /\.(md|ts|tsx|js|json|yaml|yml)$/.test(item));
   if (!plannedFiles.includes(record.path)) {
     plannedFiles.unshift(record.path);

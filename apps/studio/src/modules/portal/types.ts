@@ -86,5 +86,3 @@ export type ProjectOverviewSnapshot = {
   releasedItems: DemandStageItem[];
   runtimeFacts: RuntimeFacts;
 };
-
-export type ProjectCockpit = ProjectOverviewSnapshot;

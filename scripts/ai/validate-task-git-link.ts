@@ -2,7 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const childProcess = require("node:child_process");
 const { getChangePolicy } = require("./lib/change-policy.ts");
-const { parseTaskContract } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
+const { parseTaskContract, parseTaskMachineFacts } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
 const { collectTaskIdentityErrors, taskIdFromPath } = require(path.join(process.cwd(), "shared", "task-identity.ts"));
 const { readCompanion } = require("../coord/lib/task-meta.ts");
 
@@ -43,7 +43,9 @@ function listTaskPaths() {
 }
 
 function parseTask(pathname) {
-  const parsed = parseTaskContract(pathname, read(pathname));
+  const content = read(pathname);
+  const parsed = parseTaskContract(pathname, content);
+  const parsedMachine = parseTaskMachineFacts(content);
   const companion = readCompanion(parsed.id);
   return {
     id: taskIdFromPath(pathname),
@@ -52,9 +54,9 @@ function parseTask(pathname) {
     path: pathname,
     title: parsed.title,
     status: normalizeStatus(parsed.status),
-    currentMode: cleanValue(companion?.current_mode || parsed.currentMode || ""),
-    branch: cleanValue(companion?.branch_name || parsed.branch || ""),
-    recentCommit: cleanValue(companion?.lifecycle?.handoff?.git_head || parsed.recentCommit || ""),
+    currentMode: cleanValue(companion?.current_mode || parsedMachine.currentMode || ""),
+    branch: cleanValue(companion?.branch_name || parsedMachine.branch || ""),
+    recentCommit: cleanValue(companion?.lifecycle?.handoff?.git_head || parsedMachine.recentCommit || ""),
   };
 }
 

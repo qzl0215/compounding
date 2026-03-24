@@ -2,7 +2,7 @@
 title: CURRENT_STATE
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-23
+last_reviewed_at: 2026-03-24
 source_of_truth: memory/project/current-state.md
 related_docs:
   - AGENTS.md
@@ -13,44 +13,26 @@ related_docs:
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 当前状态
 
-## 项目概览
-
-- 项目名称：Compounding AI Operating System
-- 战略真相请看 `memory/project/roadmap.md`
-- 这里仅记录当前运营快照、冻结项和运行边界
-
-## 使命与愿景
-
-- 使命：把当前仓库升级成适合 AI 长期协作、任务驱动、可持续重构与自进化的 AI-Native Repo。
-- 愿景：让这个项目既像创业团队一样高效推进，又能把经验、结构和发布能力持续沉淀成复利系统。
-
-## 核心价值观
-
-- 规则服务于效率，不服务于扩张
-- 持续抓重点，不过度优化
-- 少条条框框，但井井有条
-
 ## 本地入口
 
 - 本地生产默认端口：`3010`
 - dev 预览默认端口：`3011`
 - `main` 已更新不等于本地生产自动在线；需要手动拉起本地常驻进程
-
-## 运行边界
-
-- server-only
+- 本地生产是否真正生效，以 `pnpm prod:status` 与 `pnpm prod:check` 为准
+- 运行边界：`server-only`
 
 ## 当前焦点
 
-- 本地 production 当前稳定运行在 `3010`；`main` 已发布，但常驻进程仍需要人工确认是否在线。
-- `t-042` 已完成并发布到 `main / production`；Plan / Task / Companion / Release 的最简边界已进入生产主线。
-- `t-043` 已完成 gstack ROI 吸收刷新；新的高 ROI 执行主线已固定为 `t-044 ~ t-046`。
-- `t-044` 已完成并进入 `main / production`；Search Before Building 与 Boil the Lake 已落到 AI 行为链、task 边界与 companion 机器事实。
-- 当前运营重点切到 `t-049`：收口 AGENTS、AI_OPERATING_MODEL 与 DEV_WORKFLOW 的重复语义，先让规则文档职责单一。
-- `t-045` 与 `t-046` 已完成最小实现并回收到主线，后续只需继续验收与保持轻量化，避免把这些思想重新做成新 paperwork。
-- `t-047` 已完成并发布，任务页已收成单一子任务表格。
-- `t-048` 已完成并发布；task 合同模板已收口成唯一可渲染来源。
-- 当前阶段不扩 orchestration UI、数据库或新运行时；继续只吸收轻流程、轻门禁、轻测试治理思想，并开始清理规则文档重复。
+- 本地 production 当前稳定运行在 `3010`；当前 active release 仍以 `pnpm prod:status` 输出为准。
+- `t-042 ~ t-049` 已把单层 plan、task 执行合同、最小 companion / release、模板单点化与规则去重收回主线。
+- 当前运营重点切到 `t-050`：把高频阅读面收成 4 文档主干 + 3 状态主源，并同步默认读链与消费方。
+- 当前阶段不扩新页面、新状态源、新运行时或新治理文档；继续只做减默认必读面、减重复解释、减错读主源。
+
+## 当前阻塞
+
+- 如果 `AGENTS` 继续同时承接硬规则、读链、回复契约和门禁，高频入口仍会有粗细不一的问题。
+- 如果 `current-state` 和 `operating-blueprint` 继续混运营快照与计划内容，消费方仍会读错主源。
+- 如果 `README`、`build-context` 与 `ai-rewrite-context` 不跟着新骨架同步，高频文档收口只会停留在正文层。
 
 ## 当前推荐校验顺序
 
@@ -76,7 +58,9 @@ related_docs:
 - `pnpm prod:check`
 - `pnpm coord:check:pre-task`
 - 确认当前无 `pending dev`，本地 production 继续稳定运行在最新 active release
-- 验证 `t-049` 是否真的把 AGENTS、AI_OPERATING_MODEL 与 DEV_WORKFLOW 的重复语义收口；各文档不再解释同一件事两遍
-- 验证 `t-048` 是否真的把 task 合同模板收口成单点真相；改模板时不再需要同时改 `create-task`、测试夹具和反馈脚本
-- 验证 `t-043` 产出的 `t-044 ~ t-046` 边界是否足够清楚，不会再次长成大而散 backlog
+- 验证 `t-050` 是否真的把高频阅读面收成 4 文档主干 + 3 状态主源
+- 验证 `AGENTS` 是否只剩硬规则、默认读链和改动门禁
+- 验证 `current-state` 是否不再承载愿景、价值观和长期叙事
+- 验证 `operating-blueprint` 是否不再承载当前阻塞和下一检查点
+- 验证 `README`、`build-context` 与 `ai-rewrite-context` 是否按新骨架读取主源
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

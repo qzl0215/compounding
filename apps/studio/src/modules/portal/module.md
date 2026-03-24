@@ -40,7 +40,6 @@
 - `DEFAULT_DOC_PATH`
 - `HOME_ENTRY_LINKS`
 - `getProjectOverview`
-- `getProjectCockpit`
 - `getSemanticEntryGroups`
 - `formatWorktreeStatus`
 - `formatSyncStatus`

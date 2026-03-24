@@ -2,13 +2,14 @@
 title: DEV_WORKFLOW
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-23
+last_reviewed_at: 2026-03-24
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
   - docs/WORK_MODES.md
-  - docs/AI_OPERATING_MODEL.md
+  - docs/ARCHITECTURE.md
   - tasks/templates/task-template.md
+  - memory/project/current-state.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 开发工作流
@@ -21,7 +22,7 @@ related_docs:
 
 ## 进入前判断
 
-- 先按 `docs/WORK_MODES.md` 判断当前处于哪个需求环节，再决定是否建 task、是否直接执行；这里不重复枚举阶段定义。
+- 先按 `docs/WORK_MODES.md` 判断当前处于哪个场景，再决定是否建 task、是否直接执行。
 - `task` 是执行边界，不承接未成熟需求；模糊事项继续留在 `roadmap / operating-blueprint`。
 - 当前只允许一层 plan；唯一 plan 主源是 `memory/project/operating-blueprint.md`。
 
@@ -46,7 +47,8 @@ related_docs:
 
 ## 执行链
 
-- 先读当前 task、相关 `module.md`、`code_index/*`。
+- 先读当前 task、`memory/project/current-state.md`、相关 `module.md`、`code_index/*`。
+- 进入模块和运行时边界前，再补 `docs/ARCHITECTURE.md`。
 - 需要上下文压缩时，用 `scripts/ai/build-context.ts`。
 - 动手前先跑 `python3 scripts/pre_mutation_check.py`。
 - 小而边界清楚的 task，默认做到最小完整闭环；若边界重新变大，退回 plan。
