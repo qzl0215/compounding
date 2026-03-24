@@ -125,19 +125,61 @@ function updateChannelSymlink(target, channel = "prod") {
   return target;
 }
 
-function materializeProdRuntime(sourceReleasePath, releaseId) {
+function buildReleaseAtPath(releasePath) {
+  run("pnpm", ["install", "--frozen-lockfile=false"], releasePath);
+  run("pnpm", ["build"], releasePath);
+}
+
+function hasBuildArtifacts(releasePath) {
+  return fs.existsSync(path.join(releasePath, "apps", "studio", ".next", "BUILD_ID"));
+}
+
+function ensureProdRuntimeSource(releaseId, commitSha, sourceReleasePath = null) {
+  if (sourceReleasePath && fs.existsSync(sourceReleasePath) && hasBuildArtifacts(sourceReleasePath)) {
+    return { sourcePath: sourceReleasePath, cleanup: null };
+  }
+
+  const { root } = ensureLayout();
+  const tempSourcePath = path.join(root, "materialize-tmp", releaseId);
+  fs.rmSync(tempSourcePath, { force: true, recursive: true });
+  fs.mkdirSync(path.dirname(tempSourcePath), { recursive: true });
+  git(["worktree", "add", "--detach", tempSourcePath, commitSha]);
+  try {
+    git(["clean", "-fdx"], tempSourcePath);
+    buildReleaseAtPath(tempSourcePath);
+  } catch (error) {
+    git(["worktree", "remove", "--force", tempSourcePath]);
+    git(["worktree", "prune"]);
+    throw error;
+  }
+
+  return {
+    sourcePath: tempSourcePath,
+    cleanup: () => {
+      git(["worktree", "remove", "--force", tempSourcePath]);
+      git(["worktree", "prune"]);
+    },
+  };
+}
+
+function materializeProdRuntime(sourceReleasePath, releaseId, commitSha) {
   const { prodLiveDir } = ensureLayout();
   const targetPath = path.join(prodLiveDir, releaseId);
   const stagePath = `${targetPath}.next`;
-  fs.rmSync(stagePath, { force: true, recursive: true });
-  fs.cpSync(sourceReleasePath, stagePath, {
-    recursive: true,
-    force: true,
-    filter: (source) => path.basename(source) !== ".git",
-  });
-  fs.rmSync(targetPath, { force: true, recursive: true });
-  fs.renameSync(stagePath, targetPath);
-  return targetPath;
+  const prepared = ensureProdRuntimeSource(releaseId, commitSha, sourceReleasePath);
+  try {
+    fs.rmSync(stagePath, { force: true, recursive: true });
+    fs.cpSync(prepared.sourcePath, stagePath, {
+      recursive: true,
+      force: true,
+      filter: (source) => path.basename(source) !== ".git",
+    });
+    fs.rmSync(targetPath, { force: true, recursive: true });
+    fs.renameSync(stagePath, targetPath);
+    return targetPath;
+  } finally {
+    prepared.cleanup?.();
+  }
 }
 
 function pruneInactiveProdRuntimeCopies(activeReleaseId) {

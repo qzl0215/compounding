@@ -38,7 +38,7 @@ try {
       }
 
       const tag = ensureReleaseTag(`release-${releaseId}`, record.commit_sha);
-      const prodRuntimePath = materializeProdRuntime(record.release_path, releaseId);
+      const prodRuntimePath = materializeProdRuntime(record.release_path, releaseId, record.commit_sha);
       updateChannelSymlink(prodRuntimePath, "prod");
       markActive(releaseId);
       const reloadNote = releaseReload();

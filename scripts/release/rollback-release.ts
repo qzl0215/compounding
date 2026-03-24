@@ -37,7 +37,7 @@ try {
       throw new Error(`Release ${releaseId} has no release path.`);
     }
 
-    const prodRuntimePath = materializeProdRuntime(target.release_path, releaseId);
+    const prodRuntimePath = materializeProdRuntime(target.release_path, releaseId, target.commit_sha);
     updateChannelSymlink(prodRuntimePath, "prod");
     const reloadNote = releaseReload();
     markActive(releaseId, previous?.release_id || null);

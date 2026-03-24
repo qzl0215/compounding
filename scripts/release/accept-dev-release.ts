@@ -78,7 +78,7 @@ try {
     };
 
     upsertRelease(prodRecord);
-    const prodRuntimePath = materializeProdRuntime(pending.release_path, prodReleaseId);
+    const prodRuntimePath = materializeProdRuntime(pending.release_path, prodReleaseId, pending.commit_sha);
     updateChannelSymlink(prodRuntimePath, "prod");
     markActive(prodReleaseId);
     const reloadNote = releaseReload();
