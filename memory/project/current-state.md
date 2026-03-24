@@ -25,14 +25,14 @@ related_docs:
 
 - 本地 production 当前稳定运行在 `3010`；active release 仍以 `pnpm prod:status` 输出为准。
 - `t-053` 已完成：本地 production 已脱离 release worktree 运行 cwd，当前只保留主工作区，不再保留 release worktree 作为常驻运行目录。
-- 当前焦点切到 `t-058`：收紧 `scripts/ai` 的重复编排逻辑，只抽公共 CLI 外壳，不改业务策略，不碰 portal。
-- 这轮目标是统一 `template-feedback`、`fix-first` 与 `create-task` 的参数解析、标准输出、错误出口和 task 模板渲染，减少脚本层重复而不引入新框架。
-- 当前阶段不扩新页面、新状态源、新运行时系统或远端部署模型；优先继续收真正会制造维护成本的脚本边界。
+- `t-058` 已完成：`scripts/ai` 的共享 CLI 外壳已经落地，`template-feedback`、`fix-first` 与 `create-task` 已收回同一套参数解析、标准输出、错误出口和 task 模板渲染。
+- 当前无 `pending dev`；本地 production 已稳定运行在 `20260324195439-38bfa9d-prod`。
+- 当前主线回到结构 review 待定状态；下一轮优先只选一个高 ROI 边界继续推进，候选仍以 portal 读模型聚合点与 release 兼容壳为主。
 
 ## 当前阻塞
 
-- 主要风险不再是 runtime cwd，而是 `scripts/ai` 里的 CLI 外壳逻辑仍分散在多个脚本里，后续每次加门禁或模板约定都要多处同步。
-- 如果共享内核抽取过度，会把业务策略和公共外壳重新耦成一个新框架；如果抽取不足，重复代码会继续增长。
+- 当前没有发布阻塞；主要剩余结构风险是 portal 读模型仍偏聚合、release 兼容壳仍有历史回退逻辑，下一轮需要只挑一个边界继续收口。
+- 如果下一轮同时动多个结构边界，会重新放大对象歧义和回归成本。
 
 ## 当前推荐校验顺序
 
@@ -59,11 +59,7 @@ related_docs:
 - `pnpm coord:check:pre-task`
 - `pnpm ai:validate-assets`
 - `pnpm ai:cleanup-candidates`
-- `python3 scripts/init_project_compounding.py attach --target . --config bootstrap/project_brief.yaml`
-- `python3 scripts/init_project_compounding.py proposal --target . --config bootstrap/project_brief.yaml`
 - 确认当前无 `pending dev`，本地 production 继续稳定运行在最新 active release
-- 验证 `template-feedback-orchestrator`、`fix-first-orchestrator`、`create-task` 继续保持现有 CLI 行为
-- 验证共享内核只承接参数解析、输出、错误出口和 task 模板渲染，不承接业务判断
-- 验证 `pnpm lint`、`pnpm test`、`pnpm build`、`validate-change-trace`、`validate-task-git-link` 全部通过
-- 刷新代码量快照，确认 `scripts/ai` 的增长得到收敛
+- 为下一轮结构收口先明确单一候选边界，再进入新的执行 task
+- 在下一轮动手前刷新代码量快照，并重新评估高 ROI 噪音入口
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

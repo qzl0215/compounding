@@ -15,7 +15,7 @@ last_reviewed_at: 2026-03-25
 
 ## 需求总览
 
-继续把结构收口落到真正会制造熵增的边界上：在保留单一 plan 的前提下，优先收紧 `scripts/ai` 里仍在多处重复的 CLI 外壳，让模板渲染、参数解析、标准输出和错误出口回到同一条轻量主链；业务策略仍留在各脚本内部，不再继续堆新的编排壳。
+继续把结构收口落到真正会制造熵增的边界上：`scripts/ai` 的共享 CLI 外壳已经落地，下一轮只从 portal 读模型聚合点与 release 兼容壳里选择一个继续推进；目标仍是减少对象歧义和重复外壳，而不是增加新框架。
 
 ## 待思考
 
@@ -57,11 +57,11 @@ last_reviewed_at: 2026-03-25
 - `t-050`：高频文档结构合理化，把高频阅读面收成 4 文档主干 + 3 状态主源（已完成）
 - `t-051`：把 `AGENTS` 激进瘦身成真正的执行入口，并让迁出的内容在对应主源中各归其位（已完成）
 - `t-052`：保留单一 plan，废除规划 task，让 planning 只作为阶段动作留在 `operating-blueprint`（已完成）
-- `t-053`：让本地 production 从固定 runtime 副本启动，切断对 release worktree 的运行依赖（进行中）
+- `t-053`：让本地 production 从固定 runtime 副本启动，切断对 release worktree 的运行依赖（已完成）
 - `t-054`：把 Compounding 收口成 `single-kernel + project-shell` 的最小可运行闭环，优先打通老项目 `attach -> audit -> proposal`，再补新项目最小 `bootstrap` 与低风险 `apply`（已完成）
 - `t-055`：把知识主源升级为可校验的新鲜度与质量护栏（已完成）
 - `t-056`：把持续垃圾回收收口成轻量候选生成器（已完成）
-- `t-058`：把 `scripts/ai` 的重复 CLI 外壳收口成极薄共享内核，先服务 `template-feedback`、`fix-first` 与 `create-task`（进行中）
+- `t-058`：把 `scripts/ai` 的重复 CLI 外壳收口成极薄共享内核，先服务 `template-feedback`、`fix-first` 与 `create-task`（已完成）
 
 ## 下一步对话
 
@@ -70,7 +70,7 @@ last_reviewed_at: 2026-03-25
 - 最后产出 task：只有边界清楚后才进入执行 task
 - 若某个 task 发现边界过大，先把剩余未收口范围退回 plan，再从 plan 派生多个 sibling tasks
 - 需要收口高频文档时，优先删掉默认第一跳里的重复入口和粗粒度说明，而不是再写新的导读或说明书
-- 下一轮若继续做结构收口，先收脚本重复外壳，再决定是否进入 portal 读模型或 release 兼容层
+- 下一轮若继续做结构收口，先在 portal 读模型和 release 兼容层之间只选一个边界推进
 - `t-053` 收口后，下一阶段优先验证 knowledge freshness gate 与 cleanup candidate 报告是否足够轻、可解释、不会回流成第二套状态源
 - 若运行问题来自 worktree、软链或 cwd 耦合，优先把运行目录从输入目录中拆开，而不是继续堆 release 台账
 - 若下一轮继续推进 kernel/shell，先拿第二个老项目验证 attach/audit/proposal 的复用性，再决定是否扩大 `auto_apply`

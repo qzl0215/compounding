@@ -48,13 +48,13 @@
 
 ## 交付结果
 
-- 状态：doing
+- 状态：done
 - 体验验收结果：
-  待验收
+  用户确认共享 CLI 外壳已经落地；`create-task`、`template-feedback` 与 `fix-first` 继续保持原有行为，但现在共用同一套参数解析、标准输出、错误出口和 task 模板渲染。
 - 交付结果：
-  待交付
+  `scripts/ai/lib/cli-kernel.js` 已成为统一的 CLI 外壳；`create-task`、`template-feedback-orchestrator`、`fix-first-orchestrator` 改为复用同一套解析、输出与错误出口；相关 smoke tests 已补齐，`scripts/ai` 不再并行维护三套模板/输出壳。
 - 复盘：
-  待复盘
+  这轮真正值得统一的是编排外壳，不是业务策略。只抽参数解析、输出、错误出口和 task 模板渲染，收益高且不会把脚本目录重新做成新框架。
 
 ## 当前模式
 
@@ -62,7 +62,7 @@
 
 ## 分支
 
-`codex/task-058-ai-cli-orchestration-kernel`
+`main`
 
 ## 关联模块
 
@@ -70,6 +70,7 @@
 - `scripts/ai/template-feedback-orchestrator.js`
 - `scripts/ai/fix-first-orchestrator.js`
 - `scripts/ai/create-task.ts`
+- `scripts/ai/lib/cli-kernel.js`
 - `tests/test_coord_cli.py`
 - `memory/project/current-state.md`
 - `memory/project/roadmap.md`
@@ -78,7 +79,7 @@
 
 ## 更新痕迹
 
-- 记忆：updated current-state / operating-blueprint to focus on t-058 CLI kernel consolidation
-- 索引：no change: 未更新
-- 路线图：updated roadmap stage and milestone to AI Script Surface Simplification
+- 记忆：closeout t-058 and return focus to next structural review candidate
+- 索引：updated code volume snapshot after CLI kernel landing
+- 路线图：moved roadmap from active t-058 delivery to next high-ROI structure review
 - 文档：no change: 未更新
