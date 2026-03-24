@@ -15,11 +15,11 @@ related_docs:
 
 ## 当前阶段
 
-High-Frequency Governance Rationalization（推进中）
+High-Frequency Governance Rationalization（持续收口）
 
 ## 当前里程碑
 
-4 文档主干 + 3 状态主源（进行中）
+4 文档主干 + 3 状态主源（已完成）
 
 ## 里程碑成功标准
 
@@ -31,12 +31,12 @@ High-Frequency Governance Rationalization（推进中）
 
 ## 当前优先级
 
-推进 `t-051`：把 `AGENTS` 激进瘦身成真正的执行入口，并让迁出的内容在对应主源中各归其位。
+评估下一轮高 ROI 结构收口：优先继续处理 `scripts/ai` 重复编排、兼容层残留与仍会放大默认读链的静态噪音。
 
 ## 下一阶段方向
 
 - 继续让附录文档退出默认高频链，只在专项场景补读
 - 继续把 `AGENTS` 之外的高频文档切成“一文一类问题”，避免主干重新变粗
 - 在不增加新状态源的前提下，继续退休低价值解释层和静态噪音
-- 先收高频文档结构，再继续做兼容层清理与 `scripts/ai` 重复编排收口
+- 先收脚本层重复编排和兼容层，再决定是否进入下一批结构性实现
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

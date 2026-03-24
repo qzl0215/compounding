@@ -40,10 +40,10 @@ AGENTS、AI_OPERATING_MODEL、DEV_WORKFLOW、PROJECT_RULES、current-state、REA
 
 ## 交付结果
 
-- 状态：doing
+- 状态：done
 - 体验验收结果：
-  
+  用户确认 `AGENTS` 已经收成真正的一屏执行入口；高价值内容保留在执行原则、默认读链和最小门禁中，runbook、交互契约、专项治理和运行事实已迁到各自主源。
 - 交付结果：
-  
+  `AGENTS` 只保留执行原则、默认读链、改动门禁与人工备注；`AI_OPERATING_MODEL`、`DEV_WORKFLOW`、`PROJECT_RULES`、`current-state` 接住迁出的内容；旧的粗细混杂结构被拆开，默认高频阅读链更短。
 - 复盘：
-  
+  `AGENTS` 只适合作为执行入口，不适合继续承担 runbook、交互契约和专项治理。后续若继续瘦身，优先继续找“会不会改变动作”，而不是继续修辞。

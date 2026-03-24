@@ -24,15 +24,15 @@ related_docs:
 ## 当前焦点
 
 - 本地 production 当前稳定运行在 `3010`；当前 active release 仍以 `pnpm prod:status` 输出为准。
-- `t-042 ~ t-049` 已把单层 plan、task 执行合同、最小 companion / release、模板单点化与规则去重收回主线。
-- `t-050` 已把高频阅读面收成 4 文档主干 + 3 状态主源；当前运营重点切到 `t-051`：把 `AGENTS` 激进瘦身成真正的一屏执行入口。
+- `t-042 ~ t-051` 已把单层 plan、task 执行合同、最小 companion / release、模板单点化、高频文档主干和 `AGENTS` 执行入口收回主线。
+- 当前运营重点切到下一轮高 ROI 收口候选评估：优先看 `scripts/ai` 重复编排逻辑、兼容层残留和仍会放大默认读链的静态噪音。
 - 当前阶段不扩新页面、新状态源、新运行时或新治理文档；继续只做减默认必读面、减重复解释、减错读主源。
 
 ## 当前阻塞
 
-- 如果 `AGENTS` 继续混入 runbook、专项治理和运行事实，它仍然不是一屏内的执行入口。
-- 如果迁出的内容没有在 `AI_OPERATING_MODEL / DEV_WORKFLOW / PROJECT_RULES / current-state` 中各归其位，瘦身会演变成信息缺口。
-- 如果上下文构建和知识库入口继续把附录与主干混读，默认读链仍会被拖宽。
+- `AGENTS` 已完成瘦身，当前阻塞不再是文档骨架，而是脚本层和兼容层里仍可能残留重复编排逻辑。
+- 如果 `scripts/ai` 继续各自维护参数解析、模板填充和失败出口，后续自动化会继续重复造轮子。
+- 如果 portal / task / release 的兼容壳不继续退出主读链，文档瘦身的收益会被模型层膨胀抵消。
 
 ## 当前推荐校验顺序
 
@@ -58,7 +58,7 @@ related_docs:
 - `pnpm prod:check`
 - `pnpm coord:check:pre-task`
 - 确认当前无 `pending dev`，本地 production 继续稳定运行在最新 active release
-- 验证 `t-051` 是否真的把 `AGENTS` 收成执行原则、默认读链与最小门禁
-- 验证被移出的 runbook、AI 行为、专项治理和运行事实是否各自落在正确主源
-- 验证 `README`、`build-context` 与 `ai-rewrite-context` 是否没有重新把附录拉回默认第一跳
+- 评估 `scripts/ai` 的重复编排逻辑是否值得进入下一轮高 ROI 收口
+- 评估 portal / task / release 兼容层是否还有可安全拔掉的旧别名和回退壳
+- 继续验证 `README`、`build-context` 与 `ai-rewrite-context` 没有把附录重新拉回默认第一跳
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->
