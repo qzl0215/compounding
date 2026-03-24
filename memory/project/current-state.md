@@ -2,7 +2,7 @@
 title: CURRENT_STATE
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-24
+last_reviewed_at: 2026-03-25
 source_of_truth: memory/project/current-state.md
 related_docs:
   - AGENTS.md
@@ -59,6 +59,8 @@ related_docs:
 - `pnpm validate:build`
 - `pnpm prod:check`
 - `pnpm coord:check:pre-task`
+- `pnpm ai:validate-assets`
+- `pnpm ai:cleanup-candidates`
 - `python3 scripts/init_project_compounding.py attach --target . --config bootstrap/project_brief.yaml`
 - `python3 scripts/init_project_compounding.py proposal --target . --config bootstrap/project_brief.yaml`
 - 确认当前无 `pending dev`，本地 production 继续稳定运行在最新 active release
@@ -66,4 +68,5 @@ related_docs:
 - 验证 `git worktree list` 只剩主工作区
 - 验证 kernel proposal 的 `auto_apply` 只覆盖协议层资产，不会覆盖 `apps/**`、`scripts/release/**`、`scripts/local-runtime/**`
 - 验证 rollback 也复用同一条 runtime materialize 路径，不再回流到 release worktree
+- 在 `t-053` 收口后，抽样检查高频主干文档 freshness warning 与 cleanup candidate 输出是否仍保持轻量、可解释且不形成新状态源
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

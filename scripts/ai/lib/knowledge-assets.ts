@@ -1,6 +1,8 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
+const KNOWLEDGE_FRONTMATTER_FIELDS = Object.freeze(["title", "update_mode", "status", "source_of_truth", "related_docs", "last_reviewed_at"]);
+
 function hasBundledSourceOfTruth(value) {
   return /[+，,]/.test(String(value || ""));
 }
@@ -64,6 +66,16 @@ function getKnowledgeAssets(root) {
         "memory/project/current-state.md",
         "memory/project/operating-blueprint.md",
       ],
+      freshness_policy: {
+        window_days: 14,
+        strict_failure: true,
+      },
+      metadata_policy: {
+        required_frontmatter_fields: KNOWLEDGE_FRONTMATTER_FIELDS,
+        validate_related_docs: true,
+        validate_source_of_truth_path: true,
+        require_review_bump_on_change: true,
+      },
       boundaries: [
         "高频主干文档保留人工维护，不把判断性内容错误生成化。",
         "默认先读主干，再按场景补专项附录、task 和 code_index。",
@@ -82,6 +94,16 @@ function getKnowledgeAssets(root) {
         "docs/ASSET_MAINTENANCE.md",
         "memory/project/tech-debt.md",
       ],
+      freshness_policy: {
+        window_days: 21,
+        strict_failure: false,
+      },
+      metadata_policy: {
+        required_frontmatter_fields: KNOWLEDGE_FRONTMATTER_FIELDS,
+        validate_related_docs: true,
+        validate_source_of_truth_path: true,
+        require_review_bump_on_change: true,
+      },
       boundaries: [
         "专项附录只在对应场景补读，不回到默认第一跳。",
         "附录负责专项规则、AI 行为原则和资产维护，不与主干争主入口。",
@@ -92,6 +114,7 @@ function getKnowledgeAssets(root) {
 }
 
 module.exports = {
+  KNOWLEDGE_FRONTMATTER_FIELDS,
   getKnowledgeAssets,
   hasBundledSourceOfTruth,
   loadPromptManifest,

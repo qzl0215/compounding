@@ -2,7 +2,7 @@
 title: DEV_WORKFLOW
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-24
+last_reviewed_at: 2026-03-25
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -44,6 +44,7 @@ related_docs:
 - 先读 `memory/project/operating-blueprint.md`，再对齐 `memory/project/roadmap.md`。
 - 先扩选项，再收关键决策。
 - planning 只留在 `memory/project/operating-blueprint.md`；边界、范围外、完成定义和约束清楚后，再用 `scripts/ai/create-task.ts` 创建执行 task。
+- 计划评审、release 复盘或当前没有更高优先级产品任务时，可运行 `pnpm ai:cleanup-candidates` 暴露小型熵减候选；报告只作为临时输入，不回写成新的状态源。
 
 ## 执行链
 
@@ -67,6 +68,7 @@ related_docs:
 - 构建门禁：`pnpm validate:build`
 - 运行时门禁：`pnpm preview:check`、`pnpm prod:check`
 - AI 输出门禁：`pnpm validate:ai-output`
+- knowledge assets 默认在 `pnpm ai:validate-assets` 中给出 freshness / quality 结论；`pnpm validate:static:strict` 会把高频主干文档 stale 状态升级成硬失败。
 - 默认顺序是静态 → 构建 → 运行时 → AI 输出；只有 AI 相关资产变化时再补 AI 输出门禁。
 
 ## 文档与任务规则

@@ -8,7 +8,7 @@ related_docs:
   - memory/project/roadmap.md
   - memory/project/current-state.md
   - docs/DEV_WORKFLOW.md
-last_reviewed_at: 2026-03-24
+last_reviewed_at: 2026-03-25
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 运营蓝图
@@ -26,6 +26,7 @@ last_reviewed_at: 2026-03-24
 
 ## 待规划
 
+- `Harness Delta Hardening`：把“文档是主源”升级成可校验的新鲜度契约，并让小型熵减事项能被周期性暴露和消费
 - `scripts/ai` 的重复编排逻辑应先收哪一层，才能在不造框架的前提下减少维护成本
 - release/runtime 链里哪些历史兼容点还值得继续下沉，避免把 live runtime 和 release registry 再次绑死
 - `README`、文档门户和 bootstrap manifest 怎样继续表达主干 / 附录分层，而不增加新文档族
@@ -59,6 +60,8 @@ last_reviewed_at: 2026-03-24
 - `t-052`：保留单一 plan，废除规划 task，让 planning 只作为阶段动作留在 `operating-blueprint`（已完成）
 - `t-053`：让本地 production 从固定 runtime 副本启动，切断对 release worktree 的运行依赖（进行中）
 - `t-054`：把 Compounding 收口成 `single-kernel + project-shell` 的最小可运行闭环，优先打通老项目 `attach -> audit -> proposal`，再补新项目最小 `bootstrap` 与低风险 `apply`（已完成）
+- `t-055`：把知识主源升级为可校验的新鲜度与质量护栏（已完成）
+- `t-056`：把持续垃圾回收收口成轻量候选生成器（已完成）
 
 ## 下一步对话
 
@@ -68,6 +71,7 @@ last_reviewed_at: 2026-03-24
 - 若某个 task 发现边界过大，先把剩余未收口范围退回 plan，再从 plan 派生多个 sibling tasks
 - 需要收口高频文档时，优先删掉默认第一跳里的重复入口和粗粒度说明，而不是再写新的导读或说明书
 - 下一轮若继续做结构收口，先看脚本重复与兼容壳，再决定是否进入新的实现任务
+- `t-053` 收口后，下一阶段优先验证 knowledge freshness gate 与 cleanup candidate 报告是否足够轻、可解释、不会回流成第二套状态源
 - 若运行问题来自 worktree、软链或 cwd 耦合，优先把运行目录从输入目录中拆开，而不是继续堆 release 台账
 - 若下一轮继续推进 kernel/shell，先拿第二个老项目验证 attach/audit/proposal 的复用性，再决定是否扩大 `auto_apply`
 

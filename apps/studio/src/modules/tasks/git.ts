@@ -70,6 +70,10 @@ function isPendingCommit(value: string) {
   return !normalized || normalized === "pending" || normalized === "auto" || normalized.startsWith("auto:");
 }
 
+function isHistoricalMergedBranch(status: TaskStatus, branch: string, currentBranch: string, localBranchExists: boolean, effectiveCommit: string) {
+  return status === "done" && Boolean(branch) && !isLegacyMainBranch(branch) && !localBranchExists && branch !== currentBranch && !effectiveCommit;
+}
+
 export function resolveTaskGitInfo(status: TaskStatus, branchValue: string, recentCommitValue: string): TaskGitInfo {
   const branch = cleanValue(branchValue);
   const storedCommit = isPendingCommit(recentCommitValue) ? "" : cleanValue(recentCommitValue);
@@ -80,15 +84,20 @@ export function resolveTaskGitInfo(status: TaskStatus, branchValue: string, rece
   const effectiveCommit = branchHead || (commitExists(storedCommit) ? storedCommit : "");
   const recentCommit = effectiveCommit ? shortSha(effectiveCommit) : cleanValue(recentCommitValue) || "auto: branch HEAD";
   const mergedToMain = isLegacyMainBranch(branch) || (branch !== currentBranch && isCommitMergedIntoMain(effectiveCommit));
+  const historicalMerged = isHistoricalMergedBranch(status, branch, currentBranch, localBranchExists, effectiveCommit);
 
   if (status === "done") {
-    if (mergedToMain) {
+    if (mergedToMain || historicalMerged) {
       return {
         branch,
         recentCommit,
         mergedToMain: true,
         state: "merged",
-        detail: isLegacyMainBranch(branch) ? "历史直发结果已在 main" : "最近提交已并入 main",
+        detail: isLegacyMainBranch(branch)
+          ? "历史直发结果已在 main"
+          : historicalMerged
+            ? "历史任务分支已回收，按已并入 main 处理"
+            : "最近提交已并入 main",
       };
     }
     return {

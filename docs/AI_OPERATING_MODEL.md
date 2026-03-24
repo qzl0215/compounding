@@ -2,7 +2,7 @@
 title: AI_OPERATING_MODEL
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-24
+last_reviewed_at: 2026-03-25
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -25,6 +25,7 @@ related_docs:
 - AI 默认先做三步：扩选项 → 收决策 → 产出 task。
 - 遇到 unfamiliar pattern / infra / runtime capability，先搜已有实现、主源与成熟解，再决定是否自建。
 - `Boil the Lake` 只适用于小而边界清楚的 task；大而跨阶段的事项留在 plan。
+- 当需要找低风险熵减机会时，优先运行 `pnpm ai:cleanup-candidates` 读取瞬时候选，而不是先扩新 backlog 或新状态源。
 - `scripts/ai/create-task.ts` 可直接接收 `boundary / doneWhen / outOfScope / constraints / testStrategy`，把已收口的决策写成 task 合同，而不是只写摘要。
 - task 只承接可执行边界；companion 只保留机器执行上下文；release 只保留验收与运行事实。
 - 只把价值判断、体验取舍、结果验收和高风险不可逆动作抛给人；实现级细节默认不向人要确认。
@@ -39,8 +40,9 @@ related_docs:
 ## 最小脚本契约
 
 - 规划链默认脚本：`scripts/ai/create-task.ts`
-- 执行链默认脚本：`scripts/ai/build-context.ts`、`node --experimental-strip-types scripts/ai/validate-change-trace.ts`、`node --experimental-strip-types scripts/ai/validate-task-git-link.ts`
+- 执行链默认脚本：`scripts/ai/build-context.ts`、`node --experimental-strip-types scripts/ai/validate-change-trace.ts`、`node --experimental-strip-types scripts/ai/validate-task-git-link.ts`、`node --experimental-strip-types scripts/ai/validate-knowledge-assets.ts`
 - 交付链默认脚本：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`、`node --experimental-strip-types scripts/release/accept-dev-release.ts`、`node --experimental-strip-types scripts/release/reject-dev-release.ts`、`node --experimental-strip-types scripts/release/rollback-release.ts`
+- 熵减候选默认脚本：`node --experimental-strip-types scripts/ai/cleanup-candidates.ts`，只在计划评审、release 复盘或当前没有更高优先级产品任务时运行。
 - 这些脚本只承接最小契约，不替代 `docs/WORK_MODES.md`、`docs/DEV_WORKFLOW.md` 或任务边界。
 
 ## 上下文与记忆

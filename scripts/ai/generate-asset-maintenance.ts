@@ -21,6 +21,13 @@ function renderBody(root) {
     lines.push(`- 真相源：\`${asset.source_of_truth}\``);
     lines.push(`- 入口：\`${asset.generation_or_validation}\``);
     lines.push(`- 文件：${asset.files.map((file) => `\`${file}\``).join("、")}`);
+    if (asset.freshness_policy) {
+      lines.push(
+        `- 新鲜度：${asset.freshness_policy.window_days} 天窗口${
+          asset.freshness_policy.strict_failure ? "；strict 模式超窗即失败" : "；超窗默认警告"
+        }`
+      );
+    }
     if (asset.boundaries.length > 0) {
       lines.push(`- 边界：${asset.boundaries.join("；")}`);
     }

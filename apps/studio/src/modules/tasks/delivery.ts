@@ -104,6 +104,9 @@ function inferReleaseLabel(
   if (task.status === "done" && task.machine.git.state === "merged" && commit) {
     return `main@${commit}`;
   }
+  if (task.status === "done" && task.machine.git.state === "merged") {
+    return "main@history";
+  }
   return "未生成";
 }
 

@@ -37,6 +37,7 @@ related_docs:
 - 真相源：`frontmatter.source_of_truth (per document)`
 - 入口：`人工 review + task 回写`
 - 文件：`AGENTS.md`、`docs/WORK_MODES.md`、`docs/DEV_WORKFLOW.md`、`docs/ARCHITECTURE.md`、`memory/project/roadmap.md`、`memory/project/current-state.md`、`memory/project/operating-blueprint.md`
+- 新鲜度：14 天窗口；strict 模式超窗即失败
 - 边界：高频主干文档保留人工维护，不把判断性内容错误生成化。；默认先读主干，再按场景补专项附录、task 和 code_index。；结构性改动时必须通过 task、memory 与相关主干文档同步回写。
 
 ### 专项附录
@@ -45,5 +46,6 @@ related_docs:
 - 真相源：`frontmatter.source_of_truth (per document)`
 - 入口：`人工 review + task 回写`
 - 文件：`docs/PROJECT_RULES.md`、`docs/AI_OPERATING_MODEL.md`、`docs/ASSET_MAINTENANCE.md`、`memory/project/tech-debt.md`
+- 新鲜度：21 天窗口；超窗默认警告
 - 边界：专项附录只在对应场景补读，不回到默认第一跳。；附录负责专项规则、AI 行为原则和资产维护，不与主干争主入口。；若附录与主干冲突，先更新主干，再调整附录。
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

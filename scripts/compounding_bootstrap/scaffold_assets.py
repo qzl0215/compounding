@@ -102,12 +102,18 @@ def task_001(resolved: dict[str, Any]) -> str:
 def render_ai_scripts(target: Path) -> None:
     for relative_path in (
         "scripts/ai/lib/task-template.js",
+        "scripts/ai/lib/knowledge-assets.ts",
+        "scripts/ai/lib/knowledge-asset-health.ts",
+        "scripts/ai/lib/cleanup-candidates.ts",
         "scripts/ai/scan-code-health.ts",
+        "scripts/ai/cleanup-candidates.ts",
         "scripts/ai/generate-code-volume.ts",
+        "scripts/ai/generate-asset-maintenance.ts",
         "scripts/ai/generate-module-index.ts",
         "scripts/ai/build-context.ts",
         "scripts/ai/create-task.ts",
         "scripts/ai/validate-change-trace.ts",
+        "scripts/ai/validate-knowledge-assets.ts",
         "scripts/ai/validate-task-git-link.ts",
     ):
         copy_canonical_file(target, relative_path)

@@ -1,16 +1,13 @@
+import path from "node:path";
+import { getWorkspaceRoot } from "@/lib/workspace";
 import { extractSection, readDoc } from "@/modules/docs";
 import { getDeliverySnapshot } from "@/modules/delivery";
-import {
-  buildHomepageProjection,
-  buildDirectionSummary,
-  buildOverviewSummary,
-  buildRuntimeFacts,
-  toRuntimeSignal,
-} from "./builders";
+import { buildHomeSurfaceSnapshot, buildDirectionSummary, buildOverviewSummary, buildRuntimeFacts, toRuntimeSignal } from "./builders";
+import { loadKernelShellArtifacts } from "./kernel-shell";
 import { buildAcceptanceReleaseItems, buildDocItems, buildReleasedItems, buildTaskItem } from "./overview-items";
 import { normalizeInline, parseBulletList } from "./parsing";
 import { groupTaskRowsByDemandStage } from "./stage-model";
-import type { HomeEntryLink, ProjectOverviewSnapshot, SemanticEntry, SemanticEntryGroup } from "./types";
+import type { HomeEntryLink, OverviewEntry, ProjectOverviewSnapshot, SemanticEntry, SemanticEntryGroup } from "./types";
 
 export const DEFAULT_DOC_PATH = "AGENTS.md";
 
@@ -21,11 +18,15 @@ export const HOME_ENTRY_LINKS: HomeEntryLink[] = [
 ];
 
 export async function getProjectOverview(): Promise<ProjectOverviewSnapshot> {
-  const [currentState, roadmap, blueprint, deliverySnapshot] = await Promise.all([
+  const workspaceRoot = getWorkspaceRoot();
+  const workspaceLabel = path.basename(workspaceRoot);
+
+  const [currentState, roadmap, blueprint, deliverySnapshot, kernelArtifacts] = await Promise.all([
     readDoc("memory/project/current-state.md"),
     readDoc("memory/project/roadmap.md"),
     readDoc("memory/project/operating-blueprint.md"),
     getDeliverySnapshot(),
+    loadKernelShellArtifacts(workspaceRoot),
   ]);
 
   const currentFocus = parseBulletList(extractSection(currentState.content, "current_focus") ?? "");
@@ -88,7 +89,15 @@ export async function getProjectOverview(): Promise<ProjectOverviewSnapshot> {
 
   return {
     ...snapshot,
-    homepage: buildHomepageProjection(snapshot),
+    ...buildHomeSurfaceSnapshot({
+      workspaceLabel,
+      workspacePath: workspaceRoot,
+      overview: snapshot.overview,
+      direction: snapshot.direction,
+      runtimeFacts: snapshot.runtimeFacts,
+      kernelArtifacts,
+      drilldowns: buildProjectDrilldowns(kernelArtifacts.paths.proposal, Boolean(kernelArtifacts.proposal)),
+    }),
   };
 }
 
@@ -153,10 +162,41 @@ export function formatSyncStatus(value: string) {
   return labels[value] ?? value;
 }
 
+export { loadKernelShellArtifacts } from "./kernel-shell";
+
 function entryDoc(label: string, path: string, description?: string): SemanticEntry {
   return { label, path, description };
 }
 
 function entryLink(label: string, href: string, description?: string): SemanticEntry {
   return { label, href, description };
+}
+
+function buildProjectDrilldowns(proposalPath: string, hasProposal: boolean): OverviewEntry[] {
+  return [
+    ...HOME_ENTRY_LINKS.map((item) => {
+      const tone = item.scope === "tasks" ? "accent" : item.scope === "release" ? "warning" : "default";
+      return {
+        label: item.label,
+        description: item.description,
+        href: item.href,
+        tone,
+      } satisfies OverviewEntry;
+    }),
+    hasProposal
+      ? {
+          label: "最新 Proposal",
+          description: "当前 kernel/shell 提案已落盘，可沿路径查看 proposal 产物。",
+          path: proposalPath,
+          meta: "输出产物",
+          tone: "accent",
+        }
+      : {
+          label: "最新 Proposal",
+          description: "当前还没有 proposal 产物，先完成 attach / audit 再生成。",
+          path: proposalPath,
+          meta: "等待生成",
+          tone: "default",
+        },
+  ];
 }
