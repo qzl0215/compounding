@@ -13,6 +13,6 @@ target.write_text(json.dumps({
     "generated_at": datetime.now(timezone.utc).isoformat(),
     "docs_count": docs_count,
     "proposal_count": proposal_count,
-    "next_focus": "Keep the live docs compact, archived docs isolated, and AGENTS as the only high-frequency source."
+    "next_focus": "Keep the live docs compact and AGENTS as the only high-frequency source.",
 }, indent=2, ensure_ascii=False) + "\n", encoding="utf8")
 print(target)

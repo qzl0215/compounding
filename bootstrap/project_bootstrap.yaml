@@ -79,7 +79,6 @@ knowledge_domains:
   - memory
   - code_index
   - tasks
-  - archive
 north_star_metric: 新项目在首轮初始化后，任意 agent 只读 AGENTS.md 即能在不增加平行体系的情况下安全迭代。
 short_term_priorities:
   - 完成 AI-Native Repo 第一轮结构收敛

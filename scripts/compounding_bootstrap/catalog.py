@@ -41,7 +41,6 @@ CODE_INDEX_DOCS = [
 TASK_DOCS = [
     "tasks/templates/task-template.md",
     "tasks/queue/task-001-repo-refactor.md",
-    "tasks/archive/.gitkeep",
 ]
 
 AI_SCRIPT_PATHS = [

@@ -26,7 +26,7 @@ function walk(dir) {
   for (const entry of entries) {
     if (entry.name.startsWith(".") || entry.name === "node_modules" || entry.name === ".git" || entry.name === "__pycache__") continue;
     const full = path.join(dir, entry.name);
-    if (full.includes(`${path.sep}output${path.sep}`) || full.includes(`${path.sep}docs${path.sep}archive${path.sep}`)) continue;
+    if (full.includes(`${path.sep}output${path.sep}`)) continue;
     if (entry.isDirectory()) files.push(...walk(full));
     else files.push(full);
   }

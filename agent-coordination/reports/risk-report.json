@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-03-23T14:59:38.946Z",
+  "generated_at": "2026-03-24T07:27:34.888Z",
   "report_only": true,
-  "total_files": 336,
+  "total_files": 335,
   "by_risk": {
     "core": 22,
     "high_conflict": 61,
-    "normal": 253,
+    "normal": 252,
     "generated": 0,
     "test_only": 0,
     "docs_only": 0
   },
   "by_source": {
     "hard_rule": 10,
-    "heuristic": 326,
+    "heuristic": 325,
     "override": 0
   },
   "high_risk_files": [
@@ -1455,10 +1455,6 @@
       "source": "heuristic"
     },
     "shared/task-identity.ts": {
-      "risk_level": "normal",
-      "source": "heuristic"
-    },
-    "tasks/archive/.gitkeep": {
       "risk_level": "normal",
       "source": "heuristic"
     },

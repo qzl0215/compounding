@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-22T12:45:37.558Z",
+  "generated_at": "2026-03-24T07:26:59.275Z",
   "version": "1.0.0",
   "files": {
     ".DS_Store": {
@@ -741,6 +741,14 @@
       "required_checks": [],
       "ui_surface_flag": false
     },
+    "apps/studio/src/modules/portal/__tests__/stage-model.test.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
     "apps/studio/src/modules/portal/builders.ts": {
       "module": "apps/studio",
       "risk_level": "normal",
@@ -785,6 +793,14 @@
       ],
       "ui_surface_flag": false
     },
+    "apps/studio/src/modules/portal/overview-items.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
     "apps/studio/src/modules/portal/parsing.ts": {
       "module": "apps/studio",
       "risk_level": "normal",
@@ -794,6 +810,14 @@
       "ui_surface_flag": false
     },
     "apps/studio/src/modules/portal/service.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/portal/stage-model.ts": {
       "module": "apps/studio",
       "risk_level": "normal",
       "lock_policy": "none",
@@ -911,6 +935,14 @@
       "required_checks": [],
       "ui_surface_flag": false
     },
+    "apps/studio/src/modules/releases/release-summary.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
     "apps/studio/src/modules/releases/runtime-status.ts": {
       "module": "apps/studio",
       "risk_level": "normal",
@@ -928,6 +960,14 @@
       "ui_surface_flag": false
     },
     "apps/studio/src/modules/releases/service.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/releases/task-summary.ts": {
       "module": "apps/studio",
       "risk_level": "normal",
       "lock_policy": "none",
@@ -962,6 +1002,14 @@
       "ui_surface_flag": false
     },
     "apps/studio/src/modules/tasks/__tests__/service.test.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/tasks/__tests__/subtask-table.test.ts": {
       "module": "apps/studio",
       "risk_level": "normal",
       "lock_policy": "none",
@@ -1046,6 +1094,14 @@
       "ui_surface_flag": false
     },
     "apps/studio/src/modules/tasks/service.ts": {
+      "module": "apps/studio",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "apps/studio/src/modules/tasks/subtask-table.ts": {
       "module": "apps/studio",
       "risk_level": "normal",
       "lock_policy": "none",
@@ -1287,31 +1343,7 @@
       "required_checks": [],
       "ui_surface_flag": false
     },
-    "docs/ORG_MODEL.md": {
-      "module": "docs",
-      "risk_level": "normal",
-      "lock_policy": "none",
-      "execution_mode_hint": "direct_edit",
-      "required_checks": [],
-      "ui_surface_flag": false
-    },
     "docs/PROJECT_RULES.md": {
-      "module": "docs",
-      "risk_level": "normal",
-      "lock_policy": "none",
-      "execution_mode_hint": "direct_edit",
-      "required_checks": [],
-      "ui_surface_flag": false
-    },
-    "docs/REFACTOR_PLAN.md": {
-      "module": "docs",
-      "risk_level": "normal",
-      "lock_policy": "none",
-      "execution_mode_hint": "direct_edit",
-      "required_checks": [],
-      "ui_surface_flag": false
-    },
-    "docs/UIUX_CURRENT_PACKAGE.md": {
       "module": "docs",
       "risk_level": "normal",
       "lock_policy": "none",
@@ -1456,6 +1488,14 @@
       "ui_surface_flag": false
     },
     "memory/experience/exp-006-delivery-framework-phase-one-boundary.md": {
+      "module": "memory",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "memory/experience/exp-007-gstack-roi-refresh.md": {
       "module": "memory",
       "risk_level": "normal",
       "lock_policy": "none",
@@ -1650,6 +1690,16 @@
       "ui_surface_flag": false
     },
     "scripts/ai/lib/task-resolver.ts": {
+      "module": "scripts/ai",
+      "risk_level": "high_conflict",
+      "lock_policy": "hard",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [
+        "scope_reviewer"
+      ],
+      "ui_surface_flag": false
+    },
+    "scripts/ai/lib/task-template.js": {
       "module": "scripts/ai",
       "risk_level": "high_conflict",
       "lock_policy": "hard",
@@ -1854,14 +1904,6 @@
       "ui_surface_flag": false
     },
     "scripts/compounding_bootstrap/renderers_index.py": {
-      "module": "scripts/compounding_bootstrap",
-      "risk_level": "normal",
-      "lock_policy": "none",
-      "execution_mode_hint": "direct_edit",
-      "required_checks": [],
-      "ui_surface_flag": false
-    },
-    "scripts/compounding_bootstrap/renderers_refactor_docs.py": {
       "module": "scripts/compounding_bootstrap",
       "risk_level": "normal",
       "lock_policy": "none",
@@ -2345,7 +2387,7 @@
       "required_checks": [],
       "ui_surface_flag": false
     },
-    "shared/task-identity.ts": {
+    "shared/task-contract.ts": {
       "module": "shared",
       "risk_level": "normal",
       "lock_policy": "none",
@@ -2353,8 +2395,8 @@
       "required_checks": [],
       "ui_surface_flag": false
     },
-    "tasks/archive/.gitkeep": {
-      "module": "tasks",
+    "shared/task-identity.ts": {
+      "module": "shared",
       "risk_level": "normal",
       "lock_policy": "none",
       "execution_mode_hint": "direct_edit",
@@ -2674,6 +2716,86 @@
       "ui_surface_flag": false
     },
     "tasks/queue/task-039-truth-source-and-autonomy-subtraction.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-040-demand-stage-visualization.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-041-task-execution-contract.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-042-minimal-boundaries.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-043-gstack-roi-absorption-refresh.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-044-search-before-building-and-boil-the-lake.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-045-autoplan-human-judgment-contract.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-046-diff-based-test-roi-selection.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-047-task-page-subtask-table.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-048-task-template-single-source.md": {
+      "module": "tasks",
+      "risk_level": "normal",
+      "lock_policy": "none",
+      "execution_mode_hint": "direct_edit",
+      "required_checks": [],
+      "ui_surface_flag": false
+    },
+    "tasks/queue/task-049-rules-doc-dedup.md": {
       "module": "tasks",
       "risk_level": "normal",
       "lock_policy": "none",

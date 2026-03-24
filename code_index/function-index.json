@@ -169,6 +169,30 @@
   },
   {
     "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-summaries.ts",
+    "symbol": "buildSelectedChecks",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-summaries.ts",
+    "symbol": "buildRetirementSuggestions",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-summaries.ts",
+    "symbol": "buildCheckSelectionReason",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
     "file": "apps/studio/src/modules/delivery/diff-aware.ts",
     "symbol": "collectDiffAwareArtifact",
     "kind": "function",
@@ -1931,14 +1955,6 @@
     "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/scaffold.py",
     "symbol": "scaffold",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/scaffold.py",
-    "symbol": "archive_legacy_docs",
     "kind": "function",
     "language": "Python",
     "exported": true

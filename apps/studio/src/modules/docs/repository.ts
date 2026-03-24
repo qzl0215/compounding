@@ -10,8 +10,6 @@ const promptHistoryRoot = path.join(workspaceRoot, "output", "prompt-history");
 
 const TOP_LEVEL_FILES = ["AGENTS.md", "README.md"] as const;
 const LIVE_ROOTS = ["docs", "memory", "code_index", "tasks"] as const;
-const FOLDED_DIRS = new Set(["archive"]);
-
 export async function getDocTree() {
   const nodes: DocNode[] = TOP_LEVEL_FILES.map((file) => ({ name: file, path: file }));
   for (const root of LIVE_ROOTS) {
@@ -171,7 +169,7 @@ async function walkDocsDir(absoluteDir: string, relativeDir: string): Promise<Do
           return {
             name: entry.name,
             path: relativePath,
-            defaultExpanded: !FOLDED_DIRS.has(entry.name),
+            defaultExpanded: true,
             children: await walkDocsDir(absolutePath, relativePath)
           } satisfies DocNode;
         }

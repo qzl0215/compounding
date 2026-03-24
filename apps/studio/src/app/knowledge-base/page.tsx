@@ -52,7 +52,7 @@ export default async function KnowledgeBasePage({
           <p className="text-xs uppercase tracking-[0.28em] text-accent">完整目录</p>
           <details className="mt-5 rounded-3xl border border-white/8 bg-white/[0.03] p-4">
             <summary className="cursor-pointer text-sm font-medium text-white">展开完整文档目录</summary>
-            <p className="mt-2 text-xs leading-5 text-white/48">当精选证据入口不够时，再下钻完整树和 archive。</p>
+            <p className="mt-2 text-xs leading-5 text-white/48">当精选证据入口不够时，再下钻完整树。</p>
             <div className="mt-4">
               <DocTree nodes={tree} selectedPath={DEFAULT_DOC_PATH} />
             </div>
@@ -105,7 +105,7 @@ export default async function KnowledgeBasePage({
           <p className="text-xs uppercase tracking-[0.28em] text-accent">完整目录</p>
           <details className="mt-5 rounded-3xl border border-white/8 bg-white/[0.03] p-4">
             <summary className="cursor-pointer text-sm font-medium text-white">展开完整文档目录</summary>
-            <p className="mt-2 text-xs leading-5 text-white/48">当精选证据入口不够时，再下钻完整树和 archive。</p>
+            <p className="mt-2 text-xs leading-5 text-white/48">当精选证据入口不够时，再下钻完整树。</p>
             <div className="mt-4">
               <DocTree nodes={tree} selectedPath={selectedPath} />
             </div>
