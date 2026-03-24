@@ -1,14 +1,18 @@
 const {
   currentActiveRelease,
+  materializeProdRuntime,
   markActive,
   productionBaseUrl,
+  pruneInactiveProdRuntimeCopies,
   readManifest,
   readRegistry,
   releaseReload,
+  run,
   updateChannelSymlink,
   upsertRelease,
   withReleaseLock,
 } = require("./lib.ts");
+const { stabilizeLocalProdRuntime } = require("./prod-runtime-stability.ts");
 
 function parseArg(name) {
   const index = process.argv.indexOf(name);
@@ -33,12 +37,15 @@ try {
       throw new Error(`Release ${releaseId} has no release path.`);
     }
 
-    updateChannelSymlink(target.release_path, "prod");
+    const prodRuntimePath = materializeProdRuntime(target.release_path, releaseId);
+    updateChannelSymlink(prodRuntimePath, "prod");
     const reloadNote = releaseReload();
     markActive(releaseId, previous?.release_id || null);
+    const stabilityNote = stabilizeLocalProdRuntime(process.cwd(), run, releaseId);
     const updated = readRegistry().releases.find((item) => item.release_id === releaseId) || target;
-    const finalRelease = { ...updated, notes: [...updated.notes, reloadNote] };
+    const finalRelease = { ...updated, notes: [...updated.notes, reloadNote, stabilityNote].filter(Boolean) };
     upsertRelease(finalRelease);
+    pruneInactiveProdRuntimeCopies(releaseId);
     return { registry: readRegistry(), finalRelease };
   });
 

@@ -5,9 +5,9 @@ describe("project overview", () => {
   it("surfaces the stage-first snapshot from markdown sources and runtime state", async () => {
     const overview = await getProjectOverview();
 
-    expect(overview.overview.oneLiner).toContain("operating-blueprint");
-    expect(overview.overview.currentPhase).toContain("Single-Plan Execution Boundary Simplification");
-    expect(overview.overview.currentMilestone).toContain("废除规划 task");
+    expect(overview.overview.oneLiner).toContain("release worktree");
+    expect(overview.overview.currentPhase).toContain("Local Runtime Boundary Simplification");
+    expect(overview.overview.currentMilestone).toContain("本地 production 脱离 release worktree");
     expect(overview.homepage.headline).toBe("先定问题，再定动作");
     expect(overview.homepage.primaryStats).toHaveLength(3);
     expect(overview.direction.summary.length).toBeGreaterThan(0);

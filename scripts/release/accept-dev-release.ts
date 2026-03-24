@@ -4,9 +4,11 @@ const {
   clearChannelSymlink,
   clearPendingDevRelease,
   ensureReleaseTag,
+  materializeProdRuntime,
   markActive,
   pendingDevRelease,
   previewBaseUrl,
+  pruneInactiveProdRuntimeCopies,
   productionBaseUrl,
   readManifest,
   readRegistry,
@@ -76,12 +78,14 @@ try {
     };
 
     upsertRelease(prodRecord);
-    updateChannelSymlink(pending.release_path, "prod");
+    const prodRuntimePath = materializeProdRuntime(pending.release_path, prodReleaseId);
+    updateChannelSymlink(prodRuntimePath, "prod");
     markActive(prodReleaseId);
     const reloadNote = releaseReload();
     const stabilityNote = stabilizeLocalProdRuntime(process.cwd(), run, prodReleaseId);
     const activeRecord = readRegistry().releases.find((item) => item.release_id === prodReleaseId) || prodRecord;
     upsertRelease({ ...activeRecord, notes: [...activeRecord.notes, reloadNote, stabilityNote].filter(Boolean) });
+    pruneInactiveProdRuntimeCopies(prodReleaseId);
 
     const acceptedDevRecord = {
       ...pending,

@@ -1,4 +1,5 @@
 const fs = require("node:fs");
+const path = require("node:path");
 const { execFileSync } = require("node:child_process");
 const { releaseReload: releaseReloadImpl } = require("./reload.ts");
 const { resolveTaskId, resolveTaskRecord } = require("../ai/lib/task-resolver.ts");
@@ -124,6 +125,37 @@ function updateChannelSymlink(target, channel = "prod") {
   return target;
 }
 
+function materializeProdRuntime(sourceReleasePath, releaseId) {
+  const { prodLiveDir } = ensureLayout();
+  const targetPath = path.join(prodLiveDir, releaseId);
+  const stagePath = `${targetPath}.next`;
+  fs.rmSync(stagePath, { force: true, recursive: true });
+  fs.cpSync(sourceReleasePath, stagePath, {
+    recursive: true,
+    force: true,
+    filter: (source) => path.basename(source) !== ".git",
+  });
+  fs.rmSync(targetPath, { force: true, recursive: true });
+  fs.renameSync(stagePath, targetPath);
+  return targetPath;
+}
+
+function pruneInactiveProdRuntimeCopies(activeReleaseId) {
+  const { prodLiveDir } = ensureLayout();
+  if (!fs.existsSync(prodLiveDir)) {
+    return;
+  }
+  for (const entry of fs.readdirSync(prodLiveDir, { withFileTypes: true })) {
+    if (!entry.isDirectory()) {
+      continue;
+    }
+    if (entry.name === activeReleaseId || entry.name.endsWith(".next")) {
+      continue;
+    }
+    fs.rmSync(path.join(prodLiveDir, entry.name), { force: true, recursive: true });
+  }
+}
+
 function clearChannelSymlink(channel = "dev") {
   const { currentLink, previewCurrentLink } = ensureLayout();
   fs.rmSync(channel === "dev" ? previewCurrentLink : currentLink, { force: true, recursive: true });
@@ -171,8 +203,10 @@ module.exports = {
   layoutPaths,
   manifestPath,
   markActive,
+  materializeProdRuntime,
   pendingDevRelease,
   previewBaseUrl,
+  pruneInactiveProdRuntimeCopies,
   parseTaskIdList,
   productionBaseUrl,
   readManifest,

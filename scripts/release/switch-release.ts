@@ -1,7 +1,9 @@
 const {
   ensureReleaseTag,
+  materializeProdRuntime,
   markActive,
   productionBaseUrl,
+  pruneInactiveProdRuntimeCopies,
   readManifest,
   readRegistry,
   releaseReload,
@@ -36,13 +38,15 @@ try {
       }
 
       const tag = ensureReleaseTag(`release-${releaseId}`, record.commit_sha);
-      updateChannelSymlink(record.release_path, "prod");
+      const prodRuntimePath = materializeProdRuntime(record.release_path, releaseId);
+      updateChannelSymlink(prodRuntimePath, "prod");
       markActive(releaseId);
       const reloadNote = releaseReload();
       const stabilityNote = stabilizeLocalProdRuntime(process.cwd(), run, releaseId);
       const updated = readRegistry().releases.find((item) => item.release_id === releaseId) || { ...record, tag };
       const finalRelease = { ...updated, tag, notes: [...updated.notes, reloadNote, stabilityNote].filter(Boolean) };
       upsertRelease(finalRelease);
+      pruneInactiveProdRuntimeCopies(releaseId);
       if (record.primary_task_id) {
         recordReleaseHandoff(record.primary_task_id, {
           source: "release:switch",

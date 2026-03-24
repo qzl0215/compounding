@@ -15,18 +15,18 @@ last_reviewed_at: 2026-03-24
 
 ## 需求总览
 
-把模糊事项彻底收回 `memory/project/operating-blueprint.md`，废除“规划 task”作为常规对象：plan 只负责 deciding，task 只负责 delivering，planning 是阶段动作，不再是长期对象类型。
+继续把结构收口落到真正会制造熵增的边界上：在保留单一 plan 的前提下，让本地 production 脱离 release worktree 运行。release worktree 只负责构建与切换输入，固定 runtime 副本才承载常驻运行。
 
 ## 待思考
 
-- 哪些历史 task 或 companion 还残留“战略澄清 / 方案评审”语义，后续是否值得继续清理
-- 当一个执行 task 发现边界过大时，哪些剩余范围应该回到 plan，避免重新长成 task 树
-- portal / task / release 兼容壳里是否还有会把 planning 从 plan 重新拉回 task 的旧逻辑
+- dev preview 是否也值得在未来脱离 release worktree，还是保持当前模式更划算
+- release/runtime 边界里是否还残留其它“看起来是状态，实际是运行 cwd”一类隐性耦合
+- 当执行边界和运行边界已经拆开后，下一轮更值钱的是收脚本编排，还是收 release 兼容壳
 
 ## 待规划
 
 - `scripts/ai` 的重复编排逻辑应先收哪一层，才能在不造框架的前提下减少维护成本
-- task 拆分回 plan 的最小规则应怎样写，才能避免 task 树化
+- release/runtime 链里哪些历史兼容点还值得继续下沉，避免把 live runtime 和 release registry 再次绑死
 - `README`、文档门户和 bootstrap manifest 怎样继续表达主干 / 附录分层，而不增加新文档族
 
 ## 计划边界
@@ -42,6 +42,7 @@ last_reviewed_at: 2026-03-24
 - `task` 只承接可执行事项与执行合同，不承接模糊想法、待规划事项或机器台账
 - `companion` 只保留机器执行上下文，不再镜像 task 正文
 - `release` 只保留验收与运行事实；task 摘要只在历史兼容时回退到最小 `delivery_snapshot`
+- 本地 production 只从固定 runtime 副本启动，不再直接从 release worktree 启动
 - 首页只保留需求总览，不展开细节工作台
 - 不新增独立想法池文件、数据库、第二套工单系统或新的发布状态源
 - `docs/PROJECT_RULES.md`、`docs/AI_OPERATING_MODEL.md`、`docs/ASSET_MAINTENANCE.md` 只作为专项附录，不回到默认第一跳
@@ -52,7 +53,8 @@ last_reviewed_at: 2026-03-24
 - `t-049`：规则文档去重（已完成）
 - `t-050`：高频文档结构合理化，把高频阅读面收成 4 文档主干 + 3 状态主源（已完成）
 - `t-051`：把 `AGENTS` 激进瘦身成真正的执行入口，并让迁出的内容在对应主源中各归其位（已完成）
-- `t-052`：保留单一 plan，废除规划 task，让 planning 只作为阶段动作留在 `operating-blueprint`（进行中）
+- `t-052`：保留单一 plan，废除规划 task，让 planning 只作为阶段动作留在 `operating-blueprint`（已完成）
+- `t-053`：让本地 production 从固定 runtime 副本启动，切断对 release worktree 的运行依赖（进行中）
 
 ## 下一步对话
 
@@ -62,10 +64,12 @@ last_reviewed_at: 2026-03-24
 - 若某个 task 发现边界过大，先把剩余未收口范围退回 plan，再从 plan 派生多个 sibling tasks
 - 需要收口高频文档时，优先删掉默认第一跳里的重复入口和粗粒度说明，而不是再写新的导读或说明书
 - 下一轮若继续做结构收口，先看脚本重复与兼容壳，再决定是否进入新的实现任务
+- 若运行问题来自 worktree、软链或 cwd 耦合，优先把运行目录从输入目录中拆开，而不是继续堆 release 台账
 
 ## 测试策略
 
 - 用 needle 搜索确认高频文档里旧 headings、旧角色句和旧读链提示已退出
 - 用 `pnpm test`、`pnpm lint`、`pnpm build` 验证消费方仍能读取主源
 - 用 `scripts/ai/build-context.ts`、AI 文档重写上下文和知识库精选入口验证新读链已生效
+- 用 `pnpm prod:status`、`pnpm prod:check` 和 `git worktree list` 验证本地 production 已脱离 release worktree
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

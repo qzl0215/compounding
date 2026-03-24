@@ -180,6 +180,43 @@ console.log(JSON.stringify({ profileLabel: runtime.PROFILE_LABEL || null }));
         payload = json.loads(completed.stdout)
         self.assertEqual(payload["profileLabel"], "dev 预览")
 
+    def test_release_lib_materializes_and_prunes_prod_runtime_copy(self) -> None:
+        script = """
+const fs = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
+const runtimeRoot = fs.mkdtempSync(path.join(os.tmpdir(), "compounding-runtime-"));
+process.env.AI_OS_RELEASE_ROOT = runtimeRoot;
+const { materializeProdRuntime, pruneInactiveProdRuntimeCopies, ensureLayout } = require("./scripts/release/lib.ts");
+const sourceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "compounding-source-"));
+const releasePath = path.join(sourceRoot, "sample-release");
+fs.mkdirSync(path.join(releasePath, "apps", "studio", ".next"), { recursive: true });
+fs.mkdirSync(path.join(releasePath, ".git"), { recursive: true });
+fs.writeFileSync(path.join(releasePath, "apps", "studio", ".next", "BUILD_ID"), "sample-build\\n");
+fs.writeFileSync(path.join(releasePath, ".git", "HEAD"), "ref: refs/heads/main\\n");
+const runtimePath = materializeProdRuntime(releasePath, "20260324150000-sample-prod");
+fs.mkdirSync(path.join(ensureLayout().prodLiveDir, "old-prod"), { recursive: true });
+pruneInactiveProdRuntimeCopies("20260324150000-sample-prod");
+console.log(JSON.stringify({
+  runtimePath,
+  hasBuildId: fs.existsSync(path.join(runtimePath, "apps", "studio", ".next", "BUILD_ID")),
+  copiedGitDir: fs.existsSync(path.join(runtimePath, ".git")),
+  oldStillExists: fs.existsSync(path.join(ensureLayout().prodLiveDir, "old-prod")),
+}));
+"""
+        completed = subprocess.run(
+            ["node", "--experimental-strip-types", "-e", script],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        payload = json.loads(completed.stdout)
+        self.assertTrue(payload["runtimePath"].endswith("/live/prod/20260324150000-sample-prod"))
+        self.assertTrue(payload["hasBuildId"])
+        self.assertFalse(payload["copiedGitDir"])
+        self.assertFalse(payload["oldStillExists"])
+
 
 if __name__ == "__main__":
     unittest.main()

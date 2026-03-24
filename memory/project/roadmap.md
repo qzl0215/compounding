@@ -15,27 +15,26 @@ related_docs:
 
 ## 当前阶段
 
-Single-Plan Execution Boundary Simplification（持续收口）
+Local Runtime Boundary Simplification（持续收口）
 
 ## 当前里程碑
 
-废除规划 task，保留单一 plan
+本地 production 脱离 release worktree 运行
 
 ## 里程碑成功标准
 
-- `operating-blueprint` 继续作为唯一 plan 主源，承接待思考、待规划、计划边界和计划产出任务
-- planning 不再对应“规划 task”对象，模糊事项默认回到 plan
-- `task` 只表示可执行结果，不再默认落到 `战略澄清 / 方案评审`
-- `/tasks` 只展示执行事项，首页的 `planning` 只来自 `operating-blueprint`
-- 大 task 发现边界过大时，剩余范围回到 plan，再派生多个 sibling tasks
+- 本地 production 运行 cwd 不再指向 release worktree，而是固定 runtime 副本目录
+- `accept-dev-release`、`switch-release`、`rollback-release` 都走同一条 prod runtime materialize 路径
+- `git worktree list` 可清到只剩主工作区
+- release worktree 只承担构建与切换输入，不再承担常驻运行职责
 
 ## 当前优先级
 
-推进 `t-052`：保留单一 plan、废除规划 task，并把 planning 只保留为阶段动作。
+推进 `t-053`：让本地 production 从固定 runtime 副本启动，彻底解除对 release worktree 的运行依赖。
 
 ## 下一阶段方向
 
-- 把大 task 拆分回 plan 的规则写清，避免执行层重新长成树
-- 再评估 `scripts/ai` 重复编排和兼容层残留，优先收真正会继续制造对象歧义的入口
+- 再评估 `scripts/ai` 重复编排和兼容层残留，优先收真正会继续制造运行或对象歧义的入口
+- 继续压低 release/runtime 边界噪音，避免 current 链接、运行态和实际 cwd 再次分叉
 - 继续在不增加新状态源的前提下退休低价值解释层和静态噪音
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

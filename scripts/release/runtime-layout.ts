@@ -14,6 +14,8 @@ function layoutPaths() {
   return {
     root,
     releasesDir: path.join(root, "releases"),
+    liveDir: path.join(root, "live"),
+    prodLiveDir: path.join(root, "live", "prod"),
     sharedDir: path.join(root, "shared"),
     currentLink: path.join(root, "current"),
     previewCurrentLink: path.join(root, "preview-current"),
@@ -39,6 +41,7 @@ function bootstrapSharedEnv(sharedEnvPath) {
 function ensureLayout() {
   const layout = layoutPaths();
   fs.mkdirSync(layout.releasesDir, { recursive: true });
+  fs.mkdirSync(layout.prodLiveDir, { recursive: true });
   fs.mkdirSync(layout.sharedDir, { recursive: true });
   bootstrapSharedEnv(layout.sharedEnvPath);
   return layout;

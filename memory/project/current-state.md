@@ -24,15 +24,15 @@ related_docs:
 ## 当前焦点
 
 - 本地 production 当前稳定运行在 `3010`；当前 active release 仍以 `pnpm prod:status` 输出为准。
-- `t-052` 正在把 planning 从对象层收回为阶段动作：需求不清时默认回到 `operating-blueprint`，task 只保留可执行事项。
-- 当前正在同时收口三处回流口：`AGENTS / WORK_MODES / DEV_WORKFLOW` 的 planning 语义、portal planning stage 来源、task 默认 currentMode。
-- 当前阶段不扩新页面、新状态源、新运行时或新治理文档；继续只做减对象类别、减默认必读面、减错读主源。
+- `t-053` 正在把本地 production 从 release worktree 运行 cwd 中解耦：active prod 先 materialize 到固定 runtime 副本，再由本地生产进程从该副本启动。
+- 当前目标是让 release worktree 只承担构建与切换输入，不再承担本地 production 常驻运行目录。
+- 当前阶段不扩新页面、新状态源、新运行时系统或远端部署模型；继续只做 release/runtime 边界收口。
 
 ## 当前阻塞
 
-- 主要风险不是计划主源本身，而是 planning 语义仍可能从 task 默认 mode、portal stage 投影和旧文案回流。
-- 如果 `todo` task 继续默认落到 `方案评审`，即使文档收口了，任务页和首页仍会把 planning 错读成 task 对象。
-- 如果大 task 的剩余范围不明确退回 plan，后续很容易重新长出 task 树或隐性“规划 task”。
+- 主要风险不是发布台账，而是本地 production 一旦仍从 release worktree 启动，就无法真正把 worktree 清到只剩主工作区。
+- 如果 `current` 软链、runtime 状态和实际 `cwd` 没一起切到固定 runtime 副本，`prod:status` 虽然可能显示健康，release worktree 依赖仍会潜伏。
+- 如果 rollback 沿用旧路径，只修 accept/switch，不修 rollback，runtime cwd 仍会在回滚时重新回流到 release worktree。
 
 ## 当前推荐校验顺序
 
@@ -58,7 +58,7 @@ related_docs:
 - `pnpm prod:check`
 - `pnpm coord:check:pre-task`
 - 确认当前无 `pending dev`，本地 production 继续稳定运行在最新 active release
-- 验证 planning 只来自 `operating-blueprint`，`/tasks` 不再承担待规划对象展示
-- 验证新建或默认 task 不再落到 `战略澄清 / 方案评审`
-- 确认大 task 的剩余范围回到 plan，而不是继续在 task 内树化
+- 验证 `local-prod.json` 的 `cwd` 已切到 `.compounding-runtime/live/prod/*`
+- 验证 `git worktree list` 只剩主工作区
+- 验证 rollback 也复用同一条 runtime materialize 路径，不再回流到 release worktree
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->
