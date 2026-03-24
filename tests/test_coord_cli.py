@@ -58,6 +58,22 @@ class CoordCliTests(CoordCliTestCase):
         self.assertIn("`codex/task-124-contract-draft`", created)
         self.assertNotIn("{{", created)
 
+    def test_create_task_supports_json_output(self) -> None:
+        completed = self.run_script(
+            "scripts/ai/create-task.ts",
+            "task-126-json",
+            "统一 create-task 输出",
+            "避免脚本层继续各自维护不同的成功结果格式",
+            "--json",
+        )
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        payload = json.loads(completed.stdout)
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["task_id"], "task-126-json")
+        self.assertEqual(payload["short_id"], "t-126")
+        self.assertTrue(payload["path"].endswith("tasks/queue/task-126-json.md"))
+
     def test_create_task_can_seed_related_modules_into_companion_scope(self) -> None:
         completed = self.run_script(
             "scripts/ai/create-task.ts",
@@ -104,6 +120,58 @@ console.log(fs.readFileSync(file, "utf8"));
 
         self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
         self.assertIn("## 交付结果（单点模板）", completed.stdout)
+
+    def test_template_feedback_orchestrator_supports_json_output(self) -> None:
+        completed = subprocess.run(
+            [
+                "node",
+                str(ROOT / "scripts/ai/template-feedback-orchestrator.js"),
+                "generate-task",
+                "--json",
+            ],
+            cwd=self.target,
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        payload = json.loads(completed.stdout)
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["command"], "generate-task")
+        self.assertTrue(payload["validation"]["valid"])
+        self.assertIn("## 任务摘要", payload["content"])
+
+    def test_fix_first_orchestrator_supports_json_output(self) -> None:
+        (self.target / "package.json").write_text(
+            json.dumps(
+                {
+                    "name": "coord-cli-fixtures",
+                    "private": True,
+                    "scripts": {
+                        "lint": "node -e \"process.exit(0)\"",
+                        "test": "node -e \"process.exit(0)\"",
+                        "build": "node -e \"process.exit(0)\"",
+                        "preview:check": "node -e \"process.exit(0)\"",
+                        "ai:validate-trace": "node -e \"process.exit(0)\"",
+                        "ai:validate-task-git": "node -e \"process.exit(0)\"",
+                    },
+                }
+            ),
+            encoding="utf8",
+        )
+
+        completed = subprocess.run(
+            ["node", str(ROOT / "scripts/ai/fix-first-orchestrator.js"), "--json"],
+            cwd=self.target,
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        payload = json.loads(completed.stdout)
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["summary"]["askRequired"], 0)
+        self.assertEqual(payload["summary"]["total"], 6)
 
     def test_companion_lifecycle_records_pre_task_review_and_release_handoff(self) -> None:
         script_root = ROOT.as_posix()

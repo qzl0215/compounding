@@ -2,12 +2,15 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { listTaskRecords } = require("./lib/task-resolver.ts");
 const { ensureCompanion } = require("../coord/lib/task-meta.ts");
-const { renderTaskTemplate } = require("./lib/task-template.js");
+const { emitResult, exitWithError, parseCliArgs, renderTaskTemplate } = require("./lib/cli-kernel.js");
 
-const [taskId, summary, whyNow] = process.argv.slice(2, 5);
-const argv = parseOptions(process.argv.slice(5));
+const cli = parseCliArgs(process.argv.slice(2));
+const [taskId, summary, whyNow] = cli.positionals.slice(0, 3);
+const argv = cli.flags;
 if (!taskId || !summary || !whyNow) {
-  console.error(
+  exitWithError(
+    "Missing required arguments for create-task.",
+    cli,
     [
       "Usage: node --experimental-strip-types scripts/ai/create-task.ts <task-id> <summary> <why-now>",
       "Optional flags: --parentPlan=... --boundary=... --doneWhen=... --inScope=... --outOfScope=... --constraints=...",
@@ -17,7 +20,6 @@ if (!taskId || !summary || !whyNow) {
       "                --updateTraceRoadmap=... --updateTraceDocs=...",
     ].join("\n")
   );
-  process.exit(1);
 }
 
 const root = process.cwd();
@@ -26,12 +28,10 @@ const shortIdMatch = taskId.match(/^task-(\d+)/);
 const shortId = shortIdMatch ? `t-${shortIdMatch[1]}` : `t-${taskId}`;
 const existingTaskRecords = listTaskRecords(root);
 if (existingTaskRecords.some((record) => record.id === taskId || record.path === path.posix.join("tasks/queue", `${taskId}.md`))) {
-  console.error(`Task already exists: ${taskId}`);
-  process.exit(1);
+  exitWithError(`Task already exists: ${taskId}`, cli);
 }
 if (existingTaskRecords.some((record) => record.shortId === shortId)) {
-  console.error(`Short task id already exists: ${shortId}`);
-  process.exit(1);
+  exitWithError(`Short task id already exists: ${shortId}`, cli);
 }
 
 const body = renderTaskTemplate(
@@ -69,20 +69,13 @@ const body = renderTaskTemplate(
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, body);
 ensureCompanion(taskId);
-console.log(outputPath);
-
-function parseOptions(args) {
-  const parsed = {};
-  for (const arg of args) {
-    if (!arg.startsWith("--")) {
-      continue;
-    }
-    const [key, ...rest] = arg.slice(2).split("=");
-    if (!key) {
-      continue;
-    }
-    const value = rest.length > 0 ? rest.join("=") : "";
-    parsed[key] = value;
-  }
-  return parsed;
-}
+emitResult(
+  {
+    ok: true,
+    task_id: taskId,
+    short_id: shortId,
+    path: outputPath,
+  },
+  cli,
+  (result) => result.path
+);

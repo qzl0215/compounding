@@ -23,18 +23,16 @@ related_docs:
 
 ## 当前焦点
 
-- 本地 production 当前稳定运行在 `3010`；当前 active release 仍以 `pnpm prod:status` 输出为准。
-- `t-053` 正在把本地 production 从 release worktree 运行 cwd 中解耦：active prod 先 materialize 到固定 runtime 副本，再由本地生产进程从该副本启动。
-- 当前目标是让 release worktree 只承担构建与切换输入，不再承担本地 production 常驻运行目录。
-- `t-054` 已补上 `single-kernel + project-shell` 的 MVP 闭环：当前仓库可作为老项目跑通 `attach / audit / proposal`，空目录可跑最小 `bootstrap`，`apply-proposal` 只自动处理 `auto_apply` 协议资产。
-- `t-054` 已用第二个老项目 `qianfamily` 完成真实验证：`bootstrap/project_brief.yaml` 已生成并落分支，缺失协议资产已通过 kernel proposal `auto_apply` 补齐，`qianfamily` 的 `audit / typecheck / build` 均已通过。
-- 当前阶段不扩新页面、新状态源、新运行时系统或远端部署模型；继续只做 release/runtime 边界收口。
+- 本地 production 当前稳定运行在 `3010`；active release 仍以 `pnpm prod:status` 输出为准。
+- `t-053` 已完成：本地 production 已脱离 release worktree 运行 cwd，当前只保留主工作区，不再保留 release worktree 作为常驻运行目录。
+- 当前焦点切到 `t-058`：收紧 `scripts/ai` 的重复编排逻辑，只抽公共 CLI 外壳，不改业务策略，不碰 portal。
+- 这轮目标是统一 `template-feedback`、`fix-first` 与 `create-task` 的参数解析、标准输出、错误出口和 task 模板渲染，减少脚本层重复而不引入新框架。
+- 当前阶段不扩新页面、新状态源、新运行时系统或远端部署模型；优先继续收真正会制造维护成本的脚本边界。
 
 ## 当前阻塞
 
-- 主要风险不是发布台账，而是本地 production 一旦仍从 release worktree 启动，就无法真正把 worktree 清到只剩主工作区。
-- 如果 `current` 软链、runtime 状态和实际 `cwd` 没一起切到固定 runtime 副本，`prod:status` 虽然可能显示健康，release worktree 依赖仍会潜伏。
-- 如果 rollback 沿用旧路径，只修 accept/switch，不修 rollback，runtime cwd 仍会在回滚时重新回流到 release worktree。
+- 主要风险不再是 runtime cwd，而是 `scripts/ai` 里的 CLI 外壳逻辑仍分散在多个脚本里，后续每次加门禁或模板约定都要多处同步。
+- 如果共享内核抽取过度，会把业务策略和公共外壳重新耦成一个新框架；如果抽取不足，重复代码会继续增长。
 
 ## 当前推荐校验顺序
 
@@ -64,9 +62,8 @@ related_docs:
 - `python3 scripts/init_project_compounding.py attach --target . --config bootstrap/project_brief.yaml`
 - `python3 scripts/init_project_compounding.py proposal --target . --config bootstrap/project_brief.yaml`
 - 确认当前无 `pending dev`，本地 production 继续稳定运行在最新 active release
-- 验证 `local-prod.json` 的 `cwd` 已切到 `.compounding-runtime/live/prod/*`
-- 验证 `git worktree list` 只剩主工作区
-- 验证 kernel proposal 的 `auto_apply` 只覆盖协议层资产，不会覆盖 `apps/**`、`scripts/release/**`、`scripts/local-runtime/**`
-- 验证 rollback 也复用同一条 runtime materialize 路径，不再回流到 release worktree
-- 在 `t-053` 收口后，抽样检查高频主干文档 freshness warning 与 cleanup candidate 输出是否仍保持轻量、可解释且不形成新状态源
+- 验证 `template-feedback-orchestrator`、`fix-first-orchestrator`、`create-task` 继续保持现有 CLI 行为
+- 验证共享内核只承接参数解析、输出、错误出口和 task 模板渲染，不承接业务判断
+- 验证 `pnpm lint`、`pnpm test`、`pnpm build`、`validate-change-trace`、`validate-task-git-link` 全部通过
+- 刷新代码量快照，确认 `scripts/ai` 的增长得到收敛
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

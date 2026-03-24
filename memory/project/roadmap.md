@@ -15,27 +15,25 @@ related_docs:
 
 ## 当前阶段
 
-Local Runtime Boundary Simplification（持续收口）
+AI Script Surface Simplification（持续收口）
 
 ## 当前里程碑
 
-本地 production 脱离 release worktree 运行
+`scripts/ai` 共享 CLI 外壳落地
 
 ## 里程碑成功标准
 
-- 本地 production 运行 cwd 不再指向 release worktree，而是固定 runtime 副本目录
-- `accept-dev-release`、`switch-release`、`rollback-release` 都走同一条 prod runtime materialize 路径
-- `git worktree list` 可清到只剩主工作区
-- release worktree 只承担构建与切换输入，不再承担常驻运行职责
+- `template-feedback`、`fix-first` 和 `create-task` 共用一套参数解析、标准输出、错误出口和 task 模板渲染
+- 共享内核只承接 CLI 外壳，不引入新的脚本框架或状态源
+- 现有脚本行为、门禁和模板语义保持兼容
 
 ## 当前优先级
 
-推进 `t-053`：让本地 production 从固定 runtime 副本启动，彻底解除对 release worktree 的运行依赖。
+推进 `t-058`：把 `scripts/ai` 的重复编排逻辑收口到一个极薄共享内核。
 
 ## 下一阶段方向
 
-- `Knowledge Freshness and Entropy Cleanup`：把 knowledge asset freshness 做成可执行门禁，并用轻量候选报告持续暴露可在一个 task 内闭环的小型熵减机会
-- 再评估 `scripts/ai` 重复编排和兼容层残留，优先收真正会继续制造运行或对象歧义的入口
-- 继续压低 release/runtime 边界噪音，避免 current 链接、运行态和实际 cwd 再次分叉
-- 继续在不增加新状态源的前提下退休低价值解释层和静态噪音
+- 在 `scripts/ai` 外壳收口后，再评估 portal 读模型聚合点是否值得继续拆分
+- 继续压低兼容层和静态噪音，优先收真正会继续制造对象歧义的入口
+- 继续在不增加新状态源的前提下退休低价值解释层和脚本重复层
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->
