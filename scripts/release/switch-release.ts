@@ -1,4 +1,6 @@
 const {
+  currentActiveRelease,
+  detachReleaseWorktrees,
   ensureReleaseTag,
   materializeProdRuntime,
   markActive,
@@ -32,6 +34,7 @@ if (!releaseId) {
 
 try {
     const result = withReleaseLock(() => {
+      const previous = currentActiveRelease();
       const record = readManifest(releaseId);
       if (record.build_result !== "passed" || record.smoke_result !== "passed") {
         throw new Error(`Release ${releaseId} is not healthy enough for cutover.`);
@@ -47,6 +50,7 @@ try {
       const finalRelease = { ...updated, tag, notes: [...updated.notes, reloadNote, stabilityNote].filter(Boolean) };
       upsertRelease(finalRelease);
       pruneInactiveProdRuntimeCopies(releaseId);
+      detachReleaseWorktrees([record.release_path, previous?.release_path]);
       if (record.primary_task_id) {
         recordReleaseHandoff(record.primary_task_id, {
           source: "release:switch",

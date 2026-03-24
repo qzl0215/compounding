@@ -26,12 +26,13 @@ related_docs:
 - 本地 production 当前稳定运行在 `3010`；active release 仍以 `pnpm prod:status` 输出为准。
 - `t-053` 已完成：本地 production 已脱离 release worktree 运行 cwd，当前只保留主工作区，不再保留 release worktree 作为常驻运行目录。
 - `t-058` 已完成：`scripts/ai` 的共享 CLI 外壳已经落地，`template-feedback`、`fix-first` 与 `create-task` 已收回同一套参数解析、标准输出、错误出口和 task 模板渲染。
-- 当前无 `pending dev`；本地 production 已稳定运行在 `20260324195439-38bfa9d-prod`。
-- 当前主线回到结构 review 待定状态；下一轮优先只选一个高 ROI 边界继续推进，候选仍以 portal 读模型聚合点与 release 兼容壳为主。
+- `t-059` 已完成：release registry、Studio 读模型和主源文档已经统一到真实待验收语义；已晋升到 prod 的旧 dev 不再继续显示为 `pending`。
+- 当前 active release 以 `pnpm prod:status` 输出为准；本地 runtime release 目录也已脱离 git worktree，当前 `git worktree list` 只剩主工作区。
+- 当前主线回到结构 review 待定状态；下一轮仍优先只选一个高 ROI 边界继续推进。
 
 ## 当前阻塞
 
-- 当前没有发布阻塞；主要剩余结构风险是 portal 读模型仍偏聚合、release 兼容壳仍有历史回退逻辑，下一轮需要只挑一个边界继续收口。
+- 当前没有发布阻塞；主要剩余结构风险重新回到 portal 聚合边界和 release 历史兼容壳。
 - 如果下一轮同时动多个结构边界，会重新放大对象歧义和回归成本。
 
 ## 当前推荐校验顺序
@@ -55,6 +56,7 @@ related_docs:
 
 - `pnpm validate:static`
 - `pnpm validate:build`
+- `pnpm prod:status`
 - `pnpm prod:check`
 - `pnpm coord:check:pre-task`
 - `pnpm ai:validate-assets`

@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { reconcileReleaseRegistry } from "../../../../../shared/release-registry";
 import type { ReleaseDashboard, ReleaseRecord, ReleaseRegistry } from "./types";
 import { getChannelBaseUrl, getLocalRuntimeStatus, getReleaseRuntimeRoot } from "./runtime";
 import { normalizeDeliverySnapshot, resolveTaskContractSummary } from "./task-summary";
@@ -18,14 +19,14 @@ export function readReleaseRegistry(): ReleaseRegistry {
   }
   try {
     const payload = JSON.parse(fs.readFileSync(registryPath, "utf8")) as ReleaseRegistry;
-    return {
+    return reconcileReleaseRegistry({
       active_release_id: payload.active_release_id ?? null,
       pending_dev_release_id: payload.pending_dev_release_id ?? null,
       updated_at: payload.updated_at ?? null,
       releases: Array.isArray(payload.releases)
         ? payload.releases.map((release) => normalizeReleaseRecord(release))
         : []
-    };
+    }).registry;
   } catch {
     return EMPTY_REGISTRY;
   }
@@ -40,10 +41,7 @@ export function getReleaseDashboard(): ReleaseDashboard {
     runtime_root: getReleaseRuntimeRoot(),
     active_release_id: registry.active_release_id,
     active_release: releases.find((release) => release.release_id === registry.active_release_id) || null,
-    pending_dev_release:
-      releases.find((release) => release.release_id === registry.pending_dev_release_id) ||
-      releases.find((release) => release.channel === "dev" && release.acceptance_status === "pending") ||
-      null,
+    pending_dev_release: releases.find((release) => release.release_id === registry.pending_dev_release_id) || null,
     dev_preview_url: getChannelBaseUrl("dev"),
     production_url: getChannelBaseUrl("prod"),
     releases,

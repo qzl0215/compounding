@@ -3,6 +3,7 @@ const { recordReleaseHandoff } = require("../coord/lib/companion-lifecycle.ts");
 const {
   clearChannelSymlink,
   clearPendingDevRelease,
+  detachReleaseWorktrees,
   ensureReleaseTag,
   materializeProdRuntime,
   markActive,
@@ -10,6 +11,7 @@ const {
   previewBaseUrl,
   pruneInactiveProdRuntimeCopies,
   productionBaseUrl,
+  repairRegistry,
   readManifest,
   readRegistry,
   releaseIdFor,
@@ -41,7 +43,7 @@ const releaseId = parseArg("--release");
 
 try {
   const result = withReleaseLock(() => {
-    const pending = releaseId ? readManifest(releaseId) : pendingDevRelease();
+    const pending = releaseId ? readManifest(releaseId) : pendingDevRelease(repairRegistry());
     if (!pending || pending.channel !== "dev" || pending.acceptance_status !== "pending") {
       throw new Error("当前没有可验收的 pending dev 预览。");
     }
@@ -119,6 +121,7 @@ try {
         stdio: ["ignore", "pipe", "pipe"],
       });
     } catch {}
+    detachReleaseWorktrees([pending.release_path]);
 
     return {
       release: readRegistry().releases.find((item) => item.release_id === prodReleaseId),

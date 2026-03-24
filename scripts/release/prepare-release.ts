@@ -4,11 +4,12 @@ const {
   changeSummary,
   currentActiveRelease,
   ensureLayout,
-  git,
+  materializeReleaseWorkspace,
   parseTaskIdList,
   pendingDevRelease,
   previewBaseUrl,
   productionBaseUrl,
+  repairRegistry,
   readTaskDeliveryMetadata,
   releaseIdFor,
   resolveCanonicalTaskIds,
@@ -42,7 +43,7 @@ function canPrepareChannel(channelName, taskId) {
   if (channelName !== "dev") {
     return null;
   }
-  const existingPending = pendingDevRelease();
+  const existingPending = pendingDevRelease(repairRegistry());
   if (existingPending) {
     return {
       ok: false,
@@ -88,9 +89,8 @@ function main() {
         .filter((taskId) => taskId !== taskMeta?.id)
         .slice(0, 2);
 
-      git(["worktree", "add", "--detach", releasePath, commitSha]);
+      materializeReleaseWorkspace(releasePath, releaseId, commitSha);
       try {
-        git(["clean", "-fdx"], releasePath);
         installAndBuildRelease(releasePath);
         const smokePassed = hasBuildSmokeSignal(releasePath);
         if (!smokePassed) {

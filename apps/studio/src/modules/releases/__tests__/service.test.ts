@@ -179,6 +179,75 @@ describe("releases service", () => {
     expect(dashboard.active_release?.delivery_snapshot?.summary).toBe("仅快照摘要");
   });
 
+  it("ignores stale pending dev pointers once the preview has already been promoted", () => {
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "compounding-release-reconcile-"));
+    const registryPath = path.join(tempRoot, "registry.json");
+    process.env.AI_OS_RELEASE_ROOT = tempRoot;
+    fs.writeFileSync(
+      registryPath,
+      JSON.stringify(
+        {
+          active_release_id: "rel-prod",
+          pending_dev_release_id: "rel-dev",
+          updated_at: "2026-03-25T10:00:00Z",
+          releases: [
+            {
+              release_id: "rel-dev",
+              commit_sha: "3333333",
+              tag: null,
+              source_ref: "HEAD",
+              channel: "dev",
+              acceptance_status: "pending",
+              preview_url: "http://127.0.0.1:3011",
+              promoted_to_main_at: null,
+              promoted_from_dev_release_id: null,
+              created_at: "2026-03-25T09:00:00Z",
+              status: "preview",
+              build_result: "passed",
+              smoke_result: "passed",
+              cutover_at: null,
+              rollback_from: null,
+              release_path: "/tmp/rel-dev",
+              change_summary: ["3333333 preview"],
+              notes: []
+            },
+            {
+              release_id: "rel-prod",
+              commit_sha: "3333333",
+              tag: "release-rel-prod",
+              source_ref: "main",
+              channel: "prod",
+              acceptance_status: "accepted",
+              preview_url: null,
+              promoted_to_main_at: null,
+              promoted_from_dev_release_id: "rel-dev",
+              created_at: "2026-03-25T09:30:00Z",
+              status: "active",
+              build_result: "passed",
+              smoke_result: "passed",
+              cutover_at: "2026-03-25T09:35:00Z",
+              rollback_from: null,
+              release_path: "/tmp/rel-prod",
+              change_summary: ["3333333 promote"],
+              notes: []
+            }
+          ]
+        },
+        null,
+        2
+      )
+    );
+
+    const registry = readReleaseRegistry();
+    const dashboard = getReleaseDashboard();
+    const devRelease = registry.releases.find((release) => release.release_id === "rel-dev");
+
+    expect(registry.pending_dev_release_id).toBeNull();
+    expect(dashboard.pending_dev_release).toBeNull();
+    expect(devRelease?.acceptance_status).toBe("accepted");
+    expect(devRelease?.promoted_to_main_at).toBe("2026-03-25T09:35:00Z");
+  });
+
   it("exposes the fixed validation layer order", () => {
     expect(RELEASE_VALIDATION_ORDER).toEqual(["static", "build", "runtime", "ai-output"]);
     expect(VALIDATION_LAYERS).toHaveLength(4);

@@ -1,6 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { ensureLayout, previewBaseUrl } = require("./runtime-layout.ts");
+const { findEffectivePendingDevRelease, reconcileReleaseRegistry } = require("../../shared/release-registry.ts");
 
 function emptyRegistry() {
   return { active_release_id: null, pending_dev_release_id: null, updated_at: null, releases: [] };
@@ -40,28 +41,48 @@ function normalizeReleaseRecord(record) {
   return normalized;
 }
 
-function readRegistry() {
+function parseRegistryPayload(raw = {}) {
+  return {
+    active_release_id: raw.active_release_id ?? null,
+    pending_dev_release_id: raw.pending_dev_release_id ?? null,
+    updated_at: raw.updated_at ?? null,
+    releases: Array.isArray(raw.releases) ? raw.releases.map(normalizeReleaseRecord) : [],
+  };
+}
+
+function readRegistryState() {
   const { registryPath } = ensureLayout();
   if (!fs.existsSync(registryPath)) {
-    return emptyRegistry();
+    return { registry: emptyRegistry(), changed: false };
   }
   try {
-    const raw = JSON.parse(fs.readFileSync(registryPath, "utf8"));
-    return {
-      active_release_id: raw.active_release_id ?? null,
-      pending_dev_release_id: raw.pending_dev_release_id ?? null,
-      updated_at: raw.updated_at ?? null,
-      releases: Array.isArray(raw.releases) ? raw.releases.map(normalizeReleaseRecord) : [],
-    };
+    return reconcileReleaseRegistry(parseRegistryPayload(JSON.parse(fs.readFileSync(registryPath, "utf8"))));
   } catch {
-    return emptyRegistry();
+    return { registry: emptyRegistry(), changed: false };
   }
 }
 
-function writeRegistry(registry) {
+function readRegistry() {
+  return readRegistryState().registry;
+}
+
+function writeRegistry(registry, options = {}) {
   const { registryPath } = ensureLayout();
-  registry.updated_at = new Date().toISOString();
-  fs.writeFileSync(registryPath, JSON.stringify(registry, null, 2) + "\n");
+  const next = options.skip_reconcile ? registry : reconcileReleaseRegistry(registry).registry;
+  next.updated_at = new Date().toISOString();
+  fs.writeFileSync(registryPath, JSON.stringify(next, null, 2) + "\n");
+  if (options.sync_manifests) {
+    next.releases.forEach((record) => writeManifest(record));
+  }
+  return next;
+}
+
+function repairRegistry() {
+  const { registry, changed } = readRegistryState();
+  if (changed) {
+    return writeRegistry(registry, { skip_reconcile: true, sync_manifests: true });
+  }
+  return registry;
 }
 
 function manifestPath(releaseId) {
@@ -91,9 +112,7 @@ function upsertRelease(record) {
   } else {
     registry.releases.push(normalizedRecord);
   }
-  writeRegistry(registry);
-  writeManifest(normalizedRecord);
-  return registry;
+  return writeRegistry(registry, { sync_manifests: true });
 }
 
 function markActive(releaseId, rollbackFrom = null) {
@@ -116,9 +135,7 @@ function markActive(releaseId, rollbackFrom = null) {
     }
     return item;
   });
-  writeRegistry(registry);
-  registry.releases.forEach((item) => writeManifest(item));
-  return registry;
+  return writeRegistry(registry, { sync_manifests: true });
 }
 
 function currentActiveRelease(registry = readRegistry()) {
@@ -126,31 +143,19 @@ function currentActiveRelease(registry = readRegistry()) {
 }
 
 function pendingDevRelease(registry = readRegistry()) {
-  const direct = registry.pending_dev_release_id
-    ? registry.releases.find((item) => item.release_id === registry.pending_dev_release_id)
-    : null;
-  if (direct) {
-    return direct;
-  }
-  return (
-    registry.releases
-      .filter((item) => item.channel === "dev" && item.acceptance_status === "pending")
-      .sort((left, right) => right.created_at.localeCompare(left.created_at))[0] || null
-  );
+  return findEffectivePendingDevRelease(registry.releases, registry.pending_dev_release_id || null);
 }
 
 function setPendingDevRelease(releaseId) {
   const registry = readRegistry();
   registry.pending_dev_release_id = releaseId;
-  writeRegistry(registry);
-  return registry;
+  return writeRegistry(registry, { sync_manifests: true });
 }
 
 function clearPendingDevRelease() {
   const registry = readRegistry();
   registry.pending_dev_release_id = null;
-  writeRegistry(registry);
-  return registry;
+  return writeRegistry(registry, { sync_manifests: true });
 }
 
 module.exports = {
@@ -161,6 +166,7 @@ module.exports = {
   markActive,
   normalizeReleaseRecord,
   pendingDevRelease,
+  repairRegistry,
   readManifest,
   readRegistry,
   setPendingDevRelease,

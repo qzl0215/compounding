@@ -1,4 +1,5 @@
 import type { ReleaseRecord } from "@/modules/releases/types";
+import { findEffectivePendingDevRelease } from "../../../../../shared/release-registry";
 import type { TaskCard, TaskDeliveryRow, TaskDeliveryStatus } from "./types";
 
 export const TASK_DELIVERY_LABELS: Record<TaskDeliveryStatus, string> = {
@@ -26,7 +27,7 @@ function buildTaskDeliveryRow(task: TaskCard, releases: ReleaseRecord[]): TaskDe
   const associated = releases
     .filter((release) => matchesTask(task, release))
     .sort((left, right) => sortStamp(right).localeCompare(sortStamp(left)));
-  const pendingDev = associated.find((release) => release.channel === "dev" && release.acceptance_status === "pending") ?? null;
+  const pendingDev = findEffectivePendingDevRelease(associated);
   const prodReleases = associated.filter((release) => release.channel === "prod" && release.acceptance_status === "accepted");
   const activeProd = prodReleases.find((release) => release.status === "active") ?? null;
   const latestProd = prodReleases[0] ?? null;

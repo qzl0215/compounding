@@ -179,4 +179,74 @@ describe("tasks service", () => {
     expect(row.acceptReleaseId).toBeNull();
     expect(row.versionLabel).toBe("未生成");
   });
+
+  it("does not surface promoted stale dev previews as pending acceptance", async () => {
+    const tasks = await listTaskCards();
+    const releasedTask = tasks.find((task) => task.id === "task-009-ai-work-modes-productization");
+    expect(releasedTask).toBeTruthy();
+
+    const releases: ReleaseRecord[] = [
+      {
+        release_id: "rel-009-dev",
+        commit_sha: "2222222",
+        tag: null,
+        source_ref: "HEAD",
+        primary_task_id: "task-009-ai-work-modes-productization",
+        linked_task_ids: [],
+        delivery_snapshot: {
+          summary: "stale dev",
+          risk: null,
+          done_when: null,
+        },
+        resolved_task_contract: null,
+        channel: "dev",
+        acceptance_status: "pending",
+        preview_url: "http://127.0.0.1:3011",
+        promoted_to_main_at: null,
+        promoted_from_dev_release_id: null,
+        created_at: "2026-03-25T09:00:00Z",
+        status: "preview",
+        build_result: "passed",
+        smoke_result: "passed",
+        cutover_at: null,
+        rollback_from: null,
+        release_path: "/tmp/rel-009-dev",
+        change_summary: ["2222222 preview"],
+        notes: [],
+      },
+      {
+        release_id: "rel-009-prod",
+        commit_sha: "2222222",
+        tag: "release-rel-009-prod",
+        source_ref: "main",
+        primary_task_id: "task-009-ai-work-modes-productization",
+        linked_task_ids: [],
+        delivery_snapshot: {
+          summary: "prod",
+          risk: null,
+          done_when: null,
+        },
+        resolved_task_contract: null,
+        channel: "prod",
+        acceptance_status: "accepted",
+        preview_url: null,
+        promoted_to_main_at: null,
+        promoted_from_dev_release_id: "rel-009-dev",
+        created_at: "2026-03-25T09:20:00Z",
+        status: "active",
+        build_result: "passed",
+        smoke_result: "passed",
+        cutover_at: "2026-03-25T09:25:00Z",
+        rollback_from: null,
+        release_path: "/tmp/rel-009-prod",
+        change_summary: ["2222222 promote"],
+        notes: [],
+      },
+    ];
+
+    const row = buildTaskDeliveryRows([releasedTask!], releases)[0];
+    expect(row.deliveryStatus).toBe("released");
+    expect(row.acceptReleaseId).toBeNull();
+    expect(row.versionLabel).toBe("rel-009-prod");
+  }, 15000);
 });

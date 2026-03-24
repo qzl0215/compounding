@@ -1,5 +1,6 @@
 const {
   currentActiveRelease,
+  detachReleaseWorktrees,
   materializeProdRuntime,
   markActive,
   productionBaseUrl,
@@ -46,6 +47,7 @@ try {
     const finalRelease = { ...updated, notes: [...updated.notes, reloadNote, stabilityNote].filter(Boolean) };
     upsertRelease(finalRelease);
     pruneInactiveProdRuntimeCopies(releaseId);
+    detachReleaseWorktrees([target.release_path, previous?.release_path]);
     return { registry: readRegistry(), finalRelease };
   });
 

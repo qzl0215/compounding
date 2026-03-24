@@ -15,11 +15,11 @@ last_reviewed_at: 2026-03-25
 
 ## 需求总览
 
-继续把结构收口落到真正会制造熵增的边界上：`scripts/ai` 的共享 CLI 外壳已经落地，下一轮只从 portal 读模型聚合点与 release 兼容壳里选择一个继续推进；目标仍是减少对象歧义和重复外壳，而不是增加新框架。
+继续把结构收口落到真正会制造熵增的边界上：`t-058` 与 `t-059` 已经把 CLI 外壳和 release/task 状态链收正，下一轮只从 portal 读模型聚合点与 release 兼容壳里选择一个继续推进；目标仍是减少对象歧义和重复外壳，而不是增加新框架。
 
 ## 待思考
 
-- `scripts/ai` 的共享 CLI 外壳收口后，下一轮更值钱的是继续拆 portal 读模型，还是继续收 release 兼容壳
+- release/task 状态链收正后，下一轮更值钱的是继续拆 portal 读模型，还是继续收 release 兼容壳
 - `fix-first` 的 gate registry 后续是否还值得进一步数据化，还是保持当前轻量脚本更划算
 - task 模板渲染与经验模板渲染是否还需要再统一一层，还是只共享 task 合同底座已经足够
 
@@ -62,6 +62,7 @@ last_reviewed_at: 2026-03-25
 - `t-055`：把知识主源升级为可校验的新鲜度与质量护栏（已完成）
 - `t-056`：把持续垃圾回收收口成轻量候选生成器（已完成）
 - `t-058`：把 `scripts/ai` 的重复 CLI 外壳收口成极薄共享内核，先服务 `template-feedback`、`fix-first` 与 `create-task`（已完成）
+- `t-059`：收正 `dev -> main -> prod` 之后的 release/task 状态一致性，避免假 `pending dev` 与主源漂移继续回流（已完成）
 
 ## 下一步对话
 
@@ -70,8 +71,8 @@ last_reviewed_at: 2026-03-25
 - 最后产出 task：只有边界清楚后才进入执行 task
 - 若某个 task 发现边界过大，先把剩余未收口范围退回 plan，再从 plan 派生多个 sibling tasks
 - 需要收口高频文档时，优先删掉默认第一跳里的重复入口和粗粒度说明，而不是再写新的导读或说明书
-- 下一轮若继续做结构收口，先在 portal 读模型和 release 兼容层之间只选一个边界推进
-- `t-053` 收口后，下一阶段优先验证 knowledge freshness gate 与 cleanup candidate 报告是否足够轻、可解释、不会回流成第二套状态源
+- `t-058` 与 `t-059` 已落地后，再在 portal 读模型和 release 兼容层之间只选一个边界推进
+- knowledge freshness gate 与 cleanup candidate 已落地，下一阶段只继续轻量消费其输出，不再把它们扩成第二套状态源
 - 若运行问题来自 worktree、软链或 cwd 耦合，优先把运行目录从输入目录中拆开，而不是继续堆 release 台账
 - 若下一轮继续推进 kernel/shell，先拿第二个老项目验证 attach/audit/proposal 的复用性，再决定是否扩大 `auto_apply`
 

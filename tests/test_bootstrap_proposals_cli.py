@@ -296,6 +296,47 @@ console.log(JSON.stringify({
         self.assertFalse(payload["copiedGitDir"])
         self.assertFalse(payload["oldStillExists"])
 
+    def test_release_lib_materializes_plain_release_dirs_and_detaches_legacy_worktrees(self) -> None:
+        script = """
+const fs = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
+const runtimeRoot = fs.mkdtempSync(path.join(os.tmpdir(), "compounding-release-root-"));
+process.env.AI_OS_RELEASE_ROOT = runtimeRoot;
+const { ensureLayout, git, materializeReleaseWorkspace, detachReleaseWorktree } = require("./scripts/release/lib.ts");
+const layout = ensureLayout();
+const commitSha = git(["rev-parse", "HEAD"]);
+const plainReleasePath = path.join(layout.releasesDir, "plain-release");
+materializeReleaseWorkspace(plainReleasePath, "plain-release", commitSha);
+const legacyReleasePath = path.join(layout.releasesDir, "legacy-release");
+git(["worktree", "add", "--detach", legacyReleasePath, commitSha]);
+const before = git(["worktree", "list"]);
+const detached = detachReleaseWorktree(legacyReleasePath);
+const after = git(["worktree", "list"]);
+console.log(JSON.stringify({
+  plainHasGit: fs.existsSync(path.join(plainReleasePath, ".git")),
+  plainHasPackageJson: fs.existsSync(path.join(plainReleasePath, "package.json")),
+  legacyDetached: detached.detached,
+  legacyHasGit: fs.existsSync(path.join(legacyReleasePath, ".git")),
+  beforeHasLegacy: before.includes(legacyReleasePath),
+  afterHasLegacy: after.includes(legacyReleasePath),
+}));
+"""
+        completed = subprocess.run(
+            ["node", "--experimental-strip-types", "-e", script],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        payload = json.loads(completed.stdout)
+        self.assertFalse(payload["plainHasGit"])
+        self.assertTrue(payload["plainHasPackageJson"])
+        self.assertTrue(payload["legacyDetached"])
+        self.assertFalse(payload["legacyHasGit"])
+        self.assertTrue(payload["beforeHasLegacy"])
+        self.assertFalse(payload["afterHasLegacy"])
+
 
 if __name__ == "__main__":
     unittest.main()

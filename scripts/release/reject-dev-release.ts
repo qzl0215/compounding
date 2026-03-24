@@ -6,6 +6,7 @@ const {
   pendingDevRelease,
   previewBaseUrl,
   productionBaseUrl,
+  repairRegistry,
   readManifest,
   readRegistry,
   upsertRelease,
@@ -24,7 +25,7 @@ const releaseId = parseArg("--release");
 
 try {
   const result = withReleaseLock(() => {
-    const pending = releaseId ? readManifest(releaseId) : pendingDevRelease();
+    const pending = releaseId ? readManifest(releaseId) : pendingDevRelease(repairRegistry());
     if (!pending || pending.channel !== "dev" || pending.acceptance_status !== "pending") {
       throw new Error("当前没有可驳回的 pending dev 预览。");
     }

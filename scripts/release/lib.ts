@@ -19,6 +19,7 @@ const {
   manifestPath,
   markActive,
   pendingDevRelease,
+  repairRegistry,
   readManifest,
   readRegistry,
   setPendingDevRelease,
@@ -130,6 +131,34 @@ function buildReleaseAtPath(releasePath) {
   run("pnpm", ["build"], releasePath);
 }
 
+function materializeReleaseWorkspace(releasePath, releaseId, commitSha) {
+  const { root } = ensureLayout();
+  const tempSourcePath = path.join(root, "prepare-tmp", releaseId);
+  const stagePath = `${releasePath}.next`;
+  fs.rmSync(tempSourcePath, { force: true, recursive: true });
+  fs.rmSync(stagePath, { force: true, recursive: true });
+  fs.mkdirSync(path.dirname(tempSourcePath), { recursive: true });
+  git(["worktree", "add", "--detach", tempSourcePath, commitSha]);
+  try {
+    git(["clean", "-fdx"], tempSourcePath);
+    fs.cpSync(tempSourcePath, stagePath, {
+      recursive: true,
+      force: true,
+      filter: (source) => path.basename(source) !== ".git",
+    });
+    fs.rmSync(releasePath, { force: true, recursive: true });
+    fs.renameSync(stagePath, releasePath);
+    return releasePath;
+  } finally {
+    fs.rmSync(stagePath, { force: true, recursive: true });
+    try {
+      git(["worktree", "remove", "--force", tempSourcePath]);
+    } finally {
+      git(["worktree", "prune"]);
+    }
+  }
+}
+
 function hasBuildArtifacts(releasePath) {
   return fs.existsSync(path.join(releasePath, "apps", "studio", ".next", "BUILD_ID"));
 }
@@ -205,6 +234,39 @@ function clearChannelSymlink(channel = "dev") {
   fs.rmSync(channel === "dev" ? previewCurrentLink : currentLink, { force: true, recursive: true });
 }
 
+function detachReleaseWorktree(releasePath) {
+  if (!releasePath || !fs.existsSync(releasePath)) {
+    return { path: releasePath || null, detached: false, reason: "missing" };
+  }
+
+  const gitMarker = path.join(releasePath, ".git");
+  if (!fs.existsSync(gitMarker)) {
+    return { path: releasePath, detached: false, reason: "plain_dir" };
+  }
+
+  const preservePath = `${releasePath}.plain`;
+  fs.rmSync(preservePath, { force: true, recursive: true });
+  fs.cpSync(releasePath, preservePath, {
+    recursive: true,
+    force: true,
+    filter: (source) => path.basename(source) !== ".git",
+  });
+  try {
+    git(["worktree", "remove", "--force", releasePath]);
+    fs.renameSync(preservePath, releasePath);
+    git(["worktree", "prune"]);
+    return { path: releasePath, detached: true, reason: "detached" };
+  } catch (error) {
+    fs.rmSync(releasePath, { force: true, recursive: true });
+    fs.renameSync(preservePath, releasePath);
+    throw error;
+  }
+}
+
+function detachReleaseWorktrees(releasePaths = []) {
+  return Array.from(new Set((releasePaths || []).filter(Boolean))).map((releasePath) => detachReleaseWorktree(releasePath));
+}
+
 function withReleaseLock(callback) {
   const { lockPath } = ensureLayout();
   let descriptor;
@@ -247,6 +309,7 @@ module.exports = {
   layoutPaths,
   manifestPath,
   markActive,
+  materializeReleaseWorkspace,
   materializeProdRuntime,
   pendingDevRelease,
   previewBaseUrl,
@@ -256,10 +319,13 @@ module.exports = {
   readManifest,
   readRegistry,
   readTaskDeliveryMetadata,
+  repairRegistry,
   releaseIdFor,
   releaseReload,
   resolveCanonicalTaskIds,
   resolveCommit,
+  detachReleaseWorktree,
+  detachReleaseWorktrees,
   run,
   runtimeRoot,
   setPendingDevRelease,
