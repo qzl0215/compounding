@@ -172,8 +172,10 @@ function materializeProdRuntime(sourceReleasePath, releaseId, commitSha) {
     fs.cpSync(prepared.sourcePath, stagePath, {
       recursive: true,
       force: true,
+      dereference: true,
       filter: (source) => path.basename(source) !== ".git",
     });
+    run("pnpm", ["install", "--frozen-lockfile=false"], stagePath);
     fs.rmSync(targetPath, { force: true, recursive: true });
     fs.renameSync(stagePath, targetPath);
     return targetPath;

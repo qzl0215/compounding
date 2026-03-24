@@ -47,14 +47,33 @@ function currentReleaseSnapshot() {
   const releaseId = logicalReleaseId || path.basename(releasePath);
   const studioPath = path.join(releasePath, "apps", "studio");
   const buildIdPath = path.join(studioPath, ".next", "BUILD_ID");
-  const nextBin = path.join(studioPath, "node_modules", "next", "dist", "bin", "next");
+  const appScopedNextBin = path.join(studioPath, "node_modules", "next", "dist", "bin", "next");
+  const workspaceNextBin = path.join(releasePath, "node_modules", "next", "dist", "bin", "next");
+  const pnpmStoreRoot = path.join(releasePath, "node_modules", ".pnpm");
+  let pnpmStoreNextBin = null;
+  if (fs.existsSync(pnpmStoreRoot)) {
+    for (const entry of fs.readdirSync(pnpmStoreRoot)) {
+      if (!entry.startsWith("next@")) {
+        continue;
+      }
+      const candidate = path.join(pnpmStoreRoot, entry, "node_modules", "next", "dist", "bin", "next");
+      if (fs.existsSync(candidate)) {
+        pnpmStoreNextBin = candidate;
+        break;
+      }
+    }
+  }
 
   return {
     releaseId,
     releasePath,
     studioPath,
     buildId: fs.existsSync(buildIdPath) ? fs.readFileSync(buildIdPath, "utf8").trim() : null,
-    nextBin: fs.existsSync(nextBin) ? nextBin : null,
+    nextBin: fs.existsSync(appScopedNextBin)
+      ? appScopedNextBin
+      : fs.existsSync(workspaceNextBin)
+        ? workspaceNextBin
+        : pnpmStoreNextBin,
   };
 }
 
