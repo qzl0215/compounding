@@ -23,9 +23,9 @@ related_docs:
 
 ## 当前焦点
 
-- `t-066` 进行中：把高频模块补成可机读 feature 合同，并让 `scripts/ai/feature-context.ts`、`build-context.ts`、首页 / 任务页 / 发布页都开始读取共享项目状态摘要。
-- 当前主线是 AI feature 开发提效：先减少首轮搜索和二次返工，再继续压 release 单一状态机与 preflight 单入口。
-- 本地 production 当前稳定运行在 `3010`；active release 以 `pnpm prod:status` 输出为准，当前主线仍运行正常。
+- `t-066` 已完成并进入 production：高频模块已补成可机读 feature 合同，`scripts/ai/feature-context.ts` 与 `build-context.ts` 已能直接提供 feature 包，首页 / 任务页 / 发布页也已开始读取共享项目状态摘要。
+- 当前主线转回 `t-063` 与第二轮 feature context 收口：继续把 `pnpm preflight` 压成唯一对外入口，并继续减少默认上下文和选测链里的重复翻译。
+- 本地 production 当前稳定运行在 `3010`；active release 以 `pnpm prod:status` 输出为准，当前 active release 已切到 `t-066` 上线版本。
 - `t-064` 已完成：首页已改成面向人的项目逻辑态势图，主视觉是可点击的逻辑结构图，只保留目标、里程碑、节奏、风险和下钻入口。
 - `t-058` 已完成：`scripts/ai` 的共享 CLI 外壳已经落地，`template-feedback`、`fix-first` 与 `create-task` 已收回同一套参数解析、标准输出、错误出口和 task 模板渲染。
 - `t-059` 已完成：release registry、Studio 读模型和主源文档已经统一到真实待验收语义；已晋升到 prod 的旧 dev 不再继续显示为 `pending`。
@@ -34,7 +34,7 @@ related_docs:
 ## 当前阻塞
 
 - 当前没有发布阻塞。
-- 主要结构风险转到 feature context、共享状态摘要和选测闭环如果继续各自维护一份本地翻译，AI 加功能时仍会回到手工拼上下文。
+- 主要结构风险转到 feature context 第二轮与 preflight 单入口：如果 `build-context`、`feature-context`、模块合同和 `SelectedChecks` 后续再次各自维护一套本地规则，AI 加功能时仍会回到手工拼上下文。
 
 ## 当前推荐校验顺序
 
@@ -57,16 +57,14 @@ related_docs:
 ## 下一检查点
 
 - `pnpm preflight`
-- `pnpm preflight -- --taskId=t-066`
 - `pnpm preflight -- --taskId=t-063`
 - `pnpm validate:static`
 - `pnpm validate:build`
-- `pnpm preview:status`
-- `pnpm preview:check`
 - `pnpm prod:status`
 - `pnpm prod:check`
 - `pnpm ai:feature-context -- --surface=home`
 - `pnpm ai:feature-context -- --route=/releases`
-- 确认首页、任务页、发布页继续读同一份项目状态摘要
-- 确认 feature context 能在无 task / 有 task 两条路径输出一致结构
+- 确认首页、任务页、发布页继续只读同一份项目状态摘要
+- 确认 `feature-context` 与 `build-context` 仍输出一致结构
+- 继续收口 `pnpm preflight` 与 `SelectedChecks` 的默认入口
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

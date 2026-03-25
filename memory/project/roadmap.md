@@ -32,12 +32,12 @@ AI feature 开发提效闭环
 
 ## 当前优先级
 
-优先把 AI 加功能的第一轮闭环收短：先用模块合同、feature context、共享状态摘要和选测输出减少首轮搜索，再继续压 release 单一状态机和 preflight 单入口。
+优先沿着 `t-066` 的结果继续把 AI 加功能入口收短：保持模块合同、feature context、共享状态摘要和选测输出的单一口径，再继续压 `pnpm preflight` 单入口和 release 单一状态机。
 
 ## 下一阶段方向
 
-- 继续压跨页面唯一 snapshot
-- 继续压实 release 单一状态机，避免 task / release / runtime 重新长出平行口径
+- 继续压实 `pnpm preflight` 单入口，减少 task guard / pre-task / decision card 的多入口感
+- 继续压跨页面唯一 snapshot，避免首页 / 任务页 / 发布页重新长出本地翻译
 - 继续把 AI 加 feature 的默认上下文收成更短、更稳定的入口
 - 继续在不增加新状态源的前提下退休低价值解释层和重复外壳
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

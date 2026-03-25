@@ -51,13 +51,13 @@
 
 ## 交付结果
 
-- 状态：pending_acceptance
+- 状态：done
 - 体验验收结果：
-  feature context 已能在无 task / 有 task 两条路径输出统一 packet；首页、任务页、发布页开始读取共享项目状态摘要。
+  feature context 已能在无 task / 有 task 两条路径输出统一 packet；首页、任务页、发布页已经读取同一份项目状态摘要；required / recommended 选测也已在交付面板落地。
 - 交付结果：
-  高频模块合同、feature context、共享状态摘要和 required / recommended 选测已经接入当前仓库主链，AI 加功能时不必再手工拼第一轮上下文。
+  高频模块合同、feature context、共享状态摘要和 required / recommended 选测已经接入当前仓库主链，并已随 `main` 发布到本地 production；AI 加功能时不必再手工拼第一轮上下文。
 - 复盘：
-  这轮真正值钱的是把“加一个 feature 先读什么、先改哪里、先跑什么”收成了可机读闭环，而不是继续堆说明文档。
+  这轮真正值钱的是把“加一个 feature 先读什么、先改哪里、先跑什么”收成了可机读闭环。真正的长期复利不在再写规则，而在继续把 default context、状态摘要和选测入口压成单一主链。
 
 ## 当前模式
 
