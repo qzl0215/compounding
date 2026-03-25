@@ -75,7 +75,7 @@ related_docs:
 ## 模块边界
 
 - `TaskContract` 只保留人类执行语义；branch、commit、release、trace 等机器事实由 companion / release 投影承接。
-- 首页、任务页、发布页统一读取 `ProjectOverviewSnapshot` 与任务 / 发布投影，不再保留旧 cockpit 兼容层。
+- 首页读取 `HomeLogicMapSnapshot`，任务页与发布页继续读取各自投影；不再让首页承接旧 `Kernel / Project` 工程视角。
 - 文档与记忆主源保留人工维护；生成脚本只负责缓存、注册表和导航索引。
 
 ## 禁止调用方式

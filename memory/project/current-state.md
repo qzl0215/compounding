@@ -23,6 +23,7 @@ related_docs:
 
 ## 当前焦点
 
+- `t-064` 正在推进：把首页改成面向人的项目逻辑态势图，主视觉改成可点击的逻辑结构图，只保留目标、里程碑、节奏、风险和下钻入口。
 - 本地 production 当前稳定运行在 `3010`；active release 仍以 `pnpm prod:status` 输出为准。
 - `t-053` 已完成：本地 production 已脱离 release worktree 运行 cwd，当前只保留主工作区，不再保留 release worktree 作为常驻运行目录。
 - `t-058` 已完成：`scripts/ai` 的共享 CLI 外壳已经落地，`template-feedback`、`fix-first` 与 `create-task` 已收回同一套参数解析、标准输出、错误出口和 task 模板渲染。
@@ -30,12 +31,12 @@ related_docs:
 - `t-061` 已完成：portal 读模型聚合层已拆成薄 barrel，`builders.ts` 不再承担首页摘要、Kernel/Project snapshot 与运行态翻译的全部职责。
 - `t-062` 已完成：portal 首页 shell 已拆成更薄入口，Kernel / Project 面板不再堆在单文件里。
 - 当前 active release 以 `pnpm prod:status` 输出为准；本地 runtime release 目录也已脱离 git worktree，当前 `git worktree list` 只剩主工作区。
-- 当前主线切到 `t-063`：统一 preflight 入口，把 `pnpm preflight` 收成唯一对外推荐门禁，并让 task guard 不再依赖当前 diff 是否已进入 structural。
+- `t-063` 仍在待续主线：统一 preflight 入口，把 `pnpm preflight` 收成唯一对外推荐门禁，并让 task guard 不再依赖当前 diff 是否已进入 structural。
 
 ## 当前阻塞
 
-- 当前没有发布阻塞；主要结构风险转到动手前门禁仍存在双入口心智，以及 task guard 依赖当前 diff 的误判。
-- 如果继续同时暴露 `python3 scripts/pre_mutation_check.py`、`pnpm preflight` 与 `pnpm coord:check:pre-task`，后续脚本和人工执行都会继续分叉。
+- 当前没有发布阻塞；主要结构风险转到首页如果继续沿用旧 `Kernel / Project` 壳，会让人类阅读继续被工程对象拖累。
+- 如果首页逻辑图只换视觉、不切读模型，旧 tab、旧 kernel 壳和旧文案很快会重新回流。
 
 ## 当前推荐校验顺序
 
@@ -58,15 +59,14 @@ related_docs:
 ## 下一检查点
 
 - `pnpm preflight`
-- `pnpm preflight -- --taskId=t-063`
+- `pnpm preflight -- --taskId=t-064`
 - `pnpm validate:static`
 - `pnpm validate:build`
+- `pnpm preview:status`
+- `pnpm preview:check`
 - `pnpm prod:status`
 - `pnpm prod:check`
-- `pnpm coord:check:pre-task -- --taskId=t-063`
-- `pnpm ai:validate-assets`
-- `pnpm ai:cleanup-candidates`
-- 确认当前无 `pending dev`，本地 production 继续稳定运行在最新 active release
-- 确认统一 preflight 入口后，`coord:task:start`、兼容别名和基础 gate 输出 contract 没有漂移
-- 确认 `latest_pre_mutation_check.json` 继续被稳定写出，`git-health` 消费口径不回退
+- 确认首页首屏不再出现 `Kernel / Project` tab、artifact health、boundary groups 和常驻 runtime 状态板
+- 确认五个逻辑节点都能打开对应文档或页面
+- 确认健康态只显示轻量结论，待验收或运行异常时才升格提醒
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

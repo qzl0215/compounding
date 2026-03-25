@@ -1,253 +1,115 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { HomeDashboard } from "../components/home-dashboard";
-import type { ProjectOverviewSnapshot } from "../types";
+import { HomeLogicBoard } from "../components/home-logic-board";
+import type { HomeLogicMapSnapshot } from "../types";
 
-const overviewFixture: ProjectOverviewSnapshot = {
-  overview: {
-    oneLiner: "把仓库升级成适合长期协作的 AI-Native Repo。",
-    currentPhase: "Kernel / Project Home Refactor",
-    currentPriority: "先让首页能分开看内核规范和项目态势。",
-    currentMilestone: "首页双 Tab",
+const snapshotFixture: HomeLogicMapSnapshot = {
+  identity: {
+    name: "Compounding",
+    oneLiner: "把首页重构为人类可扫读的项目逻辑态势图。",
   },
-  direction: {
-    summary: "把首页拆成 Kernel / Project 双视图。",
-    nextConversationAction: "先确认双视图边界。",
-    evidenceHref: "/knowledge-base?path=memory/project/roadmap.md",
+  headline: {
+    overallSummary: "当前重点是把首页改成逻辑结构图，让人一眼看懂目标、节奏和风险。",
+    currentPhase: "Structural Entropy Reduction",
+    currentMilestone: "首页逻辑态势图",
   },
-  thinkingItems: [],
-  planningItems: [],
-  readyItems: [],
-  doingItems: [],
-  acceptanceItems: [],
-  releasedItems: [],
-  runtimeFacts: {
-    summary: "需求判断和运行判断要一起看。",
-    blockedItems: ["当前没有结构性阻塞。"],
-    nextCheckpoint: ["完成首页 UI。"],
-    runtimeSignals: [
-      {
-        label: "dev 预览",
-        status: "运行中",
-        summary: "dev 当前在线，可继续验收。",
-        href: "/releases#runtime-status",
-      },
-      {
-        label: "production",
-        status: "未启动",
-        summary: "production 当前未启动。",
-        href: "/releases#runtime-status",
-      },
+  success: {
+    criteria: ["首页首屏不滚动即可回答项目目标", "每个逻辑节点都能打开对应文档或页面"],
+  },
+  logicMap: {
+    activeNodeId: "execution",
+    edges: [
+      { from: "goals", to: "plan" },
+      { from: "plan", to: "execution" },
+      { from: "execution", to: "acceptance" },
+      { from: "focus", to: "execution" },
     ],
-    frozenItems: ["不新增数据库"],
-    pendingDevSummary: "当前没有待验收 dev。",
-    activeReleaseId: "rel-prod",
-  },
-  header: {
-    eyebrow: "首页入口",
-    title: "Kernel / Project",
-    description: "先看可复用内核，再看当前项目的接入状态与执行态势。",
-    workspaceLabel: "Compounding",
-    workspacePath: "/tmp/compounding",
-  },
-  defaultTab: "project",
-  project: {
-    identity: {
-      name: "Compounding AI Operating System",
-      oneLiner: "项目级读模型与内核规范拆分。",
-      successCriteria: ["首页双 Tab 稳定工作", "Project 默认激活"],
-      adoptionMode: "attach",
-      kernelVersion: "0.1.0",
-    },
-    execution: {
-      summary: "把项目执行态势和内核规范拆开。",
-      metrics: [
-        { label: "当前阶段", value: "Kernel / Project Home Refactor", tone: "warning" },
-        { label: "当前里程碑", value: "首页双 Tab" },
-        { label: "当前优先级", value: "实现 Project 默认激活", tone: "accent" },
-      ],
-      runtimeSignals: [
-        {
-          label: "dev 预览",
-          status: "运行中",
-          summary: "dev 当前在线，可继续验收。",
-          href: "/releases#runtime-status",
-        },
-        {
-          label: "production",
-          status: "未启动",
-          summary: "production 当前未启动。",
-          href: "/releases#runtime-status",
-        },
-      ],
-      pendingDevSummary: "当前没有待验收 dev。",
-      nextCheckpoint: ["完成 Project 视图"],
-      blockedItems: ["当前没有结构性阻塞。"],
-    },
-    kernelStatus: {
-      attached: true,
-      attachScore: 100,
-      summary: "Legacy attach completed with kernel/shell boundaries recorded and proposal inputs prepared.",
-      steps: [
-        {
-          id: "attach",
-          label: "attach",
-          state: "recorded",
-          statusLabel: "已记录",
-          summary: "bootstrap_report 已生成。",
-          tone: "success",
-        },
-        {
-          id: "audit",
-          label: "audit",
-          state: "ready",
-          statusLabel: "输入完整",
-          summary: "brief 与 report 已具备。",
-          tone: "accent",
-        },
-        {
-          id: "proposal",
-          label: "proposal",
-          state: "recorded",
-          statusLabel: "已生成",
-          summary: "proposal 已落盘。",
-          tone: "success",
-        },
-      ],
-      proposal: {
-        proposalId: "20260324171742142872",
-        path: "output/proposals/20260324171742142872/proposal.yaml",
-        kernelVersionFrom: "untracked",
-        kernelVersionTo: "0.1.0",
-        autoApplyCount: 0,
-        proposalRequiredCount: 0,
-        suggestOnlyCount: 3,
-        blockedCount: 4,
-        conflictCount: 0,
-        optionalFollowupCount: 6,
+    nodes: [
+      {
+        id: "focus",
+        label: "当前焦点",
+        href: "/knowledge-base?path=memory/project/current-state.md",
+        summary: "先把首页改成人类友好的逻辑结构图。",
+        state: "healthy",
+        badge: "现在",
       },
-      artifactPaths: {
-        brief: "bootstrap/project_brief.yaml",
-        report: "output/bootstrap/bootstrap_report.yaml",
-        proposal: "output/proposals/20260324171742142872/proposal.yaml",
-        manifest: "kernel/kernel_manifest.yaml",
+      {
+        id: "goals",
+        label: "目标与里程碑",
+        href: "/knowledge-base?path=memory/project/roadmap.md",
+        summary: "当前优先级：首页逻辑态势图；成功标准：节点可点击。",
+        state: "complete",
+        badge: "Structural Entropy Reduction",
       },
-      artifactHealth: {
-        brief: true,
-        report: true,
-        proposal: true,
-        manifest: false,
+      {
+        id: "plan",
+        label: "计划边界",
+        href: "/knowledge-base?path=memory/project/operating-blueprint.md",
+        summary: "待规划 2 项，待思考 1 项。",
+        state: "complete",
+        badge: "待规划 2",
       },
-    },
-    boundaryGroups: [
-      { label: "critical paths", items: ["AGENTS.md"], empty: "当前未写入 critical paths。", tone: "accent" },
-      { label: "owned paths", items: ["apps/**"], empty: "当前未记录 owned paths。", tone: "warning" },
-      { label: "protected rules", items: ["禁止自动修改核心业务代码"], empty: "当前未写入 protected rules。", tone: "danger" },
-      { label: "blocked paths", items: ["deploy/**"], empty: "当前未写入 blocked paths。", tone: "danger" },
-    ],
-    drilldowns: [
-      { label: "执行面板", description: "看真正可推进的事项。", href: "/tasks", tone: "accent" },
-      { label: "最新 Proposal", description: "当前 kernel/shell 提案已落盘。", path: "output/proposals/20260324171742142872/proposal.yaml" },
+      {
+        id: "execution",
+        label: "执行事项",
+        href: "/tasks",
+        summary: "进行中 1 项。当前主线：t-064 首页逻辑态势图。",
+        state: "active",
+        badge: "进行中 1",
+      },
+      {
+        id: "acceptance",
+        label: "验收与运行",
+        href: "/releases",
+        summary: "当前无待验收版本。",
+        state: "healthy",
+        badge: "稳定",
+      },
     ],
   },
-  kernel: {
-    identity: {
-      version: "0.1.0",
-      currentAdoptionMode: "attach",
-      supportedModes: ["new", "attach", "reattach"],
-      summary: "单一 kernel + project shell 的 AI 工程规范。",
-      manifestPath: "kernel/kernel_manifest.yaml",
-    },
-    entryPoints: [
-      { label: "AGENTS", description: "高频执行入口", href: "/knowledge-base?path=AGENTS.md", tone: "accent" },
-      { label: "WORK_MODES", description: "场景语义", href: "/knowledge-base?path=docs/WORK_MODES.md" },
-      { label: "DEV_WORKFLOW", description: "交付门禁", href: "/knowledge-base?path=docs/DEV_WORKFLOW.md" },
-      { label: "ARCHITECTURE", description: "运行边界", href: "/knowledge-base?path=docs/ARCHITECTURE.md" },
-    ],
-    governance: [
-      {
-        id: "managed",
-        label: "managed",
-        description: "跨项目复用资产",
-        count: 20,
-        missingCount: 10,
-        status: "partial",
-        tone: "warning",
-        highlights: ["AGENTS.md"],
-        missing: ["kernel/kernel_manifest.yaml"],
-        note: "报告与仓库实物还没完全对齐。",
-      },
-      {
-        id: "shell",
-        label: "shell",
-        description: "项目自有资产",
-        count: 3,
-        missingCount: 0,
-        status: "healthy",
-        tone: "success",
-        highlights: ["apps/**"],
-        missing: [],
-        note: "当前 shell 资产健康。",
-      },
-      {
-        id: "protected",
-        label: "protected",
-        description: "受保护资产",
-        count: 4,
-        missingCount: 0,
-        status: "healthy",
-        tone: "success",
-        highlights: ["deploy/**"],
-        missing: [],
-        note: "当前 protected 资产健康。",
-      },
-      {
-        id: "generated",
-        label: "generated",
-        description: "衍生产物",
-        count: 3,
-        missingCount: 1,
-        status: "partial",
-        tone: "warning",
-        highlights: ["bootstrap/project_brief.yaml"],
-        missing: ["output/proposals/*/proposal.yaml"],
-        note: "仍有待补齐产物。",
-      },
-    ],
-    upgradeFlow: [
-      { id: "bootstrap", label: "bootstrap", summary: "生成最小 shell", detail: "为新项目起壳。" },
-      { id: "attach", label: "attach", summary: "接入老项目", detail: "记录边界。" },
-      { id: "audit", label: "audit", summary: "校验协议", detail: "检查分类。" },
-      { id: "proposal", label: "proposal", summary: "生成提案", detail: "输出四类差异。" },
-    ],
-    sourceHealth: {
-      brief: true,
-      report: true,
-      proposal: true,
-      manifest: false,
-    },
+  attention: {
+    blockers: [],
+    pendingAcceptance: null,
+    runtimeAlert: null,
+    healthSummary: "当前无待验收版本，运行正常，可继续按当前焦点推进。",
   },
 };
 
-describe("home dashboard", () => {
-  it("defaults to the project tab and renders project-specific panels", () => {
-    render(<HomeDashboard overview={overviewFixture} />);
+describe("home logic board", () => {
+  it("renders a single human-friendly logic board without kernel/project tabs", () => {
+    render(<HomeLogicBoard snapshot={snapshotFixture} />);
 
-    expect(screen.getByRole("heading", { name: "Kernel / Project" })).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: /Project/ })).toHaveAttribute("aria-selected", "true");
-    expect(screen.getByText("Compounding AI Operating System")).toBeInTheDocument();
-    expect(screen.getByText("attach / audit / proposal")).toBeInTheDocument();
-    expect(screen.queryByText("canonical entry points")).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Compounding" })).toBeInTheDocument();
+    expect(screen.getByText("项目态势图")).toBeInTheDocument();
+    expect(screen.queryByRole("tab")).not.toBeInTheDocument();
+    expect(screen.queryByText("Kernel / Project")).not.toBeInTheDocument();
+    expect(screen.queryByText("attach / audit / proposal")).not.toBeInTheDocument();
   });
 
-  it("switches to the kernel tab and renders kernel governance panels", () => {
-    render(<HomeDashboard overview={overviewFixture} />);
+  it("renders clickable logic nodes and drilldown entries", () => {
+    render(<HomeLogicBoard snapshot={snapshotFixture} />);
 
-    fireEvent.click(screen.getByRole("tab", { name: /Kernel/ }));
+    expect(screen.getByRole("link", { name: "目标与里程碑" })).toHaveAttribute(
+      "href",
+      "/knowledge-base?path=memory/project/roadmap.md",
+    );
+    expect(screen.getByRole("link", { name: "计划边界" })).toHaveAttribute(
+      "href",
+      "/knowledge-base?path=memory/project/operating-blueprint.md",
+    );
+    expect(screen.getByRole("link", { name: "执行事项" })).toHaveAttribute("href", "/tasks");
+    expect(screen.getByRole("link", { name: "验收与运行" })).toHaveAttribute("href", "/releases");
+    expect(screen.getByRole("link", { name: "当前焦点" })).toHaveAttribute(
+      "href",
+      "/knowledge-base?path=memory/project/current-state.md",
+    );
+    expect(screen.getByRole("link", { name: /证据库/ })).toHaveAttribute("href", "/knowledge-base");
+  });
 
-    expect(screen.getByRole("tab", { name: /Kernel/ })).toHaveAttribute("aria-selected", "true");
-    expect(screen.getByText("canonical entry points")).toBeInTheDocument();
-    expect(screen.getByText("managed / shell / protected / generated")).toBeInTheDocument();
-    expect(screen.getByText("bootstrap → attach → audit → proposal")).toBeInTheDocument();
+  it("surfaces a light health summary when there are no alerts", () => {
+    render(<HomeLogicBoard snapshot={snapshotFixture} />);
+
+    expect(screen.getByText("健康结论")).toBeInTheDocument();
+    expect(screen.getByText("当前无待验收版本，运行正常，可继续按当前焦点推进。")).toBeInTheDocument();
   });
 });

@@ -17,7 +17,7 @@
 
 ## 仓库结构
 
-- `apps/studio/`: 只读文档门户
+- `apps/studio/`: 只读文档门户，首页是面向人的项目逻辑态势图
 - `scripts/compounding_bootstrap/`: bootstrap / scaffold / audit / proposal 引擎
 - `docs/`: 4 文档主干与专项附录
 - `memory/`: 架构记忆、项目状态、经验、ADR

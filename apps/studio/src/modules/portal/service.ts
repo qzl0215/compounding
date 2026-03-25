@@ -2,129 +2,109 @@ import path from "node:path";
 import { getWorkspaceRoot } from "@/lib/workspace";
 import { extractSection, readDoc } from "@/modules/docs";
 import { getDeliverySnapshot } from "@/modules/delivery";
-import { buildHomeSurfaceSnapshot, buildDirectionSummary, buildOverviewSummary, buildRuntimeFacts, toRuntimeSignal } from "./builders";
-import { loadKernelShellArtifacts } from "./kernel-shell";
-import { buildAcceptanceReleaseItems, buildDocItems, buildReleasedItems, buildTaskItem } from "./overview-items";
+import { buildHomeLogicMapSnapshot } from "./builders";
+import { HOME_ENTRY_LINKS } from "./constants";
 import { normalizeInline, parseBulletList } from "./parsing";
 import { groupTaskRowsByDemandStage } from "./stage-model";
-import type { HomeEntryLink, OverviewEntry, ProjectOverviewSnapshot, SemanticEntry, SemanticEntryGroup } from "./types";
+import type { DemandStage, HomeLogicMapSnapshot, SemanticEntry, SemanticEntryGroup } from "./types";
 
-export const DEFAULT_DOC_PATH = "AGENTS.md";
+export { DEFAULT_DOC_PATH, HOME_ENTRY_LINKS } from "./constants";
 
-export const HOME_ENTRY_LINKS: HomeEntryLink[] = [
-  { href: "/knowledge-base", label: "证据库", description: "看主源、规则和背景。", scope: "memory" },
-  { href: "/tasks", label: "执行面板", description: "看真正可推进的事项。", scope: "tasks" },
-  { href: "/releases", label: "发布事实", description: "看验收、版本和运行态。", scope: "release" },
-];
-
-export async function getProjectOverview(): Promise<ProjectOverviewSnapshot> {
+export async function getHomeStatusBoard(): Promise<HomeLogicMapSnapshot> {
   const workspaceRoot = getWorkspaceRoot();
   const workspaceLabel = path.basename(workspaceRoot);
 
-  const [currentState, roadmap, blueprint, deliverySnapshot, kernelArtifacts] = await Promise.all([
+  const [currentState, roadmap, blueprint, deliverySnapshot] = await Promise.all([
     readDoc("memory/project/current-state.md"),
     readDoc("memory/project/roadmap.md"),
     readDoc("memory/project/operating-blueprint.md"),
     getDeliverySnapshot(),
-    loadKernelShellArtifacts(workspaceRoot),
   ]);
 
   const currentFocus = parseBulletList(extractSection(currentState.content, "current_focus") ?? "");
-  const frozenItems = parseBulletList(extractSection(currentState.content, "frozen_items") ?? "");
-  const blueprintOverview = normalizeInline(extractSection(blueprint.content, "plan_overview") ?? "");
+  const currentBlockers = parseBulletList(extractSection(currentState.content, "current_blockers") ?? "");
+  const nextCheckpoint = parseBulletList(extractSection(currentState.content, "next_checkpoint") ?? "");
   const roadmapPhase = normalizeInline(extractSection(roadmap.content, "current_phase") ?? "");
   const currentPriority = normalizeInline(extractSection(roadmap.content, "current_priority") ?? "");
   const currentMilestone = normalizeInline(extractSection(roadmap.content, "current_milestone") ?? roadmapPhase);
-  const nextDirection = normalizeInline(extractSection(roadmap.content, "next_direction") ?? "");
+  const successCriteria = parseBulletList(extractSection(roadmap.content, "milestone_success_criteria") ?? "");
+  const blueprintOverview = normalizeInline(extractSection(blueprint.content, "plan_overview") ?? "");
   const thinkingBacklog = parseBulletList(extractSection(blueprint.content, "thinking_backlog") ?? "");
-  const nextConversation = parseBulletList(extractSection(blueprint.content, "next_conversation") ?? "");
   const planningBacklog = parseBulletList(extractSection(blueprint.content, "planning_backlog") ?? "");
-  const currentBlockers = parseBulletList(extractSection(currentState.content, "current_blockers") ?? "");
+
   const taskRows = deliverySnapshot.projections.taskRows;
   const releaseDashboard = deliverySnapshot.facts.releaseDashboard;
   const stageBuckets = groupTaskRowsByDemandStage(taskRows);
-  const blockedItems = [
-    ...currentBlockers,
-    ...taskRows.filter((task) => task.status === "blocked").map((task) => `${task.shortId} ${task.title}（已阻塞）`),
-  ];
-  const nextCheckpoint = parseBulletList(extractSection(currentState.content, "next_checkpoint") ?? "");
-  const pendingDevSummary = releaseDashboard.pending_dev_release
-    ? `待验收版本：${releaseDashboard.pending_dev_release.release_id}`
-    : "当前无待验收版本";
+  const pendingAcceptance = summarizePendingAcceptance(releaseDashboard.pending_dev_release?.release_id ?? null, stageBuckets.acceptance[0]?.versionLabel ?? null);
+  const runtimeAlert = summarizeRuntimeAlert(
+    releaseDashboard.local_runtime.reason,
+    releaseDashboard.local_runtime.status,
+    releaseDashboard.local_preview.reason,
+    releaseDashboard.local_preview.status,
+    Boolean(releaseDashboard.pending_dev_release),
+  );
+  const activeStage = resolveHomeStage(thinkingBacklog, planningBacklog, stageBuckets, pendingAcceptance);
+  const overallSummary = currentFocus[0] || currentPriority || blueprintOverview || "当前焦点尚未写入。";
 
-  const snapshot = {
-    overview: buildOverviewSummary(blueprintOverview || currentFocus[0] || currentPriority, roadmapPhase, currentMilestone, currentPriority),
-    direction: buildDirectionSummary(nextDirection || currentPriority),
-    thinkingItems: buildDocItems({
-      values: thinkingBacklog,
-      stage: "thinking",
-      source: "运营蓝图",
-      evidenceHref: "/knowledge-base?path=memory/project/operating-blueprint.md",
-      actions: nextConversation,
-    }),
-    planningItems: [
-      ...buildDocItems({
-        values: planningBacklog,
-        stage: "planning",
-        source: "运营蓝图",
-        evidenceHref: "/knowledge-base?path=memory/project/operating-blueprint.md",
-      }),
-    ],
-    readyItems: stageBuckets.ready.map((row) => buildTaskItem(row)),
-    doingItems: stageBuckets.doing.map((row) => buildTaskItem(row)),
-    acceptanceItems: [
-      ...buildAcceptanceReleaseItems(releaseDashboard.pending_dev_release?.release_id || null),
-      ...stageBuckets.acceptance.map((row) => buildTaskItem(row)),
-    ],
-    releasedItems: buildReleasedItems(stageBuckets.released, releaseDashboard.active_release_id),
-    runtimeFacts: buildRuntimeFacts(
-      pendingDevSummary,
-      releaseDashboard.active_release_id,
-      blockedItems,
-      nextCheckpoint,
-      frozenItems,
-      [toRuntimeSignal("dev 预览", releaseDashboard.local_preview), toRuntimeSignal("production", releaseDashboard.local_runtime)],
-    ),
-  };
-
-  return {
-    ...snapshot,
-    ...buildHomeSurfaceSnapshot({
-      workspaceLabel,
-      workspacePath: workspaceRoot,
-      overview: snapshot.overview,
-      direction: snapshot.direction,
-      runtimeFacts: snapshot.runtimeFacts,
-      kernelArtifacts,
-      drilldowns: buildProjectDrilldowns(kernelArtifacts.paths.proposal, Boolean(kernelArtifacts.proposal)),
-    }),
-  };
+  return buildHomeLogicMapSnapshot({
+    name: workspaceLabel,
+    oneLiner: blueprintOverview || currentPriority || "项目一句话目标尚未写入。",
+    overallSummary,
+    currentPhase: roadmapPhase || "当前阶段尚未定义。",
+    currentMilestone: currentMilestone || "当前里程碑尚未定义。",
+    successCriteria: successCriteria.length > 0 ? successCriteria : buildFallbackCriteria(currentPriority, blueprintOverview),
+    activeStage,
+    goals: {
+      summary: summarizeGoals(currentPriority, currentMilestone, successCriteria),
+      badge: roadmapPhase || "当前阶段",
+    },
+    plan: {
+      summary: summarizePlan(blueprintOverview, planningBacklog, thinkingBacklog),
+      badge: buildPlanBadge(planningBacklog.length, thinkingBacklog.length),
+    },
+    execution: {
+      summary: summarizeExecution(stageBuckets.doing, stageBuckets.ready),
+      badge: buildExecutionBadge(stageBuckets.doing.length, stageBuckets.ready.length),
+    },
+    acceptance: {
+      summary: summarizeAcceptance(pendingAcceptance, runtimeAlert, releaseDashboard.active_release_id),
+      badge: pendingAcceptance ? "待验收" : runtimeAlert ? "异常" : "稳定",
+    },
+    focus: {
+      summary: summarizeFocus(currentFocus, nextCheckpoint, currentPriority),
+      badge: currentBlockers.length > 0 ? "有阻塞" : "现在",
+    },
+    blockers: currentBlockers,
+    pendingAcceptance,
+    runtimeAlert,
+    healthSummary: summarizeHealth(currentBlockers, pendingAcceptance, runtimeAlert),
+  });
 }
 
 export async function getSemanticEntryGroups(): Promise<SemanticEntryGroup[]> {
   return [
     {
       title: "高频主干",
-      description: "默认先读 AGENTS，再读战略、快照和当前计划。",
+      description: "默认先读 AGENTS，再读战略、快照和唯一 plan 主源。",
       items: [
         entryDoc("AGENTS", "AGENTS.md", "高频执行入口"),
-        entryDoc("路线图", "memory/project/roadmap.md", "阶段、里程碑和方向"),
-        entryDoc("当前状态", "memory/project/current-state.md", "当前运营快照"),
+        entryDoc("路线图", "memory/project/roadmap.md", "目标、里程碑和成功标准"),
+        entryDoc("当前状态", "memory/project/current-state.md", "当前焦点、阻塞和下一检查点"),
         entryDoc("运营蓝图", "memory/project/operating-blueprint.md", "唯一 plan 主源"),
       ],
     },
     {
       title: "按场景下钻",
-      description: "进入对应场景后，再补工作模式、runbook 和架构边界。",
+      description: "需要判断场景、runbook 或结构边界时，再补这些主干文档。",
       items: [
-        entryDoc("工作模式", "docs/WORK_MODES.md", "看场景语义、输入和退出条件"),
-        entryDoc("开发工作流", "docs/DEV_WORKFLOW.md", "看执行顺序、门禁和发布 runbook"),
+        entryDoc("工作模式", "docs/WORK_MODES.md", "看场景语义、允许动作和退出条件"),
+        entryDoc("开发工作流", "docs/DEV_WORKFLOW.md", "看门禁顺序、验证和发布 runbook"),
         entryDoc("架构", "docs/ARCHITECTURE.md", "看仓库拓扑、依赖方向和运行时边界"),
       ],
     },
     {
       title: "专项附录",
-      description: "这些文档仍有效，但不再是默认第一跳。",
+      description: "这些仍有效，但不再是默认第一跳。",
       items: [
         entryDoc("项目规则", "docs/PROJECT_RULES.md", "代码治理、兼容层和验证规则"),
         entryDoc("AI 工作模型", "docs/AI_OPERATING_MODEL.md", "AI 行为原则和最小脚本契约"),
@@ -134,7 +114,7 @@ export async function getSemanticEntryGroups(): Promise<SemanticEntryGroup[]> {
     },
     {
       title: "执行与发布",
-      description: "进入 task 或 release 后，再补这些事实入口。",
+      description: "进入 task 或验收后，再看这些执行页面。",
       items: [
         entryLink("执行面板", "/tasks", "查看真正可推进的事项"),
         entryLink("发布页", "/releases", "查看待验收版本、运行态和历史版本"),
@@ -144,25 +124,134 @@ export async function getSemanticEntryGroups(): Promise<SemanticEntryGroup[]> {
   ];
 }
 
-export function formatWorktreeStatus(value: string) {
-  return value.trim() ? value : "干净";
+function resolveHomeStage(
+  thinkingBacklog: string[],
+  planningBacklog: string[],
+  stageBuckets: ReturnType<typeof groupTaskRowsByDemandStage>,
+  pendingAcceptance: string | null,
+): DemandStage {
+  if (pendingAcceptance || stageBuckets.acceptance.length > 0) {
+    return "acceptance";
+  }
+  if (stageBuckets.doing.length > 0) {
+    return "doing";
+  }
+  if (stageBuckets.ready.length > 0) {
+    return "ready";
+  }
+  if (planningBacklog.length > 0) {
+    return "planning";
+  }
+  if (thinkingBacklog.length > 0) {
+    return "thinking";
+  }
+  return "released";
 }
 
-export function formatSyncStatus(value: string) {
-  const labels: Record<string, string> = {
-    no_remote: "无远端",
-    no_upstream: "无上游分支",
-    fetch_failed: "拉取远端失败",
-    sync_unknown: "同步状态未知",
-    diverged: "已分叉",
-    behind: "落后于上游",
-    ahead: "领先于上游",
-    up_to_date: "已同步",
-  };
-  return labels[value] ?? value;
+function summarizeGoals(currentPriority: string, currentMilestone: string, successCriteria: string[]) {
+  const lead = currentPriority || currentMilestone || "当前目标尚未写入。";
+  const success = successCriteria[0];
+  return success ? `${lead} 当前成功标准先看：${success}` : lead;
 }
 
-export { loadKernelShellArtifacts } from "./kernel-shell";
+function summarizePlan(blueprintOverview: string, planningBacklog: string[], thinkingBacklog: string[]) {
+  if (planningBacklog.length > 0 || thinkingBacklog.length > 0) {
+    return `待规划 ${planningBacklog.length} 项，待思考 ${thinkingBacklog.length} 项。${planningBacklog[0] || thinkingBacklog[0] || blueprintOverview}`;
+  }
+  return blueprintOverview || "当前计划边界已收口，可继续看执行事项。";
+}
+
+function summarizeExecution(doingRows: Array<{ shortId: string; title: string }>, readyRows: Array<{ shortId: string; title: string }>) {
+  if (doingRows.length > 0) {
+    const lead = doingRows[0];
+    return `进行中 ${doingRows.length} 项。当前主线：${lead.shortId} ${lead.title}`.trim();
+  }
+  if (readyRows.length > 0) {
+    const lead = readyRows[0];
+    return `待执行 ${readyRows.length} 项。下一项：${lead.shortId} ${lead.title}`.trim();
+  }
+  return "当前没有新的执行事项，先看计划边界或验收与运行。";
+}
+
+function summarizeAcceptance(pendingAcceptance: string | null, runtimeAlert: string | null, activeReleaseId: string | null) {
+  if (pendingAcceptance) {
+    return `${pendingAcceptance}，先做通过或驳回判断。`;
+  }
+  if (runtimeAlert) {
+    return runtimeAlert;
+  }
+  if (activeReleaseId) {
+    return `当前线上版本 ${activeReleaseId} 运行正常。`;
+  }
+  return "当前无待验收版本。";
+}
+
+function summarizeFocus(currentFocus: string[], nextCheckpoint: string[], currentPriority: string) {
+  return currentFocus[0] || nextCheckpoint[0] || currentPriority || "当前焦点尚未写入。";
+}
+
+function summarizePendingAcceptance(pendingReleaseId: string | null, acceptanceVersionLabel: string | null) {
+  if (pendingReleaseId) {
+    return `待验收版本 ${pendingReleaseId}`;
+  }
+  if (acceptanceVersionLabel) {
+    return `${acceptanceVersionLabel} 待验收`;
+  }
+  return null;
+}
+
+function summarizeRuntimeAlert(
+  prodReason: string,
+  prodStatus: string,
+  devReason: string,
+  devStatus: string,
+  hasPendingAcceptance: boolean,
+) {
+  if (prodStatus !== "running") {
+    return `production 异常：${prodReason}`;
+  }
+  if (hasPendingAcceptance && devStatus !== "running") {
+    return `dev 预览异常：${devReason}`;
+  }
+  return null;
+}
+
+function summarizeHealth(blockers: string[], pendingAcceptance: string | null, runtimeAlert: string | null) {
+  if (blockers.length > 0) {
+    return "当前有阻塞，先处理当前焦点和提醒。";
+  }
+  if (pendingAcceptance) {
+    return "当前有待验收版本，先做判断再继续推进。";
+  }
+  if (runtimeAlert) {
+    return "当前运行存在异常，先恢复运行态。";
+  }
+  return "当前无待验收版本，运行正常，可继续按当前焦点推进。";
+}
+
+function buildFallbackCriteria(currentPriority: string, blueprintOverview: string) {
+  return [currentPriority || blueprintOverview || "当前成功标准尚未写入。"];
+}
+
+function buildPlanBadge(planningCount: number, thinkingCount: number) {
+  if (planningCount > 0) {
+    return `待规划 ${planningCount}`;
+  }
+  if (thinkingCount > 0) {
+    return `待思考 ${thinkingCount}`;
+  }
+  return "已收口";
+}
+
+function buildExecutionBadge(doingCount: number, readyCount: number) {
+  if (doingCount > 0) {
+    return `进行中 ${doingCount}`;
+  }
+  if (readyCount > 0) {
+    return `待执行 ${readyCount}`;
+  }
+  return "空闲";
+}
 
 function entryDoc(label: string, path: string, description?: string): SemanticEntry {
   return { label, path, description };
@@ -170,33 +259,4 @@ function entryDoc(label: string, path: string, description?: string): SemanticEn
 
 function entryLink(label: string, href: string, description?: string): SemanticEntry {
   return { label, href, description };
-}
-
-function buildProjectDrilldowns(proposalPath: string, hasProposal: boolean): OverviewEntry[] {
-  return [
-    ...HOME_ENTRY_LINKS.map((item) => {
-      const tone = item.scope === "tasks" ? "accent" : item.scope === "release" ? "warning" : "default";
-      return {
-        label: item.label,
-        description: item.description,
-        href: item.href,
-        tone,
-      } satisfies OverviewEntry;
-    }),
-    hasProposal
-      ? {
-          label: "最新 Proposal",
-          description: "当前 kernel/shell 提案已落盘，可沿路径查看 proposal 产物。",
-          path: proposalPath,
-          meta: "输出产物",
-          tone: "accent",
-        }
-      : {
-          label: "最新 Proposal",
-          description: "当前还没有 proposal 产物，先完成 attach / audit 再生成。",
-          path: proposalPath,
-          meta: "等待生成",
-          tone: "default",
-        },
-  ];
 }
