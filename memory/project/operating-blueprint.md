@@ -17,6 +17,7 @@ last_reviewed_at: 2026-03-25
 
 继续把结构收口落到真正会制造熵增的边界上：`t-058` 与 `t-059` 已经把 CLI 外壳和 release/task 状态链收正，`t-061` 已把 `portal` 读模型聚合层收成薄 barrel，`t-062` 已把首页 shell 收成薄入口，`t-064` 已把首页从 `Kernel / Project` 工程视角改成人类可扫读的项目逻辑态势图；当前主线转向跨页面唯一 snapshot 与 release 单一状态机，目标仍是减少对象歧义和重复外壳，而不是增加新框架。
 `t-065` 已完成：把 Studio 整体切到浅色实验室风格，统一首页、任务、证据和发布页的底色、卡片、导航与控件语气，避免局部改版继续把控制台感重新带回首屏。
+`t-066` 当前正在推进：把高频模块补成可机读 feature 合同，把 `build-context` 升级成 feature 入口，并让首页、任务页、发布页开始读取同一份项目状态摘要；同时把 diff-aware 选测收成 `required / recommended`，减少 AI 加功能时的首轮搜索和整套重跑。
 
 ## 待思考
 
@@ -30,6 +31,7 @@ last_reviewed_at: 2026-03-25
 - `Harness Delta Hardening`：把“文档是主源”升级成可校验的新鲜度契约，并让小型熵减事项能被周期性暴露和消费
 - 跨页面唯一 snapshot：把首页、任务页、发布页的主摘要收成单一读链，避免继续各自翻译
 - release 单一状态机：继续清掉 task / release / runtime 之间残余的状态兼容壳
+- feature context 第二轮：根据第一批模块合同和 smoke 结果，再收短 `build-context` / `preflight` / `SelectedChecks` 的默认入口
 - `t-063` 完成后，按既定顺序继续推进派生产物语义收口、跨页面唯一 snapshot 和 release 单一状态机
 - `README`、文档门户和 bootstrap manifest 怎样继续表达主干 / 附录分层，而不增加新文档族
 - 第二个老项目 attach 样本应怎样选择，才能尽快验证 `project_brief / bootstrap_report / proposal` 在非本仓库上的复用性
@@ -70,6 +72,7 @@ last_reviewed_at: 2026-03-25
 - `t-062`：收薄 portal 首页 shell，让 `home-dashboard.tsx` 退化为薄入口（已完成）
 - `t-064`：把首页重构为项目逻辑态势图，移除 `Kernel / Project` 工程视角并让逻辑节点可点击（已完成）
 - `t-065`：把 Studio 整体切到浅色实验室风格，统一首屏、列表、文档和发布页的视觉语气（已完成）
+- `t-066`：给高频模块补 feature 合同，把 `build-context` 升级成 feature 入口，引入共享项目状态摘要与 required / recommended 选测（进行中）
 - `t-063`：统一 preflight 入口，让 `pnpm preflight` 成为唯一对外推荐门禁，并让完整 task guard 不再依赖当前 diff 误判（进行中）
 
 ## 下一步对话
@@ -81,6 +84,7 @@ last_reviewed_at: 2026-03-25
 - 需要收口高频文档时，优先删掉默认第一跳里的重复入口和粗粒度说明，而不是再写新的导读或说明书
 - 需要收口首页时，优先让人能一眼看懂目标、阶段、风险和下一步，而不是继续展示系统内部结构
 - `t-064` 完成后，再按顺序推进跨页面 snapshot 单一化和 release 状态机压实
+- 需要让 AI 加 feature 更快时，先补模块合同、feature context、共享状态摘要和 required / recommended 选测，不先加新的治理层
 - knowledge freshness gate 与 cleanup candidate 已落地，下一阶段只继续轻量消费其输出，不再把它们扩成第二套状态源
 - 若运行问题来自 worktree、软链或 cwd 耦合，优先把运行目录从输入目录中拆开，而不是继续堆 release 台账
 - 若下一轮继续推进 kernel/shell，先拿第二个老项目验证 attach/audit/proposal 的复用性，再决定是否扩大 `auto_apply`

@@ -21,6 +21,7 @@
     "ai:generate-experience-index": "node --experimental-strip-types scripts/ai/generate-experience-index.ts",
     "ai:generate-assets": "node --experimental-strip-types scripts/ai/generate-asset-maintenance.ts",
     "ai:build-context": "node --experimental-strip-types scripts/ai/build-context.ts tasks/queue/task-002-ui-task-pm-and-doc-localization.md",
+    "ai:feature-context": "node --experimental-strip-types scripts/ai/feature-context.ts --surface=home",
     "ai:create-task": "node --experimental-strip-types scripts/ai/create-task.ts",
     "ai:validate-trace": "node --experimental-strip-types scripts/ai/validate-change-trace.ts",
     "ai:validate-task-git": "node --experimental-strip-types scripts/ai/validate-task-git-link.ts",

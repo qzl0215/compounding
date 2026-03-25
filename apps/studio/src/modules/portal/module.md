@@ -4,46 +4,37 @@
 
 负责人类优先的首页逻辑态势图、默认阅读入口和证据入口分组。
 
-## 输入
+## 入口与拥有面
 
-- AGENTS
-- current-state
-- roadmap
-- operating-blueprint
-- delivery snapshot
-- release runtime
+- 路由：`/`
+- 页面：`apps/studio/src/app/page.tsx`
+- Service：`apps/studio/src/modules/portal/service.ts`
+- 组件：`apps/studio/src/modules/portal/components/home-logic-board.tsx`
+- Builder：`apps/studio/src/modules/portal/builders/home-logic-map.ts`
 
-## 输出
+## 常改文件
 
-- 首页逻辑态势图入口
-- 默认文档路径
-- 首页逻辑图快照
-- 证据库精选入口分组
-- 首页与任务页共享的阶段判断
+- `apps/studio/src/app/page.tsx`
+- `apps/studio/src/modules/portal/service.ts`
+- `apps/studio/src/modules/portal/types.ts`
+- `apps/studio/src/modules/portal/builders/home-logic-map.ts`
+- `apps/studio/src/modules/portal/components/home-logic-board.tsx`
+- `apps/studio/src/modules/portal/__tests__/service.test.ts`
+- `apps/studio/src/modules/portal/__tests__/home-dashboard.test.tsx`
 
-## 关键职责
+## 不变量
 
-- 固定“首页只保留项目态势判断 + 下钻页承接细节”的入口模型
-- 从 Markdown 与 release runtime 真相源提取需求环节事实
-- 把目标、计划、执行、验收和焦点翻译成可点击的逻辑结构图
-- 给知识库提供精选证据入口，而不是重新堆全量目录
-- 复用任务清单数据，避免首页和任务页双写阶段逻辑
+- 首页只展示项目逻辑态势与下钻入口，不回流 Kernel、artifact、workspace path 等工程对象。
+- 首页节点必须可点击，并只指向一个最相关的文档或页面。
+- 首页的阶段、焦点、待验收和运行提醒必须与任务页、发布页共享同一份项目状态摘要。
 
-## 依赖
+## 推荐校验
 
-- docs 模块
-- git-health 模块
+- `pnpm --filter studio test -- apps/studio/src/modules/portal/__tests__/service.test.ts apps/studio/src/modules/portal/__tests__/home-dashboard.test.tsx`
+- `pnpm --filter studio build`
 
-## 对外暴露接口
+## 常见改动
 
-- `DEFAULT_DOC_PATH`
-- `HOME_ENTRY_LINKS`
-- `getHomeStatusBoard`
-- `getSemanticEntryGroups`
-
-## 不该做什么
-
-- 不生成平行真相源
-- 不直接管理任务状态流转
-- 不在首页承接发布、编辑或聊天动作
-- 不把工程内部对象重新搬回首屏
+- 调整首页头部判断句、阶段映射或逻辑图节点摘要。
+- 增删首页逻辑节点或修改节点跳转目标。
+- 调整知识库精选入口分组或首页视觉层级。

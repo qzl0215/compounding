@@ -4,47 +4,38 @@
 
 负责本机/内网发布管理页、release registry 读取、本地生产运行态展示、发布/回滚动作调度，以及发布目录约定的统一入口。
 
-## 输入
+## 入口与拥有面
 
-- `AI_OS_RELEASE_ROOT`
-- `registry.json`
-- `releases/<release-id>/`
-- `current`
-- `shared/`
-- `shared/local-prod.json`
+- 路由：`/releases`
+- 页面：`apps/studio/src/app/releases/page.tsx`
+- Service：`apps/studio/src/modules/releases/registry.ts`
+- 动作：`apps/studio/src/modules/releases/actions-service.ts`
+- CLI：`scripts/release/*`
 
-## 输出
+## 常改文件
 
-- release dashboard 数据
-- 本地生产运行态
-- 管理访问判定
-- deploy / rollback 动作结果
-- 差异感知 QA / Review / Retro 产物入口
+- `apps/studio/src/app/releases/page.tsx`
+- `apps/studio/src/modules/releases/registry.ts`
+- `apps/studio/src/modules/releases/actions-service.ts`
+- `apps/studio/src/modules/releases/runtime.ts`
+- `apps/studio/src/modules/releases/components/release-dashboard-panel.tsx`
+- `apps/studio/src/modules/releases/__tests__/service.test.ts`
+- `tests/test_release_registry_state.py`
 
-## 关键职责
+## 不变量
 
-- 读取 release registry
-- 读取本地生产运行态
-- 判断请求是否来自本机或内网
-- 调用发布与回滚脚本
-- 给 UI 提供当前激活版本和历史版本摘要
-- 给 UI 提供按 diff 生成的 review / retro / ship log 摘要
+- release 只承接验收与运行事实，不回写 task 正文，也不生成第二份计划状态。
+- `main` 是唯一生产主线；preview 和 rollback 只通过 release 切换完成。
+- 页面展示优先读取规范化后的 release snapshot，不直接消费旧 `delivery_*` 兼容字段。
 
-## 依赖
+## 推荐校验
 
-- Node fs
-- Node child process
-- `scripts/release/*`
+- `pnpm --filter studio test -- apps/studio/src/modules/releases/__tests__/service.test.ts`
+- `python3 -m unittest tests.test_release_registry_state`
+- `pnpm prod:check`
 
-## 对外暴露接口
+## 常见改动
 
-- `getManagementAccessState`
-- `getReleaseDashboard`
-- `runDeployRelease`
-- `runRollbackRelease`
-
-## 不该做什么
-
-- 不负责通用后台系统
-- 不负责公网鉴权
-- 不直接改写业务文档
+- 调整 release dashboard 读取、待验收判断或本地运行态解释。
+- 调整发布/回滚动作的入口、返回值或页面提示。
+- 调整 release registry 的兼容适配与摘要读取。

@@ -18,17 +18,21 @@ related_docs:
 - `apps/studio/src/modules/docs`
 - `apps/studio/src/modules/git-health`
 - `apps/studio/src/modules/portal`
+- `apps/studio/src/modules/project-state`
 - `apps/studio/src/modules/releases`
 - `apps/studio/src/modules/tasks`
 
 ## Bootstrap 引擎模块
 
+- `scripts/compounding_bootstrap/attach.py`
 - `scripts/compounding_bootstrap/audit.py`
+- `scripts/compounding_bootstrap/bootstrap.py`
 - `scripts/compounding_bootstrap/catalog.py`
 - `scripts/compounding_bootstrap/config_resolution.py`
 - `scripts/compounding_bootstrap/defaults.py`
 - `scripts/compounding_bootstrap/engine.py`
 - `scripts/compounding_bootstrap/managed_blocks.py`
+- `scripts/compounding_bootstrap/proposal.py`
 - `scripts/compounding_bootstrap/proposal_engine.py`
 - `scripts/compounding_bootstrap/proposal_generation.py`
 - `scripts/compounding_bootstrap/proposal_support.py`
@@ -38,6 +42,7 @@ related_docs:
 - `scripts/compounding_bootstrap/repo_scan.py`
 - `scripts/compounding_bootstrap/scaffold.py`
 - `scripts/compounding_bootstrap/scaffold_assets.py`
+- `scripts/compounding_bootstrap/schema_validation.py`
 - `scripts/compounding_bootstrap/yaml_io.py`
 
 ## 本地运行时脚本

@@ -186,6 +186,14 @@
   {
     "module": "apps/studio/src/modules/delivery",
     "file": "apps/studio/src/modules/delivery/diff-aware-summaries.ts",
+    "symbol": "isRequiredCheck",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-summaries.ts",
     "symbol": "buildCheckSelectionReason",
     "kind": "function",
     "language": "TypeScript",
@@ -275,6 +283,14 @@
     "module": "apps/studio/src/modules/docs",
     "file": "apps/studio/src/modules/docs/ai-rewrite-context.ts",
     "symbol": "classifyDocType",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/docs",
+    "file": "apps/studio/src/modules/docs/ai-rewrite-context.ts",
+    "symbol": "getSupportingDocPaths",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -777,46 +793,6 @@
   },
   {
     "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "buildOverviewSummary",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "buildDirectionSummary",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "buildRuntimeFacts",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "toRuntimeSignal",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/builders.ts",
-    "symbol": "buildHomepageProjection",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/overview-items.ts",
     "symbol": "buildDocItems",
     "kind": "function",
@@ -906,7 +882,7 @@
   {
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/service.ts",
-    "symbol": "getProjectOverview",
+    "symbol": "getHomeStatusBoard",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -922,7 +898,7 @@
   {
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/service.ts",
-    "symbol": "formatWorktreeStatus",
+    "symbol": "summarizeGoals",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -930,7 +906,23 @@
   {
     "module": "apps/studio/src/modules/portal",
     "file": "apps/studio/src/modules/portal/service.ts",
-    "symbol": "formatSyncStatus",
+    "symbol": "summarizeAcceptance",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/service.ts",
+    "symbol": "buildPlanBadge",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/service.ts",
+    "symbol": "buildExecutionBadge",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -969,24 +961,192 @@
   },
   {
     "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/stage-model.ts",
-    "symbol": "isPlanningMode",
+    "file": "apps/studio/src/modules/portal/yaml.ts",
+    "symbol": "splitInlineItems",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
   },
   {
     "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/stage-model.ts",
-    "symbol": "isExecutionMode",
+    "file": "apps/studio/src/modules/portal/yaml.ts",
+    "symbol": "parseScalar",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
   },
   {
     "module": "apps/studio/src/modules/portal",
-    "file": "apps/studio/src/modules/portal/stage-model.ts",
-    "symbol": "normalizeMode",
+    "file": "apps/studio/src/modules/portal/yaml.ts",
+    "symbol": "normalizeLines",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/yaml.ts",
+    "symbol": "parseBlock",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/yaml.ts",
+    "symbol": "parseMapping",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/yaml.ts",
+    "symbol": "parseList",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/portal",
+    "file": "apps/studio/src/modules/portal/yaml.ts",
+    "symbol": "parseSimpleYaml",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/project-state",
+    "file": "apps/studio/src/modules/project-state/service.ts",
+    "symbol": "getProjectStateSnapshot",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/project-state",
+    "file": "apps/studio/src/modules/project-state/service.ts",
+    "symbol": "resolveProjectStateStage",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/project-state",
+    "file": "apps/studio/src/modules/project-state/service.ts",
+    "symbol": "summarizePlan",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/project-state",
+    "file": "apps/studio/src/modules/project-state/service.ts",
+    "symbol": "summarizeExecution",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/project-state",
+    "file": "apps/studio/src/modules/project-state/service.ts",
+    "symbol": "summarizeFocus",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/project-state",
+    "file": "apps/studio/src/modules/project-state/service.ts",
+    "symbol": "summarizePendingAcceptance",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/project-state",
+    "file": "apps/studio/src/modules/project-state/service.ts",
+    "symbol": "summarizeRuntimeAlert",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/project-state",
+    "file": "apps/studio/src/modules/project-state/service.ts",
+    "symbol": "summarizeHealth",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/project-state",
+    "file": "apps/studio/src/modules/project-state/service.ts",
+    "symbol": "summarizeReleaseConclusion",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/project-state",
+    "file": "apps/studio/src/modules/project-state/service.ts",
+    "symbol": "summarizeReleaseNextAction",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/project-state",
+    "file": "apps/studio/src/modules/project-state/service.ts",
+    "symbol": "summarizeOneLiner",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/project-state",
+    "file": "apps/studio/src/modules/project-state/service.ts",
+    "symbol": "summarizeHeadline",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/project-state",
+    "file": "apps/studio/src/modules/project-state/service.ts",
+    "symbol": "summarizeSuccessCriteria",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/project-state",
+    "file": "apps/studio/src/modules/project-state/service.ts",
+    "symbol": "normalizeSuccessCriterion",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/project-state",
+    "file": "apps/studio/src/modules/project-state/service.ts",
+    "symbol": "summarizeBlockers",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/project-state",
+    "file": "apps/studio/src/modules/project-state/service.ts",
+    "symbol": "normalizeBlocker",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/project-state",
+    "file": "apps/studio/src/modules/project-state/service.ts",
+    "symbol": "simplifyHumanSentence",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -1410,6 +1570,14 @@
   {
     "module": "apps/studio/src/modules/tasks",
     "file": "apps/studio/src/modules/tasks/git.ts",
+    "symbol": "isHistoricalMergedBranch",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/git.ts",
     "symbol": "resolveTaskGitInfo",
     "kind": "function",
     "language": "TypeScript",
@@ -1489,6 +1657,14 @@
   },
   {
     "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/service.ts",
+    "symbol": "normalizeExecutionMode",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
     "file": "apps/studio/src/modules/tasks/subtask-table.ts",
     "symbol": "buildSubtaskTableRows",
     "kind": "function",
@@ -1505,8 +1681,88 @@
   },
   {
     "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/attach.py",
+    "symbol": "path_matches",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/attach.py",
+    "symbol": "pattern_exists",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/attach.py",
+    "symbol": "detect_section",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/attach.py",
+    "symbol": "load_kernel_manifest",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/attach.py",
+    "symbol": "detect_protocol_entries",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/attach.py",
+    "symbol": "detect_local_overrides",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/attach.py",
+    "symbol": "attach_score",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/attach.py",
+    "symbol": "create_report",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/attach.py",
+    "symbol": "attach",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/audit.py",
-    "symbol": "has_bundled_source_of_truth",
+    "symbol": "load_object",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/audit.py",
+    "symbol": "validate_target_file",
     "kind": "function",
     "language": "Python",
     "exported": true
@@ -1521,24 +1777,312 @@
   },
   {
     "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/audit.py",
-    "symbol": "extract_heading_block",
+    "file": "scripts/compounding_bootstrap/bootstrap.py",
+    "symbol": "bootstrap",
     "kind": "function",
     "language": "Python",
     "exported": true
   },
   {
     "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/audit.py",
-    "symbol": "heading_aliases",
+    "file": "scripts/compounding_bootstrap/bootstrap.py",
+    "symbol": "_copy_if_missing",
+    "kind": "function",
+    "language": "Python",
+    "exported": false
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/bootstrap.py",
+    "symbol": "_copy_kernel_assets",
+    "kind": "function",
+    "language": "Python",
+    "exported": false
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/bootstrap.py",
+    "symbol": "_write_if_missing",
+    "kind": "function",
+    "language": "Python",
+    "exported": false
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/bootstrap.py",
+    "symbol": "_write_minimal_shell",
+    "kind": "function",
+    "language": "Python",
+    "exported": false
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/bootstrap.py",
+    "symbol": "minimal_shell_assets",
     "kind": "function",
     "language": "Python",
     "exported": true
   },
   {
     "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/audit.py",
-    "symbol": "load_heading_aliases",
+    "file": "scripts/compounding_bootstrap/bootstrap.py",
+    "symbol": "write_shell_asset",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/bootstrap.py",
+    "symbol": "render_agents",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/bootstrap.py",
+    "symbol": "render_work_modes",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/bootstrap.py",
+    "symbol": "render_dev_workflow",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/bootstrap.py",
+    "symbol": "render_architecture",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/bootstrap.py",
+    "symbol": "render_project_rules",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/bootstrap.py",
+    "symbol": "render_ai_operating_model",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/bootstrap.py",
+    "symbol": "render_asset_maintenance",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/bootstrap.py",
+    "symbol": "render_roadmap",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/bootstrap.py",
+    "symbol": "render_current_state",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/bootstrap.py",
+    "symbol": "render_operating_blueprint",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/bootstrap.py",
+    "symbol": "render_tech_debt",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "load_package_json",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "has_dependency",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "text_contains",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "default_brief_payload",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "kernel_version",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "split_success_criteria",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "infer_one_liner",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "infer_project_name",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "infer_deploy_target",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "infer_app_type",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "should_refresh_app_type",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "infer_critical_paths",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "should_refresh_critical_paths",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "infer_owned_paths",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "should_refresh_owned_paths",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "infer_blocked_paths",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "should_refresh_deploy_target",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "should_refresh_blocked_paths",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "_path_exists_for_pattern",
+    "kind": "function",
+    "language": "Python",
+    "exported": false
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "is_new_brief",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "normalize_brief_payload",
     "kind": "function",
     "language": "Python",
     "exported": true
@@ -1563,6 +2107,14 @@
     "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/config_resolution.py",
     "symbol": "migrate_legacy_config",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "ensure_brief",
     "kind": "function",
     "language": "Python",
     "exported": true
@@ -1659,6 +2211,126 @@
     "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/managed_blocks.py",
     "symbol": "update_existing_document_block",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/proposal.py",
+    "symbol": "path_matches",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/proposal.py",
+    "symbol": "local_override_paths",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/proposal.py",
+    "symbol": "load_report",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/proposal.py",
+    "symbol": "load_brief",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/proposal.py",
+    "symbol": "load_manifest",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/proposal.py",
+    "symbol": "canonical_file_differs",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/proposal.py",
+    "symbol": "classify_managed_asset",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/proposal.py",
+    "symbol": "missing_shell_protocol_assets",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/proposal.py",
+    "symbol": "build_conflicts",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/proposal.py",
+    "symbol": "create_proposal",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/proposal.py",
+    "symbol": "proposal_root",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/proposal.py",
+    "symbol": "load_proposal_files",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/proposal.py",
+    "symbol": "expand_source_paths",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/proposal.py",
+    "symbol": "copy_source_asset",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/proposal.py",
+    "symbol": "apply_proposal",
     "kind": "function",
     "language": "Python",
     "exported": true
@@ -1961,22 +2633,6 @@
   },
   {
     "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/scaffold.py",
-    "symbol": "render_markdown_docs",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
-    "file": "scripts/compounding_bootstrap/scaffold.py",
-    "symbol": "render_plain_files",
-    "kind": "function",
-    "language": "Python",
-    "exported": true
-  },
-  {
-    "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/scaffold_assets.py",
     "symbol": "copy_canonical_file",
     "kind": "function",
@@ -2041,6 +2697,38 @@
   },
   {
     "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/schema_validation.py",
+    "symbol": "load_schema",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/schema_validation.py",
+    "symbol": "validate_payload",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/schema_validation.py",
+    "symbol": "validate_file",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/yaml_io.py",
+    "symbol": "split_inline_items",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/yaml_io.py",
     "symbol": "parse_scalar",
     "kind": "function",
@@ -2050,7 +2738,47 @@
   {
     "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/yaml_io.py",
+    "symbol": "normalize_lines",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/yaml_io.py",
+    "symbol": "parse_block",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/yaml_io.py",
+    "symbol": "parse_mapping",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/yaml_io.py",
+    "symbol": "parse_list",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/yaml_io.py",
     "symbol": "parse_simple_yaml",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/yaml_io.py",
+    "symbol": "needs_quotes",
     "kind": "function",
     "language": "Python",
     "exported": true

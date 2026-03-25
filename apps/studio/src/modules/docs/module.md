@@ -4,48 +4,37 @@
 
 负责只读文档门户的文档树构建、Markdown 读取、frontmatter 规范化、语义化 Markdown 渲染和文档展示组件。
 
-## 输入
+## 入口与拥有面
 
-- `AGENTS.md`
-- `README.md`
-- `docs/*`
-- `memory/*`
-- `code_index/*`
-- `tasks/*`
+- 路由：`/knowledge-base`
+- 页面：`apps/studio/src/app/knowledge-base/page.tsx`
+- Service：`apps/studio/src/modules/docs/repository.ts`
+- 组件：`apps/studio/src/modules/docs/components/doc-viewer.tsx`
+- 文档：`docs/*`、`memory/*`、`tasks/*`、`code_index/*`
 
-## 输出
+## 常改文件
 
-- 文档树
-- 文档内容与元信息
-- 语义入口分组
-- 文档阅读组件
+- `apps/studio/src/app/knowledge-base/page.tsx`
+- `apps/studio/src/modules/docs/repository.ts`
+- `apps/studio/src/modules/docs/reader.ts`
+- `apps/studio/src/modules/docs/rendering.ts`
+- `apps/studio/src/modules/docs/structure.ts`
+- `apps/studio/src/modules/docs/components/doc-viewer.tsx`
+- `apps/studio/src/modules/docs/__tests__/repository.test.ts`
 
-## 关键职责
+## 不变量
 
-- 构建 live docs tree
-- 读取 Markdown
-- 统一 Markdown 富文本渲染
-- 通过标题别名表解析中英文段落标题
-- 从标题结构中提取页内导航和区块摘要
-- 清理 managed block 标记
-- 规范化 frontmatter
+- docs 模块只负责只读读取、规范化和渲染，不承担 mutation 或 git 判定。
+- frontmatter、标题别名和 managed block 处理必须稳定，不能让知识库入口读到脏结构。
+- 文档门户只展示真相源，不替代 task、release 或 plan 的主状态流。
 
-## 依赖
+## 推荐校验
 
-- `gray-matter`
-- `react-markdown`
-- `remark-gfm`
+- `pnpm --filter studio test -- apps/studio/src/modules/docs/__tests__/repository.test.ts`
+- `pnpm --filter studio build`
 
-## 对外暴露接口
+## 常见改动
 
-- `getDocTree`
-- `listMarkdownDocs`
-- `readDoc`
-- `DocTree`
-- `DocViewer`
-
-## 不该做什么
-
-- 不负责 mutation
-- 不负责任务创建
-- 不负责 git 状态判定
+- 调整知识库树、阅读页或 Markdown 渲染行为。
+- 调整 frontmatter 解析、标题别名或 section 摘要提取。
+- 调整 AI rewrite / docs 相关的入口上下文。

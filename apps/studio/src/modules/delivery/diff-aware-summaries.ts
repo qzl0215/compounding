@@ -1,4 +1,4 @@
-import type { DiffAwareCategory, DiffAwareCheckLayer, SelectedDiffAwareCheck } from "./types";
+import type { DiffAwareCategory, DiffAwareCheckLayer, SelectedChecks } from "./types";
 import type { DiffStats } from "./diff-aware-source";
 import { categoryLabel, dedupe, type FileImpact } from "./diff-aware-impact";
 
@@ -117,17 +117,30 @@ export function buildSelectedChecks(
   suggestedChecks: DiffAwareCheckLayer[],
   categories: DiffAwareCategory[],
   healthScore: { score: number; grade: string; reason: string },
-): SelectedDiffAwareCheck[] {
+): SelectedChecks {
   const categoryNames = categories.map((item) => categoryLabel(item.name));
-  return suggestedChecks.map((layer) => ({
-    ...layer,
-    reason: buildCheckSelectionReason(layer.id, categoryNames, healthScore),
-  }));
+  const required = [];
+  const recommended = [];
+
+  for (const layer of suggestedChecks) {
+    const selected = {
+      ...layer,
+      reason: buildCheckSelectionReason(layer.id, categoryNames, healthScore),
+    };
+
+    if (isRequiredCheck(layer.id, categories, healthScore.score)) {
+      required.push(selected);
+    } else {
+      recommended.push(selected);
+    }
+  }
+
+  return { required, recommended };
 }
 
 export function buildRetirementSuggestions(
   categories: DiffAwareCategory[],
-  selectedChecks: SelectedDiffAwareCheck[],
+  selectedChecks: SelectedChecks,
   healthScore: { score: number; grade: string; reason: string },
 ) {
   const categoryNames = categories.map((item) => item.name);
@@ -142,7 +155,7 @@ export function buildRetirementSuggestions(
   if (categoryNames.some((name) => ["source-code", "config", "dependencies"].includes(name))) {
     suggestions.push("若 build / runtime smoke 已稳定覆盖同类改动，可合并重复的细粒度测试，保留能抓独特错误的那一层。");
   }
-  if (selectedChecks.length === 0) {
+  if (selectedChecks.required.length + selectedChecks.recommended.length === 0) {
     suggestions.push("当前没有新增检查，可沿用上一轮已验证的最小测试集。");
   }
   if (healthScore.score >= 90) {
@@ -150,6 +163,24 @@ export function buildRetirementSuggestions(
   }
 
   return dedupe(suggestions);
+}
+
+function isRequiredCheck(
+  layerId: DiffAwareCheckLayer["id"],
+  categories: DiffAwareCategory[],
+  healthScore: number,
+) {
+  const categoryNames = categories.map((item) => item.name);
+  if (layerId === "static" || layerId === "ai-output") {
+    return true;
+  }
+  if (layerId === "build") {
+    return categoryNames.some((name) => ["source-code", "dependencies", "config", "python-code"].includes(name));
+  }
+  if (layerId === "runtime") {
+    return categoryNames.some((name) => ["source-code", "dependencies", "config", "task-management"].includes(name)) || healthScore < 80;
+  }
+  return false;
 }
 
 function buildCheckSelectionReason(

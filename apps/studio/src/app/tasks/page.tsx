@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { getDeliverySnapshot } from "@/modules/delivery";
+import { getProjectStateSnapshot } from "@/modules/project-state";
 import { DeliveryTable } from "@/modules/tasks/components/delivery-table";
 import { buildSubtaskTableRows } from "@/modules/tasks/subtask-table";
 
@@ -8,6 +9,7 @@ export const dynamic = "force-dynamic";
 
 export default async function TasksPage() {
   const snapshot = await getDeliverySnapshot();
+  const projectState = await getProjectStateSnapshot({ deliverySnapshot: snapshot });
   const releaseDashboard = snapshot.facts.releaseDashboard;
   const rows = buildSubtaskTableRows(snapshot.projections.taskRows);
   const activeCount = rows.filter((row) => row.deliveryStatus === "in_progress").length;
@@ -20,8 +22,8 @@ export default async function TasksPage() {
         <PageHeader
           eyebrow="执行面板"
           title="子任务清单"
-          description="只保留当前子任务。已发布历史下沉到发布页，不在这里重复平铺。"
-          note="当你需要判断下一步做什么时，先看这里；当你需要看版本结果时，再去发布页。"
+          description={projectState.execution.summary}
+          note={projectState.focus.summary}
           metrics={[
             {
               label: "当前子任务",
@@ -35,7 +37,7 @@ export default async function TasksPage() {
             },
             {
               label: "待验收",
-              value: `${pendingAcceptanceCount} 项`,
+              value: projectState.release.pendingAcceptance || `${pendingAcceptanceCount} 项`,
               tone: pendingAcceptanceCount > 0 ? "warning" : "default",
             },
             {
@@ -52,10 +54,12 @@ export default async function TasksPage() {
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.28em] text-sky-700">子任务列表</p>
-              <p className="mt-3 text-sm leading-7 text-slate-600">只保留当前需要推进的事项，交付历史通过发布页追溯。</p>
+              <p className="mt-3 text-sm leading-7 text-slate-600">只保留当前需要推进的事项；计划边界看运营蓝图，交付历史看发布页。</p>
             </div>
             <p className="max-w-2xl text-sm leading-6 text-slate-600">
-              这里默认不堆额外面板，只保留最必要的执行信息，避免把“做什么”又做回一张复杂工单。
+              {projectState.release.pendingAcceptance
+                ? `${projectState.release.pendingAcceptance}，先做判断再继续推进。`
+                : "这里默认不堆额外面板，只保留最必要的执行信息，避免把“做什么”又做回一张复杂工单。"}
             </p>
           </div>
           <div className="mt-5">

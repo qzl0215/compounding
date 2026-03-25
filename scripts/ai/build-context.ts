@@ -2,6 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { parseTaskContract, parseTaskMachineFacts } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
 const { readCompanion } = require("../coord/lib/task-meta.ts");
+const { buildFeatureContextPacket, renderFeatureContextMarkdown } = require("./lib/feature-context.ts");
 
 const args = process.argv.slice(2);
 const taskPath = args.find((arg) => !arg.startsWith("--"));
@@ -121,6 +122,10 @@ const relatedModules = unique([
   ...((companion?.planned_files || []).filter((item) => item !== relTask).map(normalizeModuleToken)),
   ...((companion?.planned_modules || []).map(normalizeModuleToken)),
 ]);
+const featurePacket = buildFeatureContextPacket(root, {
+  taskPath: relTask,
+  module: relatedModules,
+});
 const relevantFunctions = findRelevantFunctions(relatedModules);
 const keywords = buildKeywords(taskContract, relatedModules);
 const moduleDocs = findModuleDocs(relatedModules);
@@ -173,6 +178,8 @@ output += `- Boundary: ${taskContract.boundary || "n/a"}\n`;
 output += `- Done When: ${taskContract.doneWhen || "n/a"}\n`;
 output += `- In Scope: ${taskContract.inScope || "n/a"}\n`;
 output += `- Constraints: ${taskContract.constraints || "n/a"}\n\n`;
+
+output += `${renderFeatureContextMarkdown(featurePacket)}\n\n`;
 
 output += "## Relevant Function Index\n\n";
 output += "```json\n";

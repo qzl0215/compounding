@@ -23,22 +23,18 @@ related_docs:
 
 ## 当前焦点
 
+- `t-066` 进行中：把高频模块补成可机读 feature 合同，并让 `scripts/ai/feature-context.ts`、`build-context.ts`、首页 / 任务页 / 发布页都开始读取共享项目状态摘要。
+- 当前主线是 AI feature 开发提效：先减少首轮搜索和二次返工，再继续压 release 单一状态机与 preflight 单入口。
+- 本地 production 当前稳定运行在 `3010`；active release 以 `pnpm prod:status` 输出为准，当前主线仍运行正常。
 - `t-064` 已完成：首页已改成面向人的项目逻辑态势图，主视觉是可点击的逻辑结构图，只保留目标、里程碑、节奏、风险和下钻入口。
-- `t-065` 已完成：把 Studio 整体切到浅色实验室风格，统一首页、任务、证据和发布页的底色、卡片、导航和控件语气。
-- 当前主线回到跨页面唯一 snapshot 与 release 单一状态机，视觉收口已先完成，后续继续压口径与对象歧义。
-- 本地 production 当前稳定运行在 `3010`；active release 为 `20260325083655-791f8cc-prod`。
-- `t-053` 已完成：本地 production 已脱离 release worktree 运行 cwd，当前只保留主工作区，不再保留 release worktree 作为常驻运行目录。
 - `t-058` 已完成：`scripts/ai` 的共享 CLI 外壳已经落地，`template-feedback`、`fix-first` 与 `create-task` 已收回同一套参数解析、标准输出、错误出口和 task 模板渲染。
 - `t-059` 已完成：release registry、Studio 读模型和主源文档已经统一到真实待验收语义；已晋升到 prod 的旧 dev 不再继续显示为 `pending`。
-- `t-061` 已完成：portal 读模型聚合层已拆成薄 barrel，`builders.ts` 不再承担首页摘要、Kernel/Project snapshot 与运行态翻译的全部职责。
-- `t-062` 已完成：portal 首页 shell 已拆成更薄入口，Kernel / Project 面板不再堆在单文件里。
-- 当前 active release 以 `pnpm prod:status` 输出为准；本地 runtime release 目录也已脱离 git worktree，当前 `git worktree list` 只剩主工作区。
 - `t-063` 仍在待续主线：统一 preflight 入口，把 `pnpm preflight` 收成唯一对外推荐门禁，并让 task guard 不再依赖当前 diff 是否已进入 structural。
 
 ## 当前阻塞
 
 - 当前没有发布阻塞。
-- 主要结构风险转到跨页面读模型如果继续各自维护摘要和状态翻译，首页、任务页和发布页会重新长出平行口径。
+- 主要结构风险转到 feature context、共享状态摘要和选测闭环如果继续各自维护一份本地翻译，AI 加功能时仍会回到手工拼上下文。
 
 ## 当前推荐校验顺序
 
@@ -61,7 +57,7 @@ related_docs:
 ## 下一检查点
 
 - `pnpm preflight`
-- `pnpm preflight -- --taskId=t-064`
+- `pnpm preflight -- --taskId=t-066`
 - `pnpm preflight -- --taskId=t-063`
 - `pnpm validate:static`
 - `pnpm validate:build`
@@ -69,7 +65,8 @@ related_docs:
 - `pnpm preview:check`
 - `pnpm prod:status`
 - `pnpm prod:check`
-- 确认 production active release 继续保持 `20260325083655-791f8cc-prod`
-- 确认首页逻辑态势图继续只回答目标、阶段、风险和下一步
-- 评估跨页面唯一 snapshot 与 release 单一状态机哪一条是下一轮更高 ROI 的主线
+- `pnpm ai:feature-context -- --surface=home`
+- `pnpm ai:feature-context -- --route=/releases`
+- 确认首页、任务页、发布页继续读同一份项目状态摘要
+- 确认 feature context 能在无 task / 有 task 两条路径输出一致结构
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

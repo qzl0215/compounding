@@ -10,7 +10,7 @@ describe("delivery snapshot", () => {
     expect(snapshot.projections.taskOptions.every((option) => snapshot.projections.taskRows.some((task) => task.id === option.id && task.status !== "done"))).toBe(true);
     expect(snapshot.facts.releaseDashboard.releases.length).toBeGreaterThan(0);
     expect(snapshot.facts.diffAware.summary.length).toBeGreaterThan(0);
-    expect(snapshot.facts.diffAware.selectedChecks.every((layer) => layer.reason.length > 0)).toBe(true);
+    expect(snapshot.facts.diffAware.selectedChecks.required.every((layer) => layer.reason.length > 0)).toBe(true);
     expect(snapshot.facts.releaseDashboard.active_release_id || snapshot.facts.releaseDashboard.pending_dev_release || snapshot.facts.releaseDashboard.local_runtime).toBeTruthy();
   }, 15000);
 });

@@ -4,41 +4,38 @@
 
 为当前仓库或新项目生成、审计、提案式改写 AI-Native Repo 骨架。
 
-## 输入
+## 入口与拥有面
 
-- `bootstrap/project_brief.yaml`
-- 目标仓库路径
-- proposal prompt（可选）
+- CLI：`python3 scripts/init_project_compounding.py scaffold`
+- CLI：`python3 scripts/init_project_compounding.py audit`
+- CLI：`python3 scripts/init_project_compounding.py propose`
+- Service：`scripts/compounding_bootstrap/bootstrap.py`
+- Service：`scripts/compounding_bootstrap/audit.py`
 
-## 输出
+## 常改文件
 
-- canonical docs / memory / tasks / code_index skeleton
-- audit result
-- proposal metadata / diff / candidate files
+- `scripts/init_project_compounding.py`
+- `scripts/compounding_bootstrap/bootstrap.py`
+- `scripts/compounding_bootstrap/scaffold_assets.py`
+- `scripts/compounding_bootstrap/catalog.py`
+- `scripts/compounding_bootstrap/renderers_index.py`
+- `bootstrap/project_bootstrap.yaml`
+- `tests/test_bootstrap_scaffold_cli.py`
 
-## 关键职责
+## 不变量
 
-- 配置解析
-- 文档渲染
-- scaffold
-- audit
-- proposal / apply
+- bootstrap 输出必须更像执行合同与默认读链，不继续生成泛化说明书。
+- canonical docs、memory、tasks、code_index 骨架只能有一套主源，不能静默保留失效结构。
+- bootstrap 不成为第二套任务系统，也不直接依赖 Studio 运行态。
 
-## 依赖
+## 推荐校验
 
-- Python 标准库
-- 仓库内 bootstrap 资源
+- `python3 -m unittest tests.test_bootstrap_scaffold_cli`
+- `python3 -m unittest tests.test_bootstrap_proposals_cli`
+- `python3 scripts/init_project_compounding.py audit --config bootstrap/project_brief.yaml --target .`
 
-## 对外暴露接口
+## 常见改动
 
-- `scaffold`
-- `audit`
-- `validate-config`
-- `propose`
-- `apply-proposal`
-
-## 不该做什么
-
-- 不直接依赖 Studio
-- 不成为第二套任务系统
-- 不静默保留失效文档结构
+- 调整 scaffold 输出的主干文档、脚本清单和默认读链。
+- 调整 proposal / apply 的产物结构或 canonical asset 同步。
+- 调整 bootstrap 输出的 module 合同、不变量和推荐校验内容。

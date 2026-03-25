@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { getDeliverySnapshot } from "@/modules/delivery";
+import { getProjectStateSnapshot } from "@/modules/project-state";
 import { DiffAwarePanel } from "@/modules/delivery/components/diff-aware-panel";
 import { getManagementAccessState, getRuntimeStatusExplanation } from "@/modules/releases";
 import type { LocalRuntimeStatus } from "@/modules/releases";
@@ -24,18 +25,9 @@ export default async function ReleasesPage() {
   }
 
   const snapshot = await getDeliverySnapshot();
+  const projectState = await getProjectStateSnapshot({ deliverySnapshot: snapshot });
   const dashboard = snapshot.facts.releaseDashboard;
   const taskOptions = snapshot.projections.taskOptions;
-  const releaseConclusion = dashboard.pending_dev_release
-    ? "现在该验收，不该继续堆改动。"
-    : dashboard.local_runtime.status === "running"
-      ? `当前 production 在线，运行版本 ${dashboard.local_runtime.runtime_release_id || "未知"}。`
-      : "当前先确认运行态，再讨论继续发布。";
-  const releaseNextAction = dashboard.pending_dev_release
-    ? `先验收 ${dashboard.pending_dev_release.release_id}，通过或驳回后再继续推进。`
-    : dashboard.local_runtime.status === "running"
-      ? "如需继续推进，先生成新的 dev 预览，再进入验收。"
-      : "先恢复运行态，再决定是否继续生成或切换 release。";
 
   return (
     <div className="space-y-6">
@@ -43,8 +35,8 @@ export default async function ReleasesPage() {
         <PageHeader
           eyebrow="发布判断"
           title="这页只回答一件事：现在该验收、继续发布，还是先修运行态"
-          description={releaseConclusion}
-          note={releaseNextAction}
+          description={projectState.release.conclusion}
+          note={projectState.release.nextAction}
           metrics={[
             {
               label: "生产激活版本",

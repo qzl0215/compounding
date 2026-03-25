@@ -58,6 +58,8 @@ class CoordCliTestCase(unittest.TestCase):
         (self.target / "bootstrap").mkdir(parents=True, exist_ok=True)
         shutil.copy(ROOT / "shared" / "task-identity.ts", self.target / "shared" / "task-identity.ts")
         shutil.copy(ROOT / "shared" / "task-contract.ts", self.target / "shared" / "task-contract.ts")
+        shutil.copy(ROOT / "shared" / "module-feature-contract.ts", self.target / "shared" / "module-feature-contract.ts")
+        shutil.copy(ROOT / "shared" / "feature-context.ts", self.target / "shared" / "feature-context.ts")
         shutil.copy(ROOT / "bootstrap" / "heading_aliases.json", self.target / "bootstrap" / "heading_aliases.json")
         shutil.copy(TASK_TEMPLATE_PATH, self.target / "tasks" / "templates" / "task-template.md")
         (self.target / "tasks" / "queue" / "task-999-sample.md").write_text(SAMPLE_TASK_MARKDOWN, encoding="utf8")

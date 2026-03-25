@@ -10,6 +10,8 @@ type Props = {
 export function DiffAwarePanel({ artifact, variant = "full" }: Props) {
   const compact = variant === "compact";
   const hasDiff = artifact.changedFiles.length > 0;
+  const selectedRequired = artifact.selectedChecks.required;
+  const selectedRecommended = artifact.selectedChecks.recommended;
 
   return (
     <div className="space-y-4">
@@ -49,16 +51,11 @@ export function DiffAwarePanel({ artifact, variant = "full" }: Props) {
 
       <div className="space-y-3">
         <p className="text-xs uppercase tracking-[0.22em] text-sky-700">选择原因</p>
-        {artifact.selectedChecks.length > 0 ? (
-          <ul className="space-y-2">
-            {artifact.selectedChecks.map((layer) => (
-              <li key={layer.id} className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
-                <span className="font-medium text-slate-900">{layer.title}</span>
-                <span className="mx-2 text-slate-300">·</span>
-                <span>{layer.reason}</span>
-              </li>
-            ))}
-          </ul>
+        {selectedRequired.length + selectedRecommended.length > 0 ? (
+          <div className="space-y-3">
+            <CheckReasonList title="必跑" layers={selectedRequired} />
+            <CheckReasonList title="可补充" layers={selectedRecommended} />
+          </div>
         ) : (
           <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-500">
             暂无新增检查原因
@@ -127,5 +124,32 @@ function InfoCard({ title, value }: { title: string; value: string }) {
       <p className="text-xs uppercase tracking-[0.22em] text-slate-500">{title}</p>
       <p className="mt-3 text-sm text-slate-700">{value}</p>
     </article>
+  );
+}
+
+function CheckReasonList({
+  title,
+  layers,
+}: {
+  title: string;
+  layers: DiffAwareArtifact["selectedChecks"]["required"];
+}) {
+  if (layers.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="space-y-2">
+      <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500">{title}</p>
+      <ul className="space-y-2">
+        {layers.map((layer) => (
+          <li key={`${title}-${layer.id}`} className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+            <span className="font-medium text-slate-900">{layer.title}</span>
+            <span className="mx-2 text-slate-300">·</span>
+            <span>{layer.reason}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

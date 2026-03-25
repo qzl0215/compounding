@@ -11,8 +11,8 @@ describe("diff-aware artifact", () => {
     expect(artifact.state).toBe("dirty");
     expect(artifact.changedFiles).toEqual(["apps/studio/src/app/releases/page.tsx", "docs/WORK_MODES.md"]);
     expect(artifact.suggestedChecks.map((layer) => layer.id)).toEqual(["static", "build", "runtime"]);
-    expect(artifact.selectedChecks.map((layer) => layer.id)).toEqual(["static", "build", "runtime"]);
-    expect(artifact.selectedChecks.every((layer) => layer.reason.length > 0)).toBe(true);
+    expect(artifact.selectedChecks.required.map((layer) => layer.id)).toEqual(["static", "build", "runtime"]);
+    expect(artifact.selectedChecks.required.every((layer) => layer.reason.length > 0)).toBe(true);
     expect(artifact.retirementSuggestions.length).toBeGreaterThan(0);
     expect(artifact.scopeSummary).toContain("2 个文件");
     expect(artifact.reviewSummary.length).toBeGreaterThan(0);
@@ -28,7 +28,7 @@ describe("diff-aware artifact", () => {
 
     expect(artifact.suggestedChecks.map((layer) => layer.id)).toContain("ai-output");
     expect(artifact.evidencePoints.join(" ")).toContain("pnpm validate:ai-output");
-    expect(artifact.selectedChecks.find((layer) => layer.id === "ai-output")?.reason).toContain("prompt / AI 脚本");
+    expect(artifact.selectedChecks.required.find((layer) => layer.id === "ai-output")?.reason).toContain("prompt / AI 脚本");
     expect(artifact.retirementSuggestions.join(" ")).toContain("仅在 prompt / AI 脚本变化时保留 ai-output 门禁");
   });
 

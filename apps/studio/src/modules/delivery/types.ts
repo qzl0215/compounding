@@ -24,6 +24,11 @@ export type SelectedDiffAwareCheck = DiffAwareCheckLayer & {
   reason: string;
 };
 
+export type SelectedChecks = {
+  required: SelectedDiffAwareCheck[];
+  recommended: SelectedDiffAwareCheck[];
+};
+
 export type DiffAwareArtifact = {
   state: "clean" | "dirty";
   summary: string;
@@ -32,7 +37,7 @@ export type DiffAwareArtifact = {
   retroSummary: string;
   shipLog: string[];
   suggestedChecks: DiffAwareCheckLayer[];
-  selectedChecks: SelectedDiffAwareCheck[];
+  selectedChecks: SelectedChecks;
   retirementSuggestions: string[];
   evidencePoints: string[];
   nextActions: string[];
