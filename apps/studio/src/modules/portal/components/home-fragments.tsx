@@ -14,6 +14,16 @@ export function MetricTile({ item }: { item: ProjectExecutionMetric }) {
   );
 }
 
+export function SectionHeader({ eyebrow, title, description }: { eyebrow: string; title: string; description: string }) {
+  return (
+    <div>
+      <p className="text-xs uppercase tracking-[0.24em] text-accent">{eyebrow}</p>
+      <h2 className="mt-3 text-3xl font-semibold">{title}</h2>
+      <p className="mt-4 max-w-3xl text-sm leading-7 text-white/66">{description}</p>
+    </div>
+  );
+}
+
 export function ToneBadge({ children, tone = "default" }: { children: ReactNode; tone?: OverviewTone }) {
   return (
     <Badge tone={tone === "warning" ? "default" : tone === "danger" ? "danger" : tone === "success" ? "success" : tone === "accent" ? "accent" : "default"}>

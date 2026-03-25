@@ -2,7 +2,7 @@
 title: CURRENT_STATE
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-26
+last_reviewed_at: 2026-03-27
 source_of_truth: memory/project/current-state.md
 related_docs:
   - AGENTS.md
@@ -27,12 +27,13 @@ related_docs:
 - `t-053` 已完成：本地 production 已脱离 release worktree 运行 cwd，当前只保留主工作区，不再保留 release worktree 作为常驻运行目录。
 - `t-058` 已完成：`scripts/ai` 的共享 CLI 外壳已经落地，`template-feedback`、`fix-first` 与 `create-task` 已收回同一套参数解析、标准输出、错误出口和 task 模板渲染。
 - `t-059` 已完成：release registry、Studio 读模型和主源文档已经统一到真实待验收语义；已晋升到 prod 的旧 dev 不再继续显示为 `pending`。
+- `t-061` 已完成：portal 读模型聚合层已拆成薄 barrel，`builders.ts` 不再承担首页摘要、Kernel/Project snapshot 与运行态翻译的全部职责。
 - 当前 active release 以 `pnpm prod:status` 输出为准；本地 runtime release 目录也已脱离 git worktree，当前 `git worktree list` 只剩主工作区。
-- 当前主线切到 `t-061`：继续收薄 portal 读模型聚合层，先把 `builders.ts` 收成薄 barrel，再评估是否还要继续下沉其它首页共享 helper。
+- 当前主线切到 `t-062`：继续收薄 portal 首页 shell，把 `home-dashboard.tsx` 收成薄入口，再评估是否继续下沉更细的 panel helper。
 
 ## 当前阻塞
 
-- 当前没有发布阻塞；主要剩余结构风险集中在 portal 聚合边界。
+- 当前没有发布阻塞；主要剩余结构风险集中在 portal 首页 shell 与更细粒度的 panel helper。
 - 如果下一轮同时动多个结构边界，会重新放大对象歧义和回归成本。
 
 ## 当前推荐校验顺序
@@ -62,6 +63,6 @@ related_docs:
 - `pnpm ai:validate-assets`
 - `pnpm ai:cleanup-candidates`
 - 确认当前无 `pending dev`，本地 production 继续稳定运行在最新 active release
-- 收薄 portal 读模型后，刷新代码量快照，确认 `apps/studio/src/modules/portal/builders.ts` 不再是单文件热点
+- 收薄 portal 首页 shell 后，刷新代码量快照，确认 `apps/studio/src/modules/portal/components/home-dashboard.tsx` 不再是单文件热点
 - 确认 `portal` 的公开 snapshot 行为和首页渲染没有回退
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

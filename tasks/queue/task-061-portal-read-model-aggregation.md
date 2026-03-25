@@ -47,12 +47,13 @@
 
 ## 交付结果
 
-- 状态：doing
+- 状态：done
 - 体验验收结果：
-
+  `portal/builders.ts` 已退化为薄 barrel，首页默认 Project Tab、Kernel / Project 语义和 markdown/YAML 输入源保持不变。
 - 交付结果：
-
+  首页/运行态摘要、Kernel tab snapshot、Project tab snapshot、治理分桶与共享 helper 已拆到 `apps/studio/src/modules/portal/builders/`；cleanup candidate 不再把 `builders.ts` 视为单文件热点。
 - 复盘：
+  这轮的关键不是继续堆更大的聚合文件，而是把入口、tab 快照与共享 helper 分层后，再把首页 shell 留到下一轮单独收口。
 
 ## 当前模式
 
@@ -60,7 +61,7 @@
 
 ## 分支
 
-`codex/task-061-portal-read-model-aggregation`
+`main`
 
 ## 关联模块
 
