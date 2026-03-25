@@ -8,26 +8,25 @@ related_docs:
   - memory/project/roadmap.md
   - memory/project/current-state.md
   - docs/DEV_WORKFLOW.md
-last_reviewed_at: 2026-03-25
+last_reviewed_at: 2026-03-26
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 运营蓝图
 
 ## 需求总览
 
-继续把结构收口落到真正会制造熵增的边界上：`t-058` 与 `t-059` 已经把 CLI 外壳和 release/task 状态链收正，下一轮只从 portal 读模型聚合点与 release 兼容壳里选择一个继续推进；目标仍是减少对象歧义和重复外壳，而不是增加新框架。
+继续把结构收口落到真正会制造熵增的边界上：`t-058` 与 `t-059` 已经把 CLI 外壳和 release/task 状态链收正，当前主线切到 `t-061`，先收薄 `portal` 读模型聚合层，把首页摘要、Kernel/Project snapshot 和运行态翻译从单文件里拆开；目标仍是减少对象歧义和重复外壳，而不是增加新框架。
 
 ## 待思考
 
-- release/task 状态链收正后，下一轮更值钱的是继续拆 portal 读模型，还是继续收 release 兼容壳
+- portal 读模型聚合边界应先收哪一层，才能在不扩页面逻辑的前提下减少首页/任务页/发布页之间的耦合
 - `fix-first` 的 gate registry 后续是否还值得进一步数据化，还是保持当前轻量脚本更划算
 - task 模板渲染与经验模板渲染是否还需要再统一一层，还是只共享 task 合同底座已经足够
 
 ## 待规划
 
 - `Harness Delta Hardening`：把“文档是主源”升级成可校验的新鲜度契约，并让小型熵减事项能被周期性暴露和消费
-- portal 读模型的聚合边界应先收哪一层，才能在不扩页面逻辑的前提下减少首页/任务页/发布页之间的耦合
-- release/runtime 链里哪些历史兼容点还值得继续下沉，避免把 live runtime 和 release registry 再次绑死
+- `t-061` 完成后，再评估 release 兼容壳是否仍值得继续下沉，或是否继续切 portal 的更细共享 helper
 - `README`、文档门户和 bootstrap manifest 怎样继续表达主干 / 附录分层，而不增加新文档族
 - 第二个老项目 attach 样本应怎样选择，才能尽快验证 `project_brief / bootstrap_report / proposal` 在非本仓库上的复用性
 - 新项目最小 shell 里哪些协议入口应继续压缩，避免 bootstrap 又回到“复制整套仓库”的旧路
@@ -63,6 +62,7 @@ last_reviewed_at: 2026-03-25
 - `t-056`：把持续垃圾回收收口成轻量候选生成器（已完成）
 - `t-058`：把 `scripts/ai` 的重复 CLI 外壳收口成极薄共享内核，先服务 `template-feedback`、`fix-first` 与 `create-task`（已完成）
 - `t-059`：收正 `dev -> main -> prod` 之后的 release/task 状态一致性，避免假 `pending dev` 与主源漂移继续回流（已完成）
+- `t-061`：收薄 portal 读模型聚合层，让 `builders.ts` 退化为薄 barrel（进行中）
 
 ## 下一步对话
 
@@ -71,7 +71,7 @@ last_reviewed_at: 2026-03-25
 - 最后产出 task：只有边界清楚后才进入执行 task
 - 若某个 task 发现边界过大，先把剩余未收口范围退回 plan，再从 plan 派生多个 sibling tasks
 - 需要收口高频文档时，优先删掉默认第一跳里的重复入口和粗粒度说明，而不是再写新的导读或说明书
-- `t-058` 与 `t-059` 已落地后，再在 portal 读模型和 release 兼容层之间只选一个边界推进
+- `t-061` 完成后，再评估 release 兼容壳是否仍值得继续下沉，或是否继续切 portal 的更细共享 helper
 - knowledge freshness gate 与 cleanup candidate 已落地，下一阶段只继续轻量消费其输出，不再把它们扩成第二套状态源
 - 若运行问题来自 worktree、软链或 cwd 耦合，优先把运行目录从输入目录中拆开，而不是继续堆 release 台账
 - 若下一轮继续推进 kernel/shell，先拿第二个老项目验证 attach/audit/proposal 的复用性，再决定是否扩大 `auto_apply`
