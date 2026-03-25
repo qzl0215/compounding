@@ -56,13 +56,13 @@
 
 ## 交付结果
 
-- 状态：doing
+- 状态：done
 - 体验验收结果：
-  
+  `pnpm preflight` 已成为唯一对外推荐入口；带 `--taskId` 时会稳定进入完整 task guard，兼容别名和 `coord:task:start` 都已复用同一条链。
 - 交付结果：
-  
+  新增共享 `preflight-gate` 与统一 CLI，`coord:check:pre-task` 退化为兼容壳；basic/task guard contract、测试 fixture 和高频文档入口已同步收口。
 - 复盘：
-  
+  真正该统一的不是“再加一个脚本名”，而是把 `taskId` 明确收成 guard level 升级信号；这样才能消掉“还没改文件就被判成 light”的长期歧义。
 
 ## 当前模式
 
@@ -70,7 +70,7 @@
 
 ## 分支
 
-`codex/task-063-unify-preflight-entry`
+`main`
 
 ## 关联模块
 
@@ -84,14 +84,15 @@
 - `README.md`
 - `docs/DEV_WORKFLOW.md`
 - `docs/AI_OPERATING_MODEL.md`
-- `memory/project/current-state.md`
-- `memory/project/operating-blueprint.md`
+  - `memory/project/current-state.md`
+  - `memory/project/operating-blueprint.md`
+  - `memory/project/roadmap.md`
 - `tests/coord_support.py`
 - `tests/test_coord_cli.py`
 
 ## 更新痕迹
 
-- 记忆：will update current-state / operating-blueprint to switch structural focus to t-063 unified preflight entry
+- 记忆：updated current-state / operating-blueprint to focus on t-063 unified preflight entry
 - 索引：no change
-- 路线图：no change
+- 路线图：updated roadmap to move from t-062 milestone to next simplification candidate after preflight unification
 - 文档：tasks/queue/task-063-unify-preflight-entry.md

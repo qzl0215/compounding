@@ -46,12 +46,13 @@
 
 ## 交付结果
 
-- 状态：doing
+- 状态：done
 - 体验验收结果：
-
+  首页默认仍落在 Project Tab，Kernel / Project 双视图保持兼容；`home-dashboard.tsx` 已退化为薄入口，面板逻辑不再堆在同一文件里。
 - 交付结果：
-
+  新增 `home-dashboard-project-panel.tsx` 与 `home-dashboard-kernel-panel.tsx`，首页 shell 只保留 tab 切换与入口布局；现有 `portal` snapshot 与首页渲染测试保持通过。
 - 复盘：
+  先把首页 shell 从读模型和展示细节里剥离，再继续看更细的 helper，能明显降低下一轮结构调整的回归面。
 
 ## 当前模式
 
@@ -59,7 +60,7 @@
 
 ## 分支
 
-`codex/task-062-portal-home-shell`
+`main`
 
 ## 关联模块
 

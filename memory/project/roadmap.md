@@ -2,7 +2,7 @@
 title: ROADMAP
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-27
+last_reviewed_at: 2026-03-25
 source_of_truth: memory/project/roadmap.md
 related_docs:
   - AGENTS.md
@@ -19,21 +19,22 @@ Structural Entropy Reduction（持续收口）
 
 ## 当前里程碑
 
-portal 首页 shell 收薄
+派生产物语义收口
 
 ## 里程碑成功标准
 
-- `home-dashboard.tsx` 退化为薄 shell，首页 tab 入口与 panel 展示不再挤在单文件里
-- 首页默认 Project Tab 和 Kernel/Project 语义保持兼容，不新增状态源
+- `code_index/*`、`output/*`、`agent-coordination/*` 与 runtime 事实都被明确当作派生产物，而不是并列状态源
+- 首页、任务页和发布页继续消费统一读模型语义，不为派生产物再长出新解释层
 - 不新增新状态源、重型框架或平行读模型
 - 本地 production 继续稳定，且保持无 `pending dev`
 
 ## 当前优先级
 
-推进 `t-062`：收薄 `portal` 首页 shell，先把 `home-dashboard.tsx` 拆成薄入口与面板模块。
+优先把 `code_index / output / agent-coordination / runtime` 收成统一派生产物语义，减少“缓存 / 报告 / 运行事实”并列心智。
 
 ## 下一阶段方向
 
-- `t-062` 完成后，再评估 types.ts 或 home-dashboard test 是否值得继续收薄，或是否回看 release 兼容壳剩余边界
+- 在派生产物语义收口后，再把跨页面摘要继续压成唯一 snapshot
+- 继续压实 release 单一状态机，避免 task / release / runtime 重新长出平行口径
 - 继续在不增加新状态源的前提下退休低价值解释层和重复外壳
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->
