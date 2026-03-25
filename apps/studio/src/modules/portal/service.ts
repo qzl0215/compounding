@@ -43,16 +43,17 @@ export async function getHomeStatusBoard(): Promise<HomeLogicMapSnapshot> {
     releaseDashboard.local_preview.status,
     Boolean(releaseDashboard.pending_dev_release),
   );
+  const blockers = summarizeBlockers(currentBlockers);
   const activeStage = resolveHomeStage(thinkingBacklog, planningBacklog, stageBuckets, pendingAcceptance);
-  const overallSummary = currentFocus[0] || currentPriority || blueprintOverview || "当前焦点尚未写入。";
+  const overallSummary = summarizeHeadline(currentFocus, currentPriority, blueprintOverview, pendingAcceptance, runtimeAlert);
 
   return buildHomeLogicMapSnapshot({
     name: workspaceLabel,
-    oneLiner: blueprintOverview || currentPriority || "项目一句话目标尚未写入。",
+    oneLiner: summarizeOneLiner(blueprintOverview, currentPriority, currentMilestone),
     overallSummary,
     currentPhase: roadmapPhase || "当前阶段尚未定义。",
     currentMilestone: currentMilestone || "当前里程碑尚未定义。",
-    successCriteria: successCriteria.length > 0 ? successCriteria : buildFallbackCriteria(currentPriority, blueprintOverview),
+    successCriteria: summarizeSuccessCriteria(successCriteria, currentPriority, currentMilestone, blueprintOverview),
     activeStage,
     goals: {
       summary: summarizeGoals(currentPriority, currentMilestone, successCriteria),
@@ -72,12 +73,12 @@ export async function getHomeStatusBoard(): Promise<HomeLogicMapSnapshot> {
     },
     focus: {
       summary: summarizeFocus(currentFocus, nextCheckpoint, currentPriority),
-      badge: currentBlockers.length > 0 ? "有阻塞" : "现在",
+      badge: blockers.length > 0 ? "有阻塞" : "现在",
     },
-    blockers: currentBlockers,
+    blockers,
     pendingAcceptance,
     runtimeAlert,
-    healthSummary: summarizeHealth(currentBlockers, pendingAcceptance, runtimeAlert),
+    healthSummary: summarizeHealth(blockers, pendingAcceptance, runtimeAlert),
   });
 }
 
@@ -149,26 +150,24 @@ function resolveHomeStage(
 }
 
 function summarizeGoals(currentPriority: string, currentMilestone: string, successCriteria: string[]) {
-  const lead = currentPriority || currentMilestone || "当前目标尚未写入。";
-  const success = successCriteria[0];
-  return success ? `${lead} 当前成功标准先看：${success}` : lead;
+  const lead = simplifyHumanSentence(currentPriority) || simplifyHumanSentence(currentMilestone) || "当前目标尚未写入。";
+  const success = summarizeSuccessCriteria(successCriteria, currentPriority, currentMilestone, "")[0];
+  return success ? `${lead} 当前先看：${success}` : lead;
 }
 
 function summarizePlan(blueprintOverview: string, planningBacklog: string[], thinkingBacklog: string[]) {
   if (planningBacklog.length > 0 || thinkingBacklog.length > 0) {
-    return `待规划 ${planningBacklog.length} 项，待思考 ${thinkingBacklog.length} 项。${planningBacklog[0] || thinkingBacklog[0] || blueprintOverview}`;
+    return `待规划 ${planningBacklog.length} 项，待思考 ${thinkingBacklog.length} 项。先收口边界，再进入执行。`;
   }
-  return blueprintOverview || "当前计划边界已收口，可继续看执行事项。";
+  return simplifyHumanSentence(blueprintOverview) || "当前计划边界已收口，可继续看执行事项。";
 }
 
 function summarizeExecution(doingRows: Array<{ shortId: string; title: string }>, readyRows: Array<{ shortId: string; title: string }>) {
   if (doingRows.length > 0) {
-    const lead = doingRows[0];
-    return `进行中 ${doingRows.length} 项。当前主线：${lead.shortId} ${lead.title}`.trim();
+    return `当前有 ${doingRows.length} 项在推进，细节看执行面板。`;
   }
   if (readyRows.length > 0) {
-    const lead = readyRows[0];
-    return `待执行 ${readyRows.length} 项。下一项：${lead.shortId} ${lead.title}`.trim();
+    return `当前有 ${readyRows.length} 项可开工，先看执行面板。`;
   }
   return "当前没有新的执行事项，先看计划边界或验收与运行。";
 }
@@ -187,7 +186,12 @@ function summarizeAcceptance(pendingAcceptance: string | null, runtimeAlert: str
 }
 
 function summarizeFocus(currentFocus: string[], nextCheckpoint: string[], currentPriority: string) {
-  return currentFocus[0] || nextCheckpoint[0] || currentPriority || "当前焦点尚未写入。";
+  return (
+    simplifyHumanSentence(currentFocus[0]) ||
+    simplifyHumanSentence(nextCheckpoint[0]) ||
+    simplifyHumanSentence(currentPriority) ||
+    "当前焦点尚未写入。"
+  );
 }
 
 function summarizePendingAcceptance(pendingReleaseId: string | null, acceptanceVersionLabel: string | null) {
@@ -229,8 +233,110 @@ function summarizeHealth(blockers: string[], pendingAcceptance: string | null, r
   return "当前无待验收版本，运行正常，可继续按当前焦点推进。";
 }
 
-function buildFallbackCriteria(currentPriority: string, blueprintOverview: string) {
-  return [currentPriority || blueprintOverview || "当前成功标准尚未写入。"];
+function summarizeOneLiner(blueprintOverview: string, currentPriority: string, currentMilestone: string) {
+  return (
+    simplifyHumanSentence(currentPriority) ||
+    simplifyHumanSentence(blueprintOverview) ||
+    simplifyHumanSentence(currentMilestone) ||
+    "项目一句话目标尚未写入。"
+  );
+}
+
+function summarizeHeadline(
+  currentFocus: string[],
+  currentPriority: string,
+  blueprintOverview: string,
+  pendingAcceptance: string | null,
+  runtimeAlert: string | null,
+) {
+  if (pendingAcceptance) {
+    return `${pendingAcceptance}，先完成验收判断。`;
+  }
+  if (runtimeAlert) {
+    return runtimeAlert;
+  }
+  return (
+    simplifyHumanSentence(currentFocus[0]) ||
+    simplifyHumanSentence(currentPriority) ||
+    simplifyHumanSentence(blueprintOverview) ||
+    "当前焦点尚未写入。"
+  );
+}
+
+function summarizeSuccessCriteria(successCriteria: string[], currentPriority: string, currentMilestone: string, blueprintOverview: string) {
+  const normalized = successCriteria
+    .map((item) => normalizeSuccessCriterion(item))
+    .filter((item): item is string => Boolean(item));
+
+  if (normalized.length > 0) {
+    return normalized.slice(0, 3);
+  }
+
+  const fallback = simplifyHumanSentence(currentPriority) || simplifyHumanSentence(currentMilestone) || simplifyHumanSentence(blueprintOverview);
+  return [fallback || "当前成功标准尚未写入。"];
+}
+
+function normalizeSuccessCriterion(value: string) {
+  const text = simplifyHumanSentence(value);
+  if (!text) {
+    return null;
+  }
+  if (text.includes("首屏不滚动即可回答")) {
+    return "首屏能回答目标、阶段、风险和下一步";
+  }
+  if (text.includes("逻辑结构图")) {
+    return "首页主视觉是可点击的逻辑结构图";
+  }
+  if (text.includes("退出首页") || text.includes("不再")) {
+    return "首页不再平铺工程内部对象";
+  }
+  if (text.includes("不新增新状态源") || text.includes("重型框架") || text.includes("图形库")) {
+    return null;
+  }
+  return text;
+}
+
+function summarizeBlockers(blockers: string[]) {
+  const normalized = blockers
+    .map((item) => normalizeBlocker(item))
+    .filter((item): item is string => Boolean(item));
+  return Array.from(new Set(normalized));
+}
+
+function normalizeBlocker(value: string) {
+  const text = normalizeInline(value).replace(/`/g, "");
+  if (!text) {
+    return null;
+  }
+  if (text.includes("没有发布阻塞")) {
+    return "新首页必须彻底脱离旧工程壳，不能只换一层文案。";
+  }
+  if (text.includes("只换视觉") || text.includes("回流")) {
+    return "首页必须连同读模型一起收口，避免旧结构回流。";
+  }
+  return simplifyHumanSentence(text);
+}
+
+function simplifyHumanSentence(value: string | null | undefined) {
+  if (!value) {
+    return "";
+  }
+
+  let text = normalizeInline(value).replace(/`/g, "");
+  text = text.replace(/^t-\d+\s*(正在推进|已完成|仍在待续主线)?[:：]\s*/i, "");
+  text = text.replace(/^当前主线切到\s*/u, "");
+  text = text.replace(/Kernel\s*\/\s*Project/gi, "旧首页");
+  text = text.replace(/\bold\b/gi, "旧");
+  text = text.replace(/artifact health/gi, "工程状态");
+  text = text.replace(/boundary groups/gi, "工程分组");
+  text = text.replace(/\s+/g, " ").trim();
+
+  if (text.includes("首页") && text.includes("逻辑态势图")) {
+    return "把首页收成人类可扫读的项目逻辑态势图。";
+  }
+
+  const firstClause = text.split(/[；。]/u).map((part) => part.trim()).find(Boolean) || text;
+  return firstClause;
 }
 
 function buildPlanBadge(planningCount: number, thinkingCount: number) {

@@ -87,3 +87,4 @@
 - 索引：no change: 未更新
 - 路线图：set roadmap current priority and milestone to t-064 home logic status board
 - 文档：README.md, docs/ARCHITECTURE.md, apps/studio/src/modules/portal/module.md, tasks/queue/task-064-home-logic-status-board.md
+- 修正：tighten homepage summaries so the logic board shows concise human-facing judgments instead of echoing old Kernel/Project engineering phrasing from source docs
