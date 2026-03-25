@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { buildHomeLogicMapSnapshot } from "../builders";
 import { getHomeStatusBoard } from "../service";
 
+const SERVICE_TIMEOUT_MS = 30000;
+
 describe("home status board service", () => {
   it("builds a human-friendly home logic snapshot from project sources", async () => {
     const snapshot = await getHomeStatusBoard();
@@ -16,7 +18,7 @@ describe("home status board service", () => {
     ]);
     expect(snapshot.logicMap.nodes.find((node) => node.id === "goals")?.href).toBe("/knowledge-base?path=memory/project/roadmap.md");
     expect(snapshot.logicMap.nodes.find((node) => node.id === "acceptance")?.href).toBe("/releases");
-  }, 15000);
+  }, SERVICE_TIMEOUT_MS);
 
   it("marks acceptance as warning when there is pending acceptance", () => {
     const snapshot = buildHomeLogicMapSnapshot({

@@ -4,6 +4,8 @@ import { getTaskBoard, listTaskCards } from "../service";
 import type { ReleaseRecord } from "@/modules/releases";
 import type { TaskDeliveryRow } from "../types";
 
+const SERVICE_TIMEOUT_MS = 30000;
+
 describe("tasks service", () => {
   it("parses queue docs into lightweight project-management cards", async () => {
     const tasks = await listTaskCards();
@@ -30,13 +32,13 @@ describe("tasks service", () => {
     expect(active?.status).toBe("doing");
     expect(active?.currentMode).toBe("工程执行");
     expect(Array.isArray(first?.machine.companionReleaseIds)).toBe(true);
-  }, 15000);
+  }, SERVICE_TIMEOUT_MS);
 
   it("groups tasks by status for the board view", async () => {
     const groups = await getTaskBoard();
 
     expect(groups.map((group) => group.status)).toEqual(["todo", "doing", "blocked", "done"]);
-  }, 15000);
+  }, SERVICE_TIMEOUT_MS);
 
   it("builds delivery rows from release associations", async () => {
     const tasks = await listTaskCards();
@@ -78,7 +80,7 @@ describe("tasks service", () => {
     expect(row?.deliveryStatus).toBe("pending_acceptance");
     expect(row?.acceptReleaseId).toBe("rel-011-dev");
     expect(row?.versionLabel).toBe("rel-011-dev");
-  }, 15000);
+  }, SERVICE_TIMEOUT_MS);
 
   it("treats merged historical tasks as released even when old release records lack explicit task links", async () => {
     const tasks = await listTaskCards();
@@ -88,7 +90,7 @@ describe("tasks service", () => {
     const row = buildTaskDeliveryRows([releasedTask!], [])[0];
     expect(row?.deliveryStatus).toBe("released");
     expect(row?.versionLabel).toContain("main@");
-  }, 15000);
+  }, SERVICE_TIMEOUT_MS);
 
   it("does not bind releases to tasks by commit prefix alone", () => {
     const task: TaskDeliveryRow = {
@@ -248,5 +250,5 @@ describe("tasks service", () => {
     expect(row.deliveryStatus).toBe("released");
     expect(row.acceptReleaseId).toBeNull();
     expect(row.versionLabel).toBe("rel-009-prod");
-  }, 15000);
+  }, SERVICE_TIMEOUT_MS);
 });

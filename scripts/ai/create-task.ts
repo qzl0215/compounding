@@ -26,6 +26,10 @@ const root = process.cwd();
 const outputPath = path.join(root, "tasks", "queue", `${taskId}.md`);
 const shortIdMatch = taskId.match(/^task-(\d+)/);
 const shortId = shortIdMatch ? `t-${shortIdMatch[1]}` : `t-${taskId}`;
+const resolvedSummary = (argv.summary || summary || "").trim();
+
+assertChineseSummary(resolvedSummary, cli);
+
 const existingTaskRecords = listTaskRecords(root);
 if (existingTaskRecords.some((record) => record.id === taskId || record.path === path.posix.join("tasks/queue", `${taskId}.md`))) {
   exitWithError(`Task already exists: ${taskId}`, cli);
@@ -39,7 +43,7 @@ const body = renderTaskTemplate(
     task_id: taskId,
     short_id: shortId,
     parent_plan: argv.parentPlan || argv.parent_plan,
-    summary: argv.summary || summary,
+    summary: resolvedSummary,
     why_now: argv.whyNow || argv.why_now || whyNow,
     boundary: argv.boundary,
     done_when: argv.doneWhen || argv.done_when,
@@ -79,3 +83,19 @@ emitResult(
   cli,
   (result) => result.path
 );
+
+function assertChineseSummary(value, cli) {
+  if (!value) {
+    exitWithError("Task summary is required.", cli);
+  }
+  if (/[A-Za-z]/.test(value)) {
+    exitWithError(
+      [
+        "任务标题必须使用中文直给概述，不能包含英文字符。",
+        `当前输入：${value}`,
+        "示例：把“unify preflight entry”改成“统一改动前门禁入口”。",
+      ].join("\n"),
+      cli
+    );
+  }
+}

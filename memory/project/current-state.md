@@ -2,7 +2,7 @@
 title: CURRENT_STATE
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-25
+last_reviewed_at: 2026-03-26
 source_of_truth: memory/project/current-state.md
 related_docs:
   - AGENTS.md
@@ -24,7 +24,7 @@ related_docs:
 ## 当前焦点
 
 - `t-066` 已完成并进入 production：高频模块已补成可机读 feature 合同，`scripts/ai/feature-context.ts` 与 `build-context.ts` 已能直接提供 feature 包，首页 / 任务页 / 发布页也已开始读取共享项目状态摘要。
-- 当前主线转回 `t-063` 与第二轮 feature context 收口：继续把 `pnpm preflight` 压成唯一对外入口，并继续减少默认上下文和选测链里的重复翻译。
+- 当前主线转到 `t-067`：把 task 人类标题统一成中文直给概述，避免任务列表、门户和 release 关联继续把英文 task id 当人类标题；`t-063` 已完成并落到 `main`。
 - 本地 production 当前稳定运行在 `3010`；active release 以 `pnpm prod:status` 输出为准，当前 active release 已切到 `t-066` 上线版本。
 - `t-064` 已完成：首页已改成面向人的项目逻辑态势图，主视觉是可点击的逻辑结构图，只保留目标、里程碑、节奏、风险和下钻入口。
 - `t-058` 已完成：`scripts/ai` 的共享 CLI 外壳已经落地，`template-feedback`、`fix-first` 与 `create-task` 已收回同一套参数解析、标准输出、错误出口和 task 模板渲染。
@@ -34,7 +34,7 @@ related_docs:
 ## 当前阻塞
 
 - 当前没有发布阻塞。
-- 主要结构风险转到 feature context 第二轮与 preflight 单入口：如果 `build-context`、`feature-context`、模块合同和 `SelectedChecks` 后续再次各自维护一套本地规则，AI 加功能时仍会回到手工拼上下文。
+- 主要结构风险转到 task 命名与 feature context 第二轮：如果 task 标题继续默认落在英文 id 或英文缩写上，任务列表再怎么收 UI 也会继续难扫读；如果 `build-context`、`feature-context`、模块合同和 `SelectedChecks` 后续再次各自维护一套本地规则，AI 加功能时仍会回到手工拼上下文。
 
 ## 当前推荐校验顺序
 
@@ -58,6 +58,7 @@ related_docs:
 
 - `pnpm preflight`
 - `pnpm preflight -- --taskId=t-063`
+- `node --experimental-strip-types scripts/ai/create-task.ts task-xxx "中文直给概述" "为什么现在"`
 - `pnpm validate:static`
 - `pnpm validate:build`
 - `pnpm prod:status`

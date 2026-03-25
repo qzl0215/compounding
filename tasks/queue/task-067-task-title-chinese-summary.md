@@ -1,9 +1,10 @@
-# 任务 task-067-task-title-chinese-summary
+# 任务标题改成中文直给概述
 
 ## 任务摘要
 
+- 任务 ID：`task-067-task-title-chinese-summary`
 - 短编号：`t-067`
-- 父计划：``
+- 父计划：`memory/project/operating-blueprint.md`
 - 任务摘要：
   任务标题改成中文直给概述
 - 为什么现在：
@@ -49,13 +50,13 @@
 
 ## 交付结果
 
-- 状态：
+- 状态：doing
 - 体验验收结果：
-  
+  新标题规则已经在本地通过创建脚本、任务解析、Studio 任务读模型和整仓静态/构建门禁验证；当前只待 review 与合并。
 - 交付结果：
-  
+  `create-task` 已拦截含英文字符的任务标题摘要；task 模板改为直接把中文摘要作为文档标题；共享 task contract 会把历史 `任务 task-xxx` 机器壳标题回退到摘要；整仓 service 测试超时也已补到可稳定跑完全仓快照。
 - 复盘：
-  
+  任务命名真正该收口的是“人类标题从哪里来”，不是去批量改历史文件名；只要创建入口和解析回退统一，旧任务也能马上变得可读。
 
 ## 当前模式
 
@@ -67,11 +68,27 @@
 
 ## 关联模块
 
-
+- `tasks/templates/task-template.md`
+- `scripts/ai/create-task.ts`
+- `scripts/ai/lib/task-template.js`
+- `shared/task-contract.ts`
+- `apps/studio/src/modules/tasks/__tests__/contract.test.ts`
+- `apps/studio/src/modules/tasks/__tests__/service.test.ts`
+- `apps/studio/src/modules/releases/__tests__/service.test.ts`
+- `apps/studio/src/modules/portal/__tests__/service.test.ts`
+- `apps/studio/src/modules/delivery/__tests__/service.test.ts`
+- `apps/studio/src/modules/project-state/__tests__/service.test.ts`
+- `AGENTS.md`
+- `docs/DEV_WORKFLOW.md`
+- `docs/AI_OPERATING_MODEL.md`
+- `memory/project/current-state.md`
+- `memory/project/roadmap.md`
+- `tests/coord_support.py`
+- `tests/test_coord_cli.py`
 
 ## 更新痕迹
 
-- 记忆：no change: 未更新
+- 记忆：updated current-state / roadmap to reflect the task-title readability focus
 - 索引：no change: 未更新
-- 路线图：no change: 未更新
-- 文档：no change: 未更新
+- 路线图：updated roadmap priority to include Chinese task-title readability
+- 文档：updated AGENTS / DEV_WORKFLOW / AI_OPERATING_MODEL / task template for Chinese human-title rule

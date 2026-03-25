@@ -1,7 +1,8 @@
-# 任务 {{task_id}}
+# {{summary}}
 
 ## 任务摘要
 
+- 任务 ID：`{{task_id}}`
 - 短编号：`{{short_id}}`
 - 父计划：`{{parent_plan}}`
 - 任务摘要：

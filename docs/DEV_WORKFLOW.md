@@ -2,7 +2,7 @@
 title: DEV_WORKFLOW
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-26
+last_reviewed_at: 2026-03-25
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -46,6 +46,7 @@ related_docs:
 - 先读 `memory/project/operating-blueprint.md`，再对齐 `memory/project/roadmap.md`。
 - 先扩选项，再收关键决策。
 - planning 只留在 `memory/project/operating-blueprint.md`；边界、范围外、完成定义和约束清楚后，再用 `scripts/ai/create-task.ts` 创建执行 task。
+- 新建 task 的人类标题必须直接写在中文摘要里，不要把 `task-xxx`、英文缩写或英文路径当标题。
 - 计划评审、release 复盘或当前没有更高优先级产品任务时，可运行 `pnpm ai:cleanup-candidates` 暴露小型熵减候选；报告只作为临时输入，不回写成新的状态源。
 
 ## 执行链
@@ -78,6 +79,7 @@ related_docs:
 - 默认先更新 task 执行合同，再改代码；机器台账改由 companion、release 与投影层回写。
 - 每个 `structural / release` 改动必须绑定 `tasks/queue/*`。
 - 每个 task 至少写清：
+  - `任务 ID`
   - `短编号`
   - `父计划`
   - `任务摘要`
@@ -94,6 +96,7 @@ related_docs:
   - `交付结果`
   - `复盘`
 - `light` 改动可只更新 `docs / memory / code_index / 现有 task`。
+- 任务页与门户展示默认优先读中文任务摘要；若标题只是 `任务 task-xxx` 这类机器壳，会自动回退到摘要。
 
 ## 发布规则
 

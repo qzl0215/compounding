@@ -11,7 +11,7 @@ related_docs:
   - memory/project/current-state.md
   - memory/project/operating-blueprint.md
   - docs/ARCHITECTURE.md
-last_reviewed_at: 2026-03-25
+last_reviewed_at: 2026-03-26
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 ## 执行原则
@@ -23,6 +23,7 @@ last_reviewed_at: 2026-03-25
 - 需求不清、范围不清或发布标准不清时，先回到 `memory/project/operating-blueprint.md` 收口，不得直接创建执行 task。
 - 任何 `structural / release` 改动都必须绑定任务，并在进入 `main` 前完成 review。
 - task 短编号必须全局唯一，并显式写入任务文档；不允许再靠文件名或序号隐式推导。
+- task 文档的人类标题必须使用中文直给概述；`task-xxx` 与 `t-xxx` 只作机器引用，不得把英文 task id 当标题。
 - 生产发布只认 `main`；`dev` 只是 preview channel，不是长期 git 主分支；回滚通过 release 切换完成，不通过 `git reset` 改写线上状态。
 
 ## 默认读链

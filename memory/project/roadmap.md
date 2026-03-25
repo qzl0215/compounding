@@ -2,7 +2,7 @@
 title: ROADMAP
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-25
+last_reviewed_at: 2026-03-26
 source_of_truth: memory/project/roadmap.md
 related_docs:
   - AGENTS.md
@@ -32,7 +32,7 @@ AI feature 开发提效闭环
 
 ## 当前优先级
 
-优先沿着 `t-066` 的结果继续把 AI 加功能入口收短：保持模块合同、feature context、共享状态摘要和选测输出的单一口径，再继续压 `pnpm preflight` 单入口和 release 单一状态机。
+优先继续收短 AI 加功能入口和人类任务入口：保持模块合同、feature context、共享状态摘要和选测输出的单一口径，同时把 task 标题统一成中文直给概述，避免任务列表继续被英文 id 污染，再继续压 `pnpm preflight` 单入口和 release 单一状态机。
 
 ## 下一阶段方向
 

@@ -6,6 +6,8 @@ import { resolveReleaseActionRedirect } from "../actions";
 import { getManagementAccessState, getReleaseDashboard, readReleaseRegistry } from "../service";
 import { RELEASE_VALIDATION_ORDER, VALIDATION_LAYERS } from "../validation";
 
+const SERVICE_TIMEOUT_MS = 30000;
+
 describe("releases service", () => {
   afterEach(() => {
     delete process.env.AI_OS_RELEASE_ROOT;
@@ -96,7 +98,7 @@ describe("releases service", () => {
     expect(getReleaseDashboard().active_release?.release_id).toBe("rel-002");
     expect(getReleaseDashboard().pending_dev_release?.release_id).toBe("rel-003");
     expect(getReleaseDashboard().releases[0]?.release_id).toBe("rel-003");
-  });
+  }, SERVICE_TIMEOUT_MS);
 
   it("prefers task contract summary and falls back to delivery snapshot", () => {
     const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "compounding-release-summary-"));
@@ -177,7 +179,7 @@ describe("releases service", () => {
     expect(dashboard.pending_dev_release?.delivery_snapshot?.summary).toBe("旧快照摘要");
     expect(dashboard.active_release?.resolved_task_contract).toBeNull();
     expect(dashboard.active_release?.delivery_snapshot?.summary).toBe("仅快照摘要");
-  });
+  }, SERVICE_TIMEOUT_MS);
 
   it("ignores stale pending dev pointers once the preview has already been promoted", () => {
     const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "compounding-release-reconcile-"));
@@ -246,7 +248,7 @@ describe("releases service", () => {
     expect(dashboard.pending_dev_release).toBeNull();
     expect(devRelease?.acceptance_status).toBe("accepted");
     expect(devRelease?.promoted_to_main_at).toBe("2026-03-25T09:35:00Z");
-  });
+  }, SERVICE_TIMEOUT_MS);
 
   it("exposes the fixed validation layer order", () => {
     expect(RELEASE_VALIDATION_ORDER).toEqual(["static", "build", "runtime", "ai-output"]);

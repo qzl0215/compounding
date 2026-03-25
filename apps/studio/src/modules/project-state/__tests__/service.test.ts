@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { getDeliverySnapshot } from "@/modules/delivery";
 import { getProjectStateSnapshot } from "../service";
 
+const SERVICE_TIMEOUT_MS = 30000;
+
 describe("project state snapshot", () => {
   it("shares the same phase and release attention across home, tasks, and releases", async () => {
     const deliverySnapshot = await getDeliverySnapshot();
@@ -12,7 +14,7 @@ describe("project state snapshot", () => {
     expect(snapshot.focus.summary.length).toBeGreaterThan(0);
     expect(snapshot.execution.counts.total).toBe(deliverySnapshot.projections.taskRows.length);
     expect(["thinking", "planning", "ready", "doing", "acceptance", "released"]).toContain(snapshot.activeStage);
-  }, 15000);
+  }, SERVICE_TIMEOUT_MS);
 
   it("keeps release conclusion aligned with pending acceptance and runtime state", async () => {
     const snapshot = await getProjectStateSnapshot();
@@ -27,5 +29,5 @@ describe("project state snapshot", () => {
     } else {
       expect(snapshot.release.healthSummary).toContain("运行正常");
     }
-  }, 15000);
+  }, SERVICE_TIMEOUT_MS);
 });

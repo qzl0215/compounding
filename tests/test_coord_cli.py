@@ -23,6 +23,8 @@ class CoordCliTests(CoordCliTestCase):
 
         self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
         created = (self.target / "tasks" / "queue" / "task-123-generated.md").read_text(encoding="utf8")
+        self.assertIn("# 建立单点模板", created)
+        self.assertIn("- 任务 ID：`task-123-generated`", created)
         self.assertIn("## 执行合同（单点模板）", created)
         self.assertNotIn("{{", created)
 
@@ -54,16 +56,28 @@ class CoordCliTests(CoordCliTestCase):
         self.assertIn("只补执行合同字段，不扩到页面或运行时", created)
         self.assertIn("体验级验收标准已经清楚，且 task 可直接进入执行", created)
         self.assertIn("验证 Autoplan 可以把关键决策直接落到 task 合同。", created)
+        self.assertIn("# 把边界说清", created)
         self.assertIn("## 当前模式", created)
         self.assertIn("工程执行", created)
         self.assertIn("`codex/task-124-contract-draft`", created)
         self.assertNotIn("{{", created)
 
+    def test_create_task_rejects_english_summary(self) -> None:
+        completed = self.run_script(
+            "scripts/ai/create-task.ts",
+            "task-127-title-policy",
+            "统一 task 标题",
+            "需要避免新任务继续把英文名字写进人类标题",
+        )
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("任务标题必须使用中文直给概述", completed.stderr)
+
     def test_create_task_supports_json_output(self) -> None:
         completed = self.run_script(
             "scripts/ai/create-task.ts",
             "task-126-json",
-            "统一 create-task 输出",
+            "统一任务创建输出",
             "避免脚本层继续各自维护不同的成功结果格式",
             "--json",
         )
@@ -79,8 +93,8 @@ class CoordCliTests(CoordCliTestCase):
         completed = self.run_script(
             "scripts/ai/create-task.ts",
             "task-125-machine-facts",
-            "让新 task 默认带最小 machine facts",
-            "避免 structural task 还要靠手工补 关联模块 才能通过 scope guard",
+            "让新任务默认带最小机器事实",
+            "避免结构任务还要靠手工补关联模块才能通过范围校验",
             "--relatedModules=- `scripts/compounding_bootstrap/`\n- `package.json`\n- `schemas/`",
         )
 
@@ -307,7 +321,7 @@ console.log(JSON.stringify(readCompanionReleaseContext("t-999"), null, 2));
         (scripts_dir / "sample.ts").write_text("export const value = 2;\n", encoding="utf8")
         task_path.write_text(
             SAMPLE_TASK_MARKDOWN.replace(
-                "需要确认 companion 生命周期与 release handoff 还能围绕统一合同运作。",
+                "需要确认 companion 生命周期与发布交接仍能围绕统一合同运作。",
                 "待补充：说明为什么现在要做。",
             ),
             encoding="utf8",
@@ -331,7 +345,10 @@ ensureCompanion("t-999");
 const firstRaw = JSON.parse(fs.readFileSync(getCompanionPath("t-999"), "utf8"));
 const taskPath = path.join(process.cwd(), "tasks", "queue", "task-999-sample.md");
 const source = fs.readFileSync(taskPath, "utf8");
-fs.writeFileSync(taskPath, source.replace("验证 companion lifecycle。", "验证 companion contract hash。"));
+fs.writeFileSync(
+  taskPath,
+  source.replace("- 任务摘要：\\n  验证 companion 生命周期。", "- 任务摘要：\\n  验证 companion 合同哈希。")
+);
 ensureCompanion("t-999");
 const secondRaw = JSON.parse(fs.readFileSync(getCompanionPath("t-999"), "utf8"));
 console.log(JSON.stringify({{

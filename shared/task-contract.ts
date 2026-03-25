@@ -2,7 +2,7 @@ import { createRequire } from "node:module";
 import { createHash } from "node:crypto";
 
 const require = createRequire(import.meta.url);
-const { deriveShortId, taskIdFromPath } = require("./task-identity.ts");
+const { deriveShortId, matchesTaskReference, normalizeTaskReference, taskIdFromPath } = require("./task-identity.ts");
 
 export type TaskUpdateTrace = {
   memory: string;
@@ -63,7 +63,7 @@ type TaskContractFingerprintSource = Pick<
 
 export function parseTaskContract(path: string, content: string): ParsedTaskContract {
   const id = taskIdFromPath(path);
-  const title = extractFirstHeading(content) ?? path.split("/").pop() ?? path;
+  const rawTitle = extractFirstHeading(content) ?? "";
   const summarySection = extractLevelSection(content, ["任务摘要"], 2) ?? "";
   const executionSection = extractLevelSection(content, ["执行合同"], 2) ?? "";
   const resultSection = extractLevelSection(content, ["交付结果"], 2) ?? "";
@@ -80,7 +80,7 @@ export function parseTaskContract(path: string, content: string): ParsedTaskCont
   const summary =
     pickLabel(summaryLabels, ["任务摘要"]) ||
     paragraph(extractLegacyField(content, ["任务摘要", "目标"])) ||
-    `待补充：${title}`;
+    `待补充：${rawTitle || normalizeTaskReference(id)}`;
   const whyNow =
     pickLabel(summaryLabels, ["为什么现在"]) ||
     paragraph(extractLegacyField(content, ["为什么现在", "为什么", "原因"])) ||
@@ -128,6 +128,7 @@ export function parseTaskContract(path: string, content: string): ParsedTaskCont
     pickLabel(resultLabels, ["复盘"]) ||
     paragraph(extractLegacyField(content, ["复盘", "一句复盘"])) ||
     "未复盘";
+  const title = resolveTaskTitle(rawTitle, summary, id, shortId);
 
   return {
     id,
@@ -190,6 +191,44 @@ export function taskContractFingerprint(contract: TaskContractFingerprintSource)
 function extractFirstHeading(markdown: string) {
   const match = markdown.match(/^#\s+(.+)$/m);
   return match ? match[1].trim() : null;
+}
+
+function resolveTaskTitle(rawTitle: string, summary: string, taskId: string, shortId: string) {
+  const heading = blockText(rawTitle || "");
+  const summaryTitle = firstMeaningfulLine(summary);
+
+  if (!heading) {
+    return summaryTitle || normalizeTaskReference(taskId);
+  }
+
+  if (isGenericTaskHeading(heading, taskId, shortId)) {
+    return summaryTitle || heading;
+  }
+
+  return heading;
+}
+
+function isGenericTaskHeading(heading: string, taskId: string, shortId: string) {
+  const normalized = heading.replace(/`/g, "").trim();
+  if (!normalized) {
+    return false;
+  }
+  if (matchesTaskReference(taskId, shortId, normalized)) {
+    return true;
+  }
+  const withoutTaskPrefix = normalized.replace(/^任务\s+/, "");
+  if (withoutTaskPrefix !== normalized && matchesTaskReference(taskId, shortId, withoutTaskPrefix)) {
+    return true;
+  }
+  return false;
+}
+
+function firstMeaningfulLine(value: string) {
+  const line = String(value || "")
+    .split(/\r?\n/)
+    .map((entry) => blockText(entry))
+    .find((entry) => entry && !entry.startsWith("待补充："));
+  return line || "";
 }
 
 function extractLevelSection(markdown: string, headings: string[], level: number): string | null {

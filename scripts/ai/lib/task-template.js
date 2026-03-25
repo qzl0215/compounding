@@ -35,7 +35,7 @@ const DEFAULT_TASK_TEMPLATE_VALUES = Object.freeze({
   task_id: "task-XXX",
   short_id: "t-XXX",
   parent_plan: "memory/project/operating-blueprint.md",
-  summary: "待补充：说明这件事要交付什么结果。",
+  summary: "待补充：用中文直给概述这件事要交付什么结果，不要把英文 task 名当标题。",
   why_now: "待补充：说明为什么现在要做。",
   boundary: "待补充：写明这个 task 从 plan 承接的那一段清晰边界；若价值判断、范围外或 taste decision 仍未收口，请先回到 plan。",
   done_when: "待补充：写明体验级交付结果，而不是实现动作；若仍是实现动作，说明决策未收口。",
