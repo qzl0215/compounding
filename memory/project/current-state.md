@@ -24,7 +24,8 @@ related_docs:
 ## 当前焦点
 
 - `t-064` 已完成：首页已改成面向人的项目逻辑态势图，主视觉是可点击的逻辑结构图，只保留目标、里程碑、节奏、风险和下钻入口。
-- 当前主线回到下一条高 ROI 结构边界：继续压跨页面唯一 snapshot 和 release 单一状态机，避免首页、任务页和发布页重新长出平行口径。
+- `t-065` 已完成：把 Studio 整体切到浅色实验室风格，统一首页、任务、证据和发布页的底色、卡片、导航和控件语气。
+- 当前主线回到跨页面唯一 snapshot 与 release 单一状态机，视觉收口已先完成，后续继续压口径与对象歧义。
 - 本地 production 当前稳定运行在 `3010`；active release 为 `20260325083655-791f8cc-prod`。
 - `t-053` 已完成：本地 production 已脱离 release worktree 运行 cwd，当前只保留主工作区，不再保留 release worktree 作为常驻运行目录。
 - `t-058` 已完成：`scripts/ai` 的共享 CLI 外壳已经落地，`template-feedback`、`fix-first` 与 `create-task` 已收回同一套参数解析、标准输出、错误出口和 task 模板渲染。
@@ -61,6 +62,7 @@ related_docs:
 
 - `pnpm preflight`
 - `pnpm preflight -- --taskId=t-064`
+- `pnpm preflight -- --taskId=t-063`
 - `pnpm validate:static`
 - `pnpm validate:build`
 - `pnpm preview:status`

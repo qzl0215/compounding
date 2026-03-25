@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { Card } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
 import { getDeliverySnapshot } from "@/modules/delivery";
 import { DiffAwarePanel } from "@/modules/delivery/components/diff-aware-panel";
 import { getManagementAccessState, getRuntimeStatusExplanation } from "@/modules/releases";
@@ -15,9 +16,9 @@ export default async function ReleasesPage() {
   if (!access.allowed) {
     return (
       <Card>
-        <p className="text-xs uppercase tracking-[0.28em] text-danger">发布管理</p>
-        <h2 className="mt-3 text-3xl font-semibold">当前入口仅允许本机或内网访问。</h2>
-        <p className="mt-4 max-w-3xl text-white/68">{access.reason}</p>
+        <p className="text-xs uppercase tracking-[0.28em] text-rose-700">发布管理</p>
+        <h2 className="mt-3 text-3xl font-semibold text-slate-900">当前入口仅允许本机或内网访问。</h2>
+        <p className="mt-4 max-w-3xl text-slate-600">{access.reason}</p>
       </Card>
     );
   }
@@ -39,32 +40,40 @@ export default async function ReleasesPage() {
   return (
     <div className="space-y-6">
       <section id="release-overview">
-        <Card>
-          <p className="text-xs uppercase tracking-[0.28em] text-accent">发布判断</p>
-          <h2 className="mt-3 text-3xl font-semibold">这页只回答一件事：现在该验收、继续发布，还是先修运行态</h2>
-          <div className="mt-6 grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
-            <div className="rounded-[1.75rem] border border-accent/18 bg-accent/8 p-5">
-              <p className="text-xs uppercase tracking-[0.18em] text-accent/80">当前结论</p>
-              <p className="mt-3 text-2xl font-semibold text-white">{releaseConclusion}</p>
-              <p className="mt-4 text-sm leading-7 text-white/78">{releaseNextAction}</p>
-            </div>
-            <div className="rounded-[1.75rem] border border-white/8 bg-white/[0.03] p-5">
-              <p className="text-xs uppercase tracking-[0.18em] text-white/42">当前入口</p>
-              <div className="mt-4 grid gap-3 md:grid-cols-2">
-                <Meta title="待验收 dev" value={dashboard.pending_dev_release?.release_id || "当前没有待验收 dev"} />
-                <Meta title="生产激活版本" value={dashboard.active_release_id || "尚未切换任何 release"} />
-                <Meta title="dev 预览链接" value={dashboard.dev_preview_url} />
-                <Meta title="生产验收链接" value={dashboard.production_url} />
-              </div>
-            </div>
-          </div>
-        </Card>
+        <PageHeader
+          eyebrow="发布判断"
+          title="这页只回答一件事：现在该验收、继续发布，还是先修运行态"
+          description={releaseConclusion}
+          note={releaseNextAction}
+          metrics={[
+            {
+              label: "生产激活版本",
+              value: dashboard.active_release_id || "尚未切换",
+              tone: dashboard.active_release_id ? "success" : "default",
+            },
+            {
+              label: "待验收 dev",
+              value: dashboard.pending_dev_release?.release_id || "当前没有",
+              tone: dashboard.pending_dev_release ? "warning" : "default",
+            },
+            {
+              label: "dev 预览",
+              value: dashboard.local_preview.status === "running" ? "可用" : "待恢复",
+              tone: dashboard.local_preview.status === "running" ? "success" : "warning",
+            },
+            {
+              label: "production",
+              value: dashboard.local_runtime.status === "running" ? "在线" : "异常",
+              tone: dashboard.local_runtime.status === "running" ? "success" : "danger",
+            },
+          ]}
+        />
       </section>
 
       <section id="runtime-status">
         <Card>
-          <p className="text-xs uppercase tracking-[0.28em] text-accent">运行态</p>
-          <h2 className="mt-3 text-3xl font-semibold">先确认 dev / production 现在是不是可信</h2>
+          <p className="text-xs uppercase tracking-[0.28em] text-sky-700">运行态</p>
+          <h2 className="mt-3 text-3xl font-semibold text-slate-900">先确认 dev / production 现在是不是可信</h2>
           <div className="mt-6 grid gap-4 xl:grid-cols-2">
             <RuntimeCard title="dev 预览" runtime={dashboard.local_preview} />
             <RuntimeCard title="production" runtime={dashboard.local_runtime} />
@@ -86,9 +95,9 @@ export default async function ReleasesPage() {
 
       <section id="diff-aware-artifacts">
         <Card>
-          <p className="text-xs uppercase tracking-[0.28em] text-accent">第二屏：差异感知摘要</p>
-          <h2 className="mt-3 text-3xl font-semibold">review / retro / ship log 放到结论之后</h2>
-          <p className="mt-4 max-w-4xl text-white/68">
+          <p className="text-xs uppercase tracking-[0.28em] text-sky-700">第二屏：差异感知摘要</p>
+          <h2 className="mt-3 text-3xl font-semibold text-slate-900">review / retro / ship log 放到结论之后</h2>
+          <p className="mt-4 max-w-4xl text-slate-600">
             这里仍然保留改动范围驱动的验证线索，但它属于“已经决定进发布页后再看的细节”，不该抢首页判断。
           </p>
           <div className="mt-6">
@@ -98,34 +107,34 @@ export default async function ReleasesPage() {
       </section>
 
       <section id="validation-layers">
-        <details className="rounded-3xl border border-white/8 bg-panel/70 p-5 shadow-glow backdrop-blur-xl">
-          <summary className="cursor-pointer text-sm font-medium text-white">展开分层验证建议</summary>
+        <details className="rounded-3xl border border-slate-200 bg-panel/70 p-5 shadow-glow backdrop-blur-xl">
+          <summary className="cursor-pointer text-sm font-medium text-slate-900">展开分层验证建议</summary>
           <div className="mt-6 grid gap-4 xl:grid-cols-2">
             {VALIDATION_LAYERS.map((layer) => (
-              <article key={layer.id} className="rounded-[1.75rem] border border-white/8 bg-white/[0.03] p-5">
-                <p className="text-xs uppercase tracking-[0.22em] text-accent">{layer.title}</p>
-                <p className="mt-3 text-sm text-white/72">{layer.summary}</p>
-                <div className="mt-4 space-y-3 text-sm text-white/72">
+              <article key={layer.id} className="rounded-[1.75rem] border border-slate-200 bg-white/90 p-5">
+                <p className="text-xs uppercase tracking-[0.22em] text-sky-700">{layer.title}</p>
+                <p className="mt-3 text-sm text-slate-700">{layer.summary}</p>
+                <div className="mt-4 space-y-3 text-sm text-slate-700">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.18em] text-white/42">推荐命令</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">推荐命令</p>
                     <ul className="mt-2 space-y-2">
                       {layer.commands.map((command) => (
-                        <li key={command} className="rounded-2xl border border-white/8 bg-black/20 px-3 py-2 font-mono text-xs text-white/78">
+                        <li key={command} className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 font-mono text-xs text-slate-700">
                           {command}
                         </li>
                       ))}
                     </ul>
                   </div>
                   <div>
-                    <p className="text-xs uppercase tracking-[0.18em] text-white/42">何时跑</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">何时跑</p>
                     <p className="mt-2">{layer.runWhen}</p>
                   </div>
                   <div>
-                    <p className="text-xs uppercase tracking-[0.18em] text-white/42">失败说明</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">失败说明</p>
                     <p className="mt-2">{layer.failureMeaning}</p>
                   </div>
                   <div>
-                    <p className="text-xs uppercase tracking-[0.18em] text-white/42">下一步</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">下一步</p>
                     <p className="mt-2">{layer.nextStep}</p>
                   </div>
                 </div>
@@ -140,9 +149,9 @@ export default async function ReleasesPage() {
 
 function Meta({ title, value }: { title: string; value: string }) {
   return (
-    <div className="rounded-[1.5rem] border border-white/8 bg-black/15 p-4">
-      <p className="text-xs uppercase tracking-[0.22em] text-white/42">{title}</p>
-      <p className="mt-3 break-all text-sm text-white/78">{value}</p>
+    <div className="rounded-[1.5rem] border border-slate-200 bg-white/90 p-4">
+      <p className="text-xs uppercase tracking-[0.22em] text-slate-500">{title}</p>
+      <p className="mt-3 break-all text-sm text-slate-700">{value}</p>
     </div>
   );
 }
@@ -151,13 +160,13 @@ function RuntimeCard({ title, runtime }: { title: string; runtime: LocalRuntimeS
   const exp = getRuntimeStatusExplanation(runtime.status, title, runtime);
   const showNextStep = runtime.status !== "running";
   return (
-    <div className="rounded-[1.75rem] border border-white/8 bg-white/[0.03] p-5">
-      <p className="text-xs uppercase tracking-[0.22em] text-accent">{title}</p>
-      <p className="mt-3 text-sm text-white/68">{exp.explanation}</p>
+    <div className="rounded-[1.75rem] border border-slate-200 bg-white/90 p-5">
+      <p className="text-xs uppercase tracking-[0.22em] text-sky-700">{title}</p>
+      <p className="mt-3 text-sm text-slate-700">{exp.explanation}</p>
       {showNextStep ? (
-        <div className="mt-4 rounded-2xl border border-accent/20 bg-accent/8 px-4 py-3">
-          <p className="text-xs uppercase tracking-[0.18em] text-accent/80">下一步</p>
-          <p className="mt-2 text-sm text-white/78">{exp.nextStep}</p>
+        <div className="mt-4 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3">
+          <p className="text-xs uppercase tracking-[0.18em] text-sky-700">下一步</p>
+          <p className="mt-2 text-sm text-slate-700">{exp.nextStep}</p>
         </div>
       ) : null}
       <dl className="mt-4 grid gap-3 md:grid-cols-2">

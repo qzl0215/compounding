@@ -1,19 +1,22 @@
 import type { PropsWithChildren } from "react";
 import { cn } from "@/lib/classnames";
 
+export type BadgeTone = "default" | "accent" | "success" | "danger" | "warning";
+
 type BadgeProps = PropsWithChildren<{
-  tone?: "default" | "accent" | "success" | "danger";
+  tone?: BadgeTone;
 }>;
 
 export function Badge({ children, tone = "default" }: BadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex rounded-full border px-3 py-1 text-xs uppercase tracking-[0.24em]",
-        tone === "accent" && "border-accent/50 bg-accent/10 text-accent",
-        tone === "success" && "border-success/50 bg-success/10 text-success",
-        tone === "danger" && "border-danger/50 bg-danger/10 text-danger",
-        tone === "default" && "border-white/10 bg-white/5 text-white/70"
+        "inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-medium uppercase tracking-[0.22em] backdrop-blur",
+        tone === "accent" && "border-sky-200 bg-sky-50 text-sky-700",
+        tone === "success" && "border-emerald-200 bg-emerald-50 text-emerald-700",
+        tone === "danger" && "border-rose-200 bg-rose-50 text-rose-700",
+        tone === "warning" && "border-amber-200 bg-amber-50 text-amber-700",
+        tone === "default" && "border-slate-200 bg-slate-50 text-slate-600"
       )}
     >
       {children}

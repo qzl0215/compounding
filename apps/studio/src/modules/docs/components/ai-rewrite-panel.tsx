@@ -73,18 +73,18 @@ export function AiRewritePanel({ open, path, content, promptDocs, onClose, onApp
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#02050b]/70 backdrop-blur-sm">
-      <div className="absolute inset-y-0 right-0 w-full max-w-[720px] overflow-y-auto border-l border-white/10 bg-[#07111f] px-5 py-5 shadow-2xl">
+    <div className="fixed inset-0 z-50 bg-slate-950/20 backdrop-blur-sm">
+      <div className="absolute inset-y-0 right-0 w-full max-w-[720px] overflow-y-auto border-l border-slate-200 bg-white/96 px-5 py-5 shadow-2xl">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-2">
-            <p className="text-xs uppercase tracking-[0.28em] text-accent">AI 重构</p>
-            <h3 className="text-2xl font-semibold text-white">两步文档重构</h3>
-            <p className="text-sm text-white/58">{path}</p>
-            {meta ? <p className="text-xs text-white/45">{meta.provider} / {meta.model}</p> : null}
+            <p className="text-xs uppercase tracking-[0.28em] text-sky-700">AI 重构</p>
+            <h3 className="text-2xl font-semibold text-slate-900">两步文档重构</h3>
+            <p className="text-sm text-slate-600">{path}</p>
+            {meta ? <p className="text-xs text-slate-500">{meta.provider} / {meta.model}</p> : null}
           </div>
           <button
             type="button"
-            className="rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-sm text-white/72 transition hover:border-white/20 hover:text-white"
+            className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-sky-200 hover:text-slate-900"
             onClick={onClose}
           >
             关闭
@@ -94,11 +94,11 @@ export function AiRewritePanel({ open, path, content, promptDocs, onClose, onApp
         <div className="mt-6 space-y-5">
           <Card>
             <div className="flex flex-wrap items-center gap-3">
-              <span className="text-sm text-white/68">重构强度</span>
+              <span className="text-sm text-slate-700">重构强度</span>
               <select
                 value={intensity}
                 onChange={(event) => setIntensity(event.target.value as RewriteIntensity)}
-                className="rounded-full border border-white/12 bg-black/20 px-4 py-2 text-sm text-white outline-none"
+                className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-900 outline-none"
               >
                 <option value="light">轻度</option>
                 <option value="medium">中度</option>
@@ -106,7 +106,7 @@ export function AiRewritePanel({ open, path, content, promptDocs, onClose, onApp
               </select>
               <button
                 type="button"
-                className="rounded-full border border-accent/35 bg-accent/10 px-4 py-2 text-sm text-accent transition hover:bg-accent/18 disabled:opacity-60"
+                className="rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm text-sky-700 transition hover:bg-sky-100 disabled:opacity-60"
                 onClick={runClarify}
                 disabled={isClarifying}
               >
@@ -120,22 +120,22 @@ export function AiRewritePanel({ open, path, content, promptDocs, onClose, onApp
                 <PanelList title="若不补充的默认假设" items={clarify.assumptions_if_unanswered} />
               </div>
             ) : (
-              <p className="mt-4 text-sm text-white/54">先让 AI 判断当前文档缺哪些关键信息，再进入正文重构。</p>
+              <p className="mt-4 text-sm text-slate-500">先让 AI 判断当前文档缺哪些关键信息，再进入正文重构。</p>
             )}
           </Card>
 
           <Card>
-            <p className="text-sm font-medium text-white">用户补充</p>
+            <p className="text-sm font-medium text-slate-900">用户补充</p>
             <textarea
               value={answers}
               onChange={(event) => setAnswers(event.target.value)}
               placeholder="把 AI 提出的关键问题补充在这里。若不补充，AI 会按默认假设继续重构。"
-              className="mt-4 min-h-[160px] w-full rounded-[1.25rem] border border-white/10 bg-black/20 px-4 py-4 text-sm leading-7 text-white outline-none transition focus:border-accent/35 focus:ring-2 focus:ring-accent/20"
+              className="mt-4 min-h-[160px] w-full rounded-[1.25rem] border border-slate-200 bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-900 outline-none transition focus:border-sky-300 focus:ring-2 focus:ring-sky-200"
             />
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <button
                 type="button"
-                className="rounded-full border border-accent/35 bg-accent/10 px-4 py-2 text-sm text-accent transition hover:bg-accent/18 disabled:opacity-60"
+                className="rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm text-sky-700 transition hover:bg-sky-100 disabled:opacity-60"
                 onClick={runRewrite}
                 disabled={isRewriting}
               >
@@ -144,7 +144,7 @@ export function AiRewritePanel({ open, path, content, promptDocs, onClose, onApp
               {rewrite?.rewritten_markdown ? (
                 <button
                   type="button"
-                  className="rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-sm text-white/72 transition hover:border-white/20 hover:text-white"
+                  className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-sky-200 hover:text-slate-900"
                   onClick={() => onApply(rewrite.rewritten_markdown)}
                 >
                   应用到正文草稿
@@ -161,12 +161,12 @@ export function AiRewritePanel({ open, path, content, promptDocs, onClose, onApp
                 <PanelList title="建议保留" items={rewrite.keep_recommendations} />
                 <PanelList title="建议删除" items={rewrite.remove_recommendations} />
                 <div>
-                  <p className="text-sm font-medium text-white">重构强度说明</p>
-                  <p className="mt-2 text-sm leading-7 text-white/72">{rewrite.intensity_note || "无"}</p>
+                  <p className="text-sm font-medium text-slate-900">重构强度说明</p>
+                  <p className="mt-2 text-sm leading-7 text-slate-700">{rewrite.intensity_note || "无"}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-white">重构预览</p>
-                  <div className="mt-4 rounded-[1.5rem] border border-white/8 bg-black/10 px-5 py-5">
+                  <p className="text-sm font-medium text-slate-900">重构预览</p>
+                  <div className="mt-4 rounded-[1.5rem] border border-slate-200 bg-slate-50 px-5 py-5">
                     <MarkdownContent content={preview} />
                   </div>
                 </div>
@@ -175,13 +175,13 @@ export function AiRewritePanel({ open, path, content, promptDocs, onClose, onApp
           ) : null}
 
           <Card>
-            <p className="text-sm font-medium text-white">当前提示词方案</p>
+            <p className="text-sm font-medium text-slate-900">当前提示词方案</p>
             <PromptDocPreviews promptDocs={promptDocs} />
           </Card>
 
           {error ? (
-            <Card className="border-red-400/20 bg-red-400/10">
-              <p className="text-sm text-red-100">{error}</p>
+            <Card className="border-rose-200 bg-rose-50">
+              <p className="text-sm text-rose-700">{error}</p>
             </Card>
           ) : null}
         </div>

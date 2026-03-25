@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html {
@@ -12,15 +12,36 @@ html {
 
 body {
   min-height: 100vh;
+  overflow-x: hidden;
   background:
-    radial-gradient(circle at top, rgba(57, 208, 255, 0.12), transparent 24%),
-    radial-gradient(circle at bottom left, rgba(241, 177, 87, 0.08), transparent 22%),
-    #070b14;
-  color: #f5f7fb;
+    radial-gradient(circle at 15% 8%, rgba(14, 165, 233, 0.1), transparent 24%),
+    radial-gradient(circle at 82% 4%, rgba(245, 158, 11, 0.08), transparent 18%),
+    radial-gradient(circle at 50% 100%, rgba(16, 185, 129, 0.08), transparent 22%),
+    #f6f8fc;
+  color: #0f172a;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings:
+    "liga" 1,
+    "calt" 1;
 }
 
 * {
-  border-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(148, 163, 184, 0.18);
+}
+
+::selection {
+  background: rgba(14, 165, 233, 0.18);
+  color: #0f172a;
+}
+
+:where(h1, h2, h3, h4, .font-display) {
+  font-family: var(--font-display), "IBM Plex Sans", sans-serif;
+  letter-spacing: -0.03em;
+}
+
+:where(code, pre, kbd, samp) {
+  font-family: var(--font-mono), "JetBrains Mono", monospace;
 }
 
 ::-webkit-scrollbar {
@@ -28,18 +49,26 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.8);
 }
 
 ::-webkit-scrollbar-thumb {
   border-radius: 9999px;
-  background: rgba(57, 208, 255, 0.24);
+  background: rgba(100, 116, 139, 0.32);
 }
 
 @layer components {
+  .page-section-title {
+    @apply text-xs uppercase tracking-[0.28em] text-accent;
+  }
+
+  .page-section-note {
+    @apply max-w-3xl text-sm leading-7 text-slate-600;
+  }
+
   .markdown-shell {
     @apply max-w-none text-[15px] leading-7;
-    color: rgba(255, 255, 255, 0.78);
+    color: #334155;
   }
 
   .markdown-shell > :first-child {
@@ -52,8 +81,9 @@ body {
 
   .markdown-shell h1,
   .markdown-shell h2,
-  .markdown-shell h3 {
-    @apply mt-8 text-white;
+  .markdown-shell h3,
+  .markdown-shell h4 {
+    @apply mt-8 text-slate-900;
   }
 
   .markdown-shell h1 {
@@ -62,11 +92,15 @@ body {
 
   .markdown-shell h2 {
     @apply border-b pb-3 text-[1.7rem] font-semibold tracking-tight;
-    border-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(226, 232, 240, 1);
   }
 
   .markdown-shell h3 {
     @apply text-[1.28rem] font-semibold tracking-tight;
+  }
+
+  .markdown-shell h4 {
+    @apply text-[1.08rem] font-semibold tracking-tight;
   }
 
   .markdown-shell .heading-anchor {
@@ -79,12 +113,12 @@ body {
   }
 
   .markdown-shell .group:hover .anchor-mark {
-    color: rgba(57, 208, 255, 0.85);
+    color: rgba(14, 165, 233, 0.9);
   }
 
   .markdown-shell p,
   .markdown-shell li {
-    color: rgba(255, 255, 255, 0.78);
+    color: #334155;
   }
 
   .markdown-shell p {
@@ -92,7 +126,7 @@ body {
   }
 
   .markdown-shell strong {
-    @apply font-semibold text-white;
+    @apply font-semibold text-slate-900;
   }
 
   .markdown-shell ul,
@@ -101,40 +135,40 @@ body {
   }
 
   .markdown-shell li::marker {
-    color: rgba(57, 208, 255, 0.85);
+    color: rgba(14, 165, 233, 0.9);
   }
 
   .markdown-shell a.markdown-link {
-    @apply rounded-md text-accent underline decoration-accent/40 underline-offset-4 transition hover:text-white hover:decoration-accent;
+    @apply rounded-md text-accent underline decoration-accent/30 underline-offset-4 transition hover:text-sky-700 hover:decoration-accent;
   }
 
   .markdown-shell .markdown-callout {
-    @apply rounded-3xl border px-5 py-4 shadow-[0_18px_60px_rgba(0,0,0,0.18)];
-    border-color: rgba(255, 255, 255, 0.1);
-    background-color: rgba(255, 255, 255, 0.04);
-    color: rgba(255, 255, 255, 0.8);
+    @apply rounded-3xl border px-5 py-4 shadow-[0_18px_60px_rgba(15,23,42,0.06)];
+    border-color: rgba(226, 232, 240, 1);
+    background-color: rgba(255, 255, 255, 0.82);
+    color: #334155;
   }
 
   .markdown-shell .markdown-pre {
-    @apply overflow-x-auto rounded-3xl border bg-[#02050b] p-4 shadow-[0_20px_80px_rgba(0,0,0,0.22)];
-    border-color: rgba(255, 255, 255, 0.1);
+    @apply overflow-x-auto rounded-3xl border bg-slate-50 p-4 shadow-[0_20px_80px_rgba(15,23,42,0.05)];
+    border-color: rgba(226, 232, 240, 1);
   }
 
   .markdown-shell .markdown-inline-code {
-    @apply rounded-lg border px-1.5 py-0.5 font-mono text-[0.92em] text-accent;
-    border-color: rgba(57, 208, 255, 0.2);
-    background-color: rgba(57, 208, 255, 0.1);
+    @apply rounded-lg border px-1.5 py-0.5 font-mono text-[0.92em] text-sky-700;
+    border-color: rgba(191, 219, 254, 1);
+    background-color: rgba(239, 246, 255, 1);
   }
 
   .markdown-shell .markdown-code-block {
     @apply font-mono text-[13px] leading-6;
-    color: rgba(255, 255, 255, 0.86);
+    color: #0f172a;
   }
 
   .markdown-shell .markdown-table-shell {
     @apply overflow-x-auto rounded-3xl border;
-    border-color: rgba(255, 255, 255, 0.1);
-    background-color: rgba(255, 255, 255, 0.03);
+    border-color: rgba(226, 232, 240, 1);
+    background-color: rgba(255, 255, 255, 0.82);
   }
 
   .markdown-shell .markdown-table {
@@ -142,20 +176,20 @@ body {
   }
 
   .markdown-shell .markdown-th {
-    @apply border-b px-4 py-3 text-left font-medium text-white;
-    border-color: rgba(255, 255, 255, 0.1);
-    background-color: rgba(255, 255, 255, 0.04);
+    @apply border-b px-4 py-3 text-left font-medium text-slate-700;
+    border-color: rgba(226, 232, 240, 1);
+    background-color: rgba(248, 250, 252, 1);
   }
 
   .markdown-shell .markdown-td {
     @apply border-t px-4 py-3 align-top;
-    border-color: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.76);
+    border-color: rgba(226, 232, 240, 1);
+    color: #334155;
   }
 
   .markdown-shell .markdown-hr {
     @apply my-8;
-    border-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(226, 232, 240, 1);
   }
 
   .markdown-compact {

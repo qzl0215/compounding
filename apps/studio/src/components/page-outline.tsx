@@ -66,8 +66,8 @@ export function PageOutline({ title = "页内导航", items, emptyText = "当前
 
   return (
     <Card className={cn("h-fit xl:sticky xl:top-6 xl:max-h-[calc(100vh-3rem)] xl:overflow-auto", className)}>
-      <p className="text-xs uppercase tracking-[0.28em] text-accent">{title}</p>
-      <div className="mt-4 space-y-2 text-sm text-white/72">
+      <p className="text-xs uppercase tracking-[0.28em] text-sky-700">{title}</p>
+      <div className="mt-4 space-y-2 text-sm text-slate-700">
         {uniqueItems.length > 0 ? (
           uniqueItems.map((item) => (
             <a
@@ -76,8 +76,8 @@ export function PageOutline({ title = "页内导航", items, emptyText = "当前
               className={cn(
                 "block rounded-2xl border px-3 py-2 transition",
                 activeId === item.id
-                  ? "border-accent/40 bg-accent/10 text-white"
-                  : "border-white/8 bg-white/[0.03] hover:border-accent/30 hover:text-white"
+                  ? "border-sky-200 bg-sky-50 text-slate-900"
+                  : "border-slate-200 bg-white hover:border-sky-200 hover:text-slate-900"
               )}
             >
               {item.label}

@@ -7,20 +7,20 @@ import { TASK_DELIVERY_LABELS } from "../delivery";
 import type { TaskDeliveryRow, TaskDeliveryStatus } from "../types";
 
 const DELIVERY_TONE: Record<TaskDeliveryStatus, string> = {
-  not_started: "border-sky-400/20 bg-sky-400/10 text-sky-100",
-  in_progress: "border-amber-400/20 bg-amber-400/10 text-amber-100",
-  pending_acceptance: "border-fuchsia-400/20 bg-fuchsia-400/10 text-fuchsia-100",
-  released: "border-emerald-400/20 bg-emerald-400/10 text-emerald-100",
-  rolled_back: "border-white/12 bg-white/[0.05] text-white/78",
-  blocked: "border-red-400/20 bg-red-400/10 text-red-100",
+  not_started: "border-sky-200 bg-sky-50 text-sky-700",
+  in_progress: "border-amber-200 bg-amber-50 text-amber-700",
+  pending_acceptance: "border-fuchsia-200 bg-fuchsia-50 text-fuchsia-700",
+  released: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  rolled_back: "border-slate-200 bg-slate-50 text-slate-700",
+  blocked: "border-rose-200 bg-rose-50 text-rose-700",
 };
 
 const STAGE_TONE: Record<string, string> = {
-  planning: "border-sky-400/20 bg-sky-400/10 text-sky-100",
-  ready: "border-emerald-400/20 bg-emerald-400/10 text-emerald-100",
-  doing: "border-amber-400/20 bg-amber-400/10 text-amber-100",
-  acceptance: "border-fuchsia-400/20 bg-fuchsia-400/10 text-fuchsia-100",
-  released: "border-white/12 bg-white/[0.05] text-white/78",
+  planning: "border-sky-200 bg-sky-50 text-sky-700",
+  ready: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  doing: "border-amber-200 bg-amber-50 text-amber-700",
+  acceptance: "border-fuchsia-200 bg-fuchsia-50 text-fuchsia-700",
+  released: "border-slate-200 bg-slate-50 text-slate-700",
 };
 
 type Props = {
@@ -37,11 +37,11 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
 
   return (
     <Fragment>
-      <tr className="align-top">
+      <tr className="align-top transition hover:bg-slate-50">
         <Cell className="min-w-[260px]">
           <button type="button" className="space-y-1 text-left" onClick={onToggle}>
-            <p className="font-medium text-white">{`${row.shortId || row.id} ${row.title}`.trim()}</p>
-            <p className="text-xs text-white/45" title={row.whyNow}>
+            <p className="font-medium leading-6 text-slate-900">{`${row.shortId || row.id} ${row.title}`.trim()}</p>
+            <p className="text-xs text-slate-500" title={row.whyNow}>
               {truncate(row.whyNow || "未记录", 52)}
             </p>
           </button>
@@ -51,10 +51,10 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
             <span className={`inline-flex rounded-full border px-3 py-1 text-xs ${STAGE_TONE[stage] || STAGE_TONE.ready}`}>
               {DEMAND_STAGE_LABELS[stage]}
             </span>
-            {row.currentMode ? <p className="text-xs text-white/45">{row.currentMode}</p> : null}
+            {row.currentMode ? <p className="text-xs text-slate-500">{row.currentMode}</p> : null}
           </div>
         </Cell>
-        <Cell className="min-w-[260px] text-white/72">
+        <Cell className="min-w-[260px] text-slate-700">
           <div title={row.doneWhen}>{truncate(row.doneWhen || "未记录", 52)}</div>
         </Cell>
         <Cell className="min-w-[140px]">
@@ -62,14 +62,14 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
             {TASK_DELIVERY_LABELS[row.deliveryStatus]}
           </span>
         </Cell>
-        <Cell className="min-w-[220px] text-white/68">
+        <Cell className="min-w-[220px] text-slate-600">
           <div title={row.risk}>{truncate(row.risk || "未记录", 40)}</div>
         </Cell>
         <Cell className="min-w-[230px]">
           <div className="flex flex-wrap gap-2">
             <Link
               href={`/knowledge-base?path=${encodeURIComponent(row.path)}`}
-              className="inline-flex rounded-full border border-accent/35 bg-accent/10 px-3 py-1 text-xs text-accent transition hover:bg-accent/18"
+              className="inline-flex rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs text-sky-700 transition hover:bg-sky-100"
             >
               打开
             </Link>
@@ -78,7 +78,7 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
                 type="button"
                 disabled={pending}
                 onClick={() => onAccept(row.acceptReleaseId as string)}
-                className="inline-flex rounded-full border border-emerald-400/35 bg-emerald-400/12 px-3 py-1 text-xs text-emerald-100 transition hover:bg-emerald-400/20 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs text-emerald-700 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 验收通过
               </button>
@@ -88,7 +88,7 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
                 type="button"
                 disabled={pending}
                 onClick={() => onRollback(row.rollbackReleaseId as string)}
-                className="inline-flex rounded-full border border-white/12 bg-white/[0.04] px-3 py-1 text-xs text-white/78 transition hover:border-accent/35 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-700 transition hover:border-sky-200 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 回滚版本
               </button>
@@ -98,8 +98,8 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
       </tr>
       {isExpanded ? (
         <tr>
-          <td colSpan={6} className="bg-white/[0.03] px-4 py-4">
-            <div className="grid gap-4 text-sm text-white/68 lg:grid-cols-3">
+          <td colSpan={6} className="bg-slate-50 px-4 py-4">
+            <div className="grid gap-4 text-sm text-slate-700 lg:grid-cols-3">
               <DetailBlock title="任务摘要">
                 <p>为什么现在：{row.whyNow || "未记录"}</p>
                 <p>父计划：{row.parentPlan || "未标注"}</p>
@@ -153,8 +153,8 @@ function Cell({ children, className }: { children: ReactNode; className?: string
 
 function DetailBlock({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="rounded-3xl border border-white/8 bg-black/20 p-4">
-      <p className="text-xs uppercase tracking-[0.22em] text-accent">{title}</p>
+    <div className="rounded-[1.35rem] border border-slate-200 bg-white/90 p-4">
+      <p className="text-xs uppercase tracking-[0.22em] text-sky-700">{title}</p>
       <div className="mt-3 space-y-2">{children}</div>
     </div>
   );

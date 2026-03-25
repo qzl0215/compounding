@@ -173,21 +173,21 @@ export function DocViewer({
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-3">
             <div>
-              <h2 className="text-2xl font-semibold">{displayTitle}</h2>
-              <p className="mt-2 text-sm text-white/48">{path}</p>
+              <h2 className="text-2xl font-semibold text-slate-900">{displayTitle}</h2>
+              <p className="mt-2 text-sm text-slate-500">{path}</p>
             </div>
             {editable && hasManagedBlocks && mode !== "advanced" ? (
-              <p className="rounded-2xl border border-amber-400/20 bg-amber-400/10 px-3 py-2 text-sm text-amber-100/88">
+              <p className="rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
                 当前文档包含 scaffold 托管区块。你正在编辑正文层；如需修改 frontmatter 或托管标记，请切换到高级模式。
               </p>
             ) : null}
             {editable && mode === "advanced" && hasManagedBlocks ? (
-              <p className="rounded-2xl border border-amber-400/20 bg-amber-400/10 px-3 py-2 text-sm text-amber-100/88">
+              <p className="rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
                 当前是高级模式。你正在编辑完整 Markdown；后续运行 scaffold 时，托管区块仍可能被覆盖。
               </p>
             ) : null}
-            {statusMessage ? <p className="text-sm text-emerald-300">{statusMessage}</p> : null}
-            {errorMessage ? <p className="text-sm text-red-300">{errorMessage}</p> : null}
+            {statusMessage ? <p className="text-sm text-emerald-700">{statusMessage}</p> : null}
+            {errorMessage ? <p className="text-sm text-rose-700">{errorMessage}</p> : null}
           </div>
           <DocViewerToolbar
             editable={editable}
@@ -212,17 +212,17 @@ export function DocViewer({
         ) : (
           <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
             <section className="space-y-3">
-              <p className="text-xs uppercase tracking-[0.22em] text-white/42">完整 Markdown 原文</p>
+              <p className="text-xs uppercase tracking-[0.22em] text-slate-500">完整 Markdown 原文</p>
               <textarea
-                className="min-h-[70vh] w-full rounded-[1.5rem] border border-white/10 bg-black/20 px-4 py-4 font-mono text-sm leading-7 text-white outline-none transition focus:border-accent/35 focus:ring-2 focus:ring-accent/20"
+                className="min-h-[70vh] w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 px-4 py-4 font-mono text-sm leading-7 text-slate-900 outline-none transition focus:border-sky-300 focus:ring-2 focus:ring-sky-200"
                 value={rawDraft}
                 onChange={(event) => setRawDraft(event.target.value)}
                 spellCheck={false}
               />
             </section>
             <section className="space-y-3">
-              <p className="text-xs uppercase tracking-[0.22em] text-white/42">实时预览</p>
-              <div className="min-h-[70vh] rounded-[1.5rem] border border-white/8 bg-black/10 px-5 py-5">
+              <p className="text-xs uppercase tracking-[0.22em] text-slate-500">实时预览</p>
+              <div className="min-h-[70vh] rounded-[1.5rem] border border-slate-200 bg-white/90 px-5 py-5">
                 <MarkdownContent content={previewContent} />
               </div>
             </section>

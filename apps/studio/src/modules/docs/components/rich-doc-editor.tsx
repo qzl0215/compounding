@@ -31,28 +31,28 @@ export function RichDocEditor({ markdown, onChange }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2 text-xs text-white/48">
+      <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
         <span>正文直编模式</span>
         <span>•</span>
         <span>默认隐藏 frontmatter 与托管标记</span>
         <span>•</span>
         <span>结构复杂时可切到高级模式</span>
       </div>
-      <div className="space-y-5 rounded-[1.5rem] border border-white/8 bg-black/10 px-5 py-5">
+      <div className="space-y-5 rounded-[1.5rem] border border-slate-200 bg-white/90 px-5 py-5">
         {blocks.map((block, index) => (
           <EditableBlockView key={block.id} block={block} onChange={(nextBlock) => updateBlock(index, nextBlock)} />
         ))}
         <div className="flex flex-wrap gap-2 pt-2">
           <button
             type="button"
-            className="rounded-full border border-white/12 bg-white/[0.04] px-3 py-2 text-xs text-white/68 transition hover:border-white/20 hover:text-white"
+            className="rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 transition hover:border-sky-200 hover:text-slate-900"
             onClick={appendParagraph}
           >
             新增段落
           </button>
           <button
             type="button"
-            className="rounded-full border border-white/12 bg-white/[0.04] px-3 py-2 text-xs text-white/68 transition hover:border-white/20 hover:text-white"
+            className="rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 transition hover:border-sky-200 hover:text-slate-900"
             onClick={appendHeading}
           >
             新增二级标题
@@ -78,9 +78,9 @@ function EditableBlockView({
           onValueChange={(value) => onChange({ ...block, text: value })}
           className={cn(
             "w-full resize-none overflow-hidden bg-transparent outline-none",
-            block.level === 1 && "text-4xl font-semibold tracking-tight leading-tight text-white",
-            block.level === 2 && "border-b border-white/10 pb-3 text-[1.7rem] font-semibold tracking-tight text-white",
-            block.level === 3 && "text-[1.28rem] font-semibold tracking-tight text-white"
+            block.level === 1 && "text-4xl font-semibold tracking-tight leading-tight text-slate-900",
+            block.level === 2 && "border-b border-slate-200 pb-3 text-[1.7rem] font-semibold tracking-tight text-slate-900",
+            block.level === 3 && "text-[1.28rem] font-semibold tracking-tight text-slate-900"
           )}
           minRows={1}
         />
@@ -90,17 +90,17 @@ function EditableBlockView({
         <AutoTextarea
           value={block.text}
           onValueChange={(value) => onChange({ ...block, text: value })}
-          className="w-full resize-none overflow-hidden bg-transparent text-[15px] leading-7 text-white/78 outline-none"
+          className="w-full resize-none overflow-hidden bg-transparent text-[15px] leading-7 text-slate-700 outline-none"
           minRows={2}
         />
       );
     case "blockquote":
       return (
-        <div className="rounded-3xl border border-white/10 bg-white/[0.04] px-5 py-4">
+        <div className="rounded-3xl border border-slate-200 bg-slate-50 px-5 py-4">
           <AutoTextarea
             value={block.text}
             onValueChange={(value) => onChange({ ...block, text: value })}
-            className="w-full resize-none overflow-hidden bg-transparent text-[15px] leading-7 text-white/80 outline-none"
+            className="w-full resize-none overflow-hidden bg-transparent text-[15px] leading-7 text-slate-700 outline-none"
             minRows={3}
           />
         </div>
@@ -111,7 +111,7 @@ function EditableBlockView({
         <div className="space-y-3">
           {block.items.map((item, index) => (
             <div key={`${block.id}-${index}`} className="flex items-start gap-3">
-              <span className="pt-2 text-sm text-accent">{block.type === "ordered_list" ? `${index + 1}.` : "•"}</span>
+              <span className="pt-2 text-sm text-sky-700">{block.type === "ordered_list" ? `${index + 1}.` : "•"}</span>
               <AutoTextarea
                 value={item}
                 onValueChange={(value) =>
@@ -120,14 +120,14 @@ function EditableBlockView({
                     items: block.items.map((current, currentIndex) => (currentIndex === index ? value : current)),
                   })
                 }
-                className="w-full resize-none overflow-hidden bg-transparent text-[15px] leading-7 text-white/78 outline-none"
+                className="w-full resize-none overflow-hidden bg-transparent text-[15px] leading-7 text-slate-700 outline-none"
                 minRows={1}
               />
             </div>
           ))}
           <button
             type="button"
-            className="rounded-full border border-white/12 bg-white/[0.04] px-3 py-1.5 text-xs text-white/62 transition hover:border-white/20 hover:text-white"
+            className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-600 transition hover:border-sky-200 hover:text-slate-900"
             onClick={() => onChange({ ...block, items: [...block.items, ""] })}
           >
             新增列表项
@@ -136,25 +136,25 @@ function EditableBlockView({
       );
     case "code":
       return (
-        <div className="rounded-3xl border border-white/10 bg-[#02050b] p-4">
-          <div className="mb-2 text-xs uppercase tracking-[0.24em] text-white/42">{block.language || "code"}</div>
+        <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+          <div className="mb-2 text-xs uppercase tracking-[0.24em] text-slate-500">{block.language || "code"}</div>
           <AutoTextarea
             value={block.text}
             onValueChange={(value) => onChange({ ...block, text: value })}
-            className="w-full resize-none overflow-hidden bg-transparent font-mono text-[13px] leading-6 text-white/86 outline-none"
+            className="w-full resize-none overflow-hidden bg-transparent font-mono text-[13px] leading-6 text-slate-800 outline-none"
             minRows={6}
           />
         </div>
       );
     case "table":
       return (
-        <div className="overflow-x-auto rounded-3xl border border-white/10 bg-white/[0.03]">
+        <div className="overflow-x-auto rounded-3xl border border-slate-200 bg-white">
           <table className="min-w-full border-collapse text-sm">
             <tbody>
               {block.rows.map((row, rowIndex) => (
-                <tr key={`${block.id}-${rowIndex}`} className={rowIndex === 0 ? "bg-white/[0.04]" : ""}>
+                <tr key={`${block.id}-${rowIndex}`} className={rowIndex === 0 ? "bg-slate-50" : ""}>
                   {row.map((cell, cellIndex) => (
-                    <td key={`${block.id}-${rowIndex}-${cellIndex}`} className="border-t border-white/8 px-3 py-3 align-top">
+                    <td key={`${block.id}-${rowIndex}-${cellIndex}`} className="border-t border-slate-200 px-3 py-3 align-top">
                       <AutoTextarea
                         value={cell}
                         onValueChange={(value) =>
@@ -169,7 +169,7 @@ function EditableBlockView({
                         }
                         className={cn(
                           "w-full resize-none overflow-hidden bg-transparent outline-none",
-                          rowIndex === 0 ? "font-medium text-white" : "text-white/78"
+                          rowIndex === 0 ? "font-medium text-slate-900" : "text-slate-700"
                         )}
                         minRows={1}
                       />
@@ -182,13 +182,13 @@ function EditableBlockView({
         </div>
       );
     case "hr":
-      return <hr className="my-8 border-white/10" />;
+      return <hr className="my-8 border-slate-200" />;
     case "raw":
       return (
         <AutoTextarea
           value={block.text}
           onValueChange={(value) => onChange({ ...block, text: value })}
-          className="w-full resize-none overflow-hidden rounded-3xl border border-white/10 bg-black/20 px-4 py-4 font-mono text-sm leading-7 text-white/78 outline-none"
+          className="w-full resize-none overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 font-mono text-sm leading-7 text-slate-800 outline-none"
           minRows={4}
         />
       );

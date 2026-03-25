@@ -10,22 +10,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#070b14",
-        shell: "#0f1728",
-        panel: "#131f33",
-        line: "#243655",
-        accent: "#39d0ff",
-        aurora: "#9bf7ff",
-        ember: "#f1b157",
-        success: "#67f2c4",
-        danger: "#ff807d"
+        ink: "#f7f8fc",
+        shell: "#eef3f9",
+        panel: "#ffffff",
+        line: "#d7e0eb",
+        accent: "#0ea5e9",
+        aurora: "#67e8f9",
+        ember: "#f59e0b",
+        success: "#10b981",
+        danger: "#ef4444"
       },
       boxShadow: {
-        glow: "0 0 0 1px rgba(57, 208, 255, 0.18), 0 24px 60px rgba(4, 11, 25, 0.45)"
+        glow: "0 0 0 1px rgba(14, 165, 233, 0.12), 0 24px 60px rgba(15, 23, 42, 0.08)"
       },
       backgroundImage: {
         "grid-shell":
-          "linear-gradient(rgba(57, 208, 255, 0.09) 1px, transparent 1px), linear-gradient(90deg, rgba(57, 208, 255, 0.09) 1px, transparent 1px)"
+          "linear-gradient(rgba(14, 165, 233, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(14, 165, 233, 0.06) 1px, transparent 1px)"
       }
     }
   },

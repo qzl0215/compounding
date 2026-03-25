@@ -41,14 +41,14 @@ export function DocViewerToolbar({
         <>
           <button
             type="button"
-            className="rounded-full border border-accent/35 bg-accent/10 px-4 py-2 text-sm text-accent transition hover:bg-accent/18"
+            className="rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm text-sky-700 transition hover:bg-sky-100"
             onClick={onEdit}
           >
             编辑
           </button>
           <button
             type="button"
-            className="rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-sm text-white/72 transition hover:border-white/20 hover:text-white"
+            className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-sky-200 hover:text-slate-900"
             onClick={onOpenAi}
           >
             AI 重构
@@ -56,7 +56,7 @@ export function DocViewerToolbar({
           {isPromptDoc && promptHistoryCount > 0 ? (
             <button
               type="button"
-              className="rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-sm text-white/72 transition hover:border-white/20 hover:text-white"
+              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-sky-200 hover:text-slate-900"
               onClick={onRollback}
             >
               回退到上一版本
@@ -67,7 +67,7 @@ export function DocViewerToolbar({
         <>
           <button
             type="button"
-            className="rounded-full border border-accent/35 bg-accent/10 px-4 py-2 text-sm text-accent transition hover:bg-accent/18 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm text-sky-700 transition hover:bg-sky-100 disabled:cursor-not-allowed disabled:opacity-60"
             onClick={onSave}
             disabled={isSaving}
           >
@@ -75,7 +75,7 @@ export function DocViewerToolbar({
           </button>
           <button
             type="button"
-            className="rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-sm text-white/72 transition hover:border-white/20 hover:text-white"
+            className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-sky-200 hover:text-slate-900"
             onClick={onCancel}
             disabled={isSaving}
           >
@@ -85,14 +85,14 @@ export function DocViewerToolbar({
             <>
               <button
                 type="button"
-                className="rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-sm text-white/72 transition hover:border-white/20 hover:text-white"
+                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-sky-200 hover:text-slate-900"
                 onClick={onAdvanced}
               >
                 高级模式
               </button>
               <button
                 type="button"
-                className="rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-sm text-white/72 transition hover:border-white/20 hover:text-white"
+                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-sky-200 hover:text-slate-900"
                 onClick={onOpenAi}
               >
                 AI 重构
@@ -101,7 +101,7 @@ export function DocViewerToolbar({
           ) : (
             <button
               type="button"
-              className="rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-sm text-white/72 transition hover:border-white/20 hover:text-white"
+              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-sky-200 hover:text-slate-900"
               onClick={onReturnToRich}
             >
               返回正文编辑

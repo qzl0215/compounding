@@ -80,13 +80,13 @@ export function DeliveryTable({
           onPendingOnlyChange={setPendingOnly}
         />
       ) : message ? (
-        <p className="text-sm text-white/68">{message}</p>
+        <p className="text-sm text-slate-600">{message}</p>
       ) : null}
 
-      <div className="overflow-hidden rounded-[1.75rem] border border-white/8">
+      <div className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white/90">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-white/8 text-left text-sm">
-            <thead className="bg-white/[0.04] text-white/52">
+          <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
+            <thead className="bg-slate-50 text-slate-500">
               <tr>
                 <HeadCell>子任务</HeadCell>
                 <HeadCell>阶段</HeadCell>
@@ -96,7 +96,7 @@ export function DeliveryTable({
                 <HeadCell>操作</HeadCell>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/8 bg-black/10">
+            <tbody className="divide-y divide-slate-200 bg-white">
               {filteredRows.length > 0 ? (
                 filteredRows.map((row) => {
                   const isExpanded = Boolean(expanded[row.id]);
@@ -114,7 +114,7 @@ export function DeliveryTable({
                 })
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-4 py-5 text-white/58">
+                  <td colSpan={6} className="px-4 py-5 text-slate-600">
                     {emptyText}
                   </td>
                 </tr>
@@ -128,5 +128,5 @@ export function DeliveryTable({
 }
 
 function HeadCell({ children }: { children: ReactNode }) {
-  return <th className="px-4 py-3 font-medium">{children}</th>;
+  return <th className="px-4 py-4 text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">{children}</th>;
 }
