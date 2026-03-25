@@ -23,8 +23,9 @@ related_docs:
 
 ## 当前焦点
 
-- `t-064` 正在推进：把首页改成面向人的项目逻辑态势图，主视觉改成可点击的逻辑结构图，只保留目标、里程碑、节奏、风险和下钻入口。
-- 本地 production 当前稳定运行在 `3010`；active release 仍以 `pnpm prod:status` 输出为准。
+- `t-064` 已完成：首页已改成面向人的项目逻辑态势图，主视觉是可点击的逻辑结构图，只保留目标、里程碑、节奏、风险和下钻入口。
+- 当前主线回到下一条高 ROI 结构边界：继续压跨页面唯一 snapshot 和 release 单一状态机，避免首页、任务页和发布页重新长出平行口径。
+- 本地 production 当前稳定运行在 `3010`；active release 为 `20260325083655-791f8cc-prod`。
 - `t-053` 已完成：本地 production 已脱离 release worktree 运行 cwd，当前只保留主工作区，不再保留 release worktree 作为常驻运行目录。
 - `t-058` 已完成：`scripts/ai` 的共享 CLI 外壳已经落地，`template-feedback`、`fix-first` 与 `create-task` 已收回同一套参数解析、标准输出、错误出口和 task 模板渲染。
 - `t-059` 已完成：release registry、Studio 读模型和主源文档已经统一到真实待验收语义；已晋升到 prod 的旧 dev 不再继续显示为 `pending`。
@@ -35,8 +36,8 @@ related_docs:
 
 ## 当前阻塞
 
-- 当前没有发布阻塞；主要结构风险转到首页如果继续沿用旧 `Kernel / Project` 壳，会让人类阅读继续被工程对象拖累。
-- 如果首页逻辑图只换视觉、不切读模型，旧 tab、旧 kernel 壳和旧文案很快会重新回流。
+- 当前没有发布阻塞。
+- 主要结构风险转到跨页面读模型如果继续各自维护摘要和状态翻译，首页、任务页和发布页会重新长出平行口径。
 
 ## 当前推荐校验顺序
 
@@ -66,7 +67,7 @@ related_docs:
 - `pnpm preview:check`
 - `pnpm prod:status`
 - `pnpm prod:check`
-- 确认首页首屏不再出现 `Kernel / Project` tab、artifact health、boundary groups 和常驻 runtime 状态板
-- 确认五个逻辑节点都能打开对应文档或页面
-- 确认健康态只显示轻量结论，待验收或运行异常时才升格提醒
+- 确认 production active release 继续保持 `20260325083655-791f8cc-prod`
+- 确认首页逻辑态势图继续只回答目标、阶段、风险和下一步
+- 评估跨页面唯一 snapshot 与 release 单一状态机哪一条是下一轮更高 ROI 的主线
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

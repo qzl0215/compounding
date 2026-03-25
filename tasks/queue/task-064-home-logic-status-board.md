@@ -48,13 +48,13 @@
 
 ## 交付结果
 
-- 状态：doing
+- 状态：done
 - 体验验收结果：
-  
+  首页已改成单页项目逻辑态势图；用户确认首屏现在更适合人类扫读，能直接看到目标、阶段、风险和下一步，且逻辑节点可点击打开对应文档或页面。
 - 交付结果：
-  
+  首页 route 现在只读取首页专用的逻辑图快照；`Kernel / Project` tab、artifact health、boundary groups、工程状态板和长段系统说明都已退出首页，首页主视觉改成五个可点击节点的逻辑链。
 - 复盘：
-  
+  首页最值钱的不是“再讲一遍系统结构”，而是帮助人快速判断项目态势。把首页读模型压窄、把文案收成人类判断句，比继续堆工程对象卡片的 ROI 更高。
 
 ## 当前模式
 
@@ -62,7 +62,7 @@
 
 ## 分支
 
-`codex/task-064-home-logic-status-board`
+`main`
 
 ## 关联模块
 
@@ -85,6 +85,7 @@
 
 - 记忆：updated current-state / operating-blueprint to focus on t-064 home logic status board
 - 索引：no change: 未更新
-- 路线图：set roadmap current priority and milestone to t-064 home logic status board
+- 路线图：mark t-064 delivered and move roadmap to next structure-tightening candidate after the home logic board landed
 - 文档：README.md, docs/ARCHITECTURE.md, apps/studio/src/modules/portal/module.md, tasks/queue/task-064-home-logic-status-board.md
 - 修正：tighten homepage summaries so the logic board shows concise human-facing judgments instead of echoing old Kernel/Project engineering phrasing from source docs
+- 发布：accepted dev preview 20260325082914-791f8cc-dev and promoted homepage logic board to production release 20260325083655-791f8cc-prod
