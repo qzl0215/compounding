@@ -2,7 +2,7 @@
 title: AI_OPERATING_MODEL
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-25
+last_reviewed_at: 2026-03-26
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -17,7 +17,7 @@ related_docs:
 ## 最小起步顺序
 
 - 先按 `AGENTS.md` 的默认读链进入对应主源。
-- 再补当前 task、相关 `module.md`、`code_index/*`，必要时先跑 `python3 scripts/pre_mutation_check.py`。
+- 再补当前 task、相关 `module.md`、`code_index/*`，必要时先跑 `pnpm preflight`；若已进入 `structural / release` task，则跑 `pnpm preflight -- --taskId=t-xxx`。
 
 ## 行为原则
 

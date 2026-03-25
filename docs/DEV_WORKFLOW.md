@@ -2,7 +2,7 @@
 title: DEV_WORKFLOW
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-25
+last_reviewed_at: 2026-03-26
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -28,16 +28,18 @@ related_docs:
 
 ## 预任务护栏
 
-- `light` 改动默认跳过 `coord:check:pre-task`；`structural / release` task 动手前默认先跑 `coord:check:pre-task`。
+- 动手前统一入口是 `pnpm preflight`。
+- `light` 改动默认只执行基础 gate；`structural / release` task 动手前默认跑 `pnpm preflight -- --taskId=t-xxx`。
+- `coord:check:pre-task` 只保留为兼容别名，输出 contract 与 `pnpm preflight -- --taskId=t-xxx` 一致。
 - 若属于 unfamiliar pattern / infra / runtime capability，先用 `coord:task:search` 记录最小 search evidence。
-- `pre-task` 默认检查：
+- 完整 task guard 默认检查：
   - 工作区是否干净
   - 任务 companion
   - search evidence
   - scope guard
   - 运行态状态
   - file/module 锁状态
-- 若发现工作区未清理、运行态异常、scope 越界或锁冲突，`pre-task` 输出决策卡，不直接开工。
+- 若发现工作区未清理、运行态异常、scope 越界或锁冲突，完整 task guard 输出决策卡，不直接开工。
 
 ## 规划链
 
@@ -51,7 +53,7 @@ related_docs:
 - 先读当前 task、`memory/project/current-state.md`、相关 `module.md`、`code_index/*`。
 - 进入模块和运行时边界前，再补 `docs/ARCHITECTURE.md`。
 - 需要上下文压缩时，用 `scripts/ai/build-context.ts`。
-- 动手前先跑 `python3 scripts/pre_mutation_check.py`。
+- 动手前先跑 `pnpm preflight`；若已绑定 `structural / release` task，则跑 `pnpm preflight -- --taskId=t-xxx`。
 - 小而边界清楚的 task，默认做到最小完整闭环；若边界重新变大，退回 plan。
 
 ## 交付链

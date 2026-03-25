@@ -1,4 +1,5 @@
 import json
+import shutil
 import subprocess
 import unittest
 from tests.coord_support import ROOT, CoordCliTestCase, SAMPLE_TASK_MARKDOWN
@@ -377,21 +378,82 @@ console.log(JSON.stringify(readCompanion("t-999"), null, 2));
         self.assertEqual(payload["change_class"], "structural")
         self.assertTrue(any("没有任何 tasks/queue/*.md 变更" in error for error in payload["errors"]))
 
-    def test_pre_task_skips_for_light_changes_without_task_id(self) -> None:
-        docs_dir = self.target / "docs"
-        docs_dir.mkdir(parents=True, exist_ok=True)
-        doc_path = docs_dir / "notes.md"
-        doc_path.write_text("# Notes\n\ninitial\n", encoding="utf8")
+    def test_preflight_uses_basic_guard_without_task_id(self) -> None:
+        self.install_preflight_fixtures()
         self.init_git_repo()
-        doc_path.write_text("# Notes\n\nupdated\n", encoding="utf8")
 
-        completed = self.run_script("scripts/coord/check.ts", "pre-task")
+        completed = self.run_script("scripts/coord/preflight.ts")
         payload = json.loads(completed.stdout)
 
         self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
         self.assertTrue(payload["ok"])
-        self.assertTrue(payload["skipped"])
+        self.assertEqual(payload["guard_level"], "basic")
+        self.assertIsNone(payload["task_id"])
         self.assertEqual(payload["change_class"], "light")
+        self.assertIn("preflight_check", payload)
+
+    def test_preflight_rejects_structural_change_without_task_id(self) -> None:
+        self.install_preflight_fixtures()
+        scripts_dir = self.target / "scripts"
+        script_path = scripts_dir / "sample.ts"
+        script_path.write_text("export const value = 1;\n", encoding="utf8")
+        self.init_git_repo()
+        script_path.write_text("export const value = 2;\n", encoding="utf8")
+
+        completed = self.run_script("scripts/coord/preflight.ts")
+        payload = json.loads(completed.stdout)
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertFalse(payload["ok"])
+        self.assertEqual(payload["guard_level"], "basic")
+        self.assertEqual(payload["change_class"], "structural")
+        self.assertTrue(any(item["step"] == "task_binding" for item in payload["blockers"]))
+
+    def test_preflight_runs_task_guard_when_task_id_is_present(self) -> None:
+        self.install_preflight_fixtures()
+        self.init_git_repo()
+
+        completed = self.run_script("scripts/coord/preflight.ts", "--taskId=task-999-sample")
+        payload = json.loads(completed.stdout)
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["guard_level"], "task")
+        self.assertEqual(payload["task_id"], "task-999-sample")
+        self.assertIn("companion", payload)
+        self.assertIn("runtime_check", payload)
+
+    def test_pre_task_alias_matches_unified_preflight_output_shape(self) -> None:
+        self.install_preflight_fixtures()
+        self.init_git_repo()
+
+        preflight = self.run_script("scripts/coord/preflight.ts", "--taskId=task-999-sample")
+        shutil.rmtree(self.target / "agent-coordination", ignore_errors=True)
+        shutil.rmtree(self.target / "output", ignore_errors=True)
+        legacy = self.run_script("scripts/coord/check.ts", "pre-task", "--taskId=task-999-sample")
+        preflight_payload = json.loads(preflight.stdout)
+        legacy_payload = json.loads(legacy.stdout)
+
+        self.assertEqual(preflight.returncode, 0, msg=preflight.stdout or preflight.stderr)
+        self.assertEqual(legacy.returncode, 0, msg=legacy.stdout or legacy.stderr)
+        self.assertEqual(preflight_payload["guard_level"], "task")
+        self.assertEqual(legacy_payload["guard_level"], "task")
+        self.assertEqual(preflight_payload["task_id"], legacy_payload["task_id"])
+        self.assertEqual(preflight_payload["change_class"], legacy_payload["change_class"])
+        self.assertEqual(sorted(preflight_payload["runtime_check"].keys()), sorted(legacy_payload["runtime_check"].keys()))
+        self.assertEqual(sorted(preflight_payload["scope_check"].keys()), sorted(legacy_payload["scope_check"].keys()))
+
+    def test_coord_task_start_uses_unified_preflight_entry(self) -> None:
+        self.install_preflight_fixtures()
+        self.init_git_repo()
+
+        completed = self.run_script("scripts/coord/task.ts", "start", "--taskId=task-999-sample")
+        payload = json.loads(completed.stdout)
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["guard_level"], "task")
+        self.assertEqual(payload["task_id"], "task-999-sample")
 
     def test_validate_task_git_link_ignores_unchanged_historical_task_noise(self) -> None:
         scripts_dir = self.target / "scripts"

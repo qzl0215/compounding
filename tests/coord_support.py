@@ -89,3 +89,48 @@ class CoordCliTestCase(unittest.TestCase):
         subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=self.target, check=True)
         subprocess.run(["git", "add", "."], cwd=self.target, check=True)
         subprocess.run(["git", "commit", "-m", "baseline"], cwd=self.target, check=True)
+
+    def install_preflight_fixtures(self, *, scope_pass: bool = True) -> None:
+        scripts_dir = self.target / "scripts"
+        coord_dir = scripts_dir / "coord"
+        runtime_dir = scripts_dir / "local-runtime"
+        scope_summary = "范围通过" if scope_pass else "范围阻塞"
+        scripts_dir.mkdir(parents=True, exist_ok=True)
+        coord_dir.mkdir(parents=True, exist_ok=True)
+        runtime_dir.mkdir(parents=True, exist_ok=True)
+
+        shutil.copy(ROOT / "scripts" / "pre_mutation_check.py", scripts_dir / "pre_mutation_check.py")
+
+        (coord_dir / "scope-guard.ts").write_text(
+            (
+                'console.log(JSON.stringify({'
+                f'"ok": {str(scope_pass).lower()}, '
+                f'"pass": {str(scope_pass).lower()}, '
+                '"scope_risk_score": 0, '
+                f'"scope_summary": "{scope_summary}", '
+                '"planned_files": ["tasks/queue/task-999-sample.md"], '
+                '"actual_files": ["tasks/queue/task-999-sample.md"], '
+                '"undeclared": [], '
+                '"high_risk_undeclared": [], '
+                '"declared_but_unchanged": []'
+                '}));\n'
+            ),
+            encoding="utf8",
+        )
+
+        runtime_payload = json.dumps(
+            {
+                "ok": True,
+                "status": "running",
+                "running": True,
+                "port": 3010,
+                "pid": 1234,
+                "runtime_release_id": "runtime-sample",
+                "current_release_id": "runtime-sample",
+                "drift": False,
+                "reason": "",
+            },
+            ensure_ascii=False,
+        )
+        for filename in ("status-prod.ts", "status-preview.ts"):
+            (runtime_dir / filename).write_text(f"console.log('{runtime_payload}');\n", encoding="utf8")

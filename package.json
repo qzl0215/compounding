@@ -13,7 +13,7 @@
     "bootstrap:new": "python3 scripts/init_project_compounding.py bootstrap --config bootstrap/project_brief.yaml --target .",
     "bootstrap:scaffold": "python3 scripts/init_project_compounding.py scaffold --config bootstrap/project_brief.yaml --target .",
     "bootstrap:propose": "python3 scripts/init_project_compounding.py propose --config bootstrap/project_brief.yaml --target . --prompt-file output/manual_prompt.md",
-    "preflight": "python3 scripts/pre_mutation_check.py",
+    "preflight": "node --experimental-strip-types scripts/coord/preflight.ts",
     "ai:scan-health": "node --experimental-strip-types scripts/ai/scan-code-health.ts",
     "ai:scan-health:strict": "node --experimental-strip-types scripts/ai/scan-code-health.ts --strict",
     "ai:generate-code-volume": "node --experimental-strip-types scripts/ai/generate-code-volume.ts",

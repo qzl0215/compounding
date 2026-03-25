@@ -4,11 +4,13 @@
  * Usage: node --experimental-strip-types scripts/coord/task.ts <create|start|handoff|merge> [options]
  */
 
+const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 const { ensureCompanion } = require("./lib/task-meta.ts");
 const { recordCreated, recordHandoff, recordSearchEvidence } = require("./lib/companion-lifecycle.ts");
 
 const ROOT = process.cwd();
+const PREFLIGHT_ENTRY = path.join(__dirname, "preflight.ts");
 
 function parseArgs() {
   const cmd = process.argv[2];
@@ -86,7 +88,7 @@ function start(args) {
     console.error(JSON.stringify({ ok: false, error: "taskId required. Use --taskId=t-025" }));
     process.exit(1);
   }
-  const result = spawnSync("node", ["--experimental-strip-types", "scripts/coord/check.ts", "pre-task", `--taskId=${taskId}`], {
+  const result = spawnSync("node", ["--experimental-strip-types", PREFLIGHT_ENTRY, `--taskId=${taskId}`], {
     cwd: ROOT,
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],

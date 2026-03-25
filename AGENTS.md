@@ -11,7 +11,7 @@ related_docs:
   - memory/project/current-state.md
   - memory/project/operating-blueprint.md
   - docs/ARCHITECTURE.md
-last_reviewed_at: 2026-03-24
+last_reviewed_at: 2026-03-25
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 ## 执行原则
@@ -37,9 +37,10 @@ last_reviewed_at: 2026-03-24
 
 ## 改动门禁
 
-- 任何文件改动前先运行 `python3 scripts/pre_mutation_check.py`。
+- 任何文件改动前先运行 `pnpm preflight`。
 - 若 worktree 不干净、存在 staged changes、或分支 `behind/diverged`，先整理或 `git pull --rebase`。
-- `light` 改动可跳过 `coord:check:pre-task` 与 companion；`structural / release` 动手前默认先跑 `coord:check:pre-task`，它会同时检查任务 companion、scope guard、运行态与锁状态；高风险时输出决策卡。
+- `light` 改动默认只过基础 gate；`structural / release` task 动手前默认跑 `pnpm preflight -- --taskId=t-xxx`，它会同时检查任务 companion、scope guard、运行态与锁状态；高风险时输出决策卡。
+- `coord:check:pre-task` 只保留为兼容别名，不再作为默认人工入口。
 - 若 `structural / release` 事项涉及 unfamiliar pattern / infra / runtime capability，动手前先记录最小 search evidence；pre-task 只提醒，不把它做成新审批流。
 - 交付顺序、验证顺序、运行端口和发布细节以 `docs/DEV_WORKFLOW.md` 与 `memory/project/current-state.md` 为准。
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->
