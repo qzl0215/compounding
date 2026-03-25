@@ -84,9 +84,9 @@
 - `README.md`
 - `docs/DEV_WORKFLOW.md`
 - `docs/AI_OPERATING_MODEL.md`
-  - `memory/project/current-state.md`
-  - `memory/project/operating-blueprint.md`
-  - `memory/project/roadmap.md`
+- `memory/project/current-state.md`
+- `memory/project/operating-blueprint.md`
+- `memory/project/roadmap.md`
 - `tests/coord_support.py`
 - `tests/test_coord_cli.py`
 
