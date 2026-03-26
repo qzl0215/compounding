@@ -216,6 +216,8 @@ upgrade_policy:
         self.assertTrue((self.target / "scripts" / "ai" / "preflight-summary.ts").exists())
         self.assertTrue((self.target / "scripts" / "ai" / "find-summary.ts").exists())
         self.assertTrue((self.target / "scripts" / "ai" / "read-summary.ts").exists())
+        self.assertTrue((self.target / "scripts" / "ai" / "lib" / "retro-candidates.ts").exists())
+        self.assertTrue((self.target / "scripts" / "pre_mutation_check.py").exists())
 
     def test_doctor_downgrades_unsupported_ai_upgrade_to_cold_start(self) -> None:
         self.brief_path.unlink()

@@ -108,6 +108,7 @@ def render_ai_scripts(target: Path) -> None:
         "scripts/ai/lib/knowledge-asset-health.ts",
         "scripts/ai/lib/cleanup-candidates.ts",
         "scripts/ai/lib/feature-context.ts",
+        "scripts/pre_mutation_check.py",
         "scripts/ai/scan-code-health.ts",
         "scripts/ai/cleanup-candidates.ts",
         "scripts/ai/generate-code-volume.ts",
