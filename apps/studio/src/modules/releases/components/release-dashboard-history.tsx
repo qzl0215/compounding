@@ -1,5 +1,7 @@
 import type { ReleaseRecord } from "../types";
 import { resolveReleaseContractSummary } from "../release-summary";
+import { formatEstimatedTokens } from "../../../../../../shared/ai-efficiency";
+import { formatTaskCostCodeDelta, formatTaskCostDuration, summarizeTaskCostEffect } from "../../../../../../shared/task-cost";
 
 type HistoryProps = {
   releases: ReleaseRecord[];
@@ -22,6 +24,7 @@ export function ReleaseHistoryList({
         const isActive = release.release_id === activeReleaseId;
         const isPendingDev = pendingDevRelease?.release_id === release.release_id;
         const contractSummary = resolveReleaseContractSummary(release);
+        const changeCost = release.delivery_snapshot?.change_cost || null;
         return (
           <article key={release.release_id} className="rounded-[1.75rem] border border-slate-200 bg-white/90 p-5 shadow-[0_16px_50px_rgba(15,23,42,0.05)]">
             <div className="flex flex-wrap items-start justify-between gap-4">
@@ -59,6 +62,25 @@ export function ReleaseHistoryList({
                 <Meta title="交付摘要" value={contractSummary.summary || "未记录"} />
                 <Meta title="完成定义" value={contractSummary.doneWhen || "未记录"} />
                 <Meta title="交付风险" value={contractSummary.risk || "未记录"} />
+              </div>
+            ) : null}
+
+            {changeCost ? (
+              <div className="mt-4 grid gap-3 text-sm text-slate-700 md:grid-cols-2 xl:grid-cols-4">
+                <Meta
+                  title="时间成本"
+                  value={`active ${formatTaskCostDuration(changeCost.time.active_ms)} / wait ${formatTaskCostDuration(changeCost.time.wait_ms)}${
+                    changeCost.time.dominant_stage ? ` / ${changeCost.time.dominant_stage}` : ""
+                  }`}
+                />
+                <Meta
+                  title="Token 成本"
+                  value={`输入 ~${formatEstimatedTokens(changeCost.tokens.summary_input_est + changeCost.tokens.context_input_est)} / 节省 ~${formatEstimatedTokens(
+                    changeCost.tokens.summary_saved_est + changeCost.tokens.context_saved_est,
+                  )}`}
+                />
+                <Meta title="代码量" value={formatTaskCostCodeDelta(changeCost.code)} />
+                <Meta title="效果" value={summarizeTaskCostEffect(changeCost.effect)} />
               </div>
             ) : null}
 

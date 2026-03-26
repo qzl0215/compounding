@@ -1,6 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const childProcess = require("node:child_process");
+const { buildTaskCostSnapshot } = require("../ai/lib/task-cost-core.ts");
 const { previewBaseUrl, updateChannelSymlink } = require("./lib.ts");
 
 function runNodeScript(scriptPath) {
@@ -55,7 +56,7 @@ function createReleaseRecord({
   smokeResult,
   notes,
 }) {
-  return {
+  const record = {
     release_id: releaseId,
     commit_sha: commitSha,
     tag: null,
@@ -78,6 +79,20 @@ function createReleaseRecord({
     change_summary: summary,
     notes,
   };
+
+  if (buildResult === "passed" && taskMeta?.id && record.delivery_snapshot) {
+    record.delivery_snapshot = {
+      ...record.delivery_snapshot,
+      change_cost: buildTaskCostSnapshot(process.cwd(), {
+        taskId: taskMeta.id,
+        deliveryStatus: channel === "dev" ? "pending_acceptance" : status === "rolled_back" ? "rolled_back" : "released",
+        versionLabel: releaseId,
+        associatedReleases: [record],
+      }),
+    };
+  }
+
+  return record;
 }
 
 module.exports = {

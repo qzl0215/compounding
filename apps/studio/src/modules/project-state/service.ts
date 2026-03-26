@@ -98,7 +98,7 @@ export async function getProjectStateSnapshot(input?: { deliverySnapshot?: Deliv
       nextAction: judgement.nextAction,
     },
     aiEfficiency: {
-    dashboard: getAiEfficiencyDashboard(workspaceRoot),
+      dashboard: getAiEfficiencyDashboard(workspaceRoot, taskRows.map((row) => row.cost)),
     },
     activeStage: judgement.activeStage,
     judgement,
@@ -123,13 +123,14 @@ function summarizeRuntimeAlert(
   return null;
 }
 
-function getAiEfficiencyDashboard(workspaceRoot: string) {
+function getAiEfficiencyDashboard(workspaceRoot: string, taskCostLedgers: DeliverySnapshot["projections"]["taskRows"][number]["cost"][]) {
   const contextRetroReport = readContextRetroReport(workspaceRoot);
   const eventsPath = path.join(workspaceRoot, "output", "ai", "command-gain", "events.jsonl");
   if (!fs.existsSync(eventsPath)) {
     return buildAiEfficiencyDashboard([], {
       contextRetroReport,
       supportedProfiles: AI_EFFICIENCY_SUPPORTED_PROFILES,
+      taskCostLedgers,
     });
   }
 
@@ -150,6 +151,7 @@ function getAiEfficiencyDashboard(workspaceRoot: string) {
   return buildAiEfficiencyDashboard(events, {
     supportedProfiles: AI_EFFICIENCY_SUPPORTED_PROFILES,
     contextRetroReport,
+    taskCostLedgers,
   });
 }
 

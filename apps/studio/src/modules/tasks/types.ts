@@ -1,3 +1,5 @@
+import type { TaskCostLedger } from "../../../../../shared/task-cost";
+
 export type TaskStatus = "todo" | "doing" | "blocked" | "done";
 
 export type TaskGitState = "missing_branch" | "developing" | "committed" | "merged" | "drift";
@@ -74,4 +76,5 @@ export type TaskDeliveryRow = TaskCard & {
   acceptReleaseId: string | null;
   rollbackReleaseId: string | null;
   linkedTaskIds: string[];
+  cost: TaskCostLedger;
 };

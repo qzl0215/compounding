@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { buildTaskDeliveryRows } from "../delivery";
 import { getTaskBoard, listTaskCards } from "../service";
 import type { ReleaseRecord } from "@/modules/releases";
+import { createEmptyTaskCostLedger } from "../../../../../../shared/task-cost";
 import type { TaskDeliveryRow } from "../types";
 
 const SERVICE_TIMEOUT_MS = 30000;
@@ -57,6 +58,41 @@ describe("tasks service", () => {
           summary: "t-011 建设防漂移文档与索引资产",
           risk: "若真相源不清会继续失真",
           done_when: "prompt 和索引的防漂移门禁可持续工作",
+          change_cost: {
+            time: {
+              active_ms: 120000,
+              wait_ms: 30000,
+              total_ms: 150000,
+              dominant_stage: "review",
+              repeated_blockers: 1,
+              latest_blockers: ["review 等待"],
+            },
+            tokens: {
+              summary_runs: 2,
+              context_packets: 1,
+              summary_input_est: 1200,
+              summary_output_est: 200,
+              summary_saved_est: 1000,
+              context_input_est: 400,
+              context_output_est: 120,
+              context_saved_est: 280,
+            },
+            code: {
+              source: "snapshot",
+              files: 4,
+              insertions: 80,
+              deletions: 12,
+            },
+            effect: {
+              last_gate_failures: [],
+              release_state: "pending_acceptance",
+              build_result: "passed",
+              smoke_result: "passed",
+              acceptance_status: "pending",
+              blockers: [],
+              status_summary: "rel-011-dev 待验收。",
+            },
+          },
         },
         resolved_task_contract: null,
               channel: "dev",
@@ -80,6 +116,9 @@ describe("tasks service", () => {
     expect(row?.deliveryStatus).toBe("pending_acceptance");
     expect(row?.acceptReleaseId).toBe("rel-011-dev");
     expect(row?.versionLabel).toBe("rel-011-dev");
+    expect(row?.cost.code.source).toBe("snapshot");
+    expect(row?.cost.code.files).toBe(4);
+    expect(row?.cost.effect.release_state).toBe("pending_acceptance");
   }, SERVICE_TIMEOUT_MS);
 
   it("treats merged historical tasks as released even when old release records lack explicit task links", async () => {
@@ -145,6 +184,7 @@ describe("tasks service", () => {
       acceptReleaseId: null,
       rollbackReleaseId: null,
       linkedTaskIds: [],
+      cost: createEmptyTaskCostLedger("t-038", "任务 task-038-autonomy-entropy-reduction", "in_progress"),
     };
 
     const release: ReleaseRecord = {
@@ -180,6 +220,7 @@ describe("tasks service", () => {
     expect(row.deliveryStatus).toBe("in_progress");
     expect(row.acceptReleaseId).toBeNull();
     expect(row.versionLabel).toBe("未生成");
+    expect(row.cost.task_id).toBe("t-038");
   });
 
   it("does not surface promoted stale dev previews as pending acceptance", async () => {

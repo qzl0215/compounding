@@ -1,3 +1,5 @@
+import type { TaskCostSnapshot } from "../../../../../shared/task-cost";
+
 export type ReleaseStatus = "prepared" | "preview" | "active" | "superseded" | "failed" | "rolled_back" | "rejected";
 export type ReleaseResult = "pending" | "passed" | "failed";
 export type ReleaseChannel = "dev" | "prod";
@@ -7,6 +9,7 @@ export type ReleaseDeliverySnapshot = {
   summary: string | null;
   risk: string | null;
   done_when: string | null;
+  change_cost?: TaskCostSnapshot | null;
 };
 
 export type ResolvedTaskContractSummary = {

@@ -32,6 +32,7 @@ function createEmptyLifecycle() {
 
 function createEmptyArtifacts() {
   return {
+    change_cost_snapshot: null,
     decision_cards: [],
     diff_summaries: [],
     handoff_notes: [],
@@ -97,6 +98,7 @@ function normalizeCompanion(companion = {}) {
     artifacts: {
       ...createEmptyArtifacts(),
       ...(companion.artifacts || {}),
+      change_cost_snapshot: companion.artifacts?.change_cost_snapshot || null,
       decision_cards: mergeArtifactList(companion.artifacts?.decision_cards, [], "path"),
       diff_summaries: mergeArtifactList(companion.artifacts?.diff_summaries, [], "path"),
       handoff_notes: mergeArtifactList(companion.artifacts?.handoff_notes, [], "recorded_at"),

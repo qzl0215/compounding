@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { AiEfficiencyCard, getProjectStateSnapshot } from "@/modules/project-state";
 import { formatEstimatedTokens } from "../../../../../shared/ai-efficiency";
+import { formatTaskCostCodeDelta, formatTaskCostDuration, summarizeTaskCostEffect } from "../../../../../shared/task-cost";
 
 export const dynamic = "force-dynamic";
 
@@ -165,8 +166,8 @@ export default async function AiEfficiencyPage() {
       <section id="ai-efficiency-actions">
         <PageHeader
           eyebrow="Actions"
-          title="把 adoption 警报、未用 wrapper 和任务滚动视图放到一起"
-          description="行动视角直接回答下一步该推动哪条默认入口、哪类 wrapper 还没有样本，以及哪个 task 最耗上下文。"
+          title="把 adoption 警报、未用 wrapper 和 task 成本账单放到一起"
+          description="行动视角直接回答下一步该推动哪条默认入口、哪类 wrapper 还没有样本，以及哪个 task 现在最贵、最卡。"
           note={topAlert ? `${topAlert.shortcut_id} 当前是最大 adoption alert。` : "当前没有明显 deterministic adoption alert。"}
         />
         <div className="grid gap-4 xl:grid-cols-3">
@@ -187,12 +188,16 @@ export default async function AiEfficiencyPage() {
             emptyText="所有已支持 wrapper 都已有样本。"
           />
           <DetailList
-            title="任务滚动视图"
-            items={dashboard.task_rollups.map((item) => ({
-              label: item.task_id,
-              body: `${item.summary_runs} 次摘要运行，输入约 ${formatEstimatedTokens(item.input_tokens_est)}，节省约 ${formatEstimatedTokens(item.saved_tokens_est)}，平均 ${item.avg_savings_pct_est}%。`,
+            title="Task 成本账单"
+            items={dashboard.task_costs.map((item) => ({
+              label: `${item.task_id} ${item.title}`.trim(),
+              body:
+                `时间 ${formatTaskCostDuration(item.time.active_ms)} active / ${formatTaskCostDuration(item.time.wait_ms)} wait；` +
+                `token 输入 ~${formatEstimatedTokens(item.tokens.summary_input_est + item.tokens.context_input_est)}；` +
+                `代码 ${formatTaskCostCodeDelta(item.code)}；` +
+                `效果 ${summarizeTaskCostEffect(item.effect)}`,
             }))}
-            emptyText="当前还没有 task 级摘要样本。"
+            emptyText="当前还没有 task 级成本账单样本。"
           />
         </div>
       </section>

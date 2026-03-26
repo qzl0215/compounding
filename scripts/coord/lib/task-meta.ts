@@ -103,6 +103,7 @@ function mergeCompanion(existing, parsed) {
     artifacts: {
       ...createEmptyArtifacts(),
       ...(current.artifacts || {}),
+      change_cost_snapshot: current.artifacts?.change_cost_snapshot || next.artifacts?.change_cost_snapshot || null,
       decision_cards: mergeArtifactList(current.artifacts?.decision_cards, next.artifacts?.decision_cards, "path"),
       diff_summaries: mergeArtifactList(current.artifacts?.diff_summaries, next.artifacts?.diff_summaries, "path"),
       handoff_notes: mergeArtifactList(current.artifacts?.handoff_notes, next.artifacts?.handoff_notes, "recorded_at"),

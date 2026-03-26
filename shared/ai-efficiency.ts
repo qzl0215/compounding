@@ -1,3 +1,9 @@
+import { createRequire } from "node:module";
+import type { TaskCostLedger } from "./task-cost";
+
+const require = createRequire(import.meta.url);
+const { taskCostIntensityScore } = require("./task-cost.ts");
+
 export type AiEfficiencyEventKind = "summary_run" | "shortcut_opportunity" | "context_packet";
 
 export const AI_EFFICIENCY_SUPPORTED_PROFILES = [
@@ -105,6 +111,7 @@ export type AiEfficiencyDashboard = {
     saved_tokens_est: number;
     avg_savings_pct_est: number;
   }>;
+  task_costs: TaskCostLedger[];
   context_waste: {
     top_time_loss_patterns: Array<{
       signature: string;
@@ -317,6 +324,7 @@ export function buildAiEfficiencyDashboard(
   inputEvents: Array<Record<string, unknown>>,
   options: {
     supportedProfiles?: readonly string[];
+    taskCostLedgers?: TaskCostLedger[];
     contextRetroReport?: {
       top_time_loss_patterns?: AiEfficiencyDashboard["context_waste"]["top_time_loss_patterns"];
       top_missed_shortcuts?: AiEfficiencyDashboard["context_waste"]["top_missed_shortcuts"];
@@ -506,6 +514,9 @@ export function buildAiEfficiencyDashboard(
   const contextOutput = contextEvents.reduce((sum, event) => sum + event.output_tokens_est, 0);
   const contextSaved = contextEvents.reduce((sum, event) => sum + event.saved_tokens_est, 0);
   const contextRetro = options.contextRetroReport || null;
+  const taskCostLedgers = [...(options.taskCostLedgers || [])].sort(
+    (left, right) => taskCostIntensityScore(right) - taskCostIntensityScore(left) || left.task_id.localeCompare(right.task_id),
+  );
 
   return {
     overview: {
@@ -550,6 +561,7 @@ export function buildAiEfficiencyDashboard(
     coverage,
     trend_delta,
     task_rollups,
+    task_costs: taskCostLedgers,
     context_waste: {
       top_time_loss_patterns: Array.isArray(contextRetro?.top_time_loss_patterns) ? contextRetro.top_time_loss_patterns : [],
       top_missed_shortcuts: Array.isArray(contextRetro?.top_missed_shortcuts) ? contextRetro.top_missed_shortcuts : [],
