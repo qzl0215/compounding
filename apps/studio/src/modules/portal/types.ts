@@ -2,7 +2,7 @@ export type HomeEntryLink = {
   href: string;
   label: string;
   description: string;
-  scope: "agents" | "roadmap" | "memory" | "tasks" | "release";
+  scope: "agents" | "roadmap" | "memory" | "tasks" | "release" | "ai";
 };
 
 export type SemanticEntry = {
@@ -73,5 +73,10 @@ export type HomeLogicMapSnapshot = {
     pendingAcceptance: string | null;
     runtimeAlert: string | null;
     healthSummary: string;
+  };
+  aiEfficiency: {
+    totalSavedLabel: string;
+    avgSavingsLabel: string;
+    alert: string | null;
   };
 };

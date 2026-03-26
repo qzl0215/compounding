@@ -31,6 +31,8 @@
     "ai:review:summary": "node --experimental-strip-types scripts/ai/review-summary.ts",
     "ai:preview:summary": "node --experimental-strip-types scripts/ai/preview-summary.ts",
     "ai:prod:summary": "node --experimental-strip-types scripts/ai/prod-summary.ts",
+    "ai:diff:summary": "node --experimental-strip-types scripts/ai/diff-summary.ts",
+    "ai:tree:summary": "node --experimental-strip-types scripts/ai/tree-summary.ts",
     "ai:command-gain": "node --experimental-strip-types scripts/ai/command-gain.ts",
     "ai:create-task": "node --experimental-strip-types scripts/ai/create-task.ts",
     "ai:validate-judgement-contract": "node --experimental-strip-types scripts/ai/validate-judgement-contract.ts",

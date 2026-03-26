@@ -32,6 +32,11 @@ export type BuildHomeLogicMapInput = {
   pendingAcceptance: string | null;
   runtimeAlert: string | null;
   healthSummary: string;
+  aiEfficiency: {
+    totalSavedLabel: string;
+    avgSavingsLabel: string;
+    alert: string | null;
+  };
 };
 
 const CHAIN_NODE_IDS: HomeLogicNodeId[] = ["goals", "plan", "execution", "acceptance"];
@@ -93,6 +98,7 @@ export function buildHomeLogicMapSnapshot(input: BuildHomeLogicMapInput): HomeLo
       runtimeAlert: input.runtimeAlert,
       healthSummary: input.healthSummary,
     },
+    aiEfficiency: input.aiEfficiency,
   };
 }
 

@@ -1,4 +1,5 @@
 import { getProjectStateSnapshot } from "@/modules/project-state";
+import { formatEstimatedTokens } from "../../../../../shared/ai-efficiency";
 import { buildHomeLogicMapSnapshot } from "./builders";
 import { HOME_ENTRY_LINKS } from "./constants";
 import type { HomeLogicMapSnapshot, SemanticEntry, SemanticEntryGroup } from "./types";
@@ -44,6 +45,13 @@ export async function getHomeStatusBoard(): Promise<HomeLogicMapSnapshot> {
     pendingAcceptance: projectState.release.pendingAcceptance,
     runtimeAlert: projectState.release.runtimeAlert,
     healthSummary: projectState.release.healthSummary,
+    aiEfficiency: {
+      totalSavedLabel: `~${formatEstimatedTokens(projectState.aiEfficiency.dashboard.overview.total_saved_tokens_est)}`,
+      avgSavingsLabel: `${projectState.aiEfficiency.dashboard.overview.avg_savings_pct_est}%`,
+      alert: projectState.aiEfficiency.dashboard.adoption.alerts[0]
+        ? `${projectState.aiEfficiency.dashboard.adoption.alerts[0].shortcut_id} adoption ${projectState.aiEfficiency.dashboard.adoption.alerts[0].adoption_pct}%`
+        : null,
+    },
   });
 }
 

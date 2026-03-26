@@ -65,6 +65,24 @@ const SUMMARY_PROFILES = {
     parser_slots: PARSER_SLOTS,
     shortcut_id: "prod_summary",
   },
+  diff_summary: {
+    profile_id: "diff_summary",
+    profile_version: "1",
+    pipeline: ["stats_extraction"],
+    tee_policy: DEFAULT_TEE_POLICY,
+    fallback_policy: DEFAULT_FALLBACK_POLICY,
+    parser_slots: PARSER_SLOTS,
+    shortcut_id: "diff_summary",
+  },
+  tree_summary: {
+    profile_id: "tree_summary",
+    profile_version: "1",
+    pipeline: ["stats_extraction"],
+    tee_policy: DEFAULT_TEE_POLICY,
+    fallback_policy: DEFAULT_FALLBACK_POLICY,
+    parser_slots: PARSER_SLOTS,
+    shortcut_id: "tree_summary",
+  },
 };
 
 function getSummaryProfile(profileId) {

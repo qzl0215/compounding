@@ -135,6 +135,20 @@ agent_shortcuts:
     why: 直接给出 production 状态、端口、drift 与失败原因，并统计 shortcut adoption
     tool_surfaces: [codex, claude, cursor, opencode]
     mode: suggest
+  - shortcut_id: diff_summary
+    label: 优先使用改动摘要
+    canonical_command: pnpm ai:diff:summary
+    applies_when: 需要看当前变更范围和主要改动文件，而不是整段 git diff
+    why: 聚焦文件变更数、增删行和主要改动文件，减少 diff 噪音
+    tool_surfaces: [codex, claude, cursor, opencode]
+    mode: suggest
+  - shortcut_id: tree_summary
+    label: 优先使用仓结构摘要
+    canonical_command: pnpm ai:tree:summary
+    applies_when: 需要快速了解仓库结构和热点目录，而不是展开整段文件列表
+    why: 聚焦目录分布、文件类型和少量代表路径，减少读仓噪音
+    tool_surfaces: [codex, claude, cursor, opencode]
+    mode: suggest
 notes:
   - 该文件只保存服务器访问面、GitHub 接入面和标准发布流的非密钥事实。
   - 真实密钥只放在 env、gh auth、ssh config 或外部 secret manager。

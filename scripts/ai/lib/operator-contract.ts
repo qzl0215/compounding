@@ -412,6 +412,8 @@ function renderAiFeatureEntry(contract) {
     "",
     "- 默认 feature 上下文：`pnpm ai:feature-context -- --surface=home`",
     "- 带 task 的 feature 上下文：`pnpm ai:feature-context -- --taskPath=tasks/queue/task-xxx.md`",
+    "- 看当前令牌效率：`pnpm ai:command-gain --json` 或打开 `/ai-efficiency`",
+    "- 看改动摘要：`pnpm ai:diff:summary`；看仓结构：`pnpm ai:tree:summary`",
     "- 默认先看 feature packet 里的 `Project Judgement` 和 `Default Loop`，再动手改代码。",
     "",
   ];
@@ -426,7 +428,9 @@ function renderClaudeEntry(contract) {
     `- 人类扫读版在 \`${OPERATOR_RUNBOOK_PATH}\``,
     `- 当前 mode：\`${normalizeString(contract.project?.bootstrap_mode)}\`；adapter：\`${normalizeString(contract.project?.adapter_id)}\``,
     `- 推荐 preflight：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
-    ...(hasAiExecPack(contract) ? ["- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`"] : []),
+    ...(hasAiExecPack(contract)
+      ? ["- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`", "- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`"]
+      : []),
     "",
     "## 优先摘要命令",
     "",
@@ -444,7 +448,9 @@ function renderOpenCodeEntry(contract) {
     `- 人类扫读版在 \`${OPERATOR_RUNBOOK_PATH}\``,
     `- 当前 mode：\`${normalizeString(contract.project?.bootstrap_mode)}\`；adapter：\`${normalizeString(contract.project?.adapter_id)}\``,
     `- 推荐 preflight：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
-    ...(hasAiExecPack(contract) ? ["- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`"] : []),
+    ...(hasAiExecPack(contract)
+      ? ["- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`", "- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`"]
+      : []),
     "",
     "## 优先摘要命令",
     "",
@@ -464,7 +470,9 @@ function renderCursorEntry(contract) {
     `- 人类扫读版在 \`${OPERATOR_RUNBOOK_PATH}\``,
     `- 当前 mode：\`${normalizeString(contract.project?.bootstrap_mode)}\`；adapter：\`${normalizeString(contract.project?.adapter_id)}\``,
     `- 推荐 preflight：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
-    ...(hasAiExecPack(contract) ? ["- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`"] : []),
+    ...(hasAiExecPack(contract)
+      ? ["- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`", "- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`"]
+      : []),
     "",
     "## 优先摘要命令",
     "",

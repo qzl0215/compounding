@@ -20,10 +20,11 @@ describe("docs repository", () => {
     expect(memoryNode?.children?.some((node) => node.path === "memory/project")).toBe(true);
   });
 
-  it("keeps the home entry links focused on evidence, execution, and release entry points", () => {
+  it("keeps the home entry links focused on evidence, execution, release and ai efficiency entry points", () => {
     expect(HOME_ENTRY_LINKS).toEqual([
       { href: "/tasks", label: "执行面板", description: "看真正可推进的事项。", scope: "tasks" },
       { href: "/releases", label: "发布事实", description: "看待验收版本、运行态和发布历史。", scope: "release" },
+      { href: "/ai-efficiency", label: "AI 效率", description: "看令牌消耗、节省和 adoption。", scope: "ai" },
       { href: "/knowledge-base", label: "证据库", description: "看主源、规则和背景。", scope: "memory" }
     ]);
   });
