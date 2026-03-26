@@ -13,6 +13,7 @@ from .defaults import (
     MINIMAL_PROTOCOL_DOCS,
     SOURCE_ROOT,
 )
+from .operator_contract import ensure_operator_contract
 from .schema_validation import validate_payload
 from .yaml_io import load_yaml, save_yaml
 
@@ -116,12 +117,17 @@ def create_report(target: Path, brief: dict[str, Any], manifest: dict[str, Any],
 def attach(config_path: Path | None, target: Path, adoption_mode: str = "attach") -> dict[str, Any]:
     manifest = load_kernel_manifest()
     brief_path, brief_payload, brief_changed = ensure_brief(config_path, target, adoption_mode=adoption_mode)
+    operator_path, _, operator_changed = ensure_operator_contract(target)
     created_actions: list[str] = []
     skipped_actions: list[str] = []
     if brief_changed:
         created_actions.append(f"{brief_path.relative_to(target).as_posix()} (created or migrated)")
     else:
         skipped_actions.append(f"{brief_path.relative_to(target).as_posix()} (already normalized)")
+    if operator_changed:
+        created_actions.append(f"{operator_path.relative_to(target).as_posix()} (created or normalized)")
+    else:
+        skipped_actions.append(f"{operator_path.relative_to(target).as_posix()} (already normalized)")
 
     report_path = target / BOOTSTRAP_REPORT_PATH
     report = create_report(target, brief_payload, manifest, created_actions, skipped_actions)

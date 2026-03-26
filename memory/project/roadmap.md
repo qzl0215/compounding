@@ -2,7 +2,7 @@
 title: ROADMAP
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-26
+last_reviewed_at: 2026-03-28
 source_of_truth: memory/project/roadmap.md
 related_docs:
   - AGENTS.md
@@ -32,7 +32,7 @@ AI feature 开发提效闭环
 
 ## 当前优先级
 
-优先继续收短派生产物入口和跨页面读链：`pnpm preflight` 单入口与 task 级 retro digest 已落地，下一步先统一 `code_index/*`、`output/*`、coordination 产物和 runtime 事实的语义，让团队只维护“主源 / 派生物”两层心智；随后继续压跨页面唯一 snapshot 和 release 单一状态机。
+优先继续收短派生产物入口和跨页面读链：`pnpm preflight` 单入口、task 级 retro digest、以及 `bootstrap/project_operator.yaml` 的运维接入合同都已落地，下一步先统一 `code_index/*`、`output/*`、coordination 产物和 runtime 事实的语义，让团队只维护“主源 / 派生物”两层心智；随后继续压跨页面唯一 snapshot 和 release 单一状态机。
 
 ## 下一阶段方向
 

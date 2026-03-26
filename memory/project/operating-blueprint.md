@@ -8,14 +8,14 @@ related_docs:
   - memory/project/roadmap.md
   - memory/project/current-state.md
   - docs/DEV_WORKFLOW.md
-last_reviewed_at: 2026-03-26
+last_reviewed_at: 2026-03-28
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 运营蓝图
 
 ## 需求总览
 
-继续把结构收口落到真正会制造熵增的边界上：`t-058` 与 `t-059` 已经把 CLI 外壳和 release/task 状态链收正，`t-061` 已把 `portal` 读模型聚合层收成薄 barrel，`t-062` 已把首页 shell 收成薄入口，`t-064` 已把首页从 `Kernel / Project` 工程视角改成人类可扫读的项目逻辑态势图；`t-063` 已把对外门禁收成 `pnpm preflight`，`t-068` 已把耗时/弯路复盘先收成轻量 TTL 轨迹、companion digest 和候选派生产物。当前主线回到派生产物语义收口、跨页面唯一 snapshot 与 release 单一状态机，目标仍是减少对象歧义和重复外壳，而不是增加新框架。
+继续把结构收口落到真正会制造熵增的边界上：`t-058` 与 `t-059` 已经把 CLI 外壳和 release/task 状态链收正，`t-061` 已把 `portal` 读模型聚合层收成薄 barrel，`t-062` 已把首页 shell 收成薄入口，`t-064` 已把首页从 `Kernel / Project` 工程视角改成人类可扫读的项目逻辑态势图；`t-063` 已把对外门禁收成 `pnpm preflight`，`t-068` 已把耗时/弯路复盘先收成轻量 TTL 轨迹、companion digest 和候选派生产物，`t-069` 已把服务器访问面、GitHub 接入方式和标准发布流统一进 `bootstrap/project_operator.yaml`，并补上可生成可校验的 runbook 与跨工具薄入口。当前主线回到派生产物语义收口、跨页面唯一 snapshot 与 release 单一状态机，目标仍是减少对象歧义和重复外壳，而不是增加新框架。
 `t-065` 已完成：把 Studio 整体切到浅色实验室风格，统一首页、任务、证据和发布页的底色、卡片、导航与控件语气，避免局部改版继续把控制台感重新带回首屏。
 `t-066` 已完成：高频模块已补成可机读 feature 合同，`build-context` 已升级成 feature 入口，首页、任务页、发布页也开始读取同一份项目状态摘要；diff-aware 选测已经收成 `required / recommended`，AI 加功能时不必再手工拼第一轮上下文。
 
@@ -75,6 +75,7 @@ last_reviewed_at: 2026-03-26
 - `t-066`：给高频模块补 feature 合同，把 `build-context` 升级成 feature 入口，引入共享项目状态摘要与 required / recommended 选测（已完成）
 - `t-063`：统一 preflight 入口，让 `pnpm preflight` 成为唯一对外推荐门禁，并让完整 task guard 不再依赖当前 diff 误判（已完成）
 - `t-068`：记录 structural/release task 的阶段耗时与重复 blocker，把 raw trace 压成 companion digest 与 retro candidate（已完成）
+- `t-069`：统一服务器 / GitHub / 发布运维契约，生成 OPERATOR_RUNBOOK 与跨工具薄入口（已完成）
 
 ## 下一步对话
 

@@ -2,7 +2,7 @@
 title: DEV_WORKFLOW
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-26
+last_reviewed_at: 2026-03-28
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -32,6 +32,7 @@ related_docs:
 - `light` 改动默认只执行基础 gate；`structural / release` task 动手前默认跑 `pnpm preflight -- --taskId=t-xxx`。
 - `coord:check:pre-task` 只保留为兼容别名，输出 contract 与 `pnpm preflight -- --taskId=t-xxx` 一致。
 - 完整 task guard 输出会附带 `iteration_digest_path / retro_candidates_path / retro_hints`；新 Agent 开工前先看上一轮时间主要耗在哪个阶段、最近 blocker 是什么、有没有现成 shortcut。
+- 涉及服务器访问、GitHub 接入方式或标准发布动作时，先读 `bootstrap/project_operator.yaml`；人类扫读版在 `docs/OPERATOR_RUNBOOK.md`。
 - 若属于 unfamiliar pattern / infra / runtime capability，先用 `coord:task:search` 记录最小 search evidence。
 - 完整 task guard 默认检查：
   - 工作区是否干净
@@ -67,6 +68,7 @@ related_docs:
 - 若已有未验收 `dev`，先提醒用户验收上一个 `dev`。
 - 用户验收通过后，再晋升到 `main` 与本地生产。
 - 最后用 `pnpm prod:status`、`pnpm prod:check` 和 `/releases` 完成生产验收。
+- 具体服务器访问面、GitHub 接入方式和标准命令以 `bootstrap/project_operator.yaml` 为准，不再散落写在多份 runbook 里。
 
 ## 分层验证顺序
 

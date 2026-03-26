@@ -1,0 +1,77 @@
+version: 0.1.0
+project:
+  name: Compounding AI Operating System
+server_surfaces:
+  - surface_id: local-preview
+    purpose: preview
+    enabled: true
+    transport: local_process
+    host: 127.0.0.1
+    port: 3011
+    base_url: http://127.0.0.1:3011
+    access_via: pnpm preview:start
+    auth:
+      mode: none
+      secret_refs: []
+    commands:
+      start: pnpm preview:start
+      stop: pnpm preview:stop
+      status: pnpm preview:status
+      check: pnpm preview:check
+    notes:
+      - 本地 preview channel；当前仓库由 scripts/local-runtime 目录管理。
+  - surface_id: local-production
+    purpose: production
+    enabled: true
+    transport: local_process
+    host: 127.0.0.1
+    port: 3010
+    base_url: http://127.0.0.1:3010
+    access_via: pnpm prod:start
+    auth:
+      mode: none
+      secret_refs: []
+    commands:
+      start: pnpm prod:start
+      stop: pnpm prod:stop
+      status: pnpm prod:status
+      check: pnpm prod:check
+    notes:
+      - 本地 production runtime；是否真正在线以 prod 状态和 prod 检查命令为准。
+github_surface:
+  enabled: false
+  provider: github
+  owner: ""
+  repo: ""
+  remote_name: origin
+  default_branch: main
+  auth:
+    mode: gh_cli
+    secret_refs: []
+  commands:
+    status: gh repo view
+    sync: git fetch --all --prune
+    open_pr: gh pr create --fill
+    checks: gh pr checks
+  required_checks: []
+  notes:
+    - 当前仓库未检测到 remote origin；接入 GitHub 后再补 owner、repo 和 required_checks。
+    - 默认优先使用 gh auth / gh cli，而不是把 token 写进仓库。
+standard_flows:
+  preflight:
+    basic: pnpm preflight
+    task: pnpm preflight -- --taskId=t-xxx
+  preview_release:
+    prepare: node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev --primary-task <taskId>
+    accept: node --experimental-strip-types scripts/release/accept-dev-release.ts --release <releaseId>
+    reject: node --experimental-strip-types scripts/release/reject-dev-release.ts --release <releaseId>
+  production_release:
+    promote_to_main: git checkout main && git merge --no-ff <validated-branch>
+    start_runtime: pnpm prod:start
+    status: pnpm prod:status
+    check: pnpm prod:check
+    rollback: node --experimental-strip-types scripts/release/rollback-release.ts --release <releaseId>
+notes:
+  - 该文件只保存服务器访问面、GitHub 接入面和标准发布流的非密钥事实。
+  - 真实密钥只放在 env、gh auth、ssh config 或外部 secret manager。
+  - 人类扫读版由 docs/OPERATOR_RUNBOOK.md 承接；跨工具薄入口只负责把工具跳转到 AGENTS.md 与本文件。

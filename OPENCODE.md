@@ -1,0 +1,6 @@
+# OPENCODE
+
+- Canonical source: `AGENTS.md`
+- 涉及服务器 / GitHub / 发布访问面时必须先读 `bootstrap/project_operator.yaml`
+- 人类扫读版在 `docs/OPERATOR_RUNBOOK.md`
+- 动手前统一跑 `pnpm preflight`；`structural / release` 改动用 `pnpm preflight -- --taskId=t-xxx`

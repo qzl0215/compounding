@@ -18,8 +18,12 @@ class AiAssetsCliTests(unittest.TestCase):
         shutil.copytree(ROOT / "docs", self.target / "docs")
         shutil.copytree(ROOT / "memory", self.target / "memory")
         shutil.copytree(ROOT / "code_index", self.target / "code_index")
+        shutil.copytree(ROOT / "bootstrap", self.target / "bootstrap")
+        shutil.copytree(ROOT / "schemas", self.target / "schemas")
         shutil.copytree(ROOT / "scripts" / "ai", self.target / "scripts" / "ai")
+        shutil.copytree(ROOT / "scripts" / "release", self.target / "scripts" / "release")
         shutil.copytree(ROOT / "tasks" / "templates", self.target / "tasks" / "templates")
+        shutil.copy(ROOT / "package.json", self.target / "package.json")
 
     def tearDown(self) -> None:
         self.temp_dir.cleanup()
@@ -181,6 +185,34 @@ class AiAssetsCliTests(unittest.TestCase):
         self.assertEqual(report["candidates"][0]["repeat_count"], 2)
         self.assertEqual(sorted(report["candidates"][0]["affected_tasks"]), ["t-111", "t-112"])
         self.assertEqual(report["candidates"][0]["lost_time_ms"], 7000)
+
+    def test_generate_operator_assets_writes_runbook_and_tool_entries(self) -> None:
+        completed = self.run_script("scripts/ai/generate-operator-assets.ts")
+        payload = json.loads(completed.stdout)
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertIn("docs/OPERATOR_RUNBOOK.md", payload["generated_paths"])
+        self.assertTrue((self.target / "docs" / "OPERATOR_RUNBOOK.md").exists())
+        self.assertTrue((self.target / "CLAUDE.md").exists())
+        self.assertTrue((self.target / "OPENCODE.md").exists())
+        self.assertTrue((self.target / ".cursor" / "rules" / "00-project-entry.mdc").exists())
+        self.assertIn("bootstrap/project_operator.yaml", (self.target / "docs" / "OPERATOR_RUNBOOK.md").read_text(encoding="utf8"))
+        self.assertIn("AGENTS.md", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
+
+    def test_validate_operator_contract_rejects_secret_like_refs(self) -> None:
+        target = self.target / "bootstrap" / "project_operator.yaml"
+        content = target.read_text(encoding="utf8")
+        target.write_text(
+            content.replace("secret_refs: []", "secret_refs:\n      - ghp_abcdefghijklmnopqrstuvwxyz123456", 1),
+            encoding="utf8",
+        )
+
+        self.run_script("scripts/ai/generate-operator-assets.ts")
+        completed = self.run_script("scripts/ai/validate-operator-contract.ts")
+        payload = json.loads(completed.stdout)
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertTrue(any("secret_refs" in error for error in payload["errors"]))
 
 
 if __name__ == "__main__":

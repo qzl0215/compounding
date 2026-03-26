@@ -2,7 +2,7 @@
 title: CURRENT_STATE
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-26
+last_reviewed_at: 2026-03-28
 source_of_truth: memory/project/current-state.md
 related_docs:
   - AGENTS.md
@@ -26,6 +26,7 @@ related_docs:
 - `t-066` 已完成并进入 production：高频模块已补成可机读 feature 合同，`scripts/ai/feature-context.ts` 与 `build-context.ts` 已能直接提供 feature 包，首页 / 任务页 / 发布页也已开始读取共享项目状态摘要。
 - `t-067` 已完成并落到 `main`：task 标题已经统一成中文直给概述，`create-task` 会拦截英文标题摘要，历史 `任务 task-xxx` 机器壳标题也会自动回退到中文摘要。
 - `t-068` 已完成：`structural / release` task 现在会自动记录 preflight / handoff / review / release / rollback 的阶段 activity；24 小时后 raw trace 会 compact 进 companion `iteration_digest`，`pnpm preflight -- --taskId=t-xxx` 会直接带出 retro hints，重复 blocker 可用 `pnpm ai:retro-candidates` 聚合成候选。
+- `t-069` 已完成：服务器访问面、GitHub 接入方式和标准发布流已经统一进 `bootstrap/project_operator.yaml`；`docs/OPERATOR_RUNBOOK.md` 与 Claude/Cursor/OpenCode 薄入口可脚本生成并在静态门禁中校验，不再各自复制一套接入说明。
 - 当前主线回到“派生产物语义收口”：继续把 `code_index/*`、`output/*`、coordination 产物和 runtime 事实压成一致的“主源 / 派生物”心智，减少导航缓存、执行产物和展示投影各自长解释层。
 - 本地 production 当前稳定运行在 `3010`；active release 以 `pnpm prod:status` 输出为准，当前 active release 已切到 `t-066` 上线版本。
 - `t-064` 已完成：首页已改成面向人的项目逻辑态势图，主视觉是可点击的逻辑结构图，只保留目标、里程碑、节奏、风险和下钻入口。
@@ -63,6 +64,8 @@ related_docs:
 - `node --experimental-strip-types scripts/ai/create-task.ts task-xxx "中文直给概述" "为什么现在"`
 - `pnpm validate:static`
 - `pnpm validate:build`
+- `pnpm ai:generate-operator-assets`
+- `pnpm ai:validate-operator-contract`
 - `pnpm ai:retro-candidates`
 - `pnpm prod:status`
 - `pnpm prod:check`

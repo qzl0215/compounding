@@ -10,6 +10,7 @@ SOURCE_ROOT = Path(__file__).resolve().parents[2]
 AGENTS_PATH = "AGENTS.md"
 BOOTSTRAP_DIR = "bootstrap"
 BRIEF_PATH = "bootstrap/project_brief.yaml"
+PROJECT_OPERATOR_PATH = "bootstrap/project_operator.yaml"
 LEGACY_CONFIG_PATH = "bootstrap/project_bootstrap.yaml"
 LEGACY_BRIEF_SCHEMA_PATH = "bootstrap/schemas/project_brief.schema.json"
 RESOLVED_CONFIG_PATH = "output/bootstrap/project_bootstrap.resolved.yaml"
@@ -26,11 +27,13 @@ KERNEL_MANIFEST_SCHEMA_PATH = SCHEMAS_DIR / "kernel_manifest.schema.yaml"
 BOOTSTRAP_REPORT_SCHEMA_PATH = SCHEMAS_DIR / "bootstrap_report.schema.yaml"
 PROPOSAL_SCHEMA_PATH = SCHEMAS_DIR / "proposal.schema.yaml"
 EXPERIENCE_PROMOTION_SCHEMA_PATH = SCHEMAS_DIR / "experience_promotion.schema.yaml"
+PROJECT_OPERATOR_SCHEMA_PATH = SCHEMAS_DIR / "project_operator.schema.yaml"
 
 PROJECT_BRIEF_TEMPLATE_PATH = TEMPLATES_DIR / "project_brief.template.yaml"
 BOOTSTRAP_REPORT_TEMPLATE_PATH = TEMPLATES_DIR / "bootstrap_report.template.yaml"
 PROPOSAL_TEMPLATE_PATH = TEMPLATES_DIR / "proposal.template.yaml"
 EXPERIENCE_PROMOTION_TEMPLATE_PATH = TEMPLATES_DIR / "experience_promotion.template.yaml"
+PROJECT_OPERATOR_TEMPLATE_PATH = TEMPLATES_DIR / "project_operator.template.yaml"
 
 KERNEL_MANIFEST_PATH = KERNEL_DIR / "kernel_manifest.yaml"
 KERNEL_VERSION = "0.1.0"
@@ -81,6 +84,7 @@ DEFAULT_PROTECTED_RULES = [
 
 DEFAULT_AUTO_APPLY_PATHS = [
     "bootstrap/project_brief.yaml",
+    "bootstrap/project_operator.yaml",
     "tasks/templates/task-template.md",
 ]
 
@@ -151,6 +155,9 @@ __all__ = [
     "EXAMPLES_ATTACH_DIR",
     "EXPERIENCE_PROMOTION_SCHEMA_PATH",
     "EXPERIENCE_PROMOTION_TEMPLATE_PATH",
+    "PROJECT_OPERATOR_PATH",
+    "PROJECT_OPERATOR_SCHEMA_PATH",
+    "PROJECT_OPERATOR_TEMPLATE_PATH",
     "HARD_FILE_LIMIT",
     "KERNEL_DIR",
     "KERNEL_MANIFEST_PATH",

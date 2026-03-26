@@ -12,6 +12,8 @@ from .defaults import (
     DIFF_CATEGORIES,
     KERNEL_MANIFEST_PATH,
     KERNEL_MANIFEST_SCHEMA_PATH,
+    PROJECT_OPERATOR_PATH,
+    PROJECT_OPERATOR_SCHEMA_PATH,
     PROJECT_BRIEF_SCHEMA_PATH,
     SOURCE_ROOT,
     AuditResult,
@@ -46,6 +48,7 @@ def audit(config_path: Path, target: Path) -> AuditResult:
         result.errors.extend(validation["field_errors"].values())
 
     validate_target_file(target / BRIEF_PATH, SOURCE_ROOT / PROJECT_BRIEF_SCHEMA_PATH, result)
+    validate_target_file(target / PROJECT_OPERATOR_PATH, SOURCE_ROOT / PROJECT_OPERATOR_SCHEMA_PATH, result)
     validate_target_file(SOURCE_ROOT / KERNEL_MANIFEST_PATH, SOURCE_ROOT / KERNEL_MANIFEST_SCHEMA_PATH, result)
     validate_target_file(target / BOOTSTRAP_REPORT_PATH, SOURCE_ROOT / BOOTSTRAP_REPORT_SCHEMA_PATH, result)
 
