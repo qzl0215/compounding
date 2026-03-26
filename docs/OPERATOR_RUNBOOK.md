@@ -58,6 +58,25 @@ related_docs:
   - 先自检：`python3 scripts/init_project_compounding.py doctor --target . --mode=ai_upgrade` / `python3 scripts/init_project_compounding.py audit --target .`
   - 适用：项目已准备长期按 AI feature 流开发，需要 preflight/task/review 与 summary harness。
 
+## 老项目接入 checklist
+
+- 先跑 `python3 scripts/init_project_compounding.py doctor --target .`，确认 `recommended_mode`、`adapter_id`、`required_packs`、`ready_for_ai_iteration`。
+- 第一轮优先 `python3 scripts/init_project_compounding.py attach --target . --mode=normalize`。
+- 跑 `python3 scripts/init_project_compounding.py audit --target .`，确认 `AGENTS.md`、`bootstrap/project_brief.yaml`、`bootstrap/project_operator.yaml`、`docs/OPERATOR_RUNBOOK.md`、`CLAUDE.md`、`OPENCODE.md`、`.cursor/rules/00-project-entry.mdc` 对齐。
+- 跑 `python3 scripts/init_project_compounding.py proposal --target .`，先看提案再决定是否应用。
+- 只有 `normalize` 通过且 `ready_for_ai_iteration=true` 时，再升级 `ai_upgrade`。
+- 升级后跑 `pnpm preflight -- --taskId=t-xxx` 和 `pnpm preflight -- --taskId=t-xxx`。
+- 验收：`python3 scripts/init_project_compounding.py doctor --target . --mode=ai_upgrade` 仍返回 `ready_for_ai_iteration=true`。
+
+## 新项目 cold_start checklist
+
+- 先跑 `python3 scripts/init_project_compounding.py doctor --target .`。
+- 直接 `python3 scripts/init_project_compounding.py bootstrap --target . --mode=cold_start`。
+- 如需补齐入口，再跑 `node --experimental-strip-types scripts/ai/generate-operator-assets.ts`。
+- 跑 `python3 scripts/init_project_compounding.py audit --target .`。
+- 只有项目真的需要 AI 深度迭代时，再进入 `ai_upgrade`。
+- 验收：`doctor` 能明确推荐模式，`bootstrap` 生成的协议 / 入口文件可读可用，后续可平滑升到 `normalize` 或 `ai_upgrade`。
+
 ## AI 默认入口
 
 - 默认 feature 上下文：`pnpm ai:feature-context -- --surface=home`

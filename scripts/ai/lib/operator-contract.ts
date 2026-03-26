@@ -363,6 +363,7 @@ function renderRunbook(contract) {
     `- review：\`${normalizeString(contract.toolchain_commands?.review)}\``,
     "",
     ...renderModeGuide(contract),
+    ...renderBootstrapChecklists(contract),
     ...renderAiFeatureEntry(contract),
     "## 服务器访问面",
     "",
@@ -443,6 +444,38 @@ function renderModeGuide(contract) {
     `  - 先自检：\`${doctor} --mode=ai_upgrade\` / \`${audit}\``,
     "  - 适用：项目已准备长期按 AI feature 流开发，需要 preflight/task/review 与 summary harness。",
     "",
+  ];
+}
+
+function renderChecklistSection(title, bullets) {
+  return [`## ${title}`, "", ...bullets, ""];
+}
+
+function renderBootstrapChecklists(contract) {
+  const doctor = normalizeString(contract.toolchain_commands?.bootstrap_doctor);
+  const attach = normalizeString(contract.toolchain_commands?.bootstrap_attach);
+  const audit = normalizeString(contract.toolchain_commands?.bootstrap_audit);
+  const proposal = normalizeString(contract.toolchain_commands?.bootstrap_proposal);
+  const preflight = normalizeString(contract.toolchain_commands?.preflight);
+  const taskPreflight = normalizeString(contract.toolchain_commands?.task_preflight);
+  return [
+    ...renderChecklistSection("老项目接入 checklist", [
+      `- 先跑 \`${doctor}\`，确认 \`recommended_mode\`、\`adapter_id\`、\`required_packs\`、\`ready_for_ai_iteration\`。`,
+      `- 第一轮优先 \`${attach} --mode=normalize\`。`,
+      `- 跑 \`${audit}\`，确认 \`AGENTS.md\`、\`bootstrap/project_brief.yaml\`、\`bootstrap/project_operator.yaml\`、\`docs/OPERATOR_RUNBOOK.md\`、\`CLAUDE.md\`、\`OPENCODE.md\`、\`.cursor/rules/00-project-entry.mdc\` 对齐。`,
+      `- 跑 \`${proposal}\`，先看提案再决定是否应用。`,
+      `- 只有 \`normalize\` 通过且 \`ready_for_ai_iteration=true\` 时，再升级 \`ai_upgrade\`。`,
+      `- 升级后跑 \`${preflight} -- --taskId=t-xxx\` 和 \`${taskPreflight}\`。`,
+      `- 验收：\`${doctor} --mode=ai_upgrade\` 仍返回 \`ready_for_ai_iteration=true\`。`,
+    ]),
+    ...renderChecklistSection("新项目 cold_start checklist", [
+      `- 先跑 \`${doctor}\`。`,
+      `- 直接 \`python3 scripts/init_project_compounding.py bootstrap --target . --mode=cold_start\`。`,
+      `- 如需补齐入口，再跑 \`node --experimental-strip-types scripts/ai/generate-operator-assets.ts\`。`,
+      `- 跑 \`${audit}\`。`,
+      `- 只有项目真的需要 AI 深度迭代时，再进入 \`ai_upgrade\`。`,
+      `- 验收：\`doctor\` 能明确推荐模式，\`bootstrap\` 生成的协议 / 入口文件可读可用，后续可平滑升到 \`normalize\` 或 \`ai_upgrade\`。`,
+    ]),
   ];
 }
 

@@ -6,7 +6,7 @@
 - 短编号：`t-076`
 - 父计划：`memory/project/operating-blueprint.md`
 - 任务摘要：
-  把摘要优先工作流做成默认入口，并收口 bootstrap shell 的分类口径
+  把摘要优先工作流做成默认入口，并收口 bootstrap shell 的分类口径，同时补齐老项目/新项目接入 checklist
 - 为什么现在：
   上一轮已经把摘要 wrapper 和量化看板打通了，但默认工作流还缺统一的可见入口与单一常量，导致 adoption 仍然需要手工记忆；同时 bootstrap 复制到新壳项目的 ARCHITECTURE / document manifest 口径还需要和黄金实例统一，这轮要把默认摘要链收成共享入口并同步外化分类口径，推动真实采用和跨项目一致性
 - 承接边界：
@@ -18,7 +18,7 @@
 
 ### 要做
 
-shared/ai-efficiency.ts,scripts/ai/lib/feature-context.ts,scripts/ai/lib/operator-contract.ts,apps/studio/src/modules/project-state/components/ai-efficiency-card.tsx,apps/studio/src/modules/project-state/__tests__/ai-efficiency-card.test.tsx,apps/studio/src/modules/portal/components/home-logic-board.tsx,apps/studio/src/modules/portal/__tests__/home-dashboard.test.tsx,docs/OPERATOR_RUNBOOK.md,tests/test_ai_summary_harness.py
+shared/ai-efficiency.ts,scripts/ai/lib/feature-context.ts,scripts/ai/lib/operator-contract.ts,apps/studio/src/modules/project-state/components/ai-efficiency-card.tsx,apps/studio/src/modules/project-state/__tests__/ai-efficiency-card.test.tsx,apps/studio/src/modules/portal/components/home-logic-board.tsx,apps/studio/src/modules/portal/__tests__/home-dashboard.test.tsx,docs/OPERATOR_RUNBOOK.md,tests/test_ai_summary_harness.py,tests/test_ai_assets_cli.py
 
 补充：`docs/ARCHITECTURE.md`、`memory/architecture/system-overview.md`、`memory/project/current-state.md`、`memory/project/operating-blueprint.md`、`memory/project/roadmap.md`、`bootstrap/templates/document_manifest.json`、`scripts/compounding_bootstrap/bootstrap.py`、`scripts/compounding_bootstrap/scaffold_assets.py`、`tests/test_bootstrap_scaffold_cli.py`
 

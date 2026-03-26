@@ -206,6 +206,9 @@ class AiAssetsCliTests(unittest.TestCase):
         self.assertIn("pnpm ai:read:summary", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
         self.assertIn("/ai-efficiency", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
         self.assertIn("三模式入口", (self.target / "docs" / "OPERATOR_RUNBOOK.md").read_text(encoding="utf8"))
+        self.assertIn("老项目接入 checklist", (self.target / "docs" / "OPERATOR_RUNBOOK.md").read_text(encoding="utf8"))
+        self.assertIn("新项目 cold_start checklist", (self.target / "docs" / "OPERATOR_RUNBOOK.md").read_text(encoding="utf8"))
+        self.assertIn("python3 scripts/init_project_compounding.py bootstrap --target . --mode=cold_start", (self.target / "docs" / "OPERATOR_RUNBOOK.md").read_text(encoding="utf8"))
         self.assertIn("pnpm ai:feature-context -- --surface=home", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
 
     def test_validate_operator_contract_rejects_secret_like_refs(self) -> None:
