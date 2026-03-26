@@ -7,8 +7,42 @@ const OPERATOR_RUNBOOK_PATH = "docs/OPERATOR_RUNBOOK.md";
 const CLAUDE_ENTRY_PATH = "CLAUDE.md";
 const OPENCODE_ENTRY_PATH = "OPENCODE.md";
 const CURSOR_ENTRY_PATH = ".cursor/rules/00-project-entry.mdc";
-const { buildSummaryFirstWorkflow } = require(path.join(process.cwd(), "shared", "ai-efficiency.ts"));
 
+function buildFallbackSummaryWorkflow() {
+  return {
+    summary_first_commands: [
+      "pnpm ai:preflight:summary",
+      "pnpm ai:diff:summary",
+      "pnpm ai:tree:summary",
+      "pnpm ai:find:summary -- --query=keyword",
+      "pnpm ai:read:summary -- --path=memory/project/current-state.md",
+    ],
+    raw_fallback_commands: [
+      "pnpm preflight",
+      "git diff",
+      "rg --files --hidden",
+      "rg -n --hidden keyword",
+      "sed -n '1,200p' memory/project/current-state.md",
+    ],
+  };
+}
+
+function loadSummaryFirstWorkflow(root = process.cwd()) {
+  const summaryPath = path.join(root, "shared", "ai-efficiency.ts");
+  if (fs.existsSync(summaryPath)) {
+    try {
+      const module = require(summaryPath);
+      if (module && typeof module.buildSummaryFirstWorkflow === "function") {
+        return module.buildSummaryFirstWorkflow;
+      }
+    } catch {
+      // Fall through to the local fallback workflow for minimal bootstrap shells.
+    }
+  }
+  return buildFallbackSummaryWorkflow;
+}
+
+const buildSummaryFirstWorkflow = loadSummaryFirstWorkflow();
 const DEFAULT_SUMMARY_WORKFLOW = buildSummaryFirstWorkflow();
 
 function splitInlineItems(text) {

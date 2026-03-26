@@ -20,5 +20,74 @@
     "code_index/dependency-map.md",
     "tasks/templates/task-template.md",
     "tasks/queue/task-001-repo-refactor.md"
-  ]
+  ],
+  "layers": {
+    "core": [
+      "apps/studio/src/app/**",
+      "apps/studio/src/components/**",
+      "apps/studio/src/lib/**",
+      "apps/studio/src/modules/**",
+      "scripts/ai/**",
+      "scripts/coord/**",
+      "scripts/local-runtime/**",
+      "scripts/release/**",
+      "shared/**"
+    ],
+    "bootstrap": [
+      "scripts/compounding_bootstrap/**",
+      "scripts/init_project_compounding.py",
+      "kernel/kernel_manifest.yaml",
+      "bootstrap/project_bootstrap.yaml",
+      "bootstrap/project_brief.yaml",
+      "bootstrap/project_operator.yaml",
+      "bootstrap/canonical_hardening.json",
+      "bootstrap/heading_aliases.json",
+      "bootstrap/managed_blocks/**",
+      "bootstrap/schemas/**",
+      "bootstrap/templates/**",
+      "schemas/**",
+      "templates/**",
+      "tasks/templates/task-template.md"
+    ],
+    "config": [
+      "package.json",
+      "pnpm-workspace.yaml",
+      "tsconfig.base.json",
+      "apps/studio/package.json",
+      "apps/studio/tsconfig.json",
+      "apps/studio/next.config.ts",
+      "apps/studio/eslint.config.mjs",
+      "apps/studio/tailwind.config.ts",
+      "apps/studio/postcss.config.mjs",
+      "apps/studio/vitest.config.ts",
+      "apps/studio/vitest.setup.ts",
+      "apps/studio/next-env.d.ts",
+      ".github/**",
+      ".cursor/rules/**",
+      "CLAUDE.md",
+      "OPENCODE.md",
+      "docs/OPERATOR_RUNBOOK.md"
+    ],
+    "governance": [
+      "AGENTS.md",
+      "docs/WORK_MODES.md",
+      "docs/DEV_WORKFLOW.md",
+      "docs/ARCHITECTURE.md",
+      "docs/PROJECT_RULES.md",
+      "docs/AI_OPERATING_MODEL.md",
+      "docs/ASSET_MAINTENANCE.md",
+      "docs/prompts/**",
+      "memory/**",
+      "tasks/queue/**",
+      "code_index/**",
+      "README.md"
+    ],
+    "derived": [
+      ".compounding-runtime/**",
+      "output/**",
+      ".next/**",
+      ".pytest_cache/**",
+      "node_modules/**"
+    ]
+  }
 }

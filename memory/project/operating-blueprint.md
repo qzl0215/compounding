@@ -8,7 +8,7 @@ related_docs:
   - memory/project/roadmap.md
   - memory/project/current-state.md
   - docs/DEV_WORKFLOW.md
-last_reviewed_at: 2026-03-28
+last_reviewed_at: 2026-03-29
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 运营蓝图
@@ -18,6 +18,26 @@ last_reviewed_at: 2026-03-28
 继续把结构收口落到真正会制造熵增的边界上：`t-058` 与 `t-059` 已经把 CLI 外壳和 release/task 状态链收正，`t-061` 已把 `portal` 读模型聚合层收成薄 barrel，`t-062` 已把首页 shell 收成薄入口，`t-064` 已把首页从 `Kernel / Project` 工程视角改成人类可扫读的项目逻辑态势图；`t-063` 已把对外门禁收成 `pnpm preflight`，`t-068` 已把耗时/弯路复盘先收成轻量 TTL 轨迹、companion digest 和候选派生产物，`t-069` 已把服务器访问面、GitHub 接入方式和标准发布流统一进 `bootstrap/project_operator.yaml`，并补上可生成可校验的 runbook 与跨工具薄入口。当前主线回到派生产物语义收口、跨页面唯一 snapshot 与 release 单一状态机，目标仍是减少对象歧义和重复外壳，而不是增加新框架。
 `t-065` 已完成：把 Studio 整体切到浅色实验室风格，统一首页、任务、证据和发布页的底色、卡片、导航与控件语气，避免局部改版继续把控制台感重新带回首屏。
 `t-066` 已完成：高频模块已补成可机读 feature 合同，`build-context` 已升级成 feature 入口，首页、任务页、发布页也开始读取同一份项目状态摘要；diff-aware 选测已经收成 `required / recommended`，AI 加功能时不必再手工拼第一轮上下文。
+
+## 本轮补修工作项
+
+### P0
+
+- 固化 core / bootstrap / config 分类清单，避免职责边界继续漂移。
+- 统一 `code_index / output / coordination / runtime` 的“主源 / 派生物”语义。
+- 压跨页面唯一 snapshot，让首页、任务页、发布页和 feature-context 只读同一份项目状态摘要。
+- 收紧 release 单一状态机，减少 task / release / runtime 兼容壳。
+
+### P1
+
+- 补 bootstrap 外部验证矩阵：至少 1 个老项目 attach 样本 + 1 个新项目 bootstrap 样本。
+- 做 bootstrap / config / runbook / operator assets 口径复查，避免产品化后再漂移。
+- 收短 feature-context 默认入口，压实 preflight / build-context / summary wrappers / SelectedChecks。
+
+### P2
+
+- 维持 generated / runtime 边界清晰，`.compounding-runtime / output / .next / node_modules` 只作派生物。
+- 外化脚手架优先补文件级清单和复用验证，不再加新框架。
 
 ## 待思考
 

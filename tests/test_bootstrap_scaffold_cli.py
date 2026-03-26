@@ -1,9 +1,10 @@
+import json
 import unittest
 
 from scripts.compounding_bootstrap.packs import export_packs
 from scripts.compounding_bootstrap.doctor import doctor
 from scripts.compounding_bootstrap.engine import attach, audit, bootstrap, load_yaml, migrate_legacy_config, scaffold, validate_config_file
-from tests.bootstrap_support import BootstrapWorkspaceTestCase
+from tests.bootstrap_support import ROOT, BootstrapWorkspaceTestCase
 
 
 class BootstrapKernelShellTests(BootstrapWorkspaceTestCase):
@@ -36,6 +37,23 @@ class BootstrapKernelShellTests(BootstrapWorkspaceTestCase):
         self.assertTrue((self.target / "scripts" / "ai" / "validate-operator-contract.ts").exists())
         self.assertTrue((self.target / "bootstrap" / "project_operator.yaml").exists())
         self.assertTrue((self.target / "output" / "bootstrap" / "bootstrap_report.yaml").exists())
+        architecture = (self.target / "docs" / "ARCHITECTURE.md").read_text(encoding="utf8")
+        self.assertIn("core：`apps/studio/src/app/*`", architecture)
+        self.assertIn("bootstrap：`scripts/compounding_bootstrap/*`", architecture)
+        self.assertIn("config：`package.json`", architecture)
+        self.assertIn("derived / runtime：`output/*`", architecture)
+
+    def test_document_manifest_exposes_layered_classification(self) -> None:
+        payload = json.loads((ROOT / "bootstrap" / "templates" / "document_manifest.json").read_text(encoding="utf8"))
+
+        self.assertIn("core_docs", payload)
+        self.assertIn("appendix_docs", payload)
+        self.assertIn("layers", payload)
+        self.assertIn("core", payload["layers"])
+        self.assertIn("bootstrap", payload["layers"])
+        self.assertIn("config", payload["layers"])
+        self.assertIn("governance", payload["layers"])
+        self.assertIn("derived", payload["layers"])
 
     def test_attach_generates_report_and_detects_local_overrides(self) -> None:
         (self.target / "memory" / "project").mkdir(parents=True, exist_ok=True)

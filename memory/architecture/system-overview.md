@@ -2,7 +2,7 @@
 title: SYSTEM_OVERVIEW
 update_mode: promote_only
 status: active
-last_reviewed_at: 2026-03-22
+last_reviewed_at: 2026-03-29
 source_of_truth: docs/ARCHITECTURE.md
 related_docs:
   - docs/ARCHITECTURE.md
@@ -19,13 +19,10 @@ related_docs:
 
 ## 核心模块
 
-- `AGENTS.md`
-- `docs/*`
-- `memory/*`
-- `tasks/*`
-- `code_index/*`
-- `apps/studio/src/modules/*`
-- `scripts/compounding_bootstrap/*`
+- core：`apps/studio/src/modules/*`、`apps/studio/src/app/*`、`apps/studio/src/components/*`、`apps/studio/src/lib/*`、`scripts/ai/*`、`scripts/coord/*`、`scripts/local-runtime/*`、`scripts/release/*`、`shared/*`
+- bootstrap：`scripts/compounding_bootstrap/*`、`scripts/init_project_compounding.py`、`kernel/kernel_manifest.yaml`、`bootstrap/*`、`schemas/*`、`templates/*`
+- config：`package.json`、`pnpm-workspace.yaml`、`tsconfig.base.json`、`apps/studio/*.config.*`、`.github/*`、`.cursor/rules/*`、`docs/OPERATOR_RUNBOOK.md`、`CLAUDE.md`、`OPENCODE.md`
+- governance / knowledge：`AGENTS.md`、`docs/*`、`memory/*`、`tasks/*`、`code_index/*`
 
 ## 数据流
 
@@ -37,6 +34,7 @@ related_docs:
 - `docs/*` 不与 `AGENTS.md` 竞争主源
 - `memory/*` 先记忆，后升格
 - `code_index/*` 只做导航，不替代真实代码
+- `output/*`、`.compounding-runtime/*`、`.next/*`、`node_modules/*` 只做派生物，不反向充当主源
 - 生产 runtime 用 `releases/<id> + current + shared + registry.json` 管理，而不是原地覆盖
 
 ## 模块职责
