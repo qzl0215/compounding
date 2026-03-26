@@ -77,7 +77,7 @@ github_surface:
   required_checks: []
   notes:
     - 当前仓库未检测到 remote origin；接入 GitHub 后再补 owner、repo 和 required_checks。
-    - 接入前先运行 `pnpm ai:github-surface:summary`，只看本地还差哪一步，不直接猜 owner/repo。
+    - 接入前先运行 GitHub 接入摘要命令，只看本地还差哪一步，不直接猜 owner/repo。
     - 最小接入顺序固定为：配置 `origin` -> `git push -u origin main` -> 为活跃 task branch 建 upstream -> 回写 owner/repo/required_checks 并启用 `github_surface.enabled`。
     - 默认优先使用 gh auth / gh cli，而不是把 token 写进仓库。
 standard_flows:
