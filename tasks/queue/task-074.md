@@ -77,7 +77,26 @@
 
 ## 关联模块
 
-
+- `shared/ai-efficiency.ts`
+- `scripts/ai/diff-summary.ts`
+- `scripts/ai/tree-summary.ts`
+- `scripts/ai/lib/command-gain.ts`
+- `scripts/ai/lib/operator-contract.ts`
+- `scripts/ai/lib/summary-harness.ts`
+- `scripts/ai/lib/summary-profiles.ts`
+- `apps/studio/src/app/ai-efficiency/`
+- `apps/studio/src/modules/project-state/`
+- `apps/studio/src/modules/portal/`
+- `apps/studio/src/modules/docs/__tests__/repository.test.ts`
+- `bootstrap/project_operator.yaml`
+- `docs/OPERATOR_RUNBOOK.md`
+- `CLAUDE.md`
+- `OPENCODE.md`
+- `.cursor/rules/00-project-entry.mdc`
+- `kernel/kernel_manifest.yaml`
+- `package.json`
+- `tests/test_ai_assets_cli.py`
+- `tests/test_ai_summary_harness.py`
 
 ## 更新痕迹
 
