@@ -55,15 +55,15 @@
 
 - 状态：doing
 - 体验验收结果：
-  待完成静态 / 构建 / review 收尾
+  `pnpm ai:generate-operator-assets`、`pnpm ai:validate-operator-contract`、`python3 -m unittest tests.test_bootstrap_scaffold_cli tests.test_ai_assets_cli`、`pnpm validate:static` 与 `pnpm validate:build` 已通过；`pnpm coord:review:run -- --taskId=t-069` 的 scope / lock / contract / architecture / test reviewer 全部通过，merge decision 仅因 `AGENTS.md` 与 `package.json` 属于核心文件而给出人工确认建议。
 - 交付结果：
-  operator contract、runbook 生成器、跨工具薄入口、bootstrap/audit 接线与相关测试已实现，待验证链和 closeout 完成后回填。
+  已新增 `bootstrap/project_operator.yaml`、`schemas/project_operator.schema.yaml` 与 `templates/project_operator.template.yaml`，并补上 `scripts/ai/generate-operator-assets.ts`、`scripts/ai/validate-operator-contract.ts`、`scripts/ai/lib/operator-contract.ts` 和 `scripts/compounding_bootstrap/operator_contract.py`；当前仓库的本地 preview / production、GitHub 接入占位和标准发布流已统一进入 operator contract，`docs/OPERATOR_RUNBOOK.md`、`CLAUDE.md`、`OPENCODE.md` 与 `.cursor/rules/00-project-entry.mdc` 可由脚本生成，`bootstrap attach / bootstrap / audit` 以及静态门禁也已接入这份合同。
 - 复盘：
-  待实现
+  这类跨工具治理改动最容易失败的点不是 schema 本身，而是“又多写了一套说明书”；这轮真正保住复杂度的做法是把人类 runbook 和各工具入口都降成生成产物，只允许它们回指 `AGENTS.md` 与 `bootstrap/project_operator.yaml`，从根上避免多主源分叉。
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 ## 分支
 
