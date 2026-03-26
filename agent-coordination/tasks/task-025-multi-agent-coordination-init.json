@@ -1,10 +1,11 @@
 {
+  "schema_version": "3",
   "task_id": "t-025",
-  "title": "初始化 Autonomous Multi-Agent Coordination Layer，落地 agent-coordination 目录骨架、manifes",
-  "goal": "初始化 Autonomous Multi-Agent Coordination Layer，落地 agent-coordination 目录骨架、manifest 扫描器、lock registry、pre-task check、scope guard、review 骨架与 decision card 生成器，为多 Agent 并行协作提供最小闭环。",
-  "owner_agent": "default",
-  "base_branch": "dev",
-  "branch_name": "codex/task-025-multi-agent-coordination-init",
+  "task_path": "tasks/queue/task-025-multi-agent-coordination-init.md",
+  "contract_hash": "964dbd3901766cf4e4a205c83135f62aa57d3ae6603d2a717f6ddcfba7e9af8b",
+  "current_mode": "发布复盘",
+  "branch_name": "main (legacy direct release)",
+  "completion_mode": "close_full_contract",
   "planned_files": [
     "AGENTS.md",
     "memory/project/roadmap.md",
@@ -18,11 +19,51 @@
     "tasks/queue/task-027-coord-unattended-polish.md"
   ],
   "planned_modules": [],
-  "risk_assessment": "medium",
-  "execution_mode": "direct_edit",
-  "status": "active",
-  "human_decision_needed": false,
-  "human_decision_reason": null,
-  "ui_validation_required": false,
-  "summary_artifacts": []
+  "locks": [],
+  "lifecycle": {
+    "created": null,
+    "pre_task": null,
+    "handoff": null,
+    "review": null,
+    "release_handoff": null
+  },
+  "artifacts": {
+    "branch_cleanup": {
+      "schema_version": "1",
+      "trigger": "legacy_merged",
+      "eligible_at": "2026-03-26T23:10:50.990Z",
+      "scheduled_for": null,
+      "delay_hours": 24,
+      "source_release_id": null,
+      "source_commit": "fbe8034",
+      "overall_state": "deleted",
+      "local": {
+        "state": "deleted",
+        "branch_name": "codex/task-025-multi-agent-coordination-init",
+        "deleted_at": "2026-03-26T23:10:50.990Z",
+        "last_error": null,
+        "error_code": null
+      },
+      "remote": {
+        "state": "not_configured",
+        "remote_name": "origin",
+        "remote_ref": null,
+        "deleted_at": null,
+        "last_error": null,
+        "error_code": null
+      },
+      "attempt_count": 0,
+      "last_attempt_at": null,
+      "canceled_reason": null,
+      "attempts": []
+    },
+    "change_cost_snapshot": null,
+    "decision_cards": [],
+    "diff_summaries": [],
+    "handoff_notes": [],
+    "iteration_digest": null,
+    "review_notes": [],
+    "release_notes": [],
+    "search_evidence": []
+  }
 }
