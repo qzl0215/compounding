@@ -1,4 +1,5 @@
 import type { TaskCostLedger } from "../../../../../shared/task-cost";
+import type { TaskBranchCleanupView } from "../../../../../shared/branch-cleanup";
 
 export type TaskStatus = "todo" | "doing" | "blocked" | "done";
 
@@ -35,6 +36,7 @@ export type TaskMachineFacts = {
   locks: string[];
   artifactRefs: string[];
   latestSearchEvidence: string;
+  branchCleanup: TaskBranchCleanupView | null;
   git: TaskGitInfo;
 };
 

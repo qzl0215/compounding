@@ -1,5 +1,5 @@
 const childProcess = require("node:child_process");
-const { recordReleaseHandoff } = require("../coord/lib/companion-lifecycle.ts");
+const { recordReleaseCleanupSchedule, recordReleaseHandoff } = require("../coord/lib/companion-lifecycle.ts");
 const { finishWaitStageIfOpen, recordBlocker } = require("../coord/lib/task-activity.ts");
 const {
   clearChannelSymlink,
@@ -115,6 +115,16 @@ try {
         linked_task_ids: pending.linked_task_ids,
         change_summary: pending.change_summary,
         status: "active",
+      });
+      recordReleaseCleanupSchedule(pending.primary_task_id, {
+        trigger: "prod_accepted",
+        eligible_at: promotedAt,
+        scheduled_for: new Date(Date.parse(promotedAt) + 24 * 60 * 60 * 1000).toISOString(),
+        delay_hours: 24,
+        release_id: prodReleaseId,
+        commit_sha: pending.commit_sha,
+        linked_task_ids: pending.linked_task_ids,
+        recorded_at: promotedAt,
       });
     }
     const stopPreviewScript = require("node:path").join(process.cwd(), "scripts", "local-runtime", "stop-preview.ts");

@@ -33,6 +33,16 @@ export async function getProjectStateSnapshot(input?: { deliverySnapshot?: Deliv
     acceptance: taskRows.filter((row) => row.deliveryStatus === "pending_acceptance").length,
     released: taskRows.filter((row) => row.deliveryStatus === "released" || row.deliveryStatus === "rolled_back").length,
   };
+  const cleanup = {
+    scheduled: taskRows.filter((row) => row.machine.branchCleanup?.overallState === "scheduled").length,
+    failed: taskRows.filter((row) => row.machine.branchCleanup?.overallState === "failed").length,
+    overdue: taskRows.filter((row) => row.machine.branchCleanup?.isOverdue).length,
+    legacy: taskRows.filter((row) => isLegacyCleanupBacklog(row)).length,
+  };
+  const cleanupAlert =
+    cleanup.failed > 0 || cleanup.overdue > 0 || cleanup.legacy > 0
+      ? `分支治理：待回收 ${cleanup.scheduled} / 失败 ${cleanup.failed} / 逾期 ${cleanup.overdue} / 历史残留 ${cleanup.legacy}`
+      : null;
   const pendingAcceptance =
     summarizePendingAcceptance(
     releaseDashboard.pending_dev_release?.release_id ?? null,
@@ -82,6 +92,10 @@ export async function getProjectStateSnapshot(input?: { deliverySnapshot?: Deliv
     execution: {
       summary: judgement.executionSummary,
       counts,
+      cleanup: {
+        ...cleanup,
+        alert: cleanupAlert,
+      },
     },
     focus: {
       current: judgement.currentFocus,
@@ -103,6 +117,16 @@ export async function getProjectStateSnapshot(input?: { deliverySnapshot?: Deliv
     activeStage: judgement.activeStage,
     judgement,
   };
+}
+
+function isLegacyCleanupBacklog(row: DeliverySnapshot["projections"]["taskRows"][number]) {
+  return Boolean(
+    !row.machine.branchCleanup &&
+      row.status === "done" &&
+      row.machine.git.state === "merged" &&
+      row.machine.branch &&
+      !row.machine.branch.startsWith("main"),
+  );
 }
 
 function summarizePendingAcceptance(pendingReleaseId: string | null, acceptanceVersionLabel: string | null) {

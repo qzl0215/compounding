@@ -13,6 +13,10 @@ describe("project state snapshot", () => {
     expect(snapshot.headline.currentMilestone.length).toBeGreaterThan(0);
     expect(snapshot.focus.summary.length).toBeGreaterThan(0);
     expect(snapshot.execution.counts.total).toBe(deliverySnapshot.projections.taskRows.length);
+    expect(snapshot.execution.cleanup.scheduled).toBeGreaterThanOrEqual(0);
+    expect(snapshot.execution.cleanup.failed).toBeGreaterThanOrEqual(0);
+    expect(snapshot.execution.cleanup.overdue).toBeGreaterThanOrEqual(0);
+    expect(snapshot.execution.cleanup.legacy).toBeGreaterThanOrEqual(0);
     expect(["thinking", "planning", "ready", "doing", "acceptance", "released"]).toContain(snapshot.activeStage);
     expect(snapshot.judgement.overallSummary).toBe(snapshot.headline.overallSummary);
     expect(snapshot.judgement.focusSummary).toBe(snapshot.focus.summary);

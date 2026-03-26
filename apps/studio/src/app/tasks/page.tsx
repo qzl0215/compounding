@@ -15,6 +15,9 @@ export default async function TasksPage() {
   const activeCount = rows.filter((row) => row.deliveryStatus === "in_progress").length;
   const pendingAcceptanceCount = rows.filter((row) => row.deliveryStatus === "pending_acceptance").length;
   const blockedCount = rows.filter((row) => row.deliveryStatus === "blocked").length;
+  const cleanupScheduledCount = projectState.execution.cleanup.scheduled;
+  const cleanupFailedCount = projectState.execution.cleanup.failed;
+  const cleanupOverdueCount = projectState.execution.cleanup.overdue;
 
   return (
     <div className="space-y-6">
@@ -45,6 +48,21 @@ export default async function TasksPage() {
               value: `${blockedCount} 项`,
               tone: blockedCount > 0 ? "danger" : "success",
             },
+            {
+              label: "待回收",
+              value: `${cleanupScheduledCount} 项`,
+              tone: cleanupScheduledCount > 0 ? "warning" : "default",
+            },
+            {
+              label: "回收失败",
+              value: `${cleanupFailedCount} 项`,
+              tone: cleanupFailedCount > 0 ? "danger" : "success",
+            },
+            {
+              label: "逾期未回收",
+              value: `${cleanupOverdueCount} 项`,
+              tone: cleanupOverdueCount > 0 ? "danger" : "success",
+            },
           ]}
         />
       </section>
@@ -61,7 +79,9 @@ export default async function TasksPage() {
               <p className="mt-3 text-sm leading-7 text-slate-600">只保留当前需要推进的事项；计划边界看运营蓝图，交付历史看发布页。</p>
             </div>
             <p className="max-w-2xl text-sm leading-6 text-slate-600">
-              {projectState.release.pendingAcceptance
+              {projectState.execution.cleanup.alert
+                ? projectState.execution.cleanup.alert
+                : projectState.release.pendingAcceptance
                 ? `${projectState.release.pendingAcceptance}，先做判断再继续推进。`
                 : "这里默认不堆额外面板，只保留最必要的执行信息，避免把“做什么”又做回一张复杂工单。"}
             </p>

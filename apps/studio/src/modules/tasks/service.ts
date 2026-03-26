@@ -57,7 +57,8 @@ export async function listTaskCards(): Promise<TaskCard[]> {
           locks: companion.locks,
           artifactRefs: companion.artifactRefs,
           latestSearchEvidence: companion.latestSearchEvidence,
-          git: resolveTaskGitInfo(parsed.status, branch, recentCommit),
+          branchCleanup: companion.branchCleanup,
+          git: resolveTaskGitInfo(parsed.status, branch, recentCommit, companion.branchCleanup),
         },
       };
     })

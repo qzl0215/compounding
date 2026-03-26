@@ -1,4 +1,4 @@
-const { buildSummaryShortcutCommand, formatEstimatedTokens } = require("../../../shared/ai-efficiency.ts");
+const { formatEstimatedTokens } = require("../../../shared/ai-efficiency.ts");
 const { normalizeGainEvent, readCommandGainEvents } = require("./command-gain.ts");
 const DETERMINISTIC_SHORTCUTS = new Set(["preflight_summary", "review_summary", "preview_summary", "prod_summary"]);
 
@@ -54,6 +54,22 @@ function filterEventsSince(events, since, taskId = null) {
     });
 }
 
+function averageSavedByShortcut(events, shortcutId) {
+  const normalizedShortcutId = normalizeString(shortcutId);
+  const matchingRuns = events
+    .filter((event) => event.event_kind === "summary_run")
+    .filter((event) => normalizeString(event.shortcut_id) === normalizedShortcutId);
+  if (!matchingRuns.length) return 0;
+  const totalSaved = matchingRuns.reduce((sum, event) => sum + Math.max(0, toNumber(event.saved_tokens_est)), 0);
+  return totalSaved / matchingRuns.length;
+}
+
+function formatMissedShortcutHint(shortcutId, missedSavingsEst) {
+  const normalizedShortcutId = normalizeString(shortcutId);
+  if (!normalizedShortcutId || toNumber(missedSavingsEst) <= 0) return null;
+  return `本轮未使用 ${normalizedShortcutId}，潜在可节省 ~${formatEstimatedTokens(toNumber(missedSavingsEst))} tokens`;
+}
+
 function buildTopHint(root, { taskId = null, since, generatedAt }) {
   try {
     const { buildContextRetroReport } = require("./context-retro.ts");
@@ -61,33 +77,46 @@ function buildTopHint(root, { taskId = null, since, generatedAt }) {
       taskId: normalizeString(taskId) || null,
       window: buildRetroWindow(since, generatedAt),
     });
-    const taskAlert = report?.current_task?.alerts?.[0];
+    const taskShortcutAlert = (report?.current_task?.alerts || []).find((item) =>
+      normalizeString(item?.signature).startsWith("shortcut:")
+    );
+    if (taskShortcutAlert) {
+      const shortcutId = normalizeString(taskShortcutAlert.signature).replace(/^shortcut:/, "");
+      const hint = formatMissedShortcutHint(shortcutId, taskShortcutAlert.missed_savings_est);
+      if (hint) return hint;
+    }
+    const taskAlert = (report?.current_task?.alerts || []).find(
+      (item) => !normalizeString(item?.signature).startsWith("shortcut:")
+    );
     if (taskAlert) {
       return `${normalizeString(taskAlert.signature)}：${normalizeString(taskAlert.next_agent_should_do_instead)}`;
     }
     const missedShortcut = report?.top_missed_shortcuts?.[0];
     if (missedShortcut) {
-      const shortcut = normalizeString(missedShortcut.shortcut_id);
-      const command = normalizeString(missedShortcut.which_summary_shortcut_to_use);
-      return command ? `${shortcut}：优先 ${command}` : `${shortcut}：优先使用摘要入口`;
+      const hint = formatMissedShortcutHint(missedShortcut.shortcut_id, missedShortcut.missed_savings_est);
+      if (hint) return hint;
     }
   } catch {}
 
-  const fallbackRows = filterEventsSince(readCommandGainEvents(root), since, taskId)
+  const filteredEvents = filterEventsSince(readCommandGainEvents(root), since, taskId);
+  const fallbackRows = filteredEvents
     .filter((event) => event.event_kind === "shortcut_opportunity")
     .filter((event) => DETERMINISTIC_SHORTCUTS.has(normalizeString(event.shortcut_id)))
     .filter((event) => event.adopted !== true)
     .reduce((acc, event) => {
       const shortcutId = normalizeString(event.shortcut_id);
-      const current = acc.get(shortcutId) || { shortcut_id: shortcutId, count: 0 };
+      const current = acc.get(shortcutId) || { shortcut_id: shortcutId, count: 0, missed_savings_est: 0 };
       current.count += 1;
+      current.missed_savings_est = Math.round(current.count * averageSavedByShortcut(filteredEvents, shortcutId));
       acc.set(shortcutId, current);
       return acc;
     }, new Map());
 
-  const topFallback = Array.from(fallbackRows.values()).sort((left, right) => right.count - left.count)[0];
+  const topFallback = Array.from(fallbackRows.values()).sort(
+    (left, right) => right.missed_savings_est - left.missed_savings_est || right.count - left.count
+  )[0];
   if (topFallback?.shortcut_id) {
-    return `${topFallback.shortcut_id}：优先 ${buildSummaryShortcutCommand(topFallback.shortcut_id, { taskId })}`;
+    return formatMissedShortcutHint(topFallback.shortcut_id, topFallback.missed_savings_est);
   }
   return null;
 }
@@ -118,6 +147,8 @@ function buildTurnReport(root = process.cwd(), options = {}) {
     context_input_tokens_est: sum(contextEvents, "input_tokens_est"),
     context_output_tokens_est: sum(contextEvents, "output_tokens_est"),
     context_saved_tokens_est: sum(contextEvents, "saved_tokens_est"),
+    total_input_tokens_est: sum(summaryEvents, "input_tokens_est") + sum(contextEvents, "input_tokens_est"),
+    total_output_tokens_est: sum(summaryEvents, "output_tokens_est") + sum(contextEvents, "output_tokens_est"),
     total_saved_tokens_est: sum(summaryEvents, "saved_tokens_est") + sum(contextEvents, "saved_tokens_est"),
     top_hint: buildTopHint(root, { taskId, since, generatedAt }),
   };
@@ -127,8 +158,8 @@ function formatTurnReportText(report = {}) {
   const lines = [
     "回合量化",
     `- 耗时：${formatDurationMs(report.elapsed_ms)}`,
-    `- 上下文：${Math.max(0, Math.round(toNumber(report.context_packets)))} packets，~${formatEstimatedTokens(toNumber(report.context_input_tokens_est))} -> ${formatEstimatedTokens(toNumber(report.context_output_tokens_est))}，saved ~${formatEstimatedTokens(toNumber(report.context_saved_tokens_est))}`,
-    `- 摘要：${Math.max(0, Math.round(toNumber(report.summary_runs)))} runs，saved ~${formatEstimatedTokens(toNumber(report.summary_saved_tokens_est))}`,
+    `- Token：~${formatEstimatedTokens(toNumber(report.total_input_tokens_est))} -> ${formatEstimatedTokens(toNumber(report.total_output_tokens_est))}，saved ~${formatEstimatedTokens(toNumber(report.total_saved_tokens_est))}`,
+    `- 上下文：${Math.max(0, Math.round(toNumber(report.context_packets)))} packets；摘要：${Math.max(0, Math.round(toNumber(report.summary_runs)))} runs`,
   ];
   const hint = normalizeString(report.top_hint);
   if (hint) {

@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { getWorkspaceRoot } from "@/lib/workspace";
+import type { TaskBranchCleanupView } from "../../../../../shared/branch-cleanup";
 import type { TaskGitInfo, TaskStatus } from "./types";
 
 type GitResult = {
@@ -74,20 +75,31 @@ function isHistoricalMergedBranch(status: TaskStatus, branch: string, currentBra
   return status === "done" && Boolean(branch) && !isLegacyMainBranch(branch) && !localBranchExists && branch !== currentBranch && !effectiveCommit;
 }
 
-export function resolveTaskGitInfo(status: TaskStatus, branchValue: string, recentCommitValue: string): TaskGitInfo {
+function isManagedCleanupState(cleanup: TaskBranchCleanupView | null | undefined) {
+  return cleanup?.overallState === "scheduled" || cleanup?.overallState === "deleted" || cleanup?.overallState === "failed";
+}
+
+export function resolveTaskGitInfo(
+  status: TaskStatus,
+  branchValue: string,
+  recentCommitValue: string,
+  branchCleanup: TaskBranchCleanupView | null = null,
+): TaskGitInfo {
   const branch = cleanValue(branchValue);
   const storedCommit = isPendingCommit(recentCommitValue) ? "" : cleanValue(recentCommitValue);
+  const cleanupCommit = cleanValue(branchCleanup?.sourceCommit || "");
   const currentBranch = getCurrentBranch();
   const dirtyWorktree = hasDirtyWorktree();
   const localBranchExists = branch && !isLegacyMainBranch(branch) ? branchExists(branch) : false;
   const branchHead = localBranchExists ? getBranchHead(branch) : "";
-  const effectiveCommit = branchHead || (commitExists(storedCommit) ? storedCommit : "");
+  const effectiveCommit = branchHead || (commitExists(cleanupCommit) ? cleanupCommit : commitExists(storedCommit) ? storedCommit : "");
   const recentCommit = effectiveCommit ? shortSha(effectiveCommit) : cleanValue(recentCommitValue) || "auto: branch HEAD";
   const mergedToMain = isLegacyMainBranch(branch) || (branch !== currentBranch && isCommitMergedIntoMain(effectiveCommit));
   const historicalMerged = isHistoricalMergedBranch(status, branch, currentBranch, localBranchExists, effectiveCommit);
+  const cleanupManaged = isManagedCleanupState(branchCleanup);
 
   if (status === "done") {
-    if (mergedToMain || historicalMerged) {
+    if (mergedToMain || historicalMerged || cleanupManaged) {
       return {
         branch,
         recentCommit,
@@ -95,6 +107,12 @@ export function resolveTaskGitInfo(status: TaskStatus, branchValue: string, rece
         state: "merged",
         detail: isLegacyMainBranch(branch)
           ? "历史直发结果已在 main"
+          : branchCleanup?.overallState === "deleted"
+            ? "任务分支已按回收策略删除"
+            : branchCleanup?.overallState === "scheduled"
+              ? branchCleanup.summary
+              : branchCleanup?.overallState === "failed"
+                ? branchCleanup.summary
           : historicalMerged
             ? "历史任务分支已回收，按已并入 main 处理"
             : "最近提交已并入 main",

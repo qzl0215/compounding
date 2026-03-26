@@ -7,7 +7,6 @@ const path = require("node:path");
 const { resolveTaskRecord } = require("../../ai/lib/task-resolver.ts");
 const { parseTaskContract, parseTaskMachineFacts, taskContractFingerprint } = require("../../../shared/task-contract.ts");
 const {
-  createEmptyBranchCleanupRecord,
   deriveBranchCleanupOverallState,
   normalizeBranchCleanupRecord,
 } = require("../../../shared/branch-cleanup.ts");

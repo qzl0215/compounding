@@ -26,7 +26,9 @@ export async function getHomeStatusBoard(): Promise<HomeLogicMapSnapshot> {
       badge: buildPlanBadge(projectState.plan.planningBacklog.length, projectState.plan.thinkingBacklog.length),
     },
     execution: {
-      summary: projectState.execution.summary,
+      summary: projectState.execution.cleanup.alert
+        ? `${projectState.execution.summary}；${projectState.execution.cleanup.alert}`
+        : projectState.execution.summary,
       badge: buildExecutionBadge(projectState.execution.counts.doing + projectState.execution.counts.blocked, projectState.execution.counts.ready),
     },
     acceptance: {

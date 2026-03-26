@@ -58,6 +58,7 @@ class CoordCliTestCase(unittest.TestCase):
         (self.target / "bootstrap").mkdir(parents=True, exist_ok=True)
         shutil.copy(ROOT / "shared" / "task-identity.ts", self.target / "shared" / "task-identity.ts")
         shutil.copy(ROOT / "shared" / "task-contract.ts", self.target / "shared" / "task-contract.ts")
+        shutil.copy(ROOT / "shared" / "branch-cleanup.ts", self.target / "shared" / "branch-cleanup.ts")
         shutil.copy(ROOT / "shared" / "module-feature-contract.ts", self.target / "shared" / "module-feature-contract.ts")
         shutil.copy(ROOT / "shared" / "feature-context.ts", self.target / "shared" / "feature-context.ts")
         shutil.copy(ROOT / "bootstrap" / "heading_aliases.json", self.target / "bootstrap" / "heading_aliases.json")
@@ -91,6 +92,7 @@ class CoordCliTestCase(unittest.TestCase):
         subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=self.target, check=True)
         subprocess.run(["git", "add", "."], cwd=self.target, check=True)
         subprocess.run(["git", "commit", "-m", "baseline"], cwd=self.target, check=True)
+        subprocess.run(["git", "branch", "-M", "main"], cwd=self.target, check=True)
 
     def install_preflight_fixtures(self, *, scope_pass: bool = True) -> None:
         scripts_dir = self.target / "scripts"

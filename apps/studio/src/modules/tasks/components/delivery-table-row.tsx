@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Fragment, type ReactNode } from "react";
 import { DEMAND_STAGE_LABELS, resolveTaskDemandStage } from "@/modules/portal/stage-model";
 import { formatEstimatedTokens } from "../../../../../../shared/ai-efficiency";
+import { formatBranchCleanupStateLabel } from "../../../../../../shared/branch-cleanup";
 import { formatTaskCostCodeDelta, formatTaskCostDuration, summarizeTaskCostEffect } from "../../../../../../shared/task-cost";
 import { TASK_DELIVERY_LABELS } from "../delivery";
 import type { TaskDeliveryRow, TaskDeliveryStatus } from "../types";
@@ -134,6 +135,15 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
                 <p>代码量：{formatTaskCostCodeDelta(row.cost.code)}{row.cost.code.source !== "none" ? ` (${row.cost.code.source})` : ""}</p>
                 <p>效果：{summarizeTaskCostEffect(row.cost.effect)}</p>
                 {row.cost.effect.last_gate_failures.length > 0 ? <p>最近失败：{row.cost.effect.last_gate_failures.join("；")}</p> : null}
+              </DetailBlock>
+              <DetailBlock title="分支回收">
+                <p>状态：{row.machine.branchCleanup ? row.machine.branchCleanup.summary : "尚未建立分支回收记录。"}</p>
+                <p>本地：{formatBranchCleanupStateLabel(row.machine.branchCleanup?.localState || "none")}</p>
+                <p>远端：{formatBranchCleanupStateLabel(row.machine.branchCleanup?.remoteState || "none")}</p>
+                <p>触发：{row.machine.branchCleanup?.trigger === "legacy_merged" ? "历史补账" : row.machine.branchCleanup ? "Prod 验收成功" : "未记录"}</p>
+                <p>计划时间：{row.machine.branchCleanup?.scheduledFor || "未计划"}</p>
+                {row.machine.branchCleanup?.sourceReleaseId ? <p>来源 release：{row.machine.branchCleanup.sourceReleaseId}</p> : null}
+                {row.machine.branchCleanup?.lastError ? <p>失败原因：{row.machine.branchCleanup.lastError}</p> : null}
               </DetailBlock>
               <DetailBlock title="机器事实">
                 <p>任务路径：{row.path}</p>
