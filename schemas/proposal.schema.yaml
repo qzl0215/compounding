@@ -24,6 +24,13 @@ properties:
     type: string
   kernel_version_to:
     type: string
+  bootstrap_mode:
+    type: string
+    enum: [cold_start, normalize, ai_upgrade]
+  required_packs:
+    type: array
+    items:
+      type: string
   changes:
     type: object
     required:

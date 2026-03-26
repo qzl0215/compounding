@@ -4,7 +4,7 @@ import shutil
 from pathlib import Path
 
 from .attach import attach
-from .config_resolution import ensure_brief, infer_project_name
+from .config_resolution import ensure_brief, infer_app_type, infer_kernel_profile, infer_project_name
 from .defaults import (
     AGENTS_PATH,
     BRIEF_PATH,
@@ -16,16 +16,27 @@ from .defaults import (
     PROJECT_BRIEF_TEMPLATE_PATH,
     SOURCE_ROOT,
 )
-from .operator_contract import ensure_operator_contract
+from .operator_contract import ensure_operator_contract, sync_operator_assets
+from .packs import infer_adapter_id, infer_bootstrap_mode, load_kernel_manifest, mode_required_packs, resolve_supported_mode, selected_pack_paths
 from .yaml_io import save_yaml
 
 
-def bootstrap(config_path: Path | None, target: Path) -> dict:
+def bootstrap(config_path: Path | None, target: Path, bootstrap_mode: str = "cold_start") -> dict:
     project_name = infer_project_name(target)
     created: list[str] = []
-    _copy_kernel_assets(target, created)
+    manifest = load_kernel_manifest()
+    inferred_app_type = infer_app_type(target)
+    inferred_profile = infer_kernel_profile(target, inferred_app_type)
+    resolved_mode = resolve_supported_mode(
+        manifest,
+        infer_adapter_id(inferred_app_type),
+        bootstrap_mode,
+        infer_bootstrap_mode(target, inferred_app_type, inferred_profile),
+    )
+    pack_ids = mode_required_packs(manifest, resolved_mode)
+    _copy_kernel_assets(target, created, selected_pack_paths(manifest, pack_ids, "copy_paths"))
     _write_minimal_shell(target, project_name, created)
-    brief_path, brief_payload, _ = ensure_brief(config_path or target / BRIEF_PATH, target, adoption_mode="new")
+    brief_path, brief_payload, _ = ensure_brief(config_path or target / BRIEF_PATH, target, adoption_mode="new", bootstrap_mode=resolved_mode)
     brief_payload["kernel"]["adoption_mode"] = "new"
     save_yaml(brief_path, brief_payload)
     if "bootstrap/project_brief.yaml (normalized for new project)" not in created:
@@ -33,12 +44,26 @@ def bootstrap(config_path: Path | None, target: Path) -> dict:
     operator_path, _, operator_changed = ensure_operator_contract(target)
     if operator_changed:
         created.append(f"{operator_path.relative_to(target).as_posix()} (created or normalized)")
-    report = attach(brief_path, target, adoption_mode="new")
+    if "tooling_pack" in pack_ids and sync_operator_assets(target):
+        created.append("docs/OPERATOR_RUNBOOK.md / CLAUDE.md / OPENCODE.md / .cursor/rules/00-project-entry.mdc (generated)")
+    report = attach(brief_path, target, adoption_mode="new", bootstrap_mode=resolved_mode)
     report.setdefault("actions", {}).setdefault("created", []).extend(item for item in created if item not in report["actions"]["created"])
     return report
 
 
 def _copy_if_missing(relative_path: str, target: Path, created: list[str]) -> None:
+    if "*" in relative_path:
+        for source in sorted(SOURCE_ROOT.glob(relative_path)):
+            if not source.is_file():
+                continue
+            resolved = source.relative_to(SOURCE_ROOT).as_posix()
+            destination = target / resolved
+            if destination.exists():
+                continue
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source, destination)
+            created.append(resolved)
+        return
     source = SOURCE_ROOT / relative_path
     destination = target / relative_path
     if destination.exists():
@@ -48,37 +73,9 @@ def _copy_if_missing(relative_path: str, target: Path, created: list[str]) -> No
     created.append(relative_path)
 
 
-def _copy_kernel_assets(target: Path, created: list[str]) -> None:
-    for relative_path in (
-        str(PROJECT_BRIEF_SCHEMA_PATH),
-        str(PROJECT_OPERATOR_SCHEMA_PATH),
-        "schemas/kernel_manifest.schema.yaml",
-        "schemas/bootstrap_report.schema.yaml",
-        "schemas/proposal.schema.yaml",
-        "schemas/experience_promotion.schema.yaml",
-        str(PROJECT_BRIEF_TEMPLATE_PATH),
-        str(PROJECT_OPERATOR_TEMPLATE_PATH),
-        "templates/bootstrap_report.template.yaml",
-        "templates/proposal.template.yaml",
-        str(EXPERIENCE_PROMOTION_TEMPLATE_PATH),
-        str(KERNEL_MANIFEST_PATH),
-        "tasks/templates/task-template.md",
-        "scripts/init_project_compounding.py",
-        "scripts/ai/generate-operator-assets.ts",
-        "scripts/ai/validate-operator-contract.ts",
-        "scripts/ai/lib/operator-contract.ts",
-    ):
+def _copy_kernel_assets(target: Path, created: list[str], copy_paths: list[str]) -> None:
+    for relative_path in copy_paths:
         _copy_if_missing(relative_path, target, created)
-
-    source_bootstrap_dir = SOURCE_ROOT / "scripts" / "compounding_bootstrap"
-    target_bootstrap_dir = target / "scripts" / "compounding_bootstrap"
-    target_bootstrap_dir.mkdir(parents=True, exist_ok=True)
-    for source_path in sorted(source_bootstrap_dir.glob("*.py")) + sorted(source_bootstrap_dir.glob("*.md")):
-        destination = target_bootstrap_dir / source_path.name
-        if destination.exists():
-            continue
-        shutil.copyfile(source_path, destination)
-        created.append(destination.relative_to(target).as_posix())
 
 
 def _write_if_missing(target: Path, relative_path: str, content: str, created: list[str]) -> None:

@@ -198,6 +198,7 @@ class AiAssetsCliTests(unittest.TestCase):
         self.assertTrue((self.target / ".cursor" / "rules" / "00-project-entry.mdc").exists())
         self.assertIn("bootstrap/project_operator.yaml", (self.target / "docs" / "OPERATOR_RUNBOOK.md").read_text(encoding="utf8"))
         self.assertIn("AGENTS.md", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
+        self.assertIn("pnpm ai:preflight:summary", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
 
     def test_validate_operator_contract_rejects_secret_like_refs(self) -> None:
         target = self.target / "bootstrap" / "project_operator.yaml"
@@ -213,6 +214,18 @@ class AiAssetsCliTests(unittest.TestCase):
 
         self.assertNotEqual(completed.returncode, 0)
         self.assertTrue(any("secret_refs" in error for error in payload["errors"]))
+
+    def test_validate_operator_contract_rejects_invalid_shortcut_mode(self) -> None:
+        target = self.target / "bootstrap" / "project_operator.yaml"
+        content = target.read_text(encoding="utf8")
+        target.write_text(content.replace("mode: suggest", "mode: rewrite", 1), encoding="utf8")
+
+        self.run_script("scripts/ai/generate-operator-assets.ts")
+        completed = self.run_script("scripts/ai/validate-operator-contract.ts")
+        payload = json.loads(completed.stdout)
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertTrue(any("Agent shortcut mode must be suggest" in error for error in payload["errors"]))
 
 
 if __name__ == "__main__":

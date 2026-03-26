@@ -5,4 +5,14 @@ alwaysApply: true
 - Canonical source: `AGENTS.md`
 - 涉及服务器 / GitHub / 发布访问面时必须先读 `bootstrap/project_operator.yaml`
 - 人类扫读版在 `docs/OPERATOR_RUNBOOK.md`
-- 动手前统一跑 `pnpm preflight`；`structural / release` 改动用 `pnpm preflight -- --taskId=t-xxx`
+- 当前 mode：`ai_upgrade`；adapter：`node_service`
+- 推荐 preflight：`pnpm preflight`
+
+## 优先摘要命令
+
+- 优先使用 preflight 摘要：`pnpm ai:preflight:summary`
+- 优先使用静态校验摘要：`pnpm ai:validate:static:summary`
+- 优先使用构建校验摘要：`pnpm ai:validate:build:summary`
+- 优先使用 review 摘要：`pnpm ai:review:summary -- --taskId=t-xxx`
+- 优先使用 preview 健康摘要：`pnpm ai:preview:summary`
+- 优先使用 production 健康摘要：`pnpm ai:prod:summary`

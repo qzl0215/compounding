@@ -1,24 +1,33 @@
+bootstrap_mode: ai_upgrade
 project_identity:
   name: Compounding AI Operating System
-  one_liner: 把当前仓库升级成适合 AI 长期协作、任务驱动、可持续重构与自进化的 AI-Native Repo。
+  one_liner: 这是一个面向 AI 长期协作的 AI-Native Repo。默认先读 `AGENTS.md`，再按主干进入 `memory/project/*` 与 `docs/*`，最后按需补 `tasks/*`、`code_index/*` 和专项附录。
   success_criteria:
     - 首页成为一页经营驾驶舱
     - 用户与 AI 能快速看懂使命、路线图、运营蓝图、组织职责与认知资产边界，并能沿统一 task 闭环持续推进
 kernel:
   version: 0.1.0
   adoption_mode: attach
+  profile: full_ai_dev
 runtime_boundary:
-  app_type: ai-native-repo
+  app_type: node-service
   deploy_target: local-runtime
   critical_paths:
     - AGENTS.md
+    - README.md
+    - docs/PROJECT_RULES.md
+    - docs/ARCHITECTURE.md
+    - memory/project/roadmap.md
+    - memory/project/current-state.md
     - memory/project/operating-blueprint.md
     - scripts/compounding_bootstrap/*
+    - deploy/**
 local_overrides:
   owned_paths:
-    - memory/project/**
+    - memory/**
     - tasks/queue/**
     - apps/**
+    - code_index/**
   protected_rules:
     - 禁止自动修改核心业务代码
     - 禁止自动修改部署主入口
@@ -37,7 +46,7 @@ upgrade_policy:
     - docs/ASSET_MAINTENANCE.md
     - scripts/compounding_bootstrap/*
   blocked_paths:
-    - apps/**
     - scripts/release/**
     - scripts/local-runtime/**
     - deploy/**
+    - .github/workflows/**

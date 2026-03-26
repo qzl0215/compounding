@@ -1,4 +1,176 @@
 version: 0.1.0
+capability_groups:
+  - capability_id: protocol_layer
+    label: 协议层
+    required_paths:
+      - AGENTS.md
+      - docs/WORK_MODES.md
+      - docs/DEV_WORKFLOW.md
+      - docs/ARCHITECTURE.md
+      - memory/project/roadmap.md
+      - memory/project/current-state.md
+      - memory/project/operating-blueprint.md
+  - capability_id: operator_layer
+    label: 运维接入层
+    required_paths:
+      - bootstrap/project_operator.yaml
+      - docs/OPERATOR_RUNBOOK.md
+      - CLAUDE.md
+      - OPENCODE.md
+      - .cursor/rules/00-project-entry.mdc
+  - capability_id: execution_layer
+    label: 执行内核
+    required_paths:
+      - scripts/coord/preflight.ts
+      - scripts/coord/task.ts
+      - scripts/coord/review.ts
+profiles:
+  - profile_id: protocol_only
+    label: 协议底座
+    description: 只要求单一读链、计划协议和 bootstrap 内核，可用于刚初始化的新项目。
+    capability_groups:
+      - protocol_layer
+  - profile_id: governance
+    label: 治理底座
+    description: 在协议层之上补齐 operator contract 与跨工具入口，适合已存在业务代码的老项目 attach。
+    capability_groups:
+      - protocol_layer
+      - operator_layer
+  - profile_id: full_ai_dev
+    label: AI 开发底座
+    description: 在治理底座上补齐 preflight/task/review 等执行内核，适合长期以 AI 驱动开发的项目。
+    capability_groups:
+      - protocol_layer
+      - operator_layer
+      - execution_layer
+packs:
+  - pack_id: protocol_pack
+    label: 协议底座包
+    description: 统一读链、核心文档协议、bootstrap 引擎和基础 schema/template。
+    copy_paths:
+      - AGENTS.md
+      - docs/WORK_MODES.md
+      - docs/DEV_WORKFLOW.md
+      - docs/ARCHITECTURE.md
+      - docs/PROJECT_RULES.md
+      - docs/AI_OPERATING_MODEL.md
+      - docs/ASSET_MAINTENANCE.md
+      - schemas/project_brief.schema.yaml
+      - schemas/kernel_manifest.schema.yaml
+      - schemas/bootstrap_report.schema.yaml
+      - schemas/proposal.schema.yaml
+      - schemas/experience_promotion.schema.yaml
+      - templates/project_brief.template.yaml
+      - templates/bootstrap_report.template.yaml
+      - templates/proposal.template.yaml
+      - templates/experience_promotion.template.yaml
+      - kernel/kernel_manifest.yaml
+      - tasks/templates/task-template.md
+      - scripts/init_project_compounding.py
+      - scripts/compounding_bootstrap/*
+    generated_paths:
+      - memory/project/roadmap.md
+      - memory/project/current-state.md
+      - memory/project/operating-blueprint.md
+      - memory/project/tech-debt.md
+      - output/bootstrap/bootstrap_report.yaml
+    compatible_adapters: [generic_repo, node_service, web_app, python_service]
+    smoke_commands:
+      - python3 scripts/init_project_compounding.py doctor --target .
+      - python3 scripts/init_project_compounding.py audit --target .
+  - pack_id: operator_pack
+    label: 运维契约包
+    description: project operator schema/template 与目标仓 operator contract 生成入口。
+    copy_paths:
+      - schemas/project_operator.schema.yaml
+      - templates/project_operator.template.yaml
+    generated_paths:
+      - bootstrap/project_operator.yaml
+    compatible_adapters: [generic_repo, node_service, web_app, python_service]
+    smoke_commands:
+      - python3 scripts/init_project_compounding.py attach --target .
+  - pack_id: tooling_pack
+    label: AI 入口工具包
+    description: repo-local AI/operator 入口生成器与跨工具薄入口。
+    copy_paths:
+      - scripts/ai/generate-operator-assets.ts
+      - scripts/ai/validate-operator-contract.ts
+      - scripts/ai/lib/operator-contract.ts
+    generated_paths:
+      - docs/OPERATOR_RUNBOOK.md
+      - CLAUDE.md
+      - OPENCODE.md
+      - .cursor/rules/00-project-entry.mdc
+    compatible_adapters: [generic_repo, node_service, web_app, python_service]
+    smoke_commands:
+      - node --experimental-strip-types scripts/ai/generate-operator-assets.ts
+  - pack_id: ai_exec_pack
+    label: AI 执行效率包
+    description: task/preflight/review、summary harness、command gain 与最小 AI 上下文入口。
+    copy_paths:
+      - scripts/coord/*.ts
+      - scripts/coord/lib/*.ts
+      - scripts/ai/create-task.ts
+      - scripts/ai/build-context.ts
+      - scripts/ai/preflight-summary.ts
+      - scripts/ai/review-summary.ts
+      - scripts/ai/preview-summary.ts
+      - scripts/ai/prod-summary.ts
+      - scripts/ai/validate-static-summary.ts
+      - scripts/ai/validate-build-summary.ts
+      - scripts/ai/command-gain.ts
+      - scripts/ai/lib/cli-kernel.js
+      - scripts/ai/lib/task-template.js
+      - scripts/ai/lib/task-resolver.ts
+      - scripts/ai/lib/command-gain.ts
+      - scripts/ai/lib/summary-harness.ts
+      - scripts/ai/lib/summary-profiles.ts
+      - scripts/ai/lib/feature-context.ts
+      - shared/*.ts
+    generated_paths: []
+    compatible_adapters: [node_service, web_app, python_service]
+    smoke_commands:
+      - node --experimental-strip-types scripts/coord/preflight.ts
+      - node --experimental-strip-types scripts/coord/task.ts create --help
+      - node --experimental-strip-types scripts/coord/review.ts --help
+mode_packs:
+  - mode_id: cold_start
+    label: 新项目冷启动
+    description: 给空仓或新仓装上统一协议层、operator 契约与 repo-local AI/tooling 入口。
+    default_profile: governance
+    required_packs:
+      - protocol_pack
+      - operator_pack
+      - tooling_pack
+    compatible_adapters: [generic_repo, node_service, web_app, python_service]
+    smoke_commands:
+      - python3 scripts/init_project_compounding.py doctor --target .
+      - node --experimental-strip-types scripts/ai/generate-operator-assets.ts
+  - mode_id: normalize
+    label: 老项目规范化
+    description: 给已有业务代码的项目接入统一协议、operator contract 与 AI 工具入口。
+    default_profile: governance
+    required_packs:
+      - protocol_pack
+      - operator_pack
+      - tooling_pack
+    compatible_adapters: [generic_repo, node_service, web_app, python_service]
+    smoke_commands:
+      - python3 scripts/init_project_compounding.py attach --target .
+      - python3 scripts/init_project_compounding.py audit --target .
+  - mode_id: ai_upgrade
+    label: AI 底座升级
+    description: 在规范化基础上补齐 task/preflight/review、summary harness 与 gain tracking。
+    default_profile: full_ai_dev
+    required_packs:
+      - protocol_pack
+      - operator_pack
+      - ai_exec_pack
+      - tooling_pack
+    compatible_adapters: [node_service, web_app, python_service]
+    smoke_commands:
+      - node --experimental-strip-types scripts/coord/preflight.ts
+      - node --experimental-strip-types scripts/ai/preflight-summary.ts
 managed_assets:
   - path: AGENTS.md
     ownership: kernel

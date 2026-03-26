@@ -20,6 +20,7 @@ from .defaults import (
     RESOLVED_CONFIG_PATH,
     SOURCE_ROOT,
 )
+from .packs import infer_adapter_id, infer_bootstrap_mode, load_kernel_manifest, mode_default_profile, resolve_supported_mode
 from .repo_scan import scan_repo, slugify
 from .schema_validation import validate_payload
 from .yaml_io import load_yaml, save_yaml
@@ -35,6 +36,16 @@ GENERIC_APP_TYPES = {
     "project-shell",
 }
 
+GENERIC_KERNEL_PROFILES = {
+    "",
+    "protocol_only",
+}
+
+GENERIC_BOOTSTRAP_MODES = {
+    "",
+    "cold_start",
+}
+
 GENERIC_DEPLOY_TARGETS = {
     "",
     "unknown",
@@ -46,6 +57,17 @@ GENERIC_CRITICAL_PATHS = {
     "memory/project/operating-blueprint.md",
     "scripts/compounding_bootstrap/*",
 }
+
+
+def source_project_identity() -> tuple[str, str]:
+    path = SOURCE_ROOT / BRIEF_PATH
+    if not path.exists():
+        return "", ""
+    payload = load_yaml(path)
+    if not isinstance(payload, dict):
+        return "", ""
+    project_identity = payload.get("project_identity") if isinstance(payload.get("project_identity"), dict) else {}
+    return str(project_identity.get("name") or "").strip(), str(project_identity.get("one_liner") or "").strip()
 
 
 def load_package_json(target: Path) -> dict[str, Any]:
@@ -75,11 +97,12 @@ def text_contains(target: Path, relative_path: str, needles: list[str]) -> bool:
     return any(needle.lower() in content for needle in needles)
 
 
-def default_brief_payload(project_name: str, adoption_mode: str = "attach") -> dict[str, Any]:
+def default_brief_payload(project_name: str, adoption_mode: str = "attach", bootstrap_mode: str = "normalize") -> dict[str, Any]:
     template = load_yaml(SOURCE_ROOT / PROJECT_BRIEF_TEMPLATE_PATH)
     if not isinstance(template, dict):
         raise ValueError("Project brief template must be a mapping.")
     payload = dict(template)
+    payload["bootstrap_mode"] = bootstrap_mode
     payload["project_identity"] = dict(payload.get("project_identity") or {})
     payload["project_identity"]["name"] = project_name
     payload["kernel"] = dict(payload.get("kernel") or {})
@@ -109,6 +132,7 @@ def split_success_criteria(value: Any) -> list[str]:
 def infer_one_liner(target: Path, payload: dict[str, Any] | None = None) -> str:
     existing = payload or {}
     project_identity = existing.get("project_identity") if isinstance(existing.get("project_identity"), dict) else {}
+    _, source_one_liner = source_project_identity()
     candidates = [
         project_identity.get("one_liner"),
         existing.get("project_one_liner"),
@@ -116,6 +140,8 @@ def infer_one_liner(target: Path, payload: dict[str, Any] | None = None) -> str:
     for candidate in candidates:
         if isinstance(candidate, str):
             value = candidate.strip()
+            if target.resolve() != SOURCE_ROOT and source_one_liner and value == source_one_liner:
+                continue
             if value and value not in GENERIC_ONE_LINERS:
                 return value
     readme_path = target / "README.md"
@@ -130,6 +156,7 @@ def infer_one_liner(target: Path, payload: dict[str, Any] | None = None) -> str:
 def infer_project_name(target: Path, payload: dict[str, Any] | None = None) -> str:
     existing = payload or {}
     project_identity = existing.get("project_identity") if isinstance(existing.get("project_identity"), dict) else {}
+    source_name, _ = source_project_identity()
     candidates = [
         project_identity.get("name"),
         existing.get("project_name"),
@@ -137,18 +164,27 @@ def infer_project_name(target: Path, payload: dict[str, Any] | None = None) -> s
     ]
     for candidate in candidates:
         if isinstance(candidate, str) and candidate.strip():
-            return candidate.strip()
+            value = candidate.strip()
+            if target.resolve() != SOURCE_ROOT and source_name and value == source_name:
+                continue
+            return value
     return "Untitled Project"
 
 
 def infer_deploy_target(target: Path) -> str:
     package_json = load_package_json(target)
+    if (target / "vercel.json").exists() or (target / ".vercel").exists():
+        return "vercel"
+    if (target / "netlify.toml").exists():
+        return "netlify"
     if has_dependency(package_json, "next"):
         if text_contains(target, "next.config.ts", ['output: "export"', "output: 'export'"]) and (
             (target / "deploy").exists() or text_contains(target, "README.md", ["nginx", "静态导出"])
         ):
             return "nginx-static-export"
         return "next-runtime"
+    if (target / "Dockerfile").exists() or (target / "docker-compose.yml").exists() or (target / "compose.yaml").exists():
+        return "container-service"
     if (target / "scripts" / "local-runtime").exists():
         return "local-runtime"
     if (target / "deploy").exists():
@@ -158,10 +194,21 @@ def infer_deploy_target(target: Path) -> str:
 
 def infer_app_type(target: Path) -> str:
     package_json = load_package_json(target)
+    if (target / "pyproject.toml").exists() or (target / "requirements.txt").exists():
+        if any((target / path).exists() for path in ("src", "app", "services")):
+            return "python-service"
+        return "python-package"
     if has_dependency(package_json, "next"):
         if text_contains(target, "next.config.ts", ['output: "export"', "output: 'export'"]):
             return "nextjs-static-site"
         return "nextjs-app"
+    if any(has_dependency(package_json, dep) for dep in ("react", "vue", "svelte", "vite")):
+        return "web-app"
+    scripts = package_json.get("scripts") if isinstance(package_json.get("scripts"), dict) else {}
+    if package_json and any(key in scripts for key in ("dev", "start", "build", "test")):
+        return "node-service"
+    if package_json:
+        return "javascript-package"
     if (target / "apps").exists() and (target / "tasks").exists() and (target / "memory").exists():
         return "ai-native-repo"
     if (target / "apps").exists():
@@ -171,12 +218,10 @@ def infer_app_type(target: Path) -> str:
 
 def should_refresh_app_type(target: Path, current_app_type: str) -> bool:
     value = current_app_type.strip()
+    inferred = infer_app_type(target)
     if value in GENERIC_APP_TYPES:
         return True
-    package_json = load_package_json(target)
-    if has_dependency(package_json, "next") and value == "ai-native-repo":
-        return True
-    return False
+    return value != inferred
 
 
 def infer_critical_paths(target: Path) -> list[str]:
@@ -208,6 +253,9 @@ def should_refresh_critical_paths(target: Path, current_paths: Any) -> bool:
     if set(normalized).issubset(GENERIC_CRITICAL_PATHS):
         if (target / "src" / "app").exists() or (target / "src" / "modules").exists() or (target / "deploy").exists():
             return True
+    detected = infer_critical_paths(target)
+    if any(path not in normalized for path in detected):
+        return True
     return False
 
 
@@ -226,6 +274,56 @@ def infer_owned_paths(target: Path) -> list[str]:
     ]
     owned = [pattern for pattern in candidates if _path_exists_for_pattern(target, pattern)]
     return owned or DEFAULT_OWNED_PATHS.copy()
+
+
+def infer_kernel_profile(target: Path, app_type: str | None = None) -> str:
+    detected_app_type = app_type or infer_app_type(target)
+    execution_markers = (
+        target / "scripts" / "coord" / "preflight.ts",
+        target / "scripts" / "coord" / "task.ts",
+        target / "scripts" / "coord" / "review.ts",
+    )
+    if all(marker.exists() for marker in execution_markers):
+        return "full_ai_dev"
+    if detected_app_type in {"ai-native-repo", "nextjs-app", "nextjs-static-site", "web-app", "node-service", "python-service", "application"}:
+        return "governance"
+    if any((target / path).exists() for path in ("README.md", "package.json", "pyproject.toml", "requirements.txt", "src", "app", "apps")):
+        return "governance"
+    return "protocol_only"
+
+
+def should_refresh_bootstrap_mode(target: Path, current_mode: str, app_type: str | None = None, profile: str | None = None) -> bool:
+    value = current_mode.strip()
+    inferred = infer_bootstrap_mode(target, app_type or infer_app_type(target), profile or infer_kernel_profile(target, app_type))
+    if value in GENERIC_BOOTSTRAP_MODES:
+        return True
+    return value != inferred
+
+
+def should_refresh_kernel_profile(target: Path, current_profile: str, app_type: str | None = None) -> bool:
+    value = current_profile.strip()
+    inferred = infer_kernel_profile(target, app_type)
+    if value in GENERIC_KERNEL_PROFILES:
+        return True
+    return value != inferred
+
+
+def infer_package_manager(target: Path) -> str:
+    if (target / "pnpm-lock.yaml").exists():
+        return "pnpm"
+    if (target / "yarn.lock").exists():
+        return "yarn"
+    if (target / "package-lock.json").exists():
+        return "npm"
+    if (target / "bun.lockb").exists() or (target / "bun.lock").exists():
+        return "bun"
+    if (target / "uv.lock").exists():
+        return "uv"
+    if (target / "poetry.lock").exists():
+        return "poetry"
+    if (target / "pyproject.toml").exists() or (target / "requirements.txt").exists():
+        return "pip"
+    return "unknown"
 
 
 def should_refresh_owned_paths(target: Path, current_paths: Any) -> bool:
@@ -261,12 +359,10 @@ def infer_blocked_paths(target: Path) -> list[str]:
 
 def should_refresh_deploy_target(target: Path, current_deploy_target: str) -> bool:
     value = current_deploy_target.strip()
+    inferred = infer_deploy_target(target)
     if value in GENERIC_DEPLOY_TARGETS:
         return True
-    package_json = load_package_json(target)
-    if has_dependency(package_json, "next") and value == "local-runtime":
-        return True
-    return False
+    return value != inferred
 
 
 def should_refresh_blocked_paths(target: Path, current_paths: Any) -> bool:
@@ -280,6 +376,9 @@ def should_refresh_blocked_paths(target: Path, current_paths: Any) -> bool:
     if "apps/**" in normalized and not _path_exists_for_pattern(target, "apps/**"):
         if any(_path_exists_for_pattern(target, path) for path in ("src/**", "app/**", "pages/**", "components/**", "lib/**")):
             return True
+    detected = infer_blocked_paths(target)
+    if any(path not in normalized for path in detected):
+        return True
     return False
 
 
@@ -293,9 +392,24 @@ def is_new_brief(payload: dict[str, Any]) -> bool:
     return isinstance(payload.get("project_identity"), dict) and isinstance(payload.get("kernel"), dict)
 
 
-def normalize_brief_payload(payload: dict[str, Any], target: Path, adoption_mode: str = "attach") -> tuple[dict[str, Any], bool]:
-    normalized = default_brief_payload(infer_project_name(target, payload), adoption_mode=adoption_mode)
+def normalize_brief_payload(
+    payload: dict[str, Any],
+    target: Path,
+    adoption_mode: str = "attach",
+    bootstrap_mode: str | None = None,
+) -> tuple[dict[str, Any], bool]:
+    inferred_app_type = infer_app_type(target)
+    inferred_profile = infer_kernel_profile(target, inferred_app_type)
+    manifest = load_kernel_manifest()
+    resolved_bootstrap_mode = bootstrap_mode or infer_bootstrap_mode(target, inferred_app_type, inferred_profile)
+    normalized = default_brief_payload(infer_project_name(target, payload), adoption_mode=adoption_mode, bootstrap_mode=resolved_bootstrap_mode)
     migrated = not is_new_brief(payload)
+    current_bootstrap_mode = str(payload.get("bootstrap_mode") or "").strip()
+    normalized["bootstrap_mode"] = (
+        infer_bootstrap_mode(target, inferred_app_type, inferred_profile)
+        if should_refresh_bootstrap_mode(target, current_bootstrap_mode, inferred_app_type, inferred_profile)
+        else current_bootstrap_mode
+    )
 
     project_identity = payload.get("project_identity") if isinstance(payload.get("project_identity"), dict) else {}
     normalized["project_identity"] = {
@@ -307,23 +421,36 @@ def normalize_brief_payload(payload: dict[str, Any], target: Path, adoption_mode
         or ["项目进入统一的 plan / task / release / memory 协议，并能稳定运行 attach / audit / proposal / bootstrap。"],
     }
 
-    kernel = payload.get("kernel") if isinstance(payload.get("kernel"), dict) else {}
-    normalized["kernel"] = {
-        "version": str(kernel.get("version") or kernel_version()),
-        "adoption_mode": str(kernel.get("adoption_mode") or adoption_mode),
-    }
-
     runtime_boundary = payload.get("runtime_boundary") if isinstance(payload.get("runtime_boundary"), dict) else {}
     current_app_type = str(runtime_boundary.get("app_type") or "").strip()
     current_deploy_target = str(runtime_boundary.get("deploy_target") or "").strip()
     normalized["runtime_boundary"] = {
-        "app_type": infer_app_type(target) if should_refresh_app_type(target, current_app_type) else current_app_type,
+        "app_type": inferred_app_type if should_refresh_app_type(target, current_app_type) else current_app_type,
         "deploy_target": infer_deploy_target(target)
         if should_refresh_deploy_target(target, current_deploy_target)
         else current_deploy_target,
         "critical_paths": infer_critical_paths(target)
         if should_refresh_critical_paths(target, runtime_boundary.get("critical_paths"))
         else runtime_boundary.get("critical_paths"),
+    }
+    normalized["bootstrap_mode"] = resolve_supported_mode(
+        manifest,
+        infer_adapter_id(normalized["runtime_boundary"]["app_type"]),
+        normalized["bootstrap_mode"],
+        infer_bootstrap_mode(target, normalized["runtime_boundary"]["app_type"], inferred_profile),
+    )
+
+    kernel = payload.get("kernel") if isinstance(payload.get("kernel"), dict) else {}
+    current_profile = str(kernel.get("profile") or "").strip()
+    resolved_profile = current_profile
+    if should_refresh_kernel_profile(target, current_profile, normalized["runtime_boundary"]["app_type"]):
+        resolved_profile = mode_default_profile(manifest, normalized["bootstrap_mode"])
+    elif not resolved_profile:
+        resolved_profile = inferred_profile
+    normalized["kernel"] = {
+        "version": str(kernel.get("version") or kernel_version()),
+        "adoption_mode": str(kernel.get("adoption_mode") or adoption_mode),
+        "profile": resolved_profile,
     }
 
     local_overrides = payload.get("local_overrides") if isinstance(payload.get("local_overrides"), dict) else {}
@@ -367,12 +494,12 @@ def validate_config_file(config_path: Path, target: Path) -> dict[str, Any]:
     return validate_brief_payload(normalized)
 
 
-def migrate_legacy_config(target: Path, adoption_mode: str = "attach") -> Path:
+def migrate_legacy_config(target: Path, adoption_mode: str = "attach", bootstrap_mode: str | None = None) -> Path:
     brief_path = target / BRIEF_PATH
     if brief_path.exists():
         payload = load_yaml(brief_path)
         if isinstance(payload, dict):
-            normalized, migrated = normalize_brief_payload(payload, target, adoption_mode=adoption_mode)
+            normalized, migrated = normalize_brief_payload(payload, target, adoption_mode=adoption_mode, bootstrap_mode=bootstrap_mode)
             if migrated:
                 save_yaml(brief_path, normalized)
         return brief_path
@@ -382,30 +509,45 @@ def migrate_legacy_config(target: Path, adoption_mode: str = "attach") -> Path:
         payload = load_yaml(legacy_path)
         if not isinstance(payload, dict):
             raise ValueError(f"Legacy config must be an object: {legacy_path}")
-        normalized, _ = normalize_brief_payload(payload, target, adoption_mode=adoption_mode)
+        normalized, _ = normalize_brief_payload(payload, target, adoption_mode=adoption_mode, bootstrap_mode=bootstrap_mode)
         save_yaml(brief_path, normalized)
         return brief_path
 
     brief_path.parent.mkdir(parents=True, exist_ok=True)
-    normalized = default_brief_payload(infer_project_name(target), adoption_mode=adoption_mode)
+    inferred_app_type = infer_app_type(target)
+    inferred_profile = infer_kernel_profile(target, inferred_app_type)
+    manifest = load_kernel_manifest()
+    resolved_bootstrap_mode = resolve_supported_mode(
+        manifest,
+        infer_adapter_id(inferred_app_type),
+        bootstrap_mode or infer_bootstrap_mode(target, inferred_app_type, inferred_profile),
+        infer_bootstrap_mode(target, inferred_app_type, inferred_profile),
+    )
+    normalized = default_brief_payload(infer_project_name(target), adoption_mode=adoption_mode, bootstrap_mode=resolved_bootstrap_mode)
     normalized["project_identity"]["one_liner"] = infer_one_liner(target, normalized)
-    normalized["runtime_boundary"]["app_type"] = infer_app_type(target)
+    normalized["runtime_boundary"]["app_type"] = inferred_app_type
     normalized["runtime_boundary"]["deploy_target"] = infer_deploy_target(target)
     normalized["runtime_boundary"]["critical_paths"] = infer_critical_paths(target)
+    normalized["kernel"]["profile"] = mode_default_profile(manifest, resolved_bootstrap_mode)
     save_yaml(brief_path, normalized)
     return brief_path
 
 
-def ensure_brief(config_path: Path | None, target: Path, adoption_mode: str = "attach") -> tuple[Path, dict[str, Any], bool]:
+def ensure_brief(
+    config_path: Path | None,
+    target: Path,
+    adoption_mode: str = "attach",
+    bootstrap_mode: str | None = None,
+) -> tuple[Path, dict[str, Any], bool]:
     path = config_path if config_path and config_path.exists() else target / BRIEF_PATH
     created = False
     if not path.exists():
-        path = migrate_legacy_config(target, adoption_mode=adoption_mode)
+        path = migrate_legacy_config(target, adoption_mode=adoption_mode, bootstrap_mode=bootstrap_mode)
         created = True
     payload = load_yaml(path)
     if not isinstance(payload, dict):
         raise ValueError("Project brief must be an object.")
-    normalized, migrated = normalize_brief_payload(payload, target, adoption_mode=adoption_mode)
+    normalized, migrated = normalize_brief_payload(payload, target, adoption_mode=adoption_mode, bootstrap_mode=bootstrap_mode)
     if created or migrated or normalized != payload:
         save_yaml(path, normalized)
     return path, normalized, created or migrated
@@ -418,14 +560,18 @@ def resolve_project_config(brief_path: Path, target: Path) -> dict[str, Any]:
     normalized, _ = normalize_brief_payload(payload, target)
     scan = scan_repo(target)
     resolved = {
+        "bootstrap_mode": normalized["bootstrap_mode"],
         "project_name": normalized["project_identity"]["name"],
         "project_slug": slugify(normalized["project_identity"]["name"]),
         "project_one_liner": normalized["project_identity"]["one_liner"],
         "success_criteria": normalized["project_identity"]["success_criteria"],
         "kernel_version": normalized["kernel"]["version"],
         "adoption_mode": normalized["kernel"]["adoption_mode"],
+        "kernel_profile": normalized["kernel"]["profile"],
+        "adapter_id": infer_adapter_id(normalized["runtime_boundary"]["app_type"]),
         "app_type": normalized["runtime_boundary"]["app_type"],
         "deploy_target": normalized["runtime_boundary"]["deploy_target"],
+        "package_manager": infer_package_manager(target),
         "critical_paths": normalized["runtime_boundary"]["critical_paths"],
         "repo_scan": scan,
         "allowed_scopes": [
@@ -445,12 +591,16 @@ def resolve_project_config(brief_path: Path, target: Path) -> dict[str, Any]:
 __all__ = [
     "default_brief_payload",
     "ensure_brief",
+    "infer_adapter_id",
     "infer_app_type",
+    "infer_bootstrap_mode",
     "infer_blocked_paths",
     "infer_critical_paths",
     "infer_deploy_target",
+    "infer_kernel_profile",
     "infer_owned_paths",
     "infer_one_liner",
+    "infer_package_manager",
     "infer_project_name",
     "kernel_version",
     "load_yaml",

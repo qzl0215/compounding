@@ -20,6 +20,8 @@ class BootstrapProposalCliTests(BootstrapWorkspaceTestCase):
         payload = load_yaml(proposal_path)
 
         self.assertEqual(payload["proposal_id"], proposal_id)
+        self.assertEqual(payload["bootstrap_mode"], "cold_start")
+        self.assertEqual(payload["required_packs"], ["protocol_pack", "operator_pack", "tooling_pack"])
         self.assertIn("changes", payload)
         self.assertIn("proposal_required", payload["changes"])
         self.assertTrue(proposal_path.exists())
@@ -89,6 +91,26 @@ class BootstrapProposalCliTests(BootstrapWorkspaceTestCase):
 
         self.assertNotIn("tasks/templates/task-template.md", payload["changes"]["auto_apply"])
         self.assertIn("tasks/templates/task-template.md", payload["changes"]["proposal_required"])
+
+    def test_normalize_proposal_skips_ai_exec_pack_assets(self) -> None:
+        (self.target / "memory" / "project").mkdir(parents=True, exist_ok=True)
+        (self.target / "tasks" / "queue").mkdir(parents=True, exist_ok=True)
+        (self.target / "README.md").write_text("# Legacy Repo\n\nlegacy app\n", encoding="utf8")
+
+        subprocess.run(
+            ["python3", str(ROOT / "scripts" / "init_project_compounding.py"), "attach", "--target", str(self.target)],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+
+        proposal_id = create_proposal(self.target)
+        payload = load_yaml(self.target / "output" / "proposals" / proposal_id / "proposal.yaml")
+        all_paths = []
+        for category in ("auto_apply", "proposal_required", "suggest_only", "blocked"):
+            all_paths.extend(payload["changes"][category])
+
+        self.assertNotIn("scripts/coord/preflight.ts", all_paths)
 
     def test_proposal_auto_applies_missing_operating_blueprint(self) -> None:
         (self.target / "memory" / "project").mkdir(parents=True, exist_ok=True)

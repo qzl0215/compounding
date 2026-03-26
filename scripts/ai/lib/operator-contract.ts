@@ -270,6 +270,8 @@ function renderRunbook(contract) {
   const serverSections = Array.isArray(contract.server_surfaces) ? contract.server_surfaces.map((surface) => renderSurface(surface)).join("\n") : "";
   const githubNotes = normalizeNotes(contract.github_surface?.notes);
   const topNotes = normalizeNotes(contract.notes);
+  const shortcuts = Array.isArray(contract.agent_shortcuts) ? contract.agent_shortcuts : [];
+  const requiredPacks = Array.isArray(contract.project?.required_packs) ? contract.project.required_packs : [];
   const githubOwner = normalizeString(contract.github_surface?.owner);
   const githubRepo = normalizeString(contract.github_surface?.repo);
   const githubRepoLabel = githubOwner && githubRepo ? `${githubOwner}/${githubRepo}` : "未配置";
@@ -297,8 +299,27 @@ function renderRunbook(contract) {
     `## 项目`,
     "",
     `- 名称：\`${normalizeString(contract.project?.name)}\``,
+    `- 模式：\`${normalizeString(contract.project?.bootstrap_mode)}\``,
+    `- adapter：\`${normalizeString(contract.project?.adapter_id)}\``,
+    `- profile：\`${normalizeString(contract.project?.profile)}\``,
+    `- required packs：${requiredPacks.map((item) => `\`${normalizeString(item)}\``).join("、") || "无"}`,
     "- 顶层备注：",
     ...(topNotes.length ? topNotes.map((item) => `  - ${item}`) : ["  - 无"]),
+    "",
+    "## 推荐命令",
+    "",
+    `- install：\`${normalizeString(contract.toolchain_commands?.install)}\``,
+    `- dev：\`${normalizeString(contract.toolchain_commands?.dev)}\``,
+    `- build：\`${normalizeString(contract.toolchain_commands?.build)}\``,
+    `- test：\`${normalizeString(contract.toolchain_commands?.test)}\``,
+    `- bootstrap doctor：\`${normalizeString(contract.toolchain_commands?.bootstrap_doctor)}\``,
+    `- bootstrap attach：\`${normalizeString(contract.toolchain_commands?.bootstrap_attach)}\``,
+    `- bootstrap audit：\`${normalizeString(contract.toolchain_commands?.bootstrap_audit)}\``,
+    `- bootstrap proposal：\`${normalizeString(contract.toolchain_commands?.bootstrap_proposal)}\``,
+    `- preflight：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
+    `- task preflight：\`${normalizeString(contract.toolchain_commands?.task_preflight)}\``,
+    `- create task：\`${normalizeString(contract.toolchain_commands?.create_task)}\``,
+    `- review：\`${normalizeString(contract.toolchain_commands?.review)}\``,
     "",
     "## 服务器访问面",
     "",
@@ -332,36 +353,65 @@ function renderRunbook(contract) {
     `- production status：\`${normalizeString(contract.standard_flows?.production_release?.status)}\``,
     `- production check：\`${normalizeString(contract.standard_flows?.production_release?.check)}\``,
     `- rollback：\`${normalizeString(contract.standard_flows?.production_release?.rollback)}\``,
+    "",
+    "## Agent Shortcut",
+    "",
+    ...(shortcuts.length
+      ? shortcuts.flatMap((shortcut) => [
+          `- ${normalizeString(shortcut.label)}：\`${normalizeString(shortcut.canonical_command)}\``,
+          `  - 适用场景：${normalizeString(shortcut.applies_when)}`,
+          `  - 原因：${normalizeString(shortcut.why)}`,
+          `  - 工具面：${Array.isArray(shortcut.tool_surfaces) ? shortcut.tool_surfaces.map((item) => `\`${normalizeString(item)}\``).join("、") : "无"}`,
+        ])
+      : ["- 无"]),
     "<!-- END MANAGED BLOCK: CANONICAL_CONTENT -->",
     "",
   ].join("\n");
 }
 
-function renderClaudeEntry() {
+function renderShortcutLines(contract) {
+  const shortcuts = Array.isArray(contract.agent_shortcuts) ? contract.agent_shortcuts : [];
+  if (!shortcuts.length) return ["- 当前没有额外 shortcut。"];
+  return shortcuts.map(
+    (shortcut) => `- ${normalizeString(shortcut.label)}：\`${normalizeString(shortcut.canonical_command)}\``
+  );
+}
+
+function renderClaudeEntry(contract) {
   return [
     "# CLAUDE",
     "",
     "- Canonical source: `AGENTS.md`",
     `- 涉及服务器 / GitHub / 发布访问面时必须先读 \`${OPERATOR_CONTRACT_PATH}\``,
     `- 人类扫读版在 \`${OPERATOR_RUNBOOK_PATH}\``,
-    "- 动手前统一跑 `pnpm preflight`；`structural / release` 改动用 `pnpm preflight -- --taskId=t-xxx`",
+    `- 当前 mode：\`${normalizeString(contract.project?.bootstrap_mode)}\`；adapter：\`${normalizeString(contract.project?.adapter_id)}\``,
+    `- 推荐 preflight：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
+    "",
+    "## 优先摘要命令",
+    "",
+    ...renderShortcutLines(contract),
     "",
   ].join("\n");
 }
 
-function renderOpenCodeEntry() {
+function renderOpenCodeEntry(contract) {
   return [
     "# OPENCODE",
     "",
     "- Canonical source: `AGENTS.md`",
     `- 涉及服务器 / GitHub / 发布访问面时必须先读 \`${OPERATOR_CONTRACT_PATH}\``,
     `- 人类扫读版在 \`${OPERATOR_RUNBOOK_PATH}\``,
-    "- 动手前统一跑 `pnpm preflight`；`structural / release` 改动用 `pnpm preflight -- --taskId=t-xxx`",
+    `- 当前 mode：\`${normalizeString(contract.project?.bootstrap_mode)}\`；adapter：\`${normalizeString(contract.project?.adapter_id)}\``,
+    `- 推荐 preflight：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
+    "",
+    "## 优先摘要命令",
+    "",
+    ...renderShortcutLines(contract),
     "",
   ].join("\n");
 }
 
-function renderCursorEntry() {
+function renderCursorEntry(contract) {
   return [
     "---",
     "description: Project entry contract",
@@ -370,7 +420,12 @@ function renderCursorEntry() {
     "- Canonical source: `AGENTS.md`",
     `- 涉及服务器 / GitHub / 发布访问面时必须先读 \`${OPERATOR_CONTRACT_PATH}\``,
     `- 人类扫读版在 \`${OPERATOR_RUNBOOK_PATH}\``,
-    "- 动手前统一跑 `pnpm preflight`；`structural / release` 改动用 `pnpm preflight -- --taskId=t-xxx`",
+    `- 当前 mode：\`${normalizeString(contract.project?.bootstrap_mode)}\`；adapter：\`${normalizeString(contract.project?.adapter_id)}\``,
+    `- 推荐 preflight：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
+    "",
+    "## 优先摘要命令",
+    "",
+    ...renderShortcutLines(contract),
     "",
   ].join("\n");
 }
@@ -378,9 +433,9 @@ function renderCursorEntry() {
 function buildOperatorAssets(root = process.cwd(), contract = loadOperatorContract(root)) {
   return {
     [OPERATOR_RUNBOOK_PATH]: renderRunbook(contract),
-    [CLAUDE_ENTRY_PATH]: renderClaudeEntry(),
-    [OPENCODE_ENTRY_PATH]: renderOpenCodeEntry(),
-    [CURSOR_ENTRY_PATH]: renderCursorEntry(),
+    [CLAUDE_ENTRY_PATH]: renderClaudeEntry(contract),
+    [OPENCODE_ENTRY_PATH]: renderOpenCodeEntry(contract),
+    [CURSOR_ENTRY_PATH]: renderCursorEntry(contract),
   };
 }
 
@@ -404,7 +459,13 @@ function commandExists(command, root, packageScripts) {
   if (!value) return false;
   const tokens = value.split(/\s+/).filter(Boolean);
   if (!tokens.length) return false;
-  if (tokens[0] === "pnpm") return Boolean(packageScripts[tokens[1]]);
+  if (tokens[0] === "pnpm") {
+    const subcommand = tokens[1];
+    if (!subcommand) return false;
+    if (subcommand === "run") return Boolean(packageScripts[tokens[2]]);
+    if (["install", "add", "remove", "update", "up", "dlx", "exec"].includes(subcommand)) return true;
+    return Boolean(packageScripts[subcommand]);
+  }
   if (tokens[0] === "git" || tokens[0] === "gh" || tokens[0] === "ssh" || tokens[0] === "bash" || tokens[0] === "sh") return true;
   for (const token of tokens) {
     if (/\.(ts|js|py)$/.test(token)) {
@@ -493,6 +554,27 @@ function validateOperatorContract(root = process.cwd()) {
     }
   }
 
+  const toolchainCommands = contract.toolchain_commands && typeof contract.toolchain_commands === "object" ? contract.toolchain_commands : {};
+  for (const [label, command] of Object.entries(toolchainCommands)) {
+    if (!normalizeString(command)) continue;
+    if (!commandExists(command, root, packageScripts)) {
+      errors.push(`Toolchain command is missing or invalid: toolchain_commands.${label}`);
+    }
+  }
+
+  const shortcuts = Array.isArray(contract.agent_shortcuts) ? contract.agent_shortcuts : [];
+  for (const shortcut of shortcuts) {
+    if (normalizeString(shortcut.mode) !== "suggest") {
+      errors.push(`Agent shortcut mode must be suggest: ${normalizeString(shortcut.shortcut_id)}`);
+    }
+    if (!commandExists(shortcut.canonical_command, root, packageScripts)) {
+      errors.push(`Agent shortcut command is missing or invalid: ${normalizeString(shortcut.shortcut_id)}`);
+    }
+    if (!Array.isArray(shortcut.tool_surfaces) || shortcut.tool_surfaces.length === 0) {
+      errors.push(`Agent shortcut must declare tool_surfaces: ${normalizeString(shortcut.shortcut_id)}`);
+    }
+  }
+
   const assets = buildOperatorAssets(root, contract);
   for (const [relativePath, content] of Object.entries(assets)) {
     const absolutePath = path.join(root, relativePath);
@@ -516,6 +598,7 @@ function validateOperatorContract(root = process.cwd()) {
       generated_assets: Object.keys(assets),
       enabled_server_surfaces: serverSurfaces.filter((surface) => surface?.enabled).map((surface) => normalizeString(surface.surface_id)),
       github_enabled: Boolean(github.enabled),
+      shortcut_ids: shortcuts.map((shortcut) => normalizeString(shortcut.shortcut_id)).filter(Boolean),
     },
   };
 }

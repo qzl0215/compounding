@@ -1,6 +1,27 @@
 version: 0.1.0
 project:
   name: Compounding AI Operating System
+  bootstrap_mode: ai_upgrade
+  adapter_id: node_service
+  profile: full_ai_dev
+  required_packs:
+    - protocol_pack
+    - operator_pack
+    - ai_exec_pack
+    - tooling_pack
+toolchain_commands:
+  install: pnpm install
+  dev: pnpm dev
+  build: pnpm build
+  test: pnpm test
+  bootstrap_doctor: python3 scripts/init_project_compounding.py doctor --target .
+  bootstrap_attach: python3 scripts/init_project_compounding.py attach --target .
+  bootstrap_audit: python3 scripts/init_project_compounding.py audit --target .
+  bootstrap_proposal: python3 scripts/init_project_compounding.py proposal --target .
+  preflight: pnpm preflight
+  task_preflight: pnpm preflight -- --taskId=t-xxx
+  create_task: pnpm coord:task:create -- --taskId=t-xxx --summary=\"中文直给概述\" --why=\"为什么现在\"
+  review: pnpm coord:review:run -- --taskId=t-xxx
 server_surfaces:
   - surface_id: local-preview
     purpose: preview
@@ -71,6 +92,49 @@ standard_flows:
     status: pnpm prod:status
     check: pnpm prod:check
     rollback: node --experimental-strip-types scripts/release/rollback-release.ts --release <releaseId>
+agent_shortcuts:
+  - shortcut_id: preflight_summary
+    label: 优先使用 preflight 摘要
+    canonical_command: pnpm ai:preflight:summary
+    applies_when: 改动前想快速确认 gate 结果；structural 或 release 场景继续补 -- --taskId=t-xxx
+    why: 保留 preflight 判定语义，但把 blocker、note 和 retro hint 压成短摘要，失败时保留 raw tee
+    tool_surfaces: [codex, claude, cursor, opencode]
+    mode: suggest
+  - shortcut_id: validate_static_summary
+    label: 优先使用静态校验摘要
+    canonical_command: pnpm ai:validate:static:summary
+    applies_when: 想看 validate:static 的关键信号，而不是整段脚本输出
+    why: 只保留失败项、错误模式和脚本步骤，减少 lint 与 validator 噪音
+    tool_surfaces: [codex, claude, cursor, opencode]
+    mode: suggest
+  - shortcut_id: validate_build_summary
+    label: 优先使用构建校验摘要
+    canonical_command: pnpm ai:validate:build:summary
+    applies_when: 想看 test/build/audit 的结果摘要，而不是整段构建日志
+    why: 聚焦失败步骤与关键错误，避免把成功日志整段塞进上下文
+    tool_surfaces: [codex, claude, cursor, opencode]
+    mode: suggest
+  - shortcut_id: review_summary
+    label: 优先使用 review 摘要
+    canonical_command: pnpm ai:review:summary -- --taskId=t-xxx
+    applies_when: 需要看 review 结论、失败 reviewer 和 merge decision
+    why: 保留 review contract，但把 reviewer 输出收成短摘要并统计 adoption
+    tool_surfaces: [codex, claude, cursor, opencode]
+    mode: suggest
+  - shortcut_id: preview_summary
+    label: 优先使用 preview 健康摘要
+    canonical_command: pnpm ai:preview:summary
+    applies_when: 需要确认本地 preview 运行态，而不是看完整健康检查 JSON
+    why: 直接给出 preview 状态、端口、drift 与失败原因，并统计 shortcut adoption
+    tool_surfaces: [codex, claude, cursor, opencode]
+    mode: suggest
+  - shortcut_id: prod_summary
+    label: 优先使用 production 健康摘要
+    canonical_command: pnpm ai:prod:summary
+    applies_when: 需要确认本地 production 运行态，而不是看完整健康检查 JSON
+    why: 直接给出 production 状态、端口、drift 与失败原因，并统计 shortcut adoption
+    tool_surfaces: [codex, claude, cursor, opencode]
+    mode: suggest
 notes:
   - 该文件只保存服务器访问面、GitHub 接入面和标准发布流的非密钥事实。
   - 真实密钥只放在 env、gh auth、ssh config 或外部 secret manager。
