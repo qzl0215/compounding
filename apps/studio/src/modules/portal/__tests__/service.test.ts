@@ -38,6 +38,13 @@ describe("home status board service", () => {
       pendingAcceptance: "待验收版本 rel-1",
       runtimeAlert: null,
       healthSummary: "health",
+      aiEfficiency: {
+        totalSavedLabel: "~0",
+        avgSavingsLabel: "0%",
+        alert: null,
+        contextPattern: null,
+        contextMode: "balanced",
+      },
     });
 
     expect(snapshot.logicMap.activeNodeId).toBe("acceptance");
@@ -62,6 +69,13 @@ describe("home status board service", () => {
       pendingAcceptance: null,
       runtimeAlert: null,
       healthSummary: "health",
+      aiEfficiency: {
+        totalSavedLabel: "~0",
+        avgSavingsLabel: "0%",
+        alert: null,
+        contextPattern: null,
+        contextMode: "balanced",
+      },
     });
 
     expect(snapshot.logicMap.nodes.find((node) => node.id === "focus")?.state).toBe("warning");

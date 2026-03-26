@@ -4,7 +4,23 @@ const { resolveTaskRecord, resolveTaskId } = require("../../ai/lib/task-resolver
 const { buildRetroCandidates, deriveRetroPattern, loadIterationDigests, renderRetroCandidatesMarkdown } = require("../../ai/lib/retro-candidates.ts");
 const { getCompanionPath, updateCompanion } = require("./task-meta.ts");
 
-const ROOT = process.cwd();
+function detectWorkspaceRoot(startDir = process.cwd()) {
+  let currentDir = path.resolve(startDir);
+
+  while (true) {
+    if (fs.existsSync(path.join(currentDir, "shared", "task-contract.ts")) && fs.existsSync(path.join(currentDir, "tasks", "queue"))) {
+      return currentDir;
+    }
+
+    const parentDir = path.dirname(currentDir);
+    if (parentDir === currentDir) {
+      return path.resolve(startDir);
+    }
+    currentDir = parentDir;
+  }
+}
+
+const ROOT = detectWorkspaceRoot();
 const ACTIVITY_ROOT = path.join(ROOT, "output", "agent_session", "task-activity");
 const RETRO_DIR = path.join(ROOT, "output", "ai", "retro-candidates");
 const RETRO_JSON = path.join(RETRO_DIR, "latest.json");
@@ -580,6 +596,7 @@ module.exports = {
   finishActiveStageIfOpen,
   finishWaitStage,
   finishWaitStageIfOpen,
+  readLatestLiveSummary,
   recordBlocker,
   recordNote,
   refreshRetroCandidates,

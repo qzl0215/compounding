@@ -299,6 +299,46 @@ class SummaryHarnessCliTests(unittest.TestCase):
         self.assertNotIn("expired.json", payload["teeFiles"])
         self.assertLessEqual(len(payload["teeFiles"]), 2)
 
+    def test_context_packet_events_flow_into_dashboard_density(self) -> None:
+        source = """
+        const { recordContextPacketEvent, buildCommandGainReport } = require("./scripts/ai/lib/command-gain.ts");
+
+        const root = process.cwd();
+        recordContextPacketEvent(root, {
+          profileId: "feature_context_balanced",
+          profileVersion: "1",
+          taskId: "t-101",
+          originalCmd: "pnpm ai:feature-context -- --taskPath=tasks/queue/task-101.md",
+          rawBytes: 1600,
+          compactBytes: 480,
+          outputText: "balanced packet",
+        });
+        recordContextPacketEvent(root, {
+          profileId: "build_context_expanded",
+          profileVersion: "1",
+          taskId: "t-101",
+          originalCmd: "pnpm ai:build-context tasks/queue/task-101.md --expanded",
+          rawBytes: 2400,
+          compactBytes: 1040,
+          outputText: "expanded packet",
+        });
+
+        const report = buildCommandGainReport(root, { days: 30 });
+        console.log(JSON.stringify(report));
+        """
+        completed = self.run_node(textwrap.dedent(source))
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        payload = json.loads(completed.stdout)
+        density = payload["dashboard"]["context_density"]
+
+        self.assertEqual(density["total_packets"], 2)
+        self.assertEqual(density["balanced_runs"], 1)
+        self.assertEqual(density["expanded_runs"], 1)
+        self.assertEqual(density["total_saved_tokens_est"], 620)
+        self.assertEqual(density["total_input_tokens_est"], 1000)
+        self.assertEqual(density["total_output_tokens_est"], 380)
+        self.assertEqual(density["top_context_heavy_tasks"][0]["task_id"], "t-101")
+
     def test_tree_summary_reports_directory_distribution(self) -> None:
         (self.target / "apps" / "studio").mkdir(parents=True, exist_ok=True)
         (self.target / "apps" / "studio" / "page.tsx").write_text("export default function Page() {}\n", encoding="utf8")
@@ -510,6 +550,182 @@ class SummaryHarnessCliTests(unittest.TestCase):
         self.assertIn("coverage", payload["dashboard"])
         self.assertIn("trend_delta", payload["dashboard"])
         self.assertIn("task_rollups", payload["dashboard"])
+
+    def test_turn_report_aggregates_recent_summary_and_context_costs(self) -> None:
+        since = "2026-03-26T00:00:00.000Z"
+        source = f"""
+        const {{ appendCommandGainEvent }} = require("./scripts/ai/lib/command-gain.ts");
+        const {{ buildTurnReport, formatTurnReportText }} = require("./scripts/ai/lib/turn-report.ts");
+
+        const root = process.cwd();
+        appendCommandGainEvent(root, {{
+          event_kind: "summary_run",
+          timestamp: "2026-03-26T01:00:00.000Z",
+          profile_id: "validate_build_summary",
+          profile_version: "1",
+          task_id: "t-101",
+          original_cmd: "pnpm validate:build",
+          input_tokens_est: 1200,
+          output_tokens_est: 120,
+          saved_tokens_est: 1080,
+          savings_pct_est: 90,
+          exec_time_ms: 8000,
+          exit_code: 0,
+          was_fallback: false,
+          filter_error: null,
+          raw_bytes: 4800,
+          compact_bytes: 480,
+          tee_path: null,
+          shortcut_id: "validate_build_summary",
+        }});
+        appendCommandGainEvent(root, {{
+          event_kind: "context_packet",
+          timestamp: "2026-03-26T01:05:00.000Z",
+          profile_id: "feature_context_balanced",
+          profile_version: "1",
+          task_id: "t-101",
+          original_cmd: "pnpm ai:feature-context -- --taskPath=tasks/queue/task-101.md",
+          input_tokens_est: 600,
+          output_tokens_est: 240,
+          saved_tokens_est: 360,
+          savings_pct_est: 60,
+          exec_time_ms: 1200,
+          exit_code: 0,
+          was_fallback: false,
+          filter_error: null,
+          raw_bytes: 2400,
+          compact_bytes: 960,
+          tee_path: null,
+          shortcut_id: null,
+        }});
+        appendCommandGainEvent(root, {{
+          event_kind: "shortcut_opportunity",
+          timestamp: "2026-03-26T01:06:00.000Z",
+          profile_id: "preflight_summary",
+          profile_version: "1",
+          task_id: "t-101",
+          shortcut_id: "preflight_summary",
+          original_cmd: "pnpm preflight -- --taskId=t-101",
+          input_tokens_est: 0,
+          output_tokens_est: 0,
+          saved_tokens_est: 0,
+          savings_pct_est: 0,
+          exec_time_ms: 0,
+          exit_code: 0,
+          was_fallback: false,
+          filter_error: null,
+          raw_bytes: 0,
+          compact_bytes: 0,
+          tee_path: null,
+          adopted: false,
+        }});
+
+        const report = buildTurnReport(root, {{ since: "{since}", taskId: "t-101" }});
+        console.log(JSON.stringify({{
+          report,
+          text: formatTurnReportText(report),
+        }}));
+        """
+        completed = self.run_node(textwrap.dedent(source))
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        payload = json.loads(completed.stdout)
+        report = payload["report"]
+        text = payload["text"]
+
+        self.assertEqual(report["task_id"], "t-101")
+        self.assertEqual(report["summary_runs"], 1)
+        self.assertEqual(report["context_packets"], 1)
+        self.assertEqual(report["summary_saved_tokens_est"], 1080)
+        self.assertEqual(report["context_saved_tokens_est"], 360)
+        self.assertEqual(report["total_input_tokens_est"], 1800)
+        self.assertEqual(report["total_output_tokens_est"], 360)
+        self.assertEqual(report["total_saved_tokens_est"], 1440)
+        self.assertIn("回合量化", text)
+        self.assertIn("Token：~1.8K -> 360，saved ~1.4K", text)
+        self.assertIn("上下文：1 packets；摘要：1 runs", text)
+        self.assertNotIn("提示：", text)
+        self.assertLessEqual(len(text.splitlines()), 5)
+
+    def test_turn_report_omits_hint_when_no_signal_exists(self) -> None:
+        since = "2026-03-26T00:00:00.000Z"
+        source = f"""
+        const {{ buildTurnReport, formatTurnReportText }} = require("./scripts/ai/lib/turn-report.ts");
+        const report = buildTurnReport(process.cwd(), {{ since: "{since}" }});
+        console.log(JSON.stringify({{
+          report,
+          text: formatTurnReportText(report),
+        }}));
+        """
+        completed = self.run_node(textwrap.dedent(source))
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        payload = json.loads(completed.stdout)
+        text = payload["text"]
+
+        self.assertEqual(payload["report"]["summary_runs"], 0)
+        self.assertEqual(payload["report"]["context_packets"], 0)
+        self.assertNotIn("提示：", text)
+        self.assertEqual(len(text.splitlines()), 4)
+
+    def test_turn_report_emits_hint_only_when_missed_shortcut_has_positive_savings_estimate(self) -> None:
+        since = "2026-03-26T00:00:00.000Z"
+        source = f"""
+        const {{ appendCommandGainEvent }} = require("./scripts/ai/lib/command-gain.ts");
+        const {{ buildTurnReport, formatTurnReportText }} = require("./scripts/ai/lib/turn-report.ts");
+
+        const root = process.cwd();
+        appendCommandGainEvent(root, {{
+          event_kind: "summary_run",
+          timestamp: "2026-03-26T01:00:00.000Z",
+          profile_id: "preflight_summary",
+          profile_version: "1",
+          task_id: "t-201",
+          original_cmd: "pnpm preflight -- --taskId=t-201",
+          input_tokens_est: 1000,
+          output_tokens_est: 100,
+          saved_tokens_est: 900,
+          savings_pct_est: 90,
+          exec_time_ms: 1200,
+          exit_code: 0,
+          was_fallback: false,
+          filter_error: null,
+          raw_bytes: 4000,
+          compact_bytes: 400,
+          tee_path: null,
+          shortcut_id: "preflight_summary",
+        }});
+        appendCommandGainEvent(root, {{
+          event_kind: "shortcut_opportunity",
+          timestamp: "2026-03-26T01:05:00.000Z",
+          profile_id: "preflight_summary",
+          profile_version: "1",
+          task_id: "t-201",
+          shortcut_id: "preflight_summary",
+          original_cmd: "pnpm preflight -- --taskId=t-201",
+          input_tokens_est: 0,
+          output_tokens_est: 0,
+          saved_tokens_est: 0,
+          savings_pct_est: 0,
+          exec_time_ms: 0,
+          exit_code: 0,
+          was_fallback: false,
+          filter_error: null,
+          raw_bytes: 0,
+          compact_bytes: 0,
+          tee_path: null,
+          adopted: false,
+        }});
+
+        const report = buildTurnReport(root, {{ since: "{since}", taskId: "t-201" }});
+        console.log(JSON.stringify({{
+          report,
+          text: formatTurnReportText(report),
+        }}));
+        """
+        completed = self.run_node(textwrap.dedent(source))
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        payload = json.loads(completed.stdout)
+        self.assertEqual(payload["report"]["top_hint"], "本轮未使用 preflight_summary，潜在可节省 ~900 tokens")
+        self.assertIn("提示：本轮未使用 preflight_summary，潜在可节省 ~900 tokens", payload["text"])
 
 
 if __name__ == "__main__":

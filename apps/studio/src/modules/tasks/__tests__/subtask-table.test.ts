@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createEmptyTaskCostLedger } from "../../../../../../shared/task-cost";
 import { buildSubtaskTableRows } from "../subtask-table";
 import type { TaskDeliveryRow } from "../types";
 
@@ -53,6 +54,7 @@ function buildRow(overrides: Partial<TaskDeliveryRow>): TaskDeliveryRow {
     acceptReleaseId: null,
     rollbackReleaseId: null,
     linkedTaskIds: [],
+    cost: createEmptyTaskCostLedger("t-000", "任务 task-000-sample", "not_started"),
     ...overrides,
   };
 }

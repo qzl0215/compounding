@@ -3,6 +3,7 @@ const path = require("node:path");
 const childProcess = require("node:child_process");
 const { getChangePolicy } = require("./lib/change-policy.ts");
 const { parseTaskContract, parseTaskMachineFacts } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
+const { normalizeBranchCleanupRecord } = require(path.join(process.cwd(), "shared", "branch-cleanup.ts"));
 const { collectTaskIdentityErrors, taskIdFromPath } = require(path.join(process.cwd(), "shared", "task-identity.ts"));
 const { readCompanion } = require("../coord/lib/task-meta.ts");
 
@@ -57,6 +58,7 @@ function parseTask(pathname) {
     currentMode: cleanValue(companion?.current_mode || parsedMachine.currentMode || ""),
     branch: cleanValue(companion?.branch_name || parsedMachine.branch || ""),
     recentCommit: cleanValue(companion?.lifecycle?.handoff?.git_head || parsedMachine.recentCommit || ""),
+    branchCleanup: normalizeBranchCleanupRecord(companion?.artifacts?.branch_cleanup),
   };
 }
 
@@ -115,8 +117,9 @@ function getTaskGitSnapshot(task) {
   const branch = cleanValue(task.branch);
   const activeBranch = currentBranch();
   const storedCommit = isAutoCommit(task.recentCommit) ? "" : cleanValue(task.recentCommit);
+  const cleanupCommit = cleanValue(task.branchCleanup?.source_commit || "");
   const localBranch = branch && !isLegacyMainBranch(branch) && branchExists(branch);
-  const effectiveCommit = localBranch ? branchHead(branch) : commitExists(storedCommit) ? storedCommit : "";
+  const effectiveCommit = localBranch ? branchHead(branch) : commitExists(cleanupCommit) ? cleanupCommit : commitExists(storedCommit) ? storedCommit : "";
   return {
     branch,
     effectiveCommit,
@@ -125,6 +128,10 @@ function getTaskGitSnapshot(task) {
     mergedToMain: isLegacyMainBranch(branch) || (branch !== activeBranch && isMergedIntoMain(effectiveCommit)),
     hasLocalBranch: localBranch,
   };
+}
+
+function isManagedCleanupState(task) {
+  return ["scheduled", "deleted", "failed"].includes(String(task.branchCleanup?.overall_state || "").trim());
 }
 
 function allowsPlannedBranch(task, snapshot) {
@@ -165,12 +172,13 @@ function validateTask(task, errors) {
     !snapshot.effectiveCommit &&
     !isLegacyMainBranch(snapshot.branch) &&
     !(snapshot.branch === snapshot.activeBranch && snapshot.dirtyWorktree) &&
-    !allowsPlannedBranch(task, snapshot)
+    !allowsPlannedBranch(task, snapshot) &&
+    !(task.status === "done" && isManagedCleanupState(task))
   ) {
     errors.push(`${task.path}: 已绑定分支，但无法解析最近提交。`);
   }
 
-  if (task.status === "done" && !snapshot.mergedToMain) {
+  if (task.status === "done" && !snapshot.mergedToMain && !isManagedCleanupState(task)) {
     errors.push(`${task.path}: 任务标记为 done，但最近提交尚未并入 main。`);
   }
 

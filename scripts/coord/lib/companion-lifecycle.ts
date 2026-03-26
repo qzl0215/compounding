@@ -3,6 +3,8 @@
  */
 
 const { updateCompanion } = require("./task-meta.ts");
+const { buildTaskCostSnapshot } = require("../../ai/lib/task-cost-core.ts");
+const { cancelTaskBranchCleanup, scheduleBranchCleanupForRelease } = require("./branch-cleanup.ts");
 
 function now() {
   return new Date().toISOString();
@@ -26,6 +28,16 @@ function latestDiffSummary(diffSummary) {
     ref_b: diffSummary.diff_summary.ref_b,
     generated_at: diffSummary.diff_summary.generated_at || now(),
   };
+}
+
+function attachTaskCostSnapshot(taskId, companion, options = {}) {
+  companion.artifacts = companion.artifacts || {};
+  companion.artifacts.change_cost_snapshot = buildTaskCostSnapshot(process.cwd(), {
+    taskId,
+    deliveryStatus: options.deliveryStatus || null,
+    versionLabel: options.versionLabel || null,
+  });
+  return companion;
 }
 
 function recordCreated(taskId, payload = {}) {
@@ -90,7 +102,9 @@ function recordHandoff(taskId, payload = {}) {
     };
     companion.lifecycle.handoff = note;
     companion.artifacts.handoff_notes.push(note);
-    return companion;
+    return attachTaskCostSnapshot(taskId, companion, {
+      deliveryStatus: "in_progress",
+    });
   });
 }
 
@@ -111,7 +125,9 @@ function recordReviewResult(taskId, review) {
     if (diffSummary) {
       companion.artifacts.diff_summaries.push(diffSummary);
     }
-    return companion;
+    return attachTaskCostSnapshot(taskId, companion, {
+      deliveryStatus: review.ok ? "in_progress" : "blocked",
+    });
   });
 }
 
@@ -134,12 +150,42 @@ function recordReleaseHandoff(taskId, payload = {}) {
     };
     companion.lifecycle.release_handoff = note;
     companion.artifacts.release_notes.push(note);
-    return companion;
+    return attachTaskCostSnapshot(taskId, companion, {
+      deliveryStatus: payload.channel === "dev" ? "pending_acceptance" : payload.status === "rolled_back" ? "rolled_back" : "released",
+      versionLabel: payload.release_id || null,
+    });
   });
+}
+
+function recordReleaseCleanupSchedule(taskId, payload = {}) {
+  return scheduleBranchCleanupForRelease(taskId, payload.linked_task_ids || [], {
+    trigger: payload.trigger || "prod_accepted",
+    eligibleAt: payload.eligible_at || now(),
+    scheduledFor: payload.scheduled_for || null,
+    delayHours: payload.delay_hours || 24,
+    sourceReleaseId: payload.release_id || null,
+    sourceCommit: payload.commit_sha || null,
+    recordedAt: payload.recorded_at || now(),
+  });
+}
+
+function recordReleaseCleanupCancellation(taskId, payload = {}) {
+  return [taskId, ...(Array.isArray(payload.linked_task_ids) ? payload.linked_task_ids : [])]
+    .map((value) => String(value || "").trim())
+    .filter(Boolean)
+    .filter((value, index, values) => values.indexOf(value) === index)
+    .map((value) => ({
+      task_id: value,
+      result: cancelTaskBranchCleanup(value, {
+        reason: payload.reason || "release_rolled_back",
+      }),
+    }));
 }
 
 module.exports = {
   recordCreated,
+  recordReleaseCleanupCancellation,
+  recordReleaseCleanupSchedule,
   recordHandoff,
   recordPreTaskResult,
   recordReleaseHandoff,

@@ -5,8 +5,24 @@ const {
   matchesTaskReference,
   normalizeTaskReference,
   taskIdFromPath,
-} = require(path.join(process.cwd(), "shared", "task-identity.ts"));
-const { parseTaskContract } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
+} = require(path.join(detectWorkspaceRoot(), "shared", "task-identity.ts"));
+const { parseTaskContract } = require(path.join(detectWorkspaceRoot(), "shared", "task-contract.ts"));
+
+function detectWorkspaceRoot(startDir = process.cwd()) {
+  let currentDir = path.resolve(startDir);
+
+  while (true) {
+    if (fs.existsSync(path.join(currentDir, "shared", "task-contract.ts")) && fs.existsSync(path.join(currentDir, "tasks", "queue"))) {
+      return currentDir;
+    }
+
+    const parentDir = path.dirname(currentDir);
+    if (parentDir === currentDir) {
+      return path.resolve(startDir);
+    }
+    currentDir = parentDir;
+  }
+}
 
 function taskQueueDir(root = process.cwd()) {
   return path.join(root, "tasks", "queue");

@@ -1,4 +1,10 @@
-export type AiEfficiencyEventKind = "summary_run" | "shortcut_opportunity";
+import { createRequire } from "node:module";
+import type { TaskCostLedger } from "./task-cost";
+
+const require = createRequire(import.meta.url);
+const { taskCostIntensityScore } = require("./task-cost.ts");
+
+export type AiEfficiencyEventKind = "summary_run" | "shortcut_opportunity" | "context_packet";
 
 export const AI_EFFICIENCY_SUPPORTED_PROFILES = [
   "preflight_summary",
@@ -23,6 +29,8 @@ export type AiSummaryFirstWorkflowOptions = {
   querySeed?: string | null;
   readPath?: string | null;
 };
+
+export type AiSummaryShortcutOptions = AiSummaryFirstWorkflowOptions;
 
 export type AiEfficiencyEvent = {
   schema_version: string;
@@ -51,6 +59,7 @@ export type AiEfficiencyEvent = {
 export type AiEfficiencyDashboard = {
   overview: {
     summary_runs: number;
+    context_packets: number;
     total_input_tokens_est: number;
     total_output_tokens_est: number;
     total_saved_tokens_est: number;
@@ -102,6 +111,45 @@ export type AiEfficiencyDashboard = {
     saved_tokens_est: number;
     avg_savings_pct_est: number;
   }>;
+  task_costs: TaskCostLedger[];
+  context_waste: {
+    top_time_loss_patterns: Array<{
+      signature: string;
+      task_count: number;
+      lost_time_ms: number;
+      why_time_was_lost: string;
+      next_agent_should_do_instead: string;
+      which_summary_shortcut_to_use: string | null;
+    }>;
+    top_missed_shortcuts: Array<{
+      shortcut_id: string;
+      missed_count: number;
+      task_count: number;
+      missed_savings_est: number;
+      which_summary_shortcut_to_use: string | null;
+    }>;
+    promotion_candidates: Array<{
+      candidate_id: string;
+      label: string;
+      reason: string;
+      evidence: string;
+    }>;
+  };
+  context_density: {
+    total_packets: number;
+    balanced_runs: number;
+    expanded_runs: number;
+    balanced_pct: number;
+    total_input_tokens_est: number;
+    total_output_tokens_est: number;
+    total_saved_tokens_est: number;
+    top_context_heavy_tasks: Array<{
+      task_id: string;
+      runs: number;
+      input_tokens_est: number;
+      saved_tokens_est: number;
+    }>;
+  };
   health: {
     raw_trace_rate_pct: number;
     nonzero_exit_raw_trace_rate_pct: number;
@@ -150,6 +198,23 @@ function uniqueStrings(values: string[]) {
   return Array.from(new Set(values.map((value) => normalizeString(value)).filter(Boolean)));
 }
 
+function sumCommandBuckets(
+  events: AiEfficiencyEvent[],
+  keyFn: (event: AiEfficiencyEvent) => string,
+) {
+  return aggregateRows(
+    events,
+    keyFn,
+    () => ({ runs: 0, input_tokens_est: 0, output_tokens_est: 0, saved_tokens_est: 0 }),
+    (bucket, event) => {
+      bucket.runs += 1;
+      bucket.input_tokens_est += event.input_tokens_est;
+      bucket.output_tokens_est += event.output_tokens_est;
+      bucket.saved_tokens_est += event.saved_tokens_est;
+    },
+  );
+}
+
 function aggregateRows<T extends { [key: string]: unknown }>(
   events: AiEfficiencyEvent[],
   keyFn: (event: AiEfficiencyEvent) => string,
@@ -168,6 +233,7 @@ function aggregateRows<T extends { [key: string]: unknown }>(
 }
 
 export function normalizeAiEfficiencyEvent(event: Record<string, unknown> = {}): AiEfficiencyEvent {
+  const eventKind = normalizeString(event.event_kind, "summary_run");
   return {
     schema_version: normalizeString(event.schema_version, "1"),
     profile_version: normalizeString(event.profile_version, "1"),
@@ -187,7 +253,10 @@ export function normalizeAiEfficiencyEvent(event: Record<string, unknown> = {}):
     raw_bytes: roundInt(event.raw_bytes),
     compact_bytes: roundInt(event.compact_bytes),
     tee_path: normalizeString(event.tee_path) || null,
-    event_kind: normalizeString(event.event_kind, "summary_run") === "shortcut_opportunity" ? "shortcut_opportunity" : "summary_run",
+    event_kind:
+      eventKind === "shortcut_opportunity" || eventKind === "context_packet"
+        ? eventKind
+        : "summary_run",
     adopted: typeof event.adopted === "boolean" ? event.adopted : null,
     profile_id: normalizeString(event.profile_id) || null,
   };
@@ -200,36 +269,73 @@ export function formatEstimatedTokens(value: number) {
   return String(amount);
 }
 
-export function buildSummaryFirstWorkflow(options: AiSummaryFirstWorkflowOptions = {}): AiSummaryFirstWorkflow {
+export function buildSummaryShortcutCommand(shortcutId: string, options: AiSummaryShortcutOptions = {}) {
   const taskId = normalizeString(options.taskId);
   const querySeed = normalizeString(options.querySeed) || "keyword";
   const readPath = normalizeString(options.readPath) || "memory/project/current-state.md";
+  const normalized = normalizeString(shortcutId);
 
+  switch (normalized) {
+    case "preflight_summary":
+      return taskId ? `pnpm ai:preflight:summary -- --taskId=${taskId}` : "pnpm ai:preflight:summary";
+    case "validate_static_summary":
+      return "pnpm ai:validate:static:summary";
+    case "validate_build_summary":
+      return "pnpm ai:validate:build:summary";
+    case "review_summary":
+      return taskId ? `pnpm ai:review:summary -- --taskId=${taskId}` : "pnpm ai:review:summary";
+    case "preview_summary":
+      return "pnpm ai:preview:summary";
+    case "prod_summary":
+      return "pnpm ai:prod:summary";
+    case "diff_summary":
+      return "pnpm ai:diff:summary";
+    case "tree_summary":
+      return "pnpm ai:tree:summary";
+    case "find_summary":
+      return `pnpm ai:find:summary -- --query=${querySeed}`;
+    case "read_summary":
+      return `pnpm ai:read:summary -- --path=${readPath}`;
+    default:
+      return "";
+  }
+}
+
+export function buildSummaryFirstWorkflow(options: AiSummaryFirstWorkflowOptions = {}): AiSummaryFirstWorkflow {
   return {
     summary_first_commands: [
-      taskId ? `pnpm ai:preflight:summary -- --taskId=${taskId}` : "pnpm ai:preflight:summary",
-      "pnpm ai:diff:summary",
-      "pnpm ai:tree:summary",
-      `pnpm ai:find:summary -- --query=${querySeed}`,
-      `pnpm ai:read:summary -- --path=${readPath}`,
+      buildSummaryShortcutCommand("preflight_summary", options),
+      buildSummaryShortcutCommand("diff_summary", options),
+      buildSummaryShortcutCommand("tree_summary", options),
+      buildSummaryShortcutCommand("find_summary", options),
+      buildSummaryShortcutCommand("read_summary", options),
     ],
     raw_fallback_commands: [
-      taskId ? `pnpm preflight -- --taskId=${taskId}` : "pnpm preflight",
+      normalizeString(options.taskId) ? `pnpm preflight -- --taskId=${normalizeString(options.taskId)}` : "pnpm preflight",
       "git diff",
       "rg --files --hidden",
-      `rg -n --hidden ${querySeed}`,
-      `sed -n '1,200p' ${readPath}`,
+      `rg -n --hidden ${normalizeString(options.querySeed) || "keyword"}`,
+      `sed -n '1,200p' ${normalizeString(options.readPath) || "memory/project/current-state.md"}`,
     ],
   };
 }
 
 export function buildAiEfficiencyDashboard(
   inputEvents: Array<Record<string, unknown>>,
-  options: { supportedProfiles?: readonly string[] } = {},
+  options: {
+    supportedProfiles?: readonly string[];
+    taskCostLedgers?: TaskCostLedger[];
+    contextRetroReport?: {
+      top_time_loss_patterns?: AiEfficiencyDashboard["context_waste"]["top_time_loss_patterns"];
+      top_missed_shortcuts?: AiEfficiencyDashboard["context_waste"]["top_missed_shortcuts"];
+      promotion_candidates?: AiEfficiencyDashboard["context_waste"]["promotion_candidates"];
+    } | null;
+  } = {},
 ): AiEfficiencyDashboard {
   const events = inputEvents.map(normalizeAiEfficiencyEvent);
   const summaryEvents = events.filter((event) => event.event_kind === "summary_run");
   const opportunityEvents = events.filter((event) => event.event_kind === "shortcut_opportunity");
+  const contextEvents = events.filter((event) => event.event_kind === "context_packet");
   const supportedProfiles = uniqueStrings([...(options.supportedProfiles || AI_EFFICIENCY_SUPPORTED_PROFILES)]);
 
   const totalInput = summaryEvents.reduce((sum, event) => sum + event.input_tokens_est, 0);
@@ -390,9 +496,32 @@ export function buildAiEfficiencyDashboard(
     }))
     .sort((a, b) => b.input_tokens_est - a.input_tokens_est || a.task_id.localeCompare(b.task_id));
 
+  const contextTaskRows = sumCommandBuckets(
+    contextEvents.filter((event) => Boolean(event.task_id)),
+    (event) => event.task_id || "",
+  )
+    .map((row) => ({
+      task_id: row.key,
+      runs: row.runs,
+      input_tokens_est: row.input_tokens_est,
+      saved_tokens_est: row.saved_tokens_est,
+    }))
+    .sort((a, b) => b.input_tokens_est - a.input_tokens_est || a.task_id.localeCompare(b.task_id));
+
+  const balancedRuns = contextEvents.filter((event) => normalizeString(event.profile_id).endsWith("_balanced")).length;
+  const expandedRuns = contextEvents.filter((event) => normalizeString(event.profile_id).endsWith("_expanded")).length;
+  const contextInput = contextEvents.reduce((sum, event) => sum + event.input_tokens_est, 0);
+  const contextOutput = contextEvents.reduce((sum, event) => sum + event.output_tokens_est, 0);
+  const contextSaved = contextEvents.reduce((sum, event) => sum + event.saved_tokens_est, 0);
+  const contextRetro = options.contextRetroReport || null;
+  const taskCostLedgers = [...(options.taskCostLedgers || [])].sort(
+    (left, right) => taskCostIntensityScore(right) - taskCostIntensityScore(left) || left.task_id.localeCompare(right.task_id),
+  );
+
   return {
     overview: {
       summary_runs: summaryEvents.length,
+      context_packets: contextEvents.length,
       total_input_tokens_est: totalInput,
       total_output_tokens_est: totalOutput,
       total_saved_tokens_est: totalSaved,
@@ -432,6 +561,22 @@ export function buildAiEfficiencyDashboard(
     coverage,
     trend_delta,
     task_rollups,
+    task_costs: taskCostLedgers,
+    context_waste: {
+      top_time_loss_patterns: Array.isArray(contextRetro?.top_time_loss_patterns) ? contextRetro.top_time_loss_patterns : [],
+      top_missed_shortcuts: Array.isArray(contextRetro?.top_missed_shortcuts) ? contextRetro.top_missed_shortcuts : [],
+      promotion_candidates: Array.isArray(contextRetro?.promotion_candidates) ? contextRetro.promotion_candidates : [],
+    },
+    context_density: {
+      total_packets: contextEvents.length,
+      balanced_runs: balancedRuns,
+      expanded_runs: expandedRuns,
+      balanced_pct: contextEvents.length > 0 ? Number(((balancedRuns / contextEvents.length) * 100).toFixed(2)) : 0,
+      total_input_tokens_est: contextInput,
+      total_output_tokens_est: contextOutput,
+      total_saved_tokens_est: contextSaved,
+      top_context_heavy_tasks: contextTaskRows.slice(0, 5),
+    },
     health: {
       raw_trace_rate_pct: summaryEvents.length > 0 ? Number(((teeCount / summaryEvents.length) * 100).toFixed(2)) : 0,
       nonzero_exit_raw_trace_rate_pct:

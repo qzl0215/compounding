@@ -26,7 +26,9 @@ export async function getHomeStatusBoard(): Promise<HomeLogicMapSnapshot> {
       badge: buildPlanBadge(projectState.plan.planningBacklog.length, projectState.plan.thinkingBacklog.length),
     },
     execution: {
-      summary: projectState.execution.summary,
+      summary: projectState.execution.cleanup.alert
+        ? `${projectState.execution.summary}；${projectState.execution.cleanup.alert}`
+        : projectState.execution.summary,
       badge: buildExecutionBadge(projectState.execution.counts.doing + projectState.execution.counts.blocked, projectState.execution.counts.ready),
     },
     acceptance: {
@@ -51,6 +53,10 @@ export async function getHomeStatusBoard(): Promise<HomeLogicMapSnapshot> {
       alert: projectState.aiEfficiency.dashboard.adoption.alerts[0]
         ? `${projectState.aiEfficiency.dashboard.adoption.alerts[0].shortcut_id} adoption ${projectState.aiEfficiency.dashboard.adoption.alerts[0].adoption_pct}%`
         : null,
+      contextPattern: projectState.aiEfficiency.dashboard.context_waste.top_time_loss_patterns[0]
+        ? projectState.aiEfficiency.dashboard.context_waste.top_time_loss_patterns[0].signature
+        : null,
+      contextMode: "balanced",
     },
   });
 }

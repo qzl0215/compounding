@@ -15,6 +15,7 @@ const {
 } = require("./lib.ts");
 const { stabilizeLocalProdRuntime } = require("./prod-runtime-stability.ts");
 const { finishActiveStage, recordBlocker, startActiveStage } = require("../coord/lib/task-activity.ts");
+const { recordReleaseCleanupCancellation } = require("../coord/lib/companion-lifecycle.ts");
 
 function parseArg(name) {
   const index = process.argv.indexOf(name);
@@ -58,7 +59,7 @@ try {
     upsertRelease(finalRelease);
     pruneInactiveProdRuntimeCopies(releaseId);
     detachReleaseWorktrees([target.release_path, previous?.release_path]);
-    return { registry: readRegistry(), finalRelease };
+    return { registry: readRegistry(), finalRelease, previousRelease: previous };
   });
 
   console.log(
@@ -75,6 +76,12 @@ try {
       source: "release:rollback",
       status: "rolled_back",
       reason: `已回滚到 ${releaseId}。`,
+    });
+  }
+  if (result.previousRelease?.primary_task_id) {
+    recordReleaseCleanupCancellation(result.previousRelease.primary_task_id, {
+      linked_task_ids: result.previousRelease.linked_task_ids,
+      reason: "release_rolled_back",
     });
   }
 } catch (error) {

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { buildTaskDeliveryRows } from "../delivery";
 import { getTaskBoard, listTaskCards } from "../service";
 import type { ReleaseRecord } from "@/modules/releases";
+import { createEmptyTaskCostLedger } from "../../../../../../shared/task-cost";
 import type { TaskDeliveryRow } from "../types";
 
 const SERVICE_TIMEOUT_MS = 30000;
@@ -57,6 +58,41 @@ describe("tasks service", () => {
           summary: "t-011 建设防漂移文档与索引资产",
           risk: "若真相源不清会继续失真",
           done_when: "prompt 和索引的防漂移门禁可持续工作",
+          change_cost: {
+            time: {
+              active_ms: 120000,
+              wait_ms: 30000,
+              total_ms: 150000,
+              dominant_stage: "review",
+              repeated_blockers: 1,
+              latest_blockers: ["review 等待"],
+            },
+            tokens: {
+              summary_runs: 2,
+              context_packets: 1,
+              summary_input_est: 1200,
+              summary_output_est: 200,
+              summary_saved_est: 1000,
+              context_input_est: 400,
+              context_output_est: 120,
+              context_saved_est: 280,
+            },
+            code: {
+              source: "snapshot",
+              files: 4,
+              insertions: 80,
+              deletions: 12,
+            },
+            effect: {
+              last_gate_failures: [],
+              release_state: "pending_acceptance",
+              build_result: "passed",
+              smoke_result: "passed",
+              acceptance_status: "pending",
+              blockers: [],
+              status_summary: "rel-011-dev 待验收。",
+            },
+          },
         },
         resolved_task_contract: null,
               channel: "dev",
@@ -80,6 +116,9 @@ describe("tasks service", () => {
     expect(row?.deliveryStatus).toBe("pending_acceptance");
     expect(row?.acceptReleaseId).toBe("rel-011-dev");
     expect(row?.versionLabel).toBe("rel-011-dev");
+    expect(row?.cost.code.source).toBe("snapshot");
+    expect(row?.cost.code.files).toBe(4);
+    expect(row?.cost.effect.release_state).toBe("pending_acceptance");
   }, SERVICE_TIMEOUT_MS);
 
   it("treats merged historical tasks as released even when old release records lack explicit task links", async () => {
@@ -132,6 +171,7 @@ describe("tasks service", () => {
         locks: [],
         artifactRefs: [],
         latestSearchEvidence: "",
+        branchCleanup: null,
         git: {
           branch: "codex/task-038-autonomy-entropy-reduction",
           recentCommit: "abc1234",
@@ -145,6 +185,7 @@ describe("tasks service", () => {
       acceptReleaseId: null,
       rollbackReleaseId: null,
       linkedTaskIds: [],
+      cost: createEmptyTaskCostLedger("t-038", "任务 task-038-autonomy-entropy-reduction", "in_progress"),
     };
 
     const release: ReleaseRecord = {
@@ -180,6 +221,7 @@ describe("tasks service", () => {
     expect(row.deliveryStatus).toBe("in_progress");
     expect(row.acceptReleaseId).toBeNull();
     expect(row.versionLabel).toBe("未生成");
+    expect(row.cost.task_id).toBe("t-038");
   });
 
   it("does not surface promoted stale dev previews as pending acceptance", async () => {
@@ -251,4 +293,85 @@ describe("tasks service", () => {
     expect(row.acceptReleaseId).toBeNull();
     expect(row.versionLabel).toBe("rel-009-prod");
   }, SERVICE_TIMEOUT_MS);
+
+  it("keeps explicit branch cleanup state for merged tasks", () => {
+    const row = buildTaskDeliveryRows(
+      [
+        {
+          id: "task-099-branch-cleanup",
+          path: "tasks/queue/task-099-branch-cleanup.md",
+          shortId: "t-099",
+          title: "把分支回收状态投影到任务面板",
+          status: "done",
+          parentPlan: "memory/project/operating-blueprint.md",
+          summary: "让任务面板直接读 companion 的 branch cleanup 记录。",
+          whyNow: "避免继续把缺失分支误判为 drift。",
+          boundary: "只接 branch cleanup 读模型，不新增新状态源。",
+          doneWhen: "任务行和展开块都能看见回收状态。",
+          inScope: "- task read model\n- project-state counts",
+          outOfScope: "- 不做页面写操作",
+          constraints: "- 只读 companion",
+          risk: "若继续靠启发式，会把已删分支继续显示成异常。",
+          testStrategy: "锁任务投影与页面汇总。",
+          acceptanceResult: "待验收",
+          deliveryResult: "任务面板可看到已回收状态。",
+          retro: "未复盘",
+          currentMode: "质量验收",
+          machine: {
+            contractHash: "hash-099",
+            branch: "codex/task-099-branch-cleanup",
+            recentCommit: "abc9999",
+            completionMode: "close_full_contract",
+            primaryRelease: "main@abc9999",
+            linkedReleases: [],
+            companionReleaseIds: [],
+            companionLatestRelease: null,
+            relatedModules: ["shared/branch-cleanup.ts"],
+            updateTrace: {
+              memory: "no change",
+              index: "no change",
+              roadmap: "no change",
+              docs: "tasks/queue/task-099-branch-cleanup.md",
+            },
+            locks: [],
+            artifactRefs: [],
+            latestSearchEvidence: "",
+            branchCleanup: {
+              trigger: "legacy_merged",
+              overallState: "deleted",
+              localState: "deleted",
+              remoteState: "not_configured",
+              eligibleAt: "2026-03-20T00:00:00.000Z",
+              scheduledFor: null,
+              delayHours: 24,
+              sourceReleaseId: null,
+              sourceCommit: "abc9999",
+              localBranch: "codex/task-099-branch-cleanup",
+              remoteName: null,
+              remoteRef: null,
+              attemptCount: 1,
+              lastAttemptAt: "2026-03-21T00:00:00.000Z",
+              canceledReason: null,
+              lastError: null,
+              errorCode: null,
+              isOverdue: false,
+              summary: "本地分支已回收，远端未启用。",
+            },
+            git: {
+              branch: "codex/task-099-branch-cleanup",
+              recentCommit: "abc9999",
+              mergedToMain: true,
+              state: "merged",
+              detail: "任务分支已按回收策略删除",
+            },
+          },
+        },
+      ],
+      [],
+    )[0];
+
+    expect(row.machine.branchCleanup?.overallState).toBe("deleted");
+    expect(row.machine.branchCleanup?.summary).toContain("已回收");
+    expect(row.deliveryStatus).toBe("released");
+  });
 });

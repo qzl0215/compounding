@@ -76,6 +76,7 @@ function withinRetention(timestamp, now = Date.now(), retentionDays = RETENTION_
 }
 
 function normalizeGainEvent(event = {}) {
+  const eventKind = normalizeString(event.event_kind, "summary_run");
   return {
     schema_version: normalizeString(event.schema_version, SCHEMA_VERSION),
     profile_version: normalizeString(event.profile_version, "1"),
@@ -95,7 +96,7 @@ function normalizeGainEvent(event = {}) {
     raw_bytes: Math.max(0, Math.round(toNumber(event.raw_bytes))),
     compact_bytes: Math.max(0, Math.round(toNumber(event.compact_bytes))),
     tee_path: normalizeString(event.tee_path) || null,
-    event_kind: normalizeString(event.event_kind, "summary_run"),
+    event_kind: eventKind === "shortcut_opportunity" || eventKind === "context_packet" ? eventKind : "summary_run",
     adopted: typeof event.adopted === "boolean" ? event.adopted : null,
     profile_id: normalizeString(event.profile_id) || null,
   };
@@ -161,6 +162,62 @@ function recordShortcutOpportunity(root = process.cwd(), payload = {}) {
     compact_bytes: 0,
     tee_path: null,
     adopted: Boolean(payload.adopted),
+  });
+}
+
+function recordContextPacketEvent(root = process.cwd(), payload = {}) {
+  if (process.env.COMPOUNDING_SUMMARY_DISABLE_TRACKING === "1") {
+    return null;
+  }
+
+  const profileId = normalizeString(payload.profileId);
+  const originalCmd = normalizeString(payload.originalCmd);
+  if (!profileId || !originalCmd) {
+    return null;
+  }
+
+  const rawBytes = Math.max(0, Math.round(toNumber(payload.rawBytes, byteLength(payload.inputText || ""))));
+  const compactBytes = Math.max(0, Math.round(toNumber(payload.compactBytes, byteLength(payload.outputText || ""))));
+  const inputTokens = Math.max(
+    0,
+    Math.round(
+      toNumber(
+        payload.inputTokensEst,
+        rawBytes > 0 ? Math.ceil(rawBytes / 4) : estimateTokens(payload.inputText || ""),
+      ),
+    ),
+  );
+  const outputTokens = Math.max(
+    0,
+    Math.round(
+      toNumber(
+        payload.outputTokensEst,
+        compactBytes > 0 ? Math.ceil(compactBytes / 4) : estimateTokens(payload.outputText || ""),
+      ),
+    ),
+  );
+  const savedTokens = Math.max(0, Math.round(inputTokens - outputTokens));
+
+  return appendCommandGainEvent(root, {
+    event_kind: "context_packet",
+    profile_id: profileId,
+    profile_version: normalizeString(payload.profileVersion, "1"),
+    task_id: normalizeString(payload.taskId) || extractTaskIdFromArgv(process.argv.slice(2)) || null,
+    shortcut_id: null,
+    agent_surface: resolveAgentSurface(payload.agentSurface),
+    original_cmd: originalCmd,
+    input_tokens_est: inputTokens,
+    output_tokens_est: outputTokens,
+    saved_tokens_est: savedTokens,
+    savings_pct_est: inputTokens > 0 ? clampPercent((savedTokens / inputTokens) * 100) : 0,
+    exec_time_ms: Math.max(0, Math.round(toNumber(payload.execTimeMs, 0))),
+    exit_code: Math.round(toNumber(payload.exitCode, 0)),
+    was_fallback: false,
+    filter_error: null,
+    raw_bytes: rawBytes,
+    compact_bytes: compactBytes,
+    tee_path: null,
+    adopted: null,
   });
 }
 
@@ -317,7 +374,15 @@ function buildCommandGainReport(root = process.cwd(), options = {}) {
   const totalOutput = summaryEvents.reduce((sum, event) => sum + Math.max(0, toNumber(event.output_tokens_est)), 0);
   const totalSaved = summaryEvents.reduce((sum, event) => sum + Math.max(0, toNumber(event.saved_tokens_est)), 0);
   const fallbackCount = summaryEvents.filter((event) => event.was_fallback).length;
-  const dashboard = buildAiEfficiencyDashboard(events, { supportedProfiles: AI_EFFICIENCY_SUPPORTED_PROFILES });
+  let contextRetroReport = null;
+  try {
+    const { buildContextRetroReport } = require("./context-retro.ts");
+    contextRetroReport = buildContextRetroReport(root, { window: `${requestedDays}d` });
+  } catch {}
+  const dashboard = buildAiEfficiencyDashboard(events, {
+    supportedProfiles: AI_EFFICIENCY_SUPPORTED_PROFILES,
+    contextRetroReport,
+  });
 
   return {
     ok: true,
@@ -342,6 +407,7 @@ function buildCommandGainReport(root = process.cwd(), options = {}) {
     coverage: dashboard.coverage,
     trend_delta: dashboard.trend_delta,
     task_rollups: dashboard.task_rollups,
+    context_retro: contextRetroReport,
     dashboard,
   };
 }
@@ -361,6 +427,7 @@ function formatCommandGainReportText(report) {
   const lines = [
     `Command Gain (${report.report_window_days}d)`,
     `- summary runs: ${report.totals.summary_runs}`,
+    `- context packets: ${report.dashboard?.context_density?.total_packets || 0}`,
     `- estimated saved: ~${formatTokens(report.totals.total_saved_tokens_est)} tokens`,
     `- average savings: ${report.totals.avg_savings_pct_est}%`,
     `- fallbacks: ${report.totals.fallback_count}`,
@@ -392,6 +459,13 @@ function formatCommandGainReportText(report) {
       lines.push(
         `  - ${alert.shortcut_id}: adoption ${alert.adoption_pct}%, missed ~${formatTokens(alert.missed_savings_est)} tokens across ${alert.opportunity_count} opportunities`
       );
+    }
+  }
+
+  if (report.dashboard?.context_waste?.top_time_loss_patterns?.length) {
+    lines.push("- top time-loss patterns:");
+    for (const item of report.dashboard.context_waste.top_time_loss_patterns.slice(0, 3)) {
+      lines.push(`  - ${item.signature}: ~${Math.round((item.lost_time_ms / 60000) * 10) / 10} min across ${item.task_count} tasks`);
     }
   }
 
@@ -430,6 +504,7 @@ module.exports = {
   getEventsPath,
   normalizeGainEvent,
   readCommandGainEvents,
+  recordContextPacketEvent,
   recordShortcutOpportunity,
   recordShortcutOpportunityFromEnv,
   resolveAgentSurface,

@@ -40,8 +40,9 @@ related_docs:
 - bootstrap attach：`python3 scripts/init_project_compounding.py attach --target .`
 - bootstrap audit：`python3 scripts/init_project_compounding.py audit --target .`
 - bootstrap proposal：`python3 scripts/init_project_compounding.py proposal --target .`
-- preflight：`pnpm preflight`
-- task preflight：`pnpm preflight -- --taskId=t-xxx`
+- 默认 preflight 摘要：`pnpm ai:preflight:summary`
+- 原始 preflight gate：`pnpm preflight`
+- 原始 task preflight gate：`pnpm preflight -- --taskId=t-xxx`
 - create task：`pnpm coord:task:create -- --taskId=t-xxx --summary=\"中文直给概述\" --why=\"为什么现在\"`
 - review：`pnpm coord:review:run -- --taskId=t-xxx`
 

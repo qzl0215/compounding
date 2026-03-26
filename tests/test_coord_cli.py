@@ -6,6 +6,31 @@ from tests.coord_support import ROOT, CoordCliTestCase, SAMPLE_TASK_MARKDOWN
 
 
 class CoordCliTests(CoordCliTestCase):
+    def mark_sample_task_done(self) -> None:
+        task_path = self.target / "tasks" / "queue" / "task-999-sample.md"
+        task_path.write_text(
+            SAMPLE_TASK_MARKDOWN.replace("- 状态：doing", "- 状态：done"),
+            encoding="utf8",
+        )
+
+    def prepare_merged_sample_branch(self) -> str:
+        self.mark_sample_task_done()
+        self.init_git_repo()
+        subprocess.run(["git", "checkout", "-b", "codex/task-999-sample"], cwd=self.target, check=True)
+        (self.target / "README.md").write_text("feature branch\n", encoding="utf8")
+        subprocess.run(["git", "add", "README.md"], cwd=self.target, check=True)
+        subprocess.run(["git", "commit", "-m", "feature work"], cwd=self.target, check=True)
+        feature_sha = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=self.target,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        subprocess.run(["git", "checkout", "main"], cwd=self.target, check=True)
+        subprocess.run(["git", "merge", "--ff-only", "codex/task-999-sample"], cwd=self.target, check=True)
+        return feature_sha
+
 
     def test_create_task_renders_from_canonical_template(self) -> None:
         template_path = self.target / "tasks" / "templates" / "task-template.md"
@@ -259,6 +284,7 @@ console.log(JSON.stringify({{
         self.assertEqual(companion["artifacts"]["decision_cards"][-1]["decision_id"], "dec-test")
         self.assertEqual(companion["artifacts"]["diff_summaries"][-1]["path"], "agent-coordination/reports/diff-summary-main-head.json")
         self.assertEqual(companion["artifacts"]["search_evidence"][-1]["conclusion"], "现有 runtime 机制足够，无需新增基础设施。")
+        self.assertEqual(companion["artifacts"]["change_cost_snapshot"]["effect"]["release_state"], "released")
         self.assertEqual(raw["task_id"], "t-999")
         self.assertEqual(raw["task_path"], "tasks/queue/task-999-sample.md")
         self.assertTrue(bool(raw["contract_hash"]))
@@ -273,6 +299,147 @@ console.log(JSON.stringify({{
         self.assertNotIn("status", raw)
         self.assertNotIn("companion_phase", raw)
         self.assertNotIn("summary_artifacts", raw)
+
+    def test_ai_task_cost_cli_prefers_live_activity_and_falls_back_to_snapshot_code(self) -> None:
+        script_root = ROOT.as_posix()
+        payload = self.run_node(
+            f"""
+const fs = require("node:fs");
+const path = require("node:path");
+const {{ ensureCompanion, updateCompanion }} = require("{script_root}/scripts/coord/lib/task-meta.ts");
+const {{ startActiveStage, finishActiveStage }} = require("{script_root}/scripts/coord/lib/task-activity.ts");
+ensureCompanion("t-999");
+startActiveStage("t-999", "execution", {{
+  source: "test:execution",
+  recordedAt: "2026-03-20T00:00:00.000Z",
+}});
+finishActiveStage("t-999", "execution", {{
+  source: "test:execution",
+  recordedAt: "2026-03-20T00:05:00.000Z",
+  status: "passed",
+  reason: "implemented",
+}});
+updateCompanion("t-999", (companion) => {{
+  companion.artifacts.iteration_digest = {{
+    updated_at: "2026-03-20T00:06:00.000Z",
+    attempt_count: 2,
+    active_ms_by_stage: {{ execution: 999999 }},
+    wait_ms_by_stage: {{}},
+    top_blockers: [],
+    last_attempt: {{
+      dominant_stage: "review",
+      dominant_blocker: null,
+    }},
+    next_agent_hints: [],
+  }};
+  companion.artifacts.change_cost_snapshot = {{
+    time: {{
+      active_ms: 1,
+      wait_ms: 2,
+      total_ms: 3,
+      dominant_stage: "snapshot",
+      repeated_blockers: 0,
+      latest_blockers: [],
+    }},
+    tokens: {{
+      summary_runs: 0,
+      context_packets: 0,
+      summary_input_est: 0,
+      summary_output_est: 0,
+      summary_saved_est: 0,
+      context_input_est: 0,
+      context_output_est: 0,
+      context_saved_est: 0,
+    }},
+    code: {{
+      source: "snapshot",
+      files: 7,
+      insertions: 42,
+      deletions: 9,
+    }},
+    effect: {{
+      last_gate_failures: ["snapshot exit=1"],
+      release_state: "in_progress",
+      build_result: null,
+      smoke_result: null,
+      acceptance_status: null,
+      blockers: [],
+      status_summary: "snapshot",
+    }},
+  }};
+  return companion;
+}});
+const gainDir = path.join(process.cwd(), "output", "ai", "command-gain");
+fs.mkdirSync(gainDir, {{ recursive: true }});
+fs.writeFileSync(
+  path.join(gainDir, "events.jsonl"),
+  [
+    JSON.stringify({{
+      schema_version: "1",
+      profile_version: "1",
+      timestamp: "2026-03-20T00:07:00.000Z",
+      task_id: "t-999",
+      shortcut_id: "preflight_summary",
+      agent_surface: "repo_cli",
+      original_cmd: "pnpm ai:preflight:summary -- --taskId=t-999",
+      input_tokens_est: 1000,
+      output_tokens_est: 100,
+      saved_tokens_est: 900,
+      savings_pct_est: 90,
+      exec_time_ms: 1200,
+      exit_code: 0,
+      was_fallback: false,
+      filter_error: null,
+      raw_bytes: 4000,
+      compact_bytes: 400,
+      tee_path: null,
+      event_kind: "summary_run",
+      adopted: true,
+      profile_id: "preflight_summary",
+    }}),
+    JSON.stringify({{
+      schema_version: "1",
+      profile_version: "1",
+      timestamp: "2026-03-20T00:08:00.000Z",
+      task_id: "t-999",
+      shortcut_id: null,
+      agent_surface: "repo_cli",
+      original_cmd: "pnpm ai:feature-context -- --taskId=t-999",
+      input_tokens_est: 600,
+      output_tokens_est: 180,
+      saved_tokens_est: 420,
+      savings_pct_est: 70,
+      exec_time_ms: 800,
+      exit_code: 0,
+      was_fallback: false,
+      filter_error: null,
+      raw_bytes: 2400,
+      compact_bytes: 720,
+      tee_path: null,
+      event_kind: "context_packet",
+      adopted: null,
+      profile_id: "feature_context_balanced",
+    }})
+  ].join("\\n") + "\\n",
+  "utf8"
+);
+console.log(JSON.stringify({{ ok: true }}));
+"""
+        )
+        self.assertTrue(payload["ok"])
+
+        completed = self.run_script("scripts/ai/task-cost.ts", "--json", "--taskId=t-999")
+        report = json.loads(completed.stdout)
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertTrue(report["ok"])
+        self.assertEqual(report["ledger"]["task_id"], "t-999")
+        self.assertEqual(report["ledger"]["time"]["active_ms"], 300000)
+        self.assertEqual(report["ledger"]["time"]["dominant_stage"], "execution")
+        self.assertEqual(report["ledger"]["tokens"]["summary_input_est"], 1000)
+        self.assertEqual(report["ledger"]["tokens"]["context_input_est"], 600)
+        self.assertEqual(report["ledger"]["code"]["source"], "snapshot")
+        self.assertEqual(report["ledger"]["code"]["files"], 7)
 
     def test_task_activity_compacts_expired_trace_into_iteration_digest(self) -> None:
         script_root = ROOT.as_posix()
@@ -728,6 +895,170 @@ console.log(JSON.stringify({{ ok: true }}));
         self.assertEqual(payload["changed_task_paths"], [])
         self.assertEqual(payload["validated_task_paths"], ["tasks/queue/task-999-sample.md"])
         self.assertEqual([task["path"] for task in payload["tasks"]], ["tasks/queue/task-999-sample.md"])
+
+    def test_release_cleanup_lifecycle_can_schedule_and_cancel(self) -> None:
+        feature_sha = self.prepare_merged_sample_branch()
+        payload = self.run_node(
+            f"""
+const fs = require("node:fs");
+const {{
+  recordReleaseCleanupCancellation,
+  recordReleaseCleanupSchedule,
+}} = require("{ROOT.as_posix()}/scripts/coord/lib/companion-lifecycle.ts");
+const {{ getCompanionPath }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-meta.ts");
+recordReleaseCleanupSchedule("t-999", {{
+  release_id: "rel-prod-1",
+  commit_sha: "{feature_sha}",
+  eligible_at: "2026-03-25T10:00:00.000Z",
+  scheduled_for: "2026-03-26T10:00:00.000Z",
+}});
+recordReleaseCleanupCancellation("t-999", {{
+  reason: "release_rolled_back",
+}});
+console.log(fs.readFileSync(getCompanionPath("t-999"), "utf8"));
+"""
+        )
+
+        branch_cleanup = payload["artifacts"]["branch_cleanup"]
+        self.assertEqual(branch_cleanup["trigger"], "prod_accepted")
+        self.assertEqual(branch_cleanup["source_release_id"], "rel-prod-1")
+        self.assertEqual(branch_cleanup["source_commit"], feature_sha)
+        self.assertEqual(branch_cleanup["overall_state"], "canceled")
+        self.assertEqual(branch_cleanup["local"]["state"], "canceled")
+        self.assertEqual(branch_cleanup["remote"]["state"], "not_configured")
+        self.assertEqual(branch_cleanup["canceled_reason"], "release_rolled_back")
+
+    def test_branch_backfill_can_seed_legacy_cleanup_records(self) -> None:
+        feature_sha = self.prepare_merged_sample_branch()
+        completed = self.run_script("scripts/coord/branch-backfill.ts", "--apply", "--json")
+        payload = json.loads(completed.stdout)
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["summary"]["candidates"], 1)
+        self.assertEqual(payload["summary"]["applied"], 1)
+        self.assertEqual(payload["tasks"][0]["branch_cleanup"]["trigger"], "legacy_merged")
+        self.assertEqual(payload["tasks"][0]["branch_cleanup"]["source_commit"], feature_sha)
+        self.assertEqual(payload["tasks"][0]["branch_cleanup"]["overall_state"], "scheduled")
+        self.assertEqual(payload["tasks"][0]["branch_cleanup"]["remote"]["state"], "not_configured")
+
+    def test_branch_cleanup_dry_run_keeps_companion_unchanged(self) -> None:
+        self.prepare_merged_sample_branch()
+        self.run_script("scripts/coord/branch-backfill.ts", "--apply", "--json")
+        self.run_node(
+            f"""
+const fs = require("node:fs");
+const {{ updateCompanion, getCompanionPath }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-meta.ts");
+updateCompanion("t-999", (companion) => {{
+  companion.artifacts.branch_cleanup.scheduled_for = "2026-03-20T00:00:00.000Z";
+  return companion;
+}});
+console.log(JSON.stringify(JSON.parse(fs.readFileSync(getCompanionPath("t-999"), "utf8")).artifacts.branch_cleanup));
+"""
+        )
+
+        completed = self.run_script("scripts/coord/branch-cleanup.ts", "--dry-run", "--json")
+        payload = json.loads(completed.stdout)
+        companion = self.run_node(
+            f"""
+const fs = require("node:fs");
+const {{ getCompanionPath }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-meta.ts");
+console.log(JSON.stringify(JSON.parse(fs.readFileSync(getCompanionPath("t-999"), "utf8")).artifacts.branch_cleanup));
+"""
+        )
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertTrue(payload["ok"])
+        self.assertTrue(payload["dry_run"])
+        self.assertEqual(payload["summary"]["attempted"], 1)
+        self.assertEqual(companion["overall_state"], "scheduled")
+        self.assertEqual(companion["local"]["state"], "scheduled")
+
+    def test_branch_cleanup_deletes_local_branch_when_due(self) -> None:
+        self.prepare_merged_sample_branch()
+        self.run_script("scripts/coord/branch-backfill.ts", "--apply", "--json")
+        self.run_node(
+            f"""
+const {{ updateCompanion }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-meta.ts");
+updateCompanion("t-999", (companion) => {{
+  companion.artifacts.branch_cleanup.scheduled_for = "2026-03-20T00:00:00.000Z";
+  return companion;
+}});
+console.log(JSON.stringify({{ ok: true }}));
+"""
+        )
+
+        completed = self.run_script("scripts/coord/branch-cleanup.ts", "--json")
+        payload = json.loads(completed.stdout)
+        branch_exists = subprocess.run(
+            ["git", "show-ref", "--verify", "--quiet", "refs/heads/codex/task-999-sample"],
+            cwd=self.target,
+            capture_output=True,
+            text=True,
+        )
+        companion = self.run_node(
+            f"""
+const fs = require("node:fs");
+const {{ getCompanionPath }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-meta.ts");
+console.log(JSON.stringify(JSON.parse(fs.readFileSync(getCompanionPath("t-999"), "utf8")).artifacts.branch_cleanup));
+"""
+        )
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["summary"]["deleted"], 1)
+        self.assertNotEqual(companion["local"]["deleted_at"], None)
+        self.assertEqual(companion["overall_state"], "deleted")
+        self.assertEqual(companion["remote"]["state"], "not_configured")
+        self.assertNotEqual(branch_exists.returncode, 0)
+
+    def test_branch_cleanup_marks_ambiguous_remote_target_as_failed(self) -> None:
+        self.prepare_merged_sample_branch()
+        origin_dir = self.target / "origin.git"
+        backup_dir = self.target / "backup.git"
+        subprocess.run(["git", "init", "--bare", origin_dir.as_posix()], cwd=self.target, check=True)
+        subprocess.run(["git", "init", "--bare", backup_dir.as_posix()], cwd=self.target, check=True)
+        subprocess.run(["git", "remote", "add", "origin", origin_dir.as_posix()], cwd=self.target, check=True)
+        subprocess.run(["git", "remote", "add", "backup", backup_dir.as_posix()], cwd=self.target, check=True)
+        subprocess.run(["git", "checkout", "codex/task-999-sample"], cwd=self.target, check=True)
+        subprocess.run(["git", "push", "-u", "backup", "codex/task-999-sample"], cwd=self.target, check=True)
+        subprocess.run(["git", "checkout", "main"], cwd=self.target, check=True)
+        (self.target / "bootstrap" / "project_operator.yaml").write_text(
+            """github_surface:
+  enabled: true
+  remote_name: origin
+  default_branch: main
+""",
+            encoding="utf8",
+        )
+        self.run_script("scripts/coord/branch-backfill.ts", "--apply", "--json")
+        self.run_node(
+            f"""
+const {{ updateCompanion }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-meta.ts");
+updateCompanion("t-999", (companion) => {{
+  companion.artifacts.branch_cleanup.scheduled_for = "2026-03-20T00:00:00.000Z";
+  return companion;
+}});
+console.log(JSON.stringify({{ ok: true }}));
+"""
+        )
+
+        completed = self.run_script("scripts/coord/branch-cleanup.ts", "--json")
+        payload = json.loads(completed.stdout)
+        companion = self.run_node(
+            f"""
+const fs = require("node:fs");
+const {{ getCompanionPath }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-meta.ts");
+console.log(JSON.stringify(JSON.parse(fs.readFileSync(getCompanionPath("t-999"), "utf8")).artifacts.branch_cleanup));
+"""
+        )
+
+        self.assertEqual(completed.returncode, 1, msg=completed.stdout or completed.stderr)
+        self.assertFalse(payload["ok"])
+        self.assertEqual(companion["local"]["state"], "deleted")
+        self.assertEqual(companion["remote"]["state"], "failed")
+        self.assertEqual(companion["remote"]["error_code"], "ambiguous_remote_target")
+        self.assertEqual(companion["overall_state"], "failed")
 
 
 if __name__ == "__main__":

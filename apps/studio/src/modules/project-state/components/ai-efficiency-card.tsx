@@ -10,6 +10,7 @@ export function AiEfficiencyCard({ dashboard, compact = false }: { dashboard: Ai
   const topConsumer = dashboard.consumption.top_profiles_by_input[0] || null;
   const topSaver = dashboard.savings.top_profiles_by_saved[0] || null;
   const alert = dashboard.adoption.alerts[0] || null;
+  const topTimeLoss = dashboard.context_waste.top_time_loss_patterns[0] || null;
 
   return (
     <Card className={cn(compact ? "p-5" : "p-6")}>
@@ -76,9 +77,17 @@ export function AiEfficiencyCard({ dashboard, compact = false }: { dashboard: Ai
             body={
               alert
                 ? `${alert.shortcut_id} adoption 只有 ${alert.adoption_pct}% ，当前机会 ${alert.opportunity_count} 次。`
-                : "当前没有明显 adoption 警报。"
+                : topTimeLoss
+                  ? `${topTimeLoss.signature} 是当前最大的时间浪费模式。`
+                  : "当前没有明显 adoption 警报。"
             }
-            note={alert ? `按当前估算，约还有 ${formatEstimatedTokens(alert.missed_savings_est)} tokens 没省下来。` : `raw trace 率 ${dashboard.health.raw_trace_rate_pct}%，fallback ${dashboard.health.fallback_count} 次。`}
+            note={
+              alert
+                ? `按当前估算，约还有 ${formatEstimatedTokens(alert.missed_savings_est)} tokens 没省下来。`
+                : topTimeLoss
+                  ? `默认上下文模式 balanced；建议先用 ${topTimeLoss.which_summary_shortcut_to_use || "当前摘要链"} 缩短路径。`
+                  : `raw trace 率 ${dashboard.health.raw_trace_rate_pct}%，fallback ${dashboard.health.fallback_count} 次。`
+            }
             tone={alert ? "warning" : "healthy"}
           />
         </div>

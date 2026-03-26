@@ -11,6 +11,9 @@ import {
 import { buildProjectJudgementContract } from "../../../../../shared/project-judgement";
 import type { ProjectStateSnapshot } from "./types";
 
+type AiEfficiencyDashboardOptions = Parameters<typeof buildAiEfficiencyDashboard>[1];
+type ContextRetroReport = NonNullable<AiEfficiencyDashboardOptions>["contextRetroReport"];
+
 export async function getProjectStateSnapshot(input?: { deliverySnapshot?: DeliverySnapshot }): Promise<ProjectStateSnapshot> {
   const workspaceRoot = getWorkspaceRoot();
   const deliverySnapshot = input?.deliverySnapshot ?? (await getDeliverySnapshot());
@@ -30,6 +33,16 @@ export async function getProjectStateSnapshot(input?: { deliverySnapshot?: Deliv
     acceptance: taskRows.filter((row) => row.deliveryStatus === "pending_acceptance").length,
     released: taskRows.filter((row) => row.deliveryStatus === "released" || row.deliveryStatus === "rolled_back").length,
   };
+  const cleanup = {
+    scheduled: taskRows.filter((row) => row.machine.branchCleanup?.overallState === "scheduled").length,
+    failed: taskRows.filter((row) => row.machine.branchCleanup?.overallState === "failed").length,
+    overdue: taskRows.filter((row) => row.machine.branchCleanup?.isOverdue).length,
+    legacy: taskRows.filter((row) => isLegacyCleanupBacklog(row)).length,
+  };
+  const cleanupAlert =
+    cleanup.failed > 0 || cleanup.overdue > 0 || cleanup.legacy > 0
+      ? `分支治理：待回收 ${cleanup.scheduled} / 失败 ${cleanup.failed} / 逾期 ${cleanup.overdue} / 历史残留 ${cleanup.legacy}`
+      : null;
   const pendingAcceptance =
     summarizePendingAcceptance(
     releaseDashboard.pending_dev_release?.release_id ?? null,
@@ -79,6 +92,10 @@ export async function getProjectStateSnapshot(input?: { deliverySnapshot?: Deliv
     execution: {
       summary: judgement.executionSummary,
       counts,
+      cleanup: {
+        ...cleanup,
+        alert: cleanupAlert,
+      },
     },
     focus: {
       current: judgement.currentFocus,
@@ -95,11 +112,21 @@ export async function getProjectStateSnapshot(input?: { deliverySnapshot?: Deliv
       nextAction: judgement.nextAction,
     },
     aiEfficiency: {
-    dashboard: getAiEfficiencyDashboard(workspaceRoot),
+      dashboard: getAiEfficiencyDashboard(workspaceRoot, taskRows.map((row) => row.cost)),
     },
     activeStage: judgement.activeStage,
     judgement,
   };
+}
+
+function isLegacyCleanupBacklog(row: DeliverySnapshot["projections"]["taskRows"][number]) {
+  return Boolean(
+    !row.machine.branchCleanup &&
+      row.status === "done" &&
+      row.machine.git.state === "merged" &&
+      row.machine.branch &&
+      !row.machine.branch.startsWith("main"),
+  );
 }
 
 function summarizePendingAcceptance(pendingReleaseId: string | null, acceptanceVersionLabel: string | null) {
@@ -120,10 +147,15 @@ function summarizeRuntimeAlert(
   return null;
 }
 
-function getAiEfficiencyDashboard(workspaceRoot: string) {
+function getAiEfficiencyDashboard(workspaceRoot: string, taskCostLedgers: DeliverySnapshot["projections"]["taskRows"][number]["cost"][]) {
+  const contextRetroReport = readContextRetroReport(workspaceRoot);
   const eventsPath = path.join(workspaceRoot, "output", "ai", "command-gain", "events.jsonl");
   if (!fs.existsSync(eventsPath)) {
-    return buildAiEfficiencyDashboard([]);
+    return buildAiEfficiencyDashboard([], {
+      contextRetroReport,
+      supportedProfiles: AI_EFFICIENCY_SUPPORTED_PROFILES,
+      taskCostLedgers,
+    });
   }
 
   const events = fs
@@ -140,5 +172,19 @@ function getAiEfficiencyDashboard(workspaceRoot: string) {
     })
     .filter((event): event is ReturnType<typeof normalizeAiEfficiencyEvent> => Boolean(event));
 
-  return buildAiEfficiencyDashboard(events, { supportedProfiles: AI_EFFICIENCY_SUPPORTED_PROFILES });
+  return buildAiEfficiencyDashboard(events, {
+    supportedProfiles: AI_EFFICIENCY_SUPPORTED_PROFILES,
+    contextRetroReport,
+    taskCostLedgers,
+  });
+}
+
+function readContextRetroReport(workspaceRoot: string): ContextRetroReport {
+  const jsonPath = path.join(workspaceRoot, "output", "ai", "context-retro", "latest.json");
+  if (!fs.existsSync(jsonPath)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(jsonPath, "utf8")) as ContextRetroReport;
+  } catch {
+    return null;
+  }
 }

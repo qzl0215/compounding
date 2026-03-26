@@ -29,8 +29,9 @@ export function normalizeDeliverySnapshot(
     summary: firstMeaningful(snapshot?.summary || legacySummary),
     risk: firstMeaningful(snapshot?.risk || legacyRisk),
     done_when: firstMeaningful(snapshot?.done_when),
+    change_cost: snapshot?.change_cost || null,
   };
-  if (!normalized.summary && !normalized.risk && !normalized.done_when) {
+  if (!normalized.summary && !normalized.risk && !normalized.done_when && !normalized.change_cost) {
     return null;
   }
   return normalized;

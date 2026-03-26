@@ -33,6 +33,13 @@ export type ProjectStateSnapshot = {
       acceptance: number;
       released: number;
     };
+    cleanup: {
+      scheduled: number;
+      failed: number;
+      overdue: number;
+      legacy: number;
+      alert: string | null;
+    };
   };
   focus: {
     current: string[];

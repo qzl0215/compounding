@@ -7,6 +7,10 @@ const path = require("node:path");
 const { resolveTaskRecord } = require("../../ai/lib/task-resolver.ts");
 const { parseTaskContract, parseTaskMachineFacts, taskContractFingerprint } = require("../../../shared/task-contract.ts");
 const {
+  deriveBranchCleanupOverallState,
+  normalizeBranchCleanupRecord,
+} = require("../../../shared/branch-cleanup.ts");
+const {
   buildCompatView,
   createEmptyArtifacts,
   createEmptyLifecycle,
@@ -84,6 +88,55 @@ function parseTaskToCompanion(taskLike, content) {
   return companion;
 }
 
+function normalizeTaskStatus(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (normalized === "已完成") return "done";
+  if (normalized === "阻塞中") return "blocked";
+  if (normalized === "进行中" || normalized === "in_progress") return "doing";
+  if (normalized === "待开始") return "todo";
+  return normalized || "todo";
+}
+
+function resolveTaskStatus(taskPath, content) {
+  try {
+    return normalizeTaskStatus(parseTaskContract(taskPath, content).status);
+  } catch {
+    return "todo";
+  }
+}
+
+function reconcileBranchCleanupForTaskStatus(companion, taskStatus) {
+  const current = normalizeBranchCleanupRecord(companion.artifacts?.branch_cleanup);
+  if (!current || current.overall_state === "deleted" || taskStatus === "done") {
+    return companion;
+  }
+
+  const branchCleanup = {
+    ...current,
+    overall_state: "canceled",
+    canceled_reason: current.canceled_reason || "task_reopened",
+    local: {
+      ...current.local,
+      state: current.local.state === "deleted" ? "deleted" : "canceled",
+      last_error: current.local.state === "deleted" ? current.local.last_error : null,
+      error_code: current.local.state === "deleted" ? current.local.error_code : null,
+    },
+    remote: {
+      ...current.remote,
+      state:
+        current.remote.state === "deleted" || current.remote.state === "not_configured" ? current.remote.state : "canceled",
+      last_error:
+        current.remote.state === "deleted" || current.remote.state === "not_configured" ? current.remote.last_error : null,
+      error_code:
+        current.remote.state === "deleted" || current.remote.state === "not_configured" ? current.remote.error_code : null,
+    },
+  };
+
+  branchCleanup.overall_state = deriveBranchCleanupOverallState(branchCleanup.local.state, branchCleanup.remote.state);
+  companion.artifacts.branch_cleanup = branchCleanup;
+  return companion;
+}
+
 function mergeCompanion(existing, parsed) {
   const current = normalizeCompanion(existing);
   const next = normalizeCompanion(parsed);
@@ -103,6 +156,8 @@ function mergeCompanion(existing, parsed) {
     artifacts: {
       ...createEmptyArtifacts(),
       ...(current.artifacts || {}),
+      branch_cleanup: normalizeBranchCleanupRecord(current.artifacts?.branch_cleanup || next.artifacts?.branch_cleanup),
+      change_cost_snapshot: current.artifacts?.change_cost_snapshot || next.artifacts?.change_cost_snapshot || null,
       decision_cards: mergeArtifactList(current.artifacts?.decision_cards, next.artifacts?.decision_cards, "path"),
       diff_summaries: mergeArtifactList(current.artifacts?.diff_summaries, next.artifacts?.diff_summaries, "path"),
       handoff_notes: mergeArtifactList(current.artifacts?.handoff_notes, next.artifacts?.handoff_notes, "recorded_at"),
@@ -133,11 +188,13 @@ function writeCompanion(taskLike, companion) {
 function ensureCompanion(taskLike) {
   const content = readTaskContent(taskLike);
   if (!content) return { ok: false, error: "Task not found" };
+  const record = getTaskRecord(taskLike);
   const parsed = parseTaskToCompanion(taskLike, content);
+  if (!parsed || !record) return { ok: false, error: "Task not found" };
   const existing = readCompanionFile(taskLike);
-  const canonical = existing ? mergeCompanion(existing, parsed) : parsed;
+  const canonical = reconcileBranchCleanupForTaskStatus(existing ? mergeCompanion(existing, parsed) : parsed, resolveTaskStatus(record.path, content));
   writeCompanion(taskLike, canonical);
-  return { ok: true, companion: buildCompatView(canonical), record: getTaskRecord(taskLike) };
+  return { ok: true, companion: buildCompatView(canonical), record };
 }
 
 function updateCompanion(taskLike, updater) {

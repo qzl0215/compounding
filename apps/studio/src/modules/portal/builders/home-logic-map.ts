@@ -36,6 +36,8 @@ export type BuildHomeLogicMapInput = {
     totalSavedLabel: string;
     avgSavingsLabel: string;
     alert: string | null;
+    contextPattern: string | null;
+    contextMode: string;
   };
 };
 

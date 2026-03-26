@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { buildTaskBranchCleanupView, normalizeBranchCleanupRecord, type TaskBranchCleanupView } from "../../../../../shared/branch-cleanup";
 
 type CompanionReleaseNote = {
   release_id?: string | null;
@@ -35,6 +36,7 @@ type TaskCompanionShape = {
   locks?: CompanionLock[];
   lifecycle?: CompanionLifecycle;
   artifacts?: {
+    branch_cleanup?: unknown;
     decision_cards?: { path?: string | null }[];
     diff_summaries?: { path?: string | null }[];
     release_notes?: CompanionReleaseNote[];
@@ -55,6 +57,7 @@ export type TaskCompanionFacts = {
   locks: string[];
   artifactRefs: string[];
   latestSearchEvidence: string;
+  branchCleanup: TaskBranchCleanupView | null;
 };
 
 export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
@@ -73,6 +76,7 @@ export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
       locks: [],
       artifactRefs: [],
       latestSearchEvidence: "",
+      branchCleanup: null,
     };
   }
 
@@ -104,6 +108,7 @@ export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
         ...(companion.artifacts?.diff_summaries ?? []).map((item) => String(item?.path || "").trim()),
       ]),
       latestSearchEvidence: String(latestSearch?.conclusion || "").trim(),
+      branchCleanup: buildTaskBranchCleanupView(normalizeBranchCleanupRecord(companion.artifacts?.branch_cleanup)),
     };
   } catch {
     return {
@@ -119,6 +124,7 @@ export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
       locks: [],
       artifactRefs: [],
       latestSearchEvidence: "",
+      branchCleanup: null,
     };
   }
 }

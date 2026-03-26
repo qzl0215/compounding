@@ -122,7 +122,42 @@ describe("releases service", () => {
               delivery_snapshot: {
                 summary: "旧快照摘要",
                 risk: "旧快照风险",
-                done_when: "旧快照完成定义"
+                done_when: "旧快照完成定义",
+                change_cost: {
+                  time: {
+                    active_ms: 60000,
+                    wait_ms: 0,
+                    total_ms: 60000,
+                    dominant_stage: "execution",
+                    repeated_blockers: 0,
+                    latest_blockers: [],
+                  },
+                  tokens: {
+                    summary_runs: 1,
+                    context_packets: 0,
+                    summary_input_est: 800,
+                    summary_output_est: 120,
+                    summary_saved_est: 680,
+                    context_input_est: 0,
+                    context_output_est: 0,
+                    context_saved_est: 0,
+                  },
+                  code: {
+                    source: "snapshot",
+                    files: 3,
+                    insertions: 40,
+                    deletions: 8,
+                  },
+                  effect: {
+                    last_gate_failures: [],
+                    release_state: "pending_acceptance",
+                    build_result: "passed",
+                    smoke_result: "passed",
+                    acceptance_status: "pending",
+                    blockers: [],
+                    status_summary: "rel-task 待验收。",
+                  },
+                },
               },
               channel: "dev",
               acceptance_status: "pending",
@@ -177,6 +212,7 @@ describe("releases service", () => {
     expect(dashboard.pending_dev_release?.resolved_task_contract?.task_id).toBe("task-041-task-execution-contract");
     expect(dashboard.pending_dev_release?.resolved_task_contract?.summary).toBeTruthy();
     expect(dashboard.pending_dev_release?.delivery_snapshot?.summary).toBe("旧快照摘要");
+    expect(dashboard.pending_dev_release?.delivery_snapshot?.change_cost?.code.files).toBe(3);
     expect(dashboard.active_release?.resolved_task_contract).toBeNull();
     expect(dashboard.active_release?.delivery_snapshot?.summary).toBe("仅快照摘要");
   }, SERVICE_TIMEOUT_MS);

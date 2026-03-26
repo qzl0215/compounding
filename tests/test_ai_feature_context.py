@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 import unittest
 
@@ -48,3 +49,37 @@ class FeatureContextCliTests(unittest.TestCase):
         self.assertIn("tasks/queue/task-066-feature-context-and-shared-state.md", payload["likely_files"])
         self.assertIn("tasks/queue/task-066-feature-context-and-shared-state.md", payload["default_flow"]["entry_command"])
         self.assertTrue(any("t-066" in command for command in payload["default_flow"]["summary_first_commands"]))
+        self.assertLessEqual(len(payload["must_read"]), 5)
+        self.assertLessEqual(len(payload["read_on_demand"]), 5)
+        self.assertLessEqual(len(payload["waste_alerts"]), 3)
+
+    def test_build_context_balanced_and_expanded_modes(self) -> None:
+        env = os.environ.copy()
+        env["COMPOUNDING_SUMMARY_DISABLE_TRACKING"] = "0"
+        task_path = "tasks/queue/task-066-feature-context-and-shared-state.md"
+
+        default_run = subprocess.run(
+            ["node", "--experimental-strip-types", str(ROOT / "scripts/ai/build-context.ts"), task_path],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+            env=env,
+        )
+        default_output_path = ROOT / default_run.stdout.strip()
+        default_markdown = default_output_path.read_text(encoding="utf8")
+        self.assertIn("## Must Read Now", default_markdown)
+        self.assertIn("## Read On Demand", default_markdown)
+        self.assertNotIn("## Expanded Excerpts", default_markdown)
+
+        expanded_run = subprocess.run(
+            ["node", "--experimental-strip-types", str(ROOT / "scripts/ai/build-context.ts"), task_path, "--expanded"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+            env=env,
+        )
+        expanded_output_path = ROOT / expanded_run.stdout.strip()
+        expanded_markdown = expanded_output_path.read_text(encoding="utf8")
+        self.assertIn("## Expanded Excerpts", expanded_markdown)

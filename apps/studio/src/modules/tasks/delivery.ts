@@ -1,5 +1,7 @@
 import type { ReleaseRecord } from "@/modules/releases/types";
+import { getWorkspaceRoot } from "@/lib/workspace";
 import { findEffectivePendingDevRelease } from "../../../../../shared/release-registry";
+import { buildTaskCostLedger } from "../../../../../scripts/ai/lib/task-cost";
 import type { TaskCard, TaskDeliveryRow, TaskDeliveryStatus } from "./types";
 
 export const TASK_DELIVERY_LABELS: Record<TaskDeliveryStatus, string> = {
@@ -12,8 +14,9 @@ export const TASK_DELIVERY_LABELS: Record<TaskDeliveryStatus, string> = {
 };
 
 export function buildTaskDeliveryRows(tasks: TaskCard[], releases: ReleaseRecord[]): TaskDeliveryRow[] {
+  const workspaceRoot = getWorkspaceRoot();
   return [...tasks]
-    .map((task) => buildTaskDeliveryRow(task, releases))
+    .map((task) => buildTaskDeliveryRow(task, releases, workspaceRoot))
     .sort((left, right) => {
       const statusDelta = deliveryOrder(left.deliveryStatus) - deliveryOrder(right.deliveryStatus);
       if (statusDelta !== 0) {
@@ -23,7 +26,7 @@ export function buildTaskDeliveryRows(tasks: TaskCard[], releases: ReleaseRecord
     });
 }
 
-function buildTaskDeliveryRow(task: TaskCard, releases: ReleaseRecord[]): TaskDeliveryRow {
+function buildTaskDeliveryRow(task: TaskCard, releases: ReleaseRecord[], workspaceRoot: string): TaskDeliveryRow {
   const associated = releases
     .filter((release) => matchesTask(task, release))
     .sort((left, right) => sortStamp(right).localeCompare(sortStamp(left)));
@@ -42,6 +45,12 @@ function buildTaskDeliveryRow(task: TaskCard, releases: ReleaseRecord[]): TaskDe
     acceptReleaseId: pendingDev?.primary_task_id === task.id ? pendingDev.release_id : null,
     rollbackReleaseId: rollbackCandidate?.release_id || null,
     linkedTaskIds: associated.flatMap((release) => release.linked_task_ids).filter(unique),
+    cost: buildTaskCostLedger(workspaceRoot, {
+      task,
+      deliveryStatus,
+      versionLabel: inferredReleaseLabel,
+      associatedReleases: associated,
+    }),
   };
 }
 

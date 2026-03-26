@@ -12,8 +12,9 @@ function normalizeDeliverySnapshot(snapshot, summary = null, risks = null) {
     summary: snapshot?.summary || summary || null,
     risk: snapshot?.risk || risks || null,
     done_when: snapshot?.done_when || null,
+    change_cost: snapshot?.change_cost || null,
   };
-  if (!normalized.summary && !normalized.risk && !normalized.done_when) {
+  if (!normalized.summary && !normalized.risk && !normalized.done_when && !normalized.change_cost) {
     return null;
   }
   return normalized;

@@ -3,6 +3,7 @@ const path = require("node:path");
 const childProcess = require("node:child_process");
 const { parseModuleFeatureContract, collectLikelyTests } = require(path.join(process.cwd(), "shared", "module-feature-contract.ts"));
 const { buildSummaryFirstWorkflow } = require(path.join(process.cwd(), "shared", "ai-efficiency.ts"));
+const { buildContextRetroReport } = require("./context-retro.ts");
 const { buildProjectJudgementContract } = require(path.join(process.cwd(), "shared", "project-judgement.ts"));
 const { parseTaskContract, parseTaskMachineFacts } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
 const { readCompanion } = require(path.join(process.cwd(), "scripts", "coord", "lib", "task-meta.ts"));
@@ -190,6 +191,18 @@ function buildMustRead(moduleContracts, options, taskOverlay) {
   return unique(mustRead);
 }
 
+function buildReadPlan(candidates, projectJudgement, taskOverlay) {
+  const prioritized = unique([
+    taskOverlay?.taskPath,
+    normalizeString(projectJudgement?.recommendedRead?.path),
+    ...candidates,
+  ]);
+  return {
+    must_read: prioritized.slice(0, 5),
+    read_on_demand: prioritized.slice(5, 10),
+  };
+}
+
 function buildChecks(moduleContracts, diffAware) {
   const required = [];
   const recommended = [];
@@ -347,16 +360,23 @@ function buildFeatureContextPacket(root, options = {}) {
   const diffAware = collectSelectedChecks(root);
   const checks = buildChecks(moduleContracts, diffAware);
   const projectJudgement = buildProjectJudgement(root);
+  const readPlan = buildReadPlan(buildMustRead(moduleContracts, options, overlay), projectJudgement, overlay);
+  const wasteAlerts =
+    overlay?.shortId || overlay?.taskId
+      ? buildContextRetroReport(root, { taskId: normalizeString(overlay.shortId || overlay.taskId) }).current_task.alerts || []
+      : [];
   const packet = {
     target_surface: buildTargetSurface(options, moduleContracts),
     related_modules: moduleContracts.map((contract) => contract.moduleId),
-    must_read: buildMustRead(moduleContracts, options, overlay),
+    must_read: readPlan.must_read,
+    read_on_demand: readPlan.read_on_demand,
     likely_files: buildLikelyFiles(moduleContracts, overlay),
     likely_tests: buildLikelyTests(moduleContracts, checks),
     required_checks: checks.required,
     recommended_checks: checks.recommended,
     invariants: buildInvariants(moduleContracts),
     common_changes: buildCommonChanges(moduleContracts),
+    waste_alerts: wasteAlerts.slice(0, 3),
     task_overlay: overlay,
     project_judgement: projectJudgement,
   };
@@ -487,7 +507,7 @@ function renderFeatureContextMarkdown(packet) {
   lines.push("");
 
   if (packet.task_overlay) {
-    lines.push("## Task Overlay", "");
+    lines.push("## Task Delta", "");
     lines.push(`- Summary: ${packet.task_overlay.summary}`);
     lines.push(`- Boundary: ${packet.task_overlay.boundary}`);
     lines.push(`- Done When: ${packet.task_overlay.doneWhen}`);
@@ -521,9 +541,32 @@ function renderFeatureContextMarkdown(packet) {
   );
   lines.push("");
 
-  lines.push("## Must Read", "");
+  lines.push("## Waste Alerts", "");
+  if (packet.waste_alerts.length > 0) {
+    for (const item of packet.waste_alerts) {
+      lines.push(`- ${item.signature}`);
+      lines.push(`  - 为什么浪费时间：${item.why_time_was_lost}`);
+      lines.push(`  - 下个 Agent 应怎么做：${item.next_agent_should_do_instead}`);
+      lines.push(`  - 建议摘要命令：${item.which_summary_shortcut_to_use || "无"}`);
+    }
+  } else {
+    lines.push("- 当前没有命中即时复盘阈值。");
+  }
+  lines.push("");
+
+  lines.push("## Must Read Now", "");
   for (const item of packet.must_read) {
     lines.push(`- \`${item}\``);
+  }
+  lines.push("");
+
+  lines.push("## Read On Demand", "");
+  if (packet.read_on_demand.length > 0) {
+    for (const item of packet.read_on_demand) {
+      lines.push(`- \`${item}\``);
+    }
+  } else {
+    lines.push("- 当前没有额外按需阅读项。");
   }
   lines.push("");
 
@@ -567,22 +610,48 @@ function renderFeatureContextMarkdown(packet) {
   }
   lines.push("");
 
-  lines.push("## Invariants", "");
-  for (const item of packet.invariants) {
-    lines.push(`- ${item}`);
-  }
-  lines.push("");
-
-  lines.push("## Common Changes", "");
-  for (const item of packet.common_changes) {
-    lines.push(`- ${item}`);
-  }
-  lines.push("");
-
   return lines.join("\n");
 }
 
 module.exports = {
+  buildExpandedContextExcerpts,
   buildFeatureContextPacket,
+  estimateContextPacketSourceBytes,
   renderFeatureContextMarkdown,
 };
+
+function estimateContextPacketSourceBytes(root, packet, options = {}) {
+  const includeReadOnDemand = options.includeReadOnDemand !== false;
+  const files = unique([
+    ...(packet.must_read || []),
+    ...(includeReadOnDemand ? packet.read_on_demand || [] : []),
+  ]);
+  const fileBytes = files.reduce((sum, relPath) => sum + Buffer.byteLength(readIfExists(root, relPath), "utf8"), 0);
+  const taskBytes = packet.task_overlay
+    ? Buffer.byteLength(
+        [packet.task_overlay.summary, packet.task_overlay.boundary, packet.task_overlay.doneWhen].filter(Boolean).join("\n"),
+        "utf8",
+      )
+    : 0;
+  return fileBytes + taskBytes;
+}
+
+function buildExpandedContextExcerpts(root, packet, options = {}) {
+  const maxItems = Math.max(1, Number(options.maxItems || 3));
+  const paths = unique([
+    packet.task_overlay?.taskPath,
+    packet.project_judgement?.recommendedRead?.path,
+    ...(options.includeReadOnDemand ? packet.read_on_demand || [] : []),
+  ]).slice(0, maxItems);
+
+  return paths
+    .map((relPath) => {
+      const text = readIfExists(root, relPath);
+      if (!text) return null;
+      return {
+        path: relPath,
+        excerpt: text.slice(0, 1200),
+      };
+    })
+    .filter(Boolean);
+}

@@ -256,6 +256,10 @@ function renderCommandChain(commands) {
   return commands.length ? commands.map((command) => `\`${normalizeString(command)}\``).join(" / ") : "暂无";
 }
 
+function defaultPreflightSummaryCommand() {
+  return normalizeString(DEFAULT_SUMMARY_WORKFLOW.summary_first_commands?.[0]);
+}
+
 function readYamlFile(root, relativePath) {
   const absolutePath = path.join(root, relativePath);
   return parseSimpleYaml(fs.readFileSync(absolutePath, "utf8"));
@@ -357,8 +361,9 @@ function renderRunbook(contract) {
     `- bootstrap attach：\`${normalizeString(contract.toolchain_commands?.bootstrap_attach)}\``,
     `- bootstrap audit：\`${normalizeString(contract.toolchain_commands?.bootstrap_audit)}\``,
     `- bootstrap proposal：\`${normalizeString(contract.toolchain_commands?.bootstrap_proposal)}\``,
-    `- preflight：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
-    `- task preflight：\`${normalizeString(contract.toolchain_commands?.task_preflight)}\``,
+    `- 默认 preflight 摘要：\`${defaultPreflightSummaryCommand()}\``,
+    `- 原始 preflight gate：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
+    `- 原始 task preflight gate：\`${normalizeString(contract.toolchain_commands?.task_preflight)}\``,
     `- create task：\`${normalizeString(contract.toolchain_commands?.create_task)}\``,
     `- review：\`${normalizeString(contract.toolchain_commands?.review)}\``,
     "",
@@ -502,7 +507,8 @@ function renderClaudeEntry(contract) {
     `- 涉及服务器 / GitHub / 发布访问面时必须先读 \`${OPERATOR_CONTRACT_PATH}\``,
     `- 人类扫读版在 \`${OPERATOR_RUNBOOK_PATH}\``,
     `- 当前 mode：\`${normalizeString(contract.project?.bootstrap_mode)}\`；adapter：\`${normalizeString(contract.project?.adapter_id)}\``,
-    `- 推荐 preflight：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
+    `- 默认 preflight 摘要：\`${defaultPreflightSummaryCommand()}\``,
+    `- 原始 preflight gate：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
     ...(hasAiExecPack(contract)
       ? [
           "- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`",
@@ -526,7 +532,8 @@ function renderOpenCodeEntry(contract) {
     `- 涉及服务器 / GitHub / 发布访问面时必须先读 \`${OPERATOR_CONTRACT_PATH}\``,
     `- 人类扫读版在 \`${OPERATOR_RUNBOOK_PATH}\``,
     `- 当前 mode：\`${normalizeString(contract.project?.bootstrap_mode)}\`；adapter：\`${normalizeString(contract.project?.adapter_id)}\``,
-    `- 推荐 preflight：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
+    `- 默认 preflight 摘要：\`${defaultPreflightSummaryCommand()}\``,
+    `- 原始 preflight gate：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
     ...(hasAiExecPack(contract)
       ? [
           "- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`",
@@ -552,7 +559,8 @@ function renderCursorEntry(contract) {
     `- 涉及服务器 / GitHub / 发布访问面时必须先读 \`${OPERATOR_CONTRACT_PATH}\``,
     `- 人类扫读版在 \`${OPERATOR_RUNBOOK_PATH}\``,
     `- 当前 mode：\`${normalizeString(contract.project?.bootstrap_mode)}\`；adapter：\`${normalizeString(contract.project?.adapter_id)}\``,
-    `- 推荐 preflight：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
+    `- 默认 preflight 摘要：\`${defaultPreflightSummaryCommand()}\``,
+    `- 原始 preflight gate：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
     ...(hasAiExecPack(contract)
       ? [
           "- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`",
