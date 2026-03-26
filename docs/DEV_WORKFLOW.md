@@ -2,7 +2,7 @@
 title: DEV_WORKFLOW
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-28
+last_reviewed_at: 2026-03-27
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -57,6 +57,7 @@ related_docs:
 - 先读当前 task、`memory/project/current-state.md`、相关 `module.md`、`code_index/*`。
 - 进入模块和运行时边界前，再补 `docs/ARCHITECTURE.md`。
 - 需要上下文压缩时，用 `scripts/ai/build-context.ts`。
+- 需要向人反馈本轮成本时，优先用 `pnpm ai:turn-report -- --since=<iso> [--taskId=t-xxx]` 生成极简回合量化，不手工估算。
 - 动手前先跑 `pnpm preflight`；若已绑定 `structural / release` task，则跑 `pnpm preflight -- --taskId=t-xxx`。
 - `coord:task:handoff`、`coord:review:run`、`release:prepare`、`accept-dev-release`、`reject-dev-release` 与 `rollback-release` 会自动写阶段 activity；raw trace 24 小时后 compact 进 companion digest。
 - 小而边界清楚的 task，默认做到最小完整闭环；若边界重新变大，退回 plan。

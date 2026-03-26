@@ -551,6 +551,119 @@ class SummaryHarnessCliTests(unittest.TestCase):
         self.assertIn("trend_delta", payload["dashboard"])
         self.assertIn("task_rollups", payload["dashboard"])
 
+    def test_turn_report_aggregates_recent_summary_and_context_costs(self) -> None:
+        since = "2026-03-26T00:00:00.000Z"
+        source = f"""
+        const {{ appendCommandGainEvent }} = require("./scripts/ai/lib/command-gain.ts");
+        const {{ buildTurnReport, formatTurnReportText }} = require("./scripts/ai/lib/turn-report.ts");
+
+        const root = process.cwd();
+        appendCommandGainEvent(root, {{
+          event_kind: "summary_run",
+          timestamp: "2026-03-26T01:00:00.000Z",
+          profile_id: "validate_build_summary",
+          profile_version: "1",
+          task_id: "t-101",
+          original_cmd: "pnpm validate:build",
+          input_tokens_est: 1200,
+          output_tokens_est: 120,
+          saved_tokens_est: 1080,
+          savings_pct_est: 90,
+          exec_time_ms: 8000,
+          exit_code: 0,
+          was_fallback: false,
+          filter_error: null,
+          raw_bytes: 4800,
+          compact_bytes: 480,
+          tee_path: null,
+          shortcut_id: "validate_build_summary",
+        }});
+        appendCommandGainEvent(root, {{
+          event_kind: "context_packet",
+          timestamp: "2026-03-26T01:05:00.000Z",
+          profile_id: "feature_context_balanced",
+          profile_version: "1",
+          task_id: "t-101",
+          original_cmd: "pnpm ai:feature-context -- --taskPath=tasks/queue/task-101.md",
+          input_tokens_est: 600,
+          output_tokens_est: 240,
+          saved_tokens_est: 360,
+          savings_pct_est: 60,
+          exec_time_ms: 1200,
+          exit_code: 0,
+          was_fallback: false,
+          filter_error: null,
+          raw_bytes: 2400,
+          compact_bytes: 960,
+          tee_path: null,
+          shortcut_id: null,
+        }});
+        appendCommandGainEvent(root, {{
+          event_kind: "shortcut_opportunity",
+          timestamp: "2026-03-26T01:06:00.000Z",
+          profile_id: "preflight_summary",
+          profile_version: "1",
+          task_id: "t-101",
+          shortcut_id: "preflight_summary",
+          original_cmd: "pnpm preflight -- --taskId=t-101",
+          input_tokens_est: 0,
+          output_tokens_est: 0,
+          saved_tokens_est: 0,
+          savings_pct_est: 0,
+          exec_time_ms: 0,
+          exit_code: 0,
+          was_fallback: false,
+          filter_error: null,
+          raw_bytes: 0,
+          compact_bytes: 0,
+          tee_path: null,
+          adopted: false,
+        }});
+
+        const report = buildTurnReport(root, {{ since: "{since}", taskId: "t-101" }});
+        console.log(JSON.stringify({{
+          report,
+          text: formatTurnReportText(report),
+        }}));
+        """
+        completed = self.run_node(textwrap.dedent(source))
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        payload = json.loads(completed.stdout)
+        report = payload["report"]
+        text = payload["text"]
+
+        self.assertEqual(report["task_id"], "t-101")
+        self.assertEqual(report["summary_runs"], 1)
+        self.assertEqual(report["context_packets"], 1)
+        self.assertEqual(report["summary_saved_tokens_est"], 1080)
+        self.assertEqual(report["context_saved_tokens_est"], 360)
+        self.assertEqual(report["total_saved_tokens_est"], 1440)
+        self.assertIn("回合量化", text)
+        self.assertIn("上下文：1 packets", text)
+        self.assertIn("摘要：1 runs", text)
+        self.assertIn("提示：", text)
+        self.assertLessEqual(len(text.splitlines()), 5)
+
+    def test_turn_report_omits_hint_when_no_signal_exists(self) -> None:
+        since = "2026-03-26T00:00:00.000Z"
+        source = f"""
+        const {{ buildTurnReport, formatTurnReportText }} = require("./scripts/ai/lib/turn-report.ts");
+        const report = buildTurnReport(process.cwd(), {{ since: "{since}" }});
+        console.log(JSON.stringify({{
+          report,
+          text: formatTurnReportText(report),
+        }}));
+        """
+        completed = self.run_node(textwrap.dedent(source))
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        payload = json.loads(completed.stdout)
+        text = payload["text"]
+
+        self.assertEqual(payload["report"]["summary_runs"], 0)
+        self.assertEqual(payload["report"]["context_packets"], 0)
+        self.assertNotIn("提示：", text)
+        self.assertEqual(len(text.splitlines()), 4)
+
 
 if __name__ == "__main__":
     unittest.main()

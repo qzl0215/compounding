@@ -37,6 +37,7 @@
     "ai:read:summary": "node --experimental-strip-types scripts/ai/read-summary.ts",
     "ai:context-retro": "node --experimental-strip-types scripts/ai/context-retro.ts",
     "ai:command-gain": "node --experimental-strip-types scripts/ai/command-gain.ts",
+    "ai:turn-report": "node --experimental-strip-types scripts/ai/turn-report.ts",
     "ai:task-cost": "node --experimental-strip-types scripts/ai/task-cost.ts",
     "ai:create-task": "node --experimental-strip-types scripts/ai/create-task.ts",
     "ai:validate-judgement-contract": "node --experimental-strip-types scripts/ai/validate-judgement-contract.ts",

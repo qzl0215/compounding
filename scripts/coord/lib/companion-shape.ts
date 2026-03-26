@@ -1,3 +1,5 @@
+const { normalizeBranchCleanupRecord } = require("../../../shared/branch-cleanup.ts");
+
 function cleanString(value, fallback = "") {
   const normalized = String(value || "").trim();
   return normalized || fallback;
@@ -32,6 +34,7 @@ function createEmptyLifecycle() {
 
 function createEmptyArtifacts() {
   return {
+    branch_cleanup: null,
     change_cost_snapshot: null,
     decision_cards: [],
     diff_summaries: [],
@@ -98,6 +101,7 @@ function normalizeCompanion(companion = {}) {
     artifacts: {
       ...createEmptyArtifacts(),
       ...(companion.artifacts || {}),
+      branch_cleanup: normalizeBranchCleanupRecord(companion.artifacts?.branch_cleanup),
       change_cost_snapshot: companion.artifacts?.change_cost_snapshot || null,
       decision_cards: mergeArtifactList(companion.artifacts?.decision_cards, [], "path"),
       diff_summaries: mergeArtifactList(companion.artifacts?.diff_summaries, [], "path"),

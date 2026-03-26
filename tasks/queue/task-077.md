@@ -65,6 +65,8 @@ context-retro CLI、feature-context/build-context、task 级轻量成本账单�
 - `scripts/coord/lib/`
 - `scripts/release/`
 - `shared/`
+- `docs/AI_OPERATING_MODEL.md`
+- `docs/DEV_WORKFLOW.md`
 - `apps/studio/src/modules/project-state/`
 - `apps/studio/src/modules/portal/`
 - `apps/studio/src/modules/tasks/`

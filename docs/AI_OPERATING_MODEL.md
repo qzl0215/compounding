@@ -2,7 +2,7 @@
 title: AI_OPERATING_MODEL
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-28
+last_reviewed_at: 2026-03-27
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -39,11 +39,14 @@ related_docs:
 - 交付 `dev` 或 production 页面时，默认同时提供环境说明、页面链接和如何验收。
 - 任务在对话中默认使用“中文直给概述 + `t-xxx`”表达，不复述英文 task id。
 - 用户可感知变化默认走 `dev` 验收；内部低风险改动可由 AI 自验收并直接闭环。
+- 对实质性 repo 工作回合，最终回复默认追加一段 `回合量化` footer；优先用 `pnpm ai:turn-report -- --since=<iso> [--taskId=t-xxx]` 生成，不手工估算。
+- `回合量化` 默认只强调 `Time + Context`：耗时、context packets、summary saved，以及当前最值得优先使用的 shortcut 提示。
 
 ## 最小脚本契约
 
 - 规划链默认脚本：`scripts/ai/create-task.ts`
 - 执行链默认脚本：`scripts/ai/build-context.ts`、`node --experimental-strip-types scripts/ai/validate-change-trace.ts`、`node --experimental-strip-types scripts/ai/validate-task-git-link.ts`、`node --experimental-strip-types scripts/ai/validate-knowledge-assets.ts`
+- 回合量化默认脚本：`node --experimental-strip-types scripts/ai/turn-report.ts -- --since=<iso> [--taskId=t-xxx]`
 - 交付链默认脚本：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`、`node --experimental-strip-types scripts/release/accept-dev-release.ts`、`node --experimental-strip-types scripts/release/reject-dev-release.ts`、`node --experimental-strip-types scripts/release/rollback-release.ts`
 - 运维接入主合同：`bootstrap/project_operator.yaml`；跨工具薄入口只负责把不同工具跳回这份合同与 `AGENTS.md`
 - 熵减候选默认脚本：`node --experimental-strip-types scripts/ai/cleanup-candidates.ts`，只在计划评审、release 复盘或当前没有更高优先级产品任务时运行。
