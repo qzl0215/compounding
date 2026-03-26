@@ -128,6 +128,25 @@ function collectRuntimeStatuses() {
   const blockers = [];
   const notes = [];
   for (const item of RUNTIME_PROFILES) {
+    if (!fs.existsSync(path.join(ROOT, item.script))) {
+      notes.push({
+        profile: item.profile,
+        label: item.label,
+        status: "missing",
+        running: false,
+        ok: true,
+        reason: `未检测到 ${item.label} 状态脚本，已跳过运行态检查。`,
+      });
+      statuses.push({
+        profile: item.profile,
+        label: item.label,
+        status: "missing",
+        running: false,
+        ok: true,
+        reason: "状态脚本缺失，已跳过。",
+      });
+      continue;
+    }
     const result = runJsonNodeScript(item.script);
     if (!result.parsed) {
       blockers.push({
