@@ -18,7 +18,32 @@
 
 ### 要做
 
-scripts/ai、shared、apps/studio、bootstrap、kernel、tests、operator assets
+- `tasks/queue/task-075.md`
+- `scripts/ai/feature-context.ts`
+- `scripts/ai/find-summary.ts`
+- `scripts/ai/read-summary.ts`
+- `scripts/ai/command-gain.ts`
+- `scripts/ai/generate-operator-assets.ts`
+- `scripts/ai/lib/feature-context.ts`
+- `scripts/ai/lib/summary-harness.ts`
+- `scripts/ai/lib/summary-profiles.ts`
+- `scripts/ai/lib/command-gain.ts`
+- `scripts/ai/lib/operator-contract.ts`
+- `shared/ai-efficiency.ts`
+- `bootstrap/project_operator.yaml`
+- `kernel/kernel_manifest.yaml`
+- `package.json`
+- `docs/OPERATOR_RUNBOOK.md`
+- `CLAUDE.md`
+- `OPENCODE.md`
+- `.cursor/rules/00-project-entry.mdc`
+- `apps/studio/src/app/ai-efficiency/`
+- `apps/studio/src/modules/project-state/`
+- `apps/studio/src/modules/portal/`
+- `tests/test_ai_feature_context.py`
+- `tests/test_ai_summary_harness.py`
+- `tests/test_ai_assets_cli.py`
+- `tests/test_bootstrap_scaffold_cli.py`
 
 ### 不做
 
@@ -59,6 +84,12 @@ scripts/ai、shared、apps/studio、bootstrap、kernel、tests、operator assets
 
 ## 关联模块
 
+- `scripts/ai/`
+- `shared/ai-efficiency.ts`
+- `apps/studio/src/app/ai-efficiency/`
+- `apps/studio/src/modules/project-state/`
+- `bootstrap/project_operator.yaml`
+- `kernel/kernel_manifest.yaml`
 
 
 ## 更新痕迹
