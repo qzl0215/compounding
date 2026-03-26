@@ -13,6 +13,17 @@ export const AI_EFFICIENCY_SUPPORTED_PROFILES = [
   "read_summary",
 ] as const;
 
+export type AiSummaryFirstWorkflow = {
+  summary_first_commands: string[];
+  raw_fallback_commands: string[];
+};
+
+export type AiSummaryFirstWorkflowOptions = {
+  taskId?: string | null;
+  querySeed?: string | null;
+  readPath?: string | null;
+};
+
 export type AiEfficiencyEvent = {
   schema_version: string;
   profile_version: string;
@@ -187,6 +198,29 @@ export function formatEstimatedTokens(value: number) {
   if (amount >= 1_000_000) return `${(amount / 1_000_000).toFixed(1)}M`;
   if (amount >= 1_000) return `${(amount / 1_000).toFixed(1)}K`;
   return String(amount);
+}
+
+export function buildSummaryFirstWorkflow(options: AiSummaryFirstWorkflowOptions = {}): AiSummaryFirstWorkflow {
+  const taskId = normalizeString(options.taskId);
+  const querySeed = normalizeString(options.querySeed) || "keyword";
+  const readPath = normalizeString(options.readPath) || "memory/project/current-state.md";
+
+  return {
+    summary_first_commands: [
+      taskId ? `pnpm ai:preflight:summary -- --taskId=${taskId}` : "pnpm ai:preflight:summary",
+      "pnpm ai:diff:summary",
+      "pnpm ai:tree:summary",
+      `pnpm ai:find:summary -- --query=${querySeed}`,
+      `pnpm ai:read:summary -- --path=${readPath}`,
+    ],
+    raw_fallback_commands: [
+      taskId ? `pnpm preflight -- --taskId=${taskId}` : "pnpm preflight",
+      "git diff",
+      "rg --files --hidden",
+      `rg -n --hidden ${querySeed}`,
+      `sed -n '1,200p' ${readPath}`,
+    ],
+  };
 }
 
 export function buildAiEfficiencyDashboard(

@@ -474,6 +474,26 @@ class SummaryHarnessCliTests(unittest.TestCase):
         self.assertIn("files_changed=1", completed.stdout)
         self.assertIn("README.md: +2 -1", completed.stdout)
 
+    def test_shared_default_summary_workflow_matches_default_entry(self) -> None:
+        completed = self.run_node(
+            """
+            const { buildSummaryFirstWorkflow } = require("./shared/ai-efficiency.ts");
+            console.log(JSON.stringify(buildSummaryFirstWorkflow()));
+            """
+        )
+        payload = json.loads(completed.stdout)
+
+        self.assertEqual(payload["summary_first_commands"][0], "pnpm ai:preflight:summary")
+        self.assertIn("pnpm ai:diff:summary", payload["summary_first_commands"])
+        self.assertIn("pnpm ai:tree:summary", payload["summary_first_commands"])
+        self.assertIn("pnpm ai:find:summary -- --query=keyword", payload["summary_first_commands"])
+        self.assertIn("pnpm ai:read:summary -- --path=memory/project/current-state.md", payload["summary_first_commands"])
+        self.assertEqual(payload["raw_fallback_commands"][0], "pnpm preflight")
+        self.assertIn("git diff", payload["raw_fallback_commands"])
+        self.assertIn("rg --files --hidden", payload["raw_fallback_commands"])
+        self.assertIn("rg -n --hidden keyword", payload["raw_fallback_commands"])
+        self.assertIn("sed -n '1,200p' memory/project/current-state.md", payload["raw_fallback_commands"])
+
     def test_command_gain_json_includes_dashboard(self) -> None:
         self.run_script("scripts/ai/validate-static-summary.ts")
         report = self.run_script("scripts/ai/command-gain.ts", "--json")

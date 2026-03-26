@@ -2,7 +2,7 @@
 title: ARCHITECTURE
 update_mode: promote_only
 status: active
-last_reviewed_at: 2026-03-24
+last_reviewed_at: 2026-03-29
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -22,6 +22,88 @@ related_docs:
 - `memory/`: 项目状态、架构记忆、经验、ADR
 - `code_index/`: 生成型导航缓存
 - `tasks/`: 模板与任务队列
+
+## 分类清单
+
+以下清单按当前 truth split 固定分层，只列仓库级文件族，不把 `.next`、`node_modules`、`output` 之类派生物当主源。
+
+- core：`apps/studio/src/app/*`、`apps/studio/src/components/*`、`apps/studio/src/lib/*`、`apps/studio/src/modules/*`、`scripts/ai/*`、`scripts/coord/*`、`scripts/local-runtime/*`、`scripts/release/*`、`shared/*`
+- bootstrap：`scripts/compounding_bootstrap/*`、`scripts/init_project_compounding.py`、`kernel/kernel_manifest.yaml`、`bootstrap/*`、`schemas/*`、`templates/*`
+- config：`package.json`、`pnpm-workspace.yaml`、`apps/studio/*.config.*`、`.github/*`、`.cursor/rules/*`、`CLAUDE.md`、`OPENCODE.md`、`docs/OPERATOR_RUNBOOK.md`
+- governance / knowledge：`AGENTS.md`、`docs/*`、`memory/*`、`tasks/*`、`code_index/*`
+- derived / runtime：`output/*`、`.compounding-runtime/*`、`.next/*`、`node_modules/*`
+
+### Core
+
+- `apps/studio/src/app/**`
+- `apps/studio/src/components/**`
+- `apps/studio/src/lib/**`
+- `apps/studio/src/modules/**`（delivery / docs / git-health / portal / project-state / releases / tasks）
+- `scripts/ai/**`
+- `scripts/coord/**`
+- `scripts/local-runtime/**`
+- `scripts/release/**`
+- `shared/**`
+
+### Bootstrap
+
+- `scripts/compounding_bootstrap/**`
+- `scripts/init_project_compounding.py`
+- `kernel/kernel_manifest.yaml`
+- `bootstrap/project_bootstrap.yaml`
+- `bootstrap/project_brief.yaml`
+- `bootstrap/project_operator.yaml`
+- `bootstrap/canonical_hardening.json`
+- `bootstrap/heading_aliases.json`
+- `bootstrap/managed_blocks/**`
+- `bootstrap/schemas/**`
+- `bootstrap/templates/**`
+- `schemas/**`
+- `templates/**`
+- `tasks/templates/task-template.md`
+
+### Config / 入口契约
+
+- `package.json`
+- `pnpm-workspace.yaml`
+- `tsconfig.base.json`
+- `apps/studio/package.json`
+- `apps/studio/tsconfig.json`
+- `apps/studio/next.config.ts`
+- `apps/studio/eslint.config.mjs`
+- `apps/studio/tailwind.config.ts`
+- `apps/studio/postcss.config.mjs`
+- `apps/studio/vitest.config.ts`
+- `apps/studio/vitest.setup.ts`
+- `apps/studio/next-env.d.ts`
+- `.github/**`
+- `.cursor/rules/**`
+- `CLAUDE.md`
+- `OPENCODE.md`
+- `docs/OPERATOR_RUNBOOK.md`
+
+### 治理 / 知识主源
+
+- `AGENTS.md`
+- `docs/WORK_MODES.md`
+- `docs/DEV_WORKFLOW.md`
+- `docs/ARCHITECTURE.md`
+- `docs/PROJECT_RULES.md`
+- `docs/AI_OPERATING_MODEL.md`
+- `docs/ASSET_MAINTENANCE.md`
+- `docs/prompts/**`
+- `memory/**`
+- `tasks/queue/**`
+- `code_index/**`
+- `README.md`
+
+### 派生物 / 运行态
+
+- `.compounding-runtime/**`
+- `output/**`
+- `.next/**`
+- `.pytest_cache/**`
+- `node_modules/**`
 
 ## 核心模块域
 

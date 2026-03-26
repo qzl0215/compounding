@@ -8,6 +8,43 @@ const CLAUDE_ENTRY_PATH = "CLAUDE.md";
 const OPENCODE_ENTRY_PATH = "OPENCODE.md";
 const CURSOR_ENTRY_PATH = ".cursor/rules/00-project-entry.mdc";
 
+function buildFallbackSummaryWorkflow() {
+  return {
+    summary_first_commands: [
+      "pnpm ai:preflight:summary",
+      "pnpm ai:diff:summary",
+      "pnpm ai:tree:summary",
+      "pnpm ai:find:summary -- --query=keyword",
+      "pnpm ai:read:summary -- --path=memory/project/current-state.md",
+    ],
+    raw_fallback_commands: [
+      "pnpm preflight",
+      "git diff",
+      "rg --files --hidden",
+      "rg -n --hidden keyword",
+      "sed -n '1,200p' memory/project/current-state.md",
+    ],
+  };
+}
+
+function loadSummaryFirstWorkflow(root = process.cwd()) {
+  const summaryPath = path.join(root, "shared", "ai-efficiency.ts");
+  if (fs.existsSync(summaryPath)) {
+    try {
+      const module = require(summaryPath);
+      if (module && typeof module.buildSummaryFirstWorkflow === "function") {
+        return module.buildSummaryFirstWorkflow;
+      }
+    } catch {
+      // Fall through to the local fallback workflow for minimal bootstrap shells.
+    }
+  }
+  return buildFallbackSummaryWorkflow;
+}
+
+const buildSummaryFirstWorkflow = loadSummaryFirstWorkflow();
+const DEFAULT_SUMMARY_WORKFLOW = buildSummaryFirstWorkflow();
+
 function splitInlineItems(text) {
   const items = [];
   let current = "";
@@ -215,6 +252,10 @@ function normalizeNotes(value) {
   return note ? [note] : [];
 }
 
+function renderCommandChain(commands) {
+  return commands.length ? commands.map((command) => `\`${normalizeString(command)}\``).join(" / ") : "暂无";
+}
+
 function readYamlFile(root, relativePath) {
   const absolutePath = path.join(root, relativePath);
   return parseSimpleYaml(fs.readFileSync(absolutePath, "utf8"));
@@ -322,6 +363,7 @@ function renderRunbook(contract) {
     `- review：\`${normalizeString(contract.toolchain_commands?.review)}\``,
     "",
     ...renderModeGuide(contract),
+    ...renderBootstrapChecklists(contract),
     ...renderAiFeatureEntry(contract),
     "## 服务器访问面",
     "",
@@ -405,6 +447,38 @@ function renderModeGuide(contract) {
   ];
 }
 
+function renderChecklistSection(title, bullets) {
+  return [`## ${title}`, "", ...bullets, ""];
+}
+
+function renderBootstrapChecklists(contract) {
+  const doctor = normalizeString(contract.toolchain_commands?.bootstrap_doctor);
+  const attach = normalizeString(contract.toolchain_commands?.bootstrap_attach);
+  const audit = normalizeString(contract.toolchain_commands?.bootstrap_audit);
+  const proposal = normalizeString(contract.toolchain_commands?.bootstrap_proposal);
+  const preflight = normalizeString(contract.toolchain_commands?.preflight);
+  const taskPreflight = normalizeString(contract.toolchain_commands?.task_preflight);
+  return [
+    ...renderChecklistSection("老项目接入 checklist", [
+      `- 先跑 \`${doctor}\`，确认 \`recommended_mode\`、\`adapter_id\`、\`required_packs\`、\`ready_for_ai_iteration\`。`,
+      `- 第一轮优先 \`${attach} --mode=normalize\`。`,
+      `- 跑 \`${audit}\`，确认 \`AGENTS.md\`、\`bootstrap/project_brief.yaml\`、\`bootstrap/project_operator.yaml\`、\`docs/OPERATOR_RUNBOOK.md\`、\`CLAUDE.md\`、\`OPENCODE.md\`、\`.cursor/rules/00-project-entry.mdc\` 对齐。`,
+      `- 跑 \`${proposal}\`，先看提案再决定是否应用。`,
+      `- 只有 \`normalize\` 通过且 \`ready_for_ai_iteration=true\` 时，再升级 \`ai_upgrade\`。`,
+      `- 升级后跑 \`${preflight} -- --taskId=t-xxx\` 和 \`${taskPreflight}\`。`,
+      `- 验收：\`${doctor} --mode=ai_upgrade\` 仍返回 \`ready_for_ai_iteration=true\`。`,
+    ]),
+    ...renderChecklistSection("新项目 cold_start checklist", [
+      `- 先跑 \`${doctor}\`。`,
+      `- 直接 \`python3 scripts/init_project_compounding.py bootstrap --target . --mode=cold_start\`。`,
+      `- 如需补齐入口，再跑 \`node --experimental-strip-types scripts/ai/generate-operator-assets.ts\`。`,
+      `- 跑 \`${audit}\`。`,
+      `- 只有项目真的需要 AI 深度迭代时，再进入 \`ai_upgrade\`。`,
+      `- 验收：\`doctor\` 能明确推荐模式，\`bootstrap\` 生成的协议 / 入口文件可读可用，后续可平滑升到 \`normalize\` 或 \`ai_upgrade\`。`,
+    ]),
+  ];
+}
+
 function renderAiFeatureEntry(contract) {
   if (!hasAiExecPack(contract)) return [];
   return [
@@ -412,8 +486,8 @@ function renderAiFeatureEntry(contract) {
     "",
     "- 默认 feature 上下文：`pnpm ai:feature-context -- --surface=home`",
     "- 带 task 的 feature 上下文：`pnpm ai:feature-context -- --taskPath=tasks/queue/task-xxx.md`",
-    "- 默认摘要链：`pnpm ai:preflight:summary` / `pnpm ai:diff:summary` / `pnpm ai:tree:summary` / `pnpm ai:find:summary -- --query=keyword` / `pnpm ai:read:summary -- --path=memory/project/current-state.md`",
-    "- 原始回退链：`pnpm preflight` / `git diff` / `rg --files --hidden` / `rg -n --hidden keyword` / `sed -n '1,200p' <path>`",
+    `- 默认摘要链：${renderCommandChain(DEFAULT_SUMMARY_WORKFLOW.summary_first_commands)}`,
+    `- 原始回退链：${renderCommandChain(DEFAULT_SUMMARY_WORKFLOW.raw_fallback_commands)}`,
     "- 看当前令牌效率：`pnpm ai:command-gain --json` 或打开 `/ai-efficiency`",
     "- 默认先看 feature packet 里的 `Project Judgement` 和 `Default Loop`，再动手改代码。",
     "",
@@ -432,7 +506,7 @@ function renderClaudeEntry(contract) {
     ...(hasAiExecPack(contract)
       ? [
           "- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`",
-          "- 默认摘要链：`pnpm ai:preflight:summary` / `pnpm ai:diff:summary` / `pnpm ai:tree:summary` / `pnpm ai:find:summary -- --query=keyword` / `pnpm ai:read:summary -- --path=memory/project/current-state.md`",
+          `- 默认摘要链：${renderCommandChain(DEFAULT_SUMMARY_WORKFLOW.summary_first_commands)}`,
           "- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`",
         ]
       : []),
@@ -456,7 +530,7 @@ function renderOpenCodeEntry(contract) {
     ...(hasAiExecPack(contract)
       ? [
           "- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`",
-          "- 默认摘要链：`pnpm ai:preflight:summary` / `pnpm ai:diff:summary` / `pnpm ai:tree:summary` / `pnpm ai:find:summary -- --query=keyword` / `pnpm ai:read:summary -- --path=memory/project/current-state.md`",
+          `- 默认摘要链：${renderCommandChain(DEFAULT_SUMMARY_WORKFLOW.summary_first_commands)}`,
           "- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`",
         ]
       : []),
@@ -482,7 +556,7 @@ function renderCursorEntry(contract) {
     ...(hasAiExecPack(contract)
       ? [
           "- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`",
-          "- 默认摘要链：`pnpm ai:preflight:summary` / `pnpm ai:diff:summary` / `pnpm ai:tree:summary` / `pnpm ai:find:summary -- --query=keyword` / `pnpm ai:read:summary -- --path=memory/project/current-state.md`",
+          `- 默认摘要链：${renderCommandChain(DEFAULT_SUMMARY_WORKFLOW.summary_first_commands)}`,
           "- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`",
         ]
       : []),

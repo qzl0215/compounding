@@ -2,10 +2,12 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { cn } from "@/lib/classnames";
+import { buildSummaryFirstWorkflow } from "../../../../../../shared/ai-efficiency";
 import { HOME_ENTRY_LINKS } from "../constants";
 import type { HomeLogicMapSnapshot, HomeLogicNode, HomeLogicNodeState } from "../types";
 
 export function HomeLogicBoard({ snapshot }: { snapshot: HomeLogicMapSnapshot }) {
+  const defaultWorkflow = buildSummaryFirstWorkflow();
   const focusNode = snapshot.logicMap.nodes.find((node) => node.id === "focus");
   const chainNodes = ["goals", "plan", "execution", "acceptance"]
     .map((id) => snapshot.logicMap.nodes.find((node) => node.id === id))
@@ -143,6 +145,20 @@ export function HomeLogicBoard({ snapshot }: { snapshot: HomeLogicMapSnapshot })
               <p className="text-xs uppercase tracking-[0.24em] text-sky-700">AI Efficiency</p>
               <h2 className="mt-3 text-2xl font-semibold text-slate-900">令牌主要花在哪里，也主要省在哪里</h2>
               <p className="mt-3 text-sm leading-7 text-slate-600">这块只看 summary wrapper 的估算结果，用来判断当前 AI 开发流是不是继续高效。</p>
+            </div>
+            <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 xl:col-span-2">
+              <p className="text-xs uppercase tracking-[0.24em] text-sky-700">默认摘要链</p>
+              <p className="mt-3 text-sm leading-7 text-slate-700">首页直接露出默认 summary-first 入口，避免把入口判断留给记忆。</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {defaultWorkflow.summary_first_commands.map((command) => (
+                  <code key={command} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-700">
+                    {command}
+                  </code>
+                ))}
+              </div>
+              <p className="mt-4 text-xs leading-6 text-slate-500">
+                原始回退链：{defaultWorkflow.raw_fallback_commands.map((command) => `\`${command}\``).join(" / ")}
+              </p>
             </div>
             <article className="rounded-[1.5rem] border border-emerald-200 bg-emerald-50 p-4">
               <p className="text-xs uppercase tracking-[0.2em] text-emerald-700">累计节省</p>

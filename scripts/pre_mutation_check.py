@@ -62,7 +62,7 @@ def sync_status() -> str:
         return "behind"
     if ahead > 0:
         return "ahead"
-    return "up_to_date"
+    return "clean"
 
 def next_action(clean: bool, status: str) -> str:
     if not clean:

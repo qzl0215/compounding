@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/classnames";
-import { formatEstimatedTokens } from "../../../../../../shared/ai-efficiency";
+import { buildSummaryFirstWorkflow, formatEstimatedTokens } from "../../../../../../shared/ai-efficiency";
 import type { AiEfficiencyDashboard } from "../types";
 
 export function AiEfficiencyCard({ dashboard, compact = false }: { dashboard: AiEfficiencyDashboard; compact?: boolean }) {
+  const defaultWorkflow = buildSummaryFirstWorkflow();
   const overview = dashboard.overview;
   const topConsumer = dashboard.consumption.top_profiles_by_input[0] || null;
   const topSaver = dashboard.savings.top_profiles_by_saved[0] || null;
@@ -27,6 +28,21 @@ export function AiEfficiencyCard({ dashboard, compact = false }: { dashboard: Ai
           >
             查看详情
           </Link>
+        </div>
+
+        <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4">
+          <p className="text-xs uppercase tracking-[0.24em] text-sky-700">默认摘要链</p>
+          <p className="mt-3 text-sm leading-7 text-slate-700">默认先走 summary-first，只有摘要不足或需要原始细节时才回退 raw 命令。</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {defaultWorkflow.summary_first_commands.map((command) => (
+              <code key={command} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-700">
+                {command}
+              </code>
+            ))}
+          </div>
+          <p className="mt-4 text-xs leading-6 text-slate-500">
+            原始回退链：{defaultWorkflow.raw_fallback_commands.map((command) => `\`${command}\``).join(" / ")}
+          </p>
         </div>
 
         <div className="grid gap-3 md:grid-cols-4">

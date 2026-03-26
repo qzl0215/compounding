@@ -117,4 +117,13 @@ describe("home logic board", () => {
     expect(screen.getByText("健康结论")).toBeInTheDocument();
     expect(screen.getByText("当前无待验收版本，运行正常，可继续按当前焦点推进。")).toBeInTheDocument();
   });
+
+  it("surfaces the shared default summary-first workflow", () => {
+    render(<HomeLogicBoard snapshot={snapshotFixture} />);
+
+    expect(screen.getByText("默认摘要链")).toBeInTheDocument();
+    expect(screen.getByText(/原始回退链/)).toBeInTheDocument();
+    expect(screen.getByText("pnpm ai:preflight:summary")).toBeInTheDocument();
+    expect(screen.getByText(/pnpm preflight/)).toBeInTheDocument();
+  });
 });

@@ -127,7 +127,10 @@ packs:
       - scripts/ai/lib/cli-kernel.js
       - scripts/ai/lib/task-template.js
       - scripts/ai/lib/task-resolver.ts
+      - scripts/ai/lib/change-policy.ts
+      - scripts/ai/lib/retro-candidates.ts
       - scripts/ai/lib/command-gain.ts
+      - scripts/pre_mutation_check.py
       - scripts/ai/lib/summary-harness.ts
       - scripts/ai/lib/summary-profiles.ts
       - scripts/ai/lib/feature-context.ts

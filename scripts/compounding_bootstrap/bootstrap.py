@@ -181,9 +181,19 @@ def render_architecture() -> str:
 
 ## 边界
 
-- `kernel/`、`schemas/`、`templates/` 承载跨项目可升级资产
-- `memory/project/*`、`tasks/queue/*`、业务代码承载项目壳子资产
-- `output/*` 只承载生成结果
+- core：`apps/studio/src/app/*`、`apps/studio/src/components/*`、`apps/studio/src/lib/*`、`apps/studio/src/modules/*`、`scripts/ai/*`、`scripts/coord/*`、`scripts/local-runtime/*`、`scripts/release/*`、`shared/*`
+- bootstrap：`scripts/compounding_bootstrap/*`、`scripts/init_project_compounding.py`、`kernel/kernel_manifest.yaml`、`bootstrap/*`、`schemas/*`、`templates/*`
+- config：`package.json`、`pnpm-workspace.yaml`、`apps/studio/*.config.*`、`.github/*`、`.cursor/rules/*`、`CLAUDE.md`、`OPENCODE.md`、`docs/OPERATOR_RUNBOOK.md`
+- governance / knowledge：`AGENTS.md`、`docs/*`、`memory/*`、`tasks/*`、`code_index/*`
+- derived / runtime：`output/*`、`.compounding-runtime/*`、`.next/*`、`node_modules/*`
+
+## 规则
+
+- core 负责产品和执行内核
+- bootstrap 负责装配、生成与契约
+- config 负责工具链和入口契约
+- governance / knowledge 负责主源与经验
+- derived / runtime 只做派生物，不反向充当主源
 """
 
 
@@ -217,9 +227,17 @@ def render_asset_maintenance() -> str:
 
 ## 分类
 
-- `kernel/*`、`schemas/*`、`templates/*`：跨项目可升级资产
-- `memory/project/*`、`tasks/queue/*`：项目壳子资产
-- `output/*`：生成物
+- core：产品与执行内核
+- bootstrap：装配、生成与契约
+- config：工具链与入口契约
+- governance / knowledge：主源、记忆与经验
+- derived / runtime：生成物与运行态
+
+## 边界
+
+- `output/*`、`.compounding-runtime/*`、`.next/*`、`node_modules/*` 只承载派生结果
+- `docs/ARCHITECTURE.md` 是仓内分类口径的主说明
+- 新的分类若要外化到别的项目，先更新 bootstrap 生成链，再回写文档主源
 """
 
 
