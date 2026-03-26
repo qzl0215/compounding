@@ -309,8 +309,6 @@ class SummaryHarnessCliTests(unittest.TestCase):
           profileVersion: "1",
           taskId: "t-101",
           originalCmd: "pnpm ai:feature-context -- --taskPath=tasks/queue/task-101.md",
-          inputTokensEst: 400,
-          outputTokensEst: 120,
           rawBytes: 1600,
           compactBytes: 480,
           outputText: "balanced packet",
@@ -320,8 +318,6 @@ class SummaryHarnessCliTests(unittest.TestCase):
           profileVersion: "1",
           taskId: "t-101",
           originalCmd: "pnpm ai:build-context tasks/queue/task-101.md --expanded",
-          inputTokensEst: 600,
-          outputTokensEst: 260,
           rawBytes: 2400,
           compactBytes: 1040,
           outputText: "expanded packet",
@@ -339,6 +335,8 @@ class SummaryHarnessCliTests(unittest.TestCase):
         self.assertEqual(density["balanced_runs"], 1)
         self.assertEqual(density["expanded_runs"], 1)
         self.assertEqual(density["total_saved_tokens_est"], 620)
+        self.assertEqual(density["total_input_tokens_est"], 1000)
+        self.assertEqual(density["total_output_tokens_est"], 380)
         self.assertEqual(density["top_context_heavy_tasks"][0]["task_id"], "t-101")
 
     def test_tree_summary_reports_directory_distribution(self) -> None:

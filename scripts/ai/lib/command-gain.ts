@@ -178,8 +178,24 @@ function recordContextPacketEvent(root = process.cwd(), payload = {}) {
 
   const rawBytes = Math.max(0, Math.round(toNumber(payload.rawBytes, byteLength(payload.inputText || ""))));
   const compactBytes = Math.max(0, Math.round(toNumber(payload.compactBytes, byteLength(payload.outputText || ""))));
-  const inputTokens = Math.max(0, Math.round(toNumber(payload.inputTokensEst, estimateTokens(payload.inputText || ""))));
-  const outputTokens = Math.max(0, Math.round(toNumber(payload.outputTokensEst, estimateTokens(payload.outputText || ""))));
+  const inputTokens = Math.max(
+    0,
+    Math.round(
+      toNumber(
+        payload.inputTokensEst,
+        rawBytes > 0 ? Math.ceil(rawBytes / 4) : estimateTokens(payload.inputText || ""),
+      ),
+    ),
+  );
+  const outputTokens = Math.max(
+    0,
+    Math.round(
+      toNumber(
+        payload.outputTokensEst,
+        compactBytes > 0 ? Math.ceil(compactBytes / 4) : estimateTokens(payload.outputText || ""),
+      ),
+    ),
+  );
   const savedTokens = Math.max(0, Math.round(inputTokens - outputTokens));
 
   return appendCommandGainEvent(root, {
