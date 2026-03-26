@@ -2,6 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const childProcess = require("node:child_process");
 const { parseModuleFeatureContract, collectLikelyTests } = require(path.join(process.cwd(), "shared", "module-feature-contract.ts"));
+const { buildSummaryFirstWorkflow } = require(path.join(process.cwd(), "shared", "ai-efficiency.ts"));
 const { buildProjectJudgementContract } = require(path.join(process.cwd(), "shared", "project-judgement.ts"));
 const { parseTaskContract, parseTaskMachineFacts } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
 const { readCompanion } = require(path.join(process.cwd(), "scripts", "coord", "lib", "task-meta.ts"));
@@ -321,24 +322,15 @@ function buildDefaultFlow(packet, options) {
     normalizeString(packet.project_judgement?.recommendedSurface?.label) ||
     normalizeString(packet.target_surface) ||
     "keyword";
-  const summaryFirstCommands = [
-    taskId ? `pnpm ai:preflight:summary -- --taskId=${taskId}` : "pnpm ai:preflight:summary",
-    "pnpm ai:diff:summary",
-    "pnpm ai:tree:summary",
-    `pnpm ai:find:summary -- --query=${querySeed}`,
-    readPath ? `pnpm ai:read:summary -- --path=${readPath}` : "pnpm ai:read:summary -- --path=...",
-  ];
-  const rawFallbackCommands = [
-    taskId ? `pnpm preflight -- --taskId=${taskId}` : "pnpm preflight",
-    "git diff",
-    "rg --files --hidden",
-    `rg -n --hidden ${querySeed}`,
-    readPath ? `sed -n '1,200p' ${readPath}` : "sed -n '1,200p' <path>",
-  ];
+  const summaryWorkflow = buildSummaryFirstWorkflow({
+    taskId,
+    querySeed,
+    readPath,
+  });
   return {
     entry_command: buildEntryCommand(options, packet.task_overlay, packet.target_surface),
-    summary_first_commands: summaryFirstCommands,
-    raw_fallback_commands: rawFallbackCommands,
+    summary_first_commands: summaryWorkflow.summary_first_commands,
+    raw_fallback_commands: summaryWorkflow.raw_fallback_commands,
     required_commands: flattenCommands(packet.required_checks),
     recommended_commands: flattenCommands(packet.recommended_checks),
     next_action: packet.project_judgement.nextAction,

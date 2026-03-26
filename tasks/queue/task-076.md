@@ -18,7 +18,7 @@
 
 ### 要做
 
-shared/ai-efficiency.ts,scripts/ai/lib/feature-context.ts,scripts/ai/lib/operator-contract.ts,apps/studio/src/app/ai-efficiency/,apps/studio/src/modules/project-state/components/,apps/studio/src/modules/portal/components/,docs/OPERATOR_RUNBOOK.md,CLAUDE.md,OPENCODE.md,.cursor/rules/00-project-entry.mdc,tests
+shared/ai-efficiency.ts,scripts/ai/lib/feature-context.ts,scripts/ai/lib/operator-contract.ts,apps/studio/src/modules/project-state/components/ai-efficiency-card.tsx,apps/studio/src/modules/project-state/__tests__/ai-efficiency-card.test.tsx,apps/studio/src/modules/portal/components/home-logic-board.tsx,apps/studio/src/modules/portal/__tests__/home-dashboard.test.tsx,docs/OPERATOR_RUNBOOK.md,tests/test_ai_summary_harness.py
 
 ### 不做
 

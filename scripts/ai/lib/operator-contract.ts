@@ -7,6 +7,9 @@ const OPERATOR_RUNBOOK_PATH = "docs/OPERATOR_RUNBOOK.md";
 const CLAUDE_ENTRY_PATH = "CLAUDE.md";
 const OPENCODE_ENTRY_PATH = "OPENCODE.md";
 const CURSOR_ENTRY_PATH = ".cursor/rules/00-project-entry.mdc";
+const { buildSummaryFirstWorkflow } = require(path.join(process.cwd(), "shared", "ai-efficiency.ts"));
+
+const DEFAULT_SUMMARY_WORKFLOW = buildSummaryFirstWorkflow();
 
 function splitInlineItems(text) {
   const items = [];
@@ -215,6 +218,10 @@ function normalizeNotes(value) {
   return note ? [note] : [];
 }
 
+function renderCommandChain(commands) {
+  return commands.length ? commands.map((command) => `\`${normalizeString(command)}\``).join(" / ") : "暂无";
+}
+
 function readYamlFile(root, relativePath) {
   const absolutePath = path.join(root, relativePath);
   return parseSimpleYaml(fs.readFileSync(absolutePath, "utf8"));
@@ -412,8 +419,8 @@ function renderAiFeatureEntry(contract) {
     "",
     "- 默认 feature 上下文：`pnpm ai:feature-context -- --surface=home`",
     "- 带 task 的 feature 上下文：`pnpm ai:feature-context -- --taskPath=tasks/queue/task-xxx.md`",
-    "- 默认摘要链：`pnpm ai:preflight:summary` / `pnpm ai:diff:summary` / `pnpm ai:tree:summary` / `pnpm ai:find:summary -- --query=keyword` / `pnpm ai:read:summary -- --path=memory/project/current-state.md`",
-    "- 原始回退链：`pnpm preflight` / `git diff` / `rg --files --hidden` / `rg -n --hidden keyword` / `sed -n '1,200p' <path>`",
+    `- 默认摘要链：${renderCommandChain(DEFAULT_SUMMARY_WORKFLOW.summary_first_commands)}`,
+    `- 原始回退链：${renderCommandChain(DEFAULT_SUMMARY_WORKFLOW.raw_fallback_commands)}`,
     "- 看当前令牌效率：`pnpm ai:command-gain --json` 或打开 `/ai-efficiency`",
     "- 默认先看 feature packet 里的 `Project Judgement` 和 `Default Loop`，再动手改代码。",
     "",
@@ -432,7 +439,7 @@ function renderClaudeEntry(contract) {
     ...(hasAiExecPack(contract)
       ? [
           "- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`",
-          "- 默认摘要链：`pnpm ai:preflight:summary` / `pnpm ai:diff:summary` / `pnpm ai:tree:summary` / `pnpm ai:find:summary -- --query=keyword` / `pnpm ai:read:summary -- --path=memory/project/current-state.md`",
+          `- 默认摘要链：${renderCommandChain(DEFAULT_SUMMARY_WORKFLOW.summary_first_commands)}`,
           "- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`",
         ]
       : []),
@@ -456,7 +463,7 @@ function renderOpenCodeEntry(contract) {
     ...(hasAiExecPack(contract)
       ? [
           "- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`",
-          "- 默认摘要链：`pnpm ai:preflight:summary` / `pnpm ai:diff:summary` / `pnpm ai:tree:summary` / `pnpm ai:find:summary -- --query=keyword` / `pnpm ai:read:summary -- --path=memory/project/current-state.md`",
+          `- 默认摘要链：${renderCommandChain(DEFAULT_SUMMARY_WORKFLOW.summary_first_commands)}`,
           "- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`",
         ]
       : []),
@@ -482,7 +489,7 @@ function renderCursorEntry(contract) {
     ...(hasAiExecPack(contract)
       ? [
           "- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`",
-          "- 默认摘要链：`pnpm ai:preflight:summary` / `pnpm ai:diff:summary` / `pnpm ai:tree:summary` / `pnpm ai:find:summary -- --query=keyword` / `pnpm ai:read:summary -- --path=memory/project/current-state.md`",
+          `- 默认摘要链：${renderCommandChain(DEFAULT_SUMMARY_WORKFLOW.summary_first_commands)}`,
           "- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`",
         ]
       : []),
