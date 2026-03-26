@@ -412,8 +412,9 @@ function renderAiFeatureEntry(contract) {
     "",
     "- 默认 feature 上下文：`pnpm ai:feature-context -- --surface=home`",
     "- 带 task 的 feature 上下文：`pnpm ai:feature-context -- --taskPath=tasks/queue/task-xxx.md`",
+    "- 默认摘要链：`pnpm ai:preflight:summary` / `pnpm ai:diff:summary` / `pnpm ai:tree:summary` / `pnpm ai:find:summary -- --query=keyword` / `pnpm ai:read:summary -- --path=memory/project/current-state.md`",
+    "- 原始回退链：`pnpm preflight` / `git diff` / `rg --files --hidden` / `rg -n --hidden keyword` / `sed -n '1,200p' <path>`",
     "- 看当前令牌效率：`pnpm ai:command-gain --json` 或打开 `/ai-efficiency`",
-    "- 看改动摘要：`pnpm ai:diff:summary`；看仓结构：`pnpm ai:tree:summary`",
     "- 默认先看 feature packet 里的 `Project Judgement` 和 `Default Loop`，再动手改代码。",
     "",
   ];
@@ -429,7 +430,11 @@ function renderClaudeEntry(contract) {
     `- 当前 mode：\`${normalizeString(contract.project?.bootstrap_mode)}\`；adapter：\`${normalizeString(contract.project?.adapter_id)}\``,
     `- 推荐 preflight：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
     ...(hasAiExecPack(contract)
-      ? ["- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`", "- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`"]
+      ? [
+          "- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`",
+          "- 默认摘要链：`pnpm ai:preflight:summary` / `pnpm ai:diff:summary` / `pnpm ai:tree:summary` / `pnpm ai:find:summary -- --query=keyword` / `pnpm ai:read:summary -- --path=memory/project/current-state.md`",
+          "- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`",
+        ]
       : []),
     "",
     "## 优先摘要命令",
@@ -449,7 +454,11 @@ function renderOpenCodeEntry(contract) {
     `- 当前 mode：\`${normalizeString(contract.project?.bootstrap_mode)}\`；adapter：\`${normalizeString(contract.project?.adapter_id)}\``,
     `- 推荐 preflight：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
     ...(hasAiExecPack(contract)
-      ? ["- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`", "- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`"]
+      ? [
+          "- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`",
+          "- 默认摘要链：`pnpm ai:preflight:summary` / `pnpm ai:diff:summary` / `pnpm ai:tree:summary` / `pnpm ai:find:summary -- --query=keyword` / `pnpm ai:read:summary -- --path=memory/project/current-state.md`",
+          "- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`",
+        ]
       : []),
     "",
     "## 优先摘要命令",
@@ -471,7 +480,11 @@ function renderCursorEntry(contract) {
     `- 当前 mode：\`${normalizeString(contract.project?.bootstrap_mode)}\`；adapter：\`${normalizeString(contract.project?.adapter_id)}\``,
     `- 推荐 preflight：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
     ...(hasAiExecPack(contract)
-      ? ["- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`", "- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`"]
+      ? [
+          "- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`",
+          "- 默认摘要链：`pnpm ai:preflight:summary` / `pnpm ai:diff:summary` / `pnpm ai:tree:summary` / `pnpm ai:find:summary -- --query=keyword` / `pnpm ai:read:summary -- --path=memory/project/current-state.md`",
+          "- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`",
+        ]
       : []),
     "",
     "## 优先摘要命令",

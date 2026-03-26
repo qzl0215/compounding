@@ -202,6 +202,9 @@ class AiAssetsCliTests(unittest.TestCase):
         self.assertIn("AGENTS.md", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
         self.assertIn("pnpm ai:preflight:summary", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
         self.assertIn("pnpm ai:command-gain --json", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
+        self.assertIn("pnpm ai:find:summary", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
+        self.assertIn("pnpm ai:read:summary", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
+        self.assertIn("/ai-efficiency", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
         self.assertIn("三模式入口", (self.target / "docs" / "OPERATOR_RUNBOOK.md").read_text(encoding="utf8"))
         self.assertIn("pnpm ai:feature-context -- --surface=home", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
 

@@ -25,6 +25,9 @@ class FeatureContextCliTests(unittest.TestCase):
         self.assertIn("project_judgement", payload)
         self.assertIn("default_flow", payload)
         self.assertTrue(payload["default_flow"]["entry_command"].startswith("pnpm ai:feature-context"))
+        self.assertTrue(any(command.startswith("pnpm ai:find:summary") for command in payload["default_flow"]["summary_first_commands"]))
+        self.assertTrue(any(command.startswith("pnpm ai:read:summary") for command in payload["default_flow"]["summary_first_commands"]))
+        self.assertTrue(any(command.startswith("rg -n --hidden") for command in payload["default_flow"]["raw_fallback_commands"]))
         self.assertTrue(payload["project_judgement"]["recommendedSurface"]["href"].startswith("/"))
 
     def test_releases_route_context_smoke(self) -> None:
@@ -44,3 +47,4 @@ class FeatureContextCliTests(unittest.TestCase):
         self.assertIn("tasks/queue/task-066-feature-context-and-shared-state.md", payload["must_read"])
         self.assertIn("tasks/queue/task-066-feature-context-and-shared-state.md", payload["likely_files"])
         self.assertIn("tasks/queue/task-066-feature-context-and-shared-state.md", payload["default_flow"]["entry_command"])
+        self.assertTrue(any("t-066" in command for command in payload["default_flow"]["summary_first_commands"]))

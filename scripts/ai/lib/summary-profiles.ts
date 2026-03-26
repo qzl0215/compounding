@@ -83,6 +83,24 @@ const SUMMARY_PROFILES = {
     parser_slots: PARSER_SLOTS,
     shortcut_id: "tree_summary",
   },
+  find_summary: {
+    profile_id: "find_summary",
+    profile_version: "1",
+    pipeline: ["stats_extraction", "error_only", "grouping_by_pattern", "deduplication"],
+    tee_policy: DEFAULT_TEE_POLICY,
+    fallback_policy: DEFAULT_FALLBACK_POLICY,
+    parser_slots: PARSER_SLOTS,
+    shortcut_id: "find_summary",
+  },
+  read_summary: {
+    profile_id: "read_summary",
+    profile_version: "1",
+    pipeline: ["structure_only", "stats_extraction"],
+    tee_policy: DEFAULT_TEE_POLICY,
+    fallback_policy: DEFAULT_FALLBACK_POLICY,
+    parser_slots: PARSER_SLOTS,
+    shortcut_id: "read_summary",
+  },
 };
 
 function getSummaryProfile(profileId) {

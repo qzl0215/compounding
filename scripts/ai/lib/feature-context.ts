@@ -31,6 +31,12 @@ function unique(values) {
   return Array.from(new Set(values.map((value) => String(value || "").trim()).filter(Boolean)));
 }
 
+function normalizeString(value, fallback = "") {
+  if (typeof value === "string") return value.trim();
+  if (value === null || value === undefined) return fallback;
+  return String(value).trim();
+}
+
 function normalizeModuleToken(token) {
   return String(token || "").replace(/`/g, "").replace(/\/\*$/, "").trim();
 }
@@ -145,6 +151,7 @@ function buildTaskOverlay(root, taskPath) {
   return {
     overlay: {
       taskId: taskContract.id,
+      shortId: taskContract.shortId,
       taskPath: relTask,
       summary: taskContract.summary,
       boundary: taskContract.boundary,
@@ -307,8 +314,31 @@ function buildEntryCommand(options, overlay, targetSurface) {
 }
 
 function buildDefaultFlow(packet, options) {
+  const taskId = normalizeString(packet.task_overlay?.shortId) || normalizeString(packet.task_overlay?.taskId);
+  const readPath = normalizeString(packet.project_judgement?.recommendedRead?.path) || normalizeString(packet.must_read?.[0]);
+  const querySeed =
+    normalizeString(packet.related_modules?.[0]) ||
+    normalizeString(packet.project_judgement?.recommendedSurface?.label) ||
+    normalizeString(packet.target_surface) ||
+    "keyword";
+  const summaryFirstCommands = [
+    taskId ? `pnpm ai:preflight:summary -- --taskId=${taskId}` : "pnpm ai:preflight:summary",
+    "pnpm ai:diff:summary",
+    "pnpm ai:tree:summary",
+    `pnpm ai:find:summary -- --query=${querySeed}`,
+    readPath ? `pnpm ai:read:summary -- --path=${readPath}` : "pnpm ai:read:summary -- --path=...",
+  ];
+  const rawFallbackCommands = [
+    taskId ? `pnpm preflight -- --taskId=${taskId}` : "pnpm preflight",
+    "git diff",
+    "rg --files --hidden",
+    `rg -n --hidden ${querySeed}`,
+    readPath ? `sed -n '1,200p' ${readPath}` : "sed -n '1,200p' <path>",
+  ];
   return {
     entry_command: buildEntryCommand(options, packet.task_overlay, packet.target_surface),
+    summary_first_commands: summaryFirstCommands,
+    raw_fallback_commands: rawFallbackCommands,
     required_commands: flattenCommands(packet.required_checks),
     recommended_commands: flattenCommands(packet.recommended_checks),
     next_action: packet.project_judgement.nextAction,
@@ -485,6 +515,12 @@ function renderFeatureContextMarkdown(packet) {
   lines.push(`- 下一步判断：${packet.default_flow.next_action}`);
   lines.push(`- 先看页面：${packet.default_flow.recommended_surface.label}`);
   lines.push(`- 先读文档：\`${packet.default_flow.recommended_read.path}\``);
+  lines.push(
+    `- 默认摘要链：${packet.default_flow.summary_first_commands.length ? packet.default_flow.summary_first_commands.map((command) => `\`${command}\``).join(" / ") : "暂无"}`
+  );
+  lines.push(
+    `- 原始回退链：${packet.default_flow.raw_fallback_commands.length ? packet.default_flow.raw_fallback_commands.map((command) => `\`${command}\``).join(" / ") : "暂无"}`
+  );
   lines.push(
     `- 必跑命令：${packet.default_flow.required_commands.length ? packet.default_flow.required_commands.map((command) => `\`${command}\``).join(" / ") : "暂无"}`
   );
