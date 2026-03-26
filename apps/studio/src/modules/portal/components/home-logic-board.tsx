@@ -168,8 +168,11 @@ export function HomeLogicBoard({ snapshot }: { snapshot: HomeLogicMapSnapshot })
             <article className="rounded-[1.5rem] border border-slate-200 bg-white p-4">
               <p className="text-xs uppercase tracking-[0.2em] text-slate-500">当前提醒</p>
               <p className="mt-3 text-sm leading-7 text-slate-700">
-                {snapshot.aiEfficiency.alert || "当前没有明显 adoption 警报，继续用 summary wrapper 保持上下文干净。"}
+                {snapshot.aiEfficiency.alert ||
+                  snapshot.aiEfficiency.contextPattern ||
+                  "当前没有明显 adoption 警报，继续用 summary wrapper 保持上下文干净。"}
               </p>
+              <p className="mt-4 text-xs leading-6 text-slate-500">默认上下文模式：{snapshot.aiEfficiency.contextMode}</p>
             </article>
           </div>
         </Card>

@@ -1,4 +1,5 @@
 const { getChangePolicy } = require("../../ai/lib/change-policy.ts");
+const { buildAndWriteContextRetroReport, summarizeContextRetroHints } = require("../../ai/lib/context-retro.ts");
 const { ensureCompanion } = require("./task-meta.ts");
 const { recordPreTaskResult } = require("./companion-lifecycle.ts");
 const { buildRetroContext, finishActiveStage, recordBlocker, startActiveStage } = require("./task-activity.ts");
@@ -41,6 +42,16 @@ function attachRetroContext(payload, retroContext = {}) {
     iteration_digest_path: retroContext.iteration_digest_path || null,
     retro_candidates_path: retroContext.retro_candidates_path || null,
     retro_hints: Array.isArray(retroContext.retro_hints) ? retroContext.retro_hints : [],
+  };
+}
+
+function attachContextRetro(payload, contextRetro = null) {
+  return {
+    ...payload,
+    context_retro_path: contextRetro?.json_path || null,
+    context_retro_hints: Array.isArray(contextRetro?.current_task?.alerts)
+      ? summarizeContextRetroHints(contextRetro)
+      : [],
   };
 }
 
@@ -220,7 +231,8 @@ function runTaskPreflight(changePolicy, taskId) {
       reason: "完整 task guard 检测到 blocker。",
     });
     const decisionCard = createDecisionCard(taskId, preflightCheck, runtimeCheck, scopeCheck, lockCheck);
-    const payload = attachRetroContext({
+    const contextRetro = buildAndWriteContextRetroReport(ROOT, { taskId });
+    const payload = attachContextRetro(attachRetroContext({
       ok: false,
       step: "pre_task_guard",
       blockers,
@@ -236,7 +248,7 @@ function runTaskPreflight(changePolicy, taskId) {
       decision_card: decisionCard,
       reason: "完整 task guard 检测到 runtime、scope、lock 或 git blocker，请先处理后重试。",
       ...output,
-    }, retroContext);
+    }, retroContext), contextRetro);
     recordPreTaskResult(taskId, payload);
     return { exitCode: 1, payload };
   }
@@ -252,7 +264,8 @@ function runTaskPreflight(changePolicy, taskId) {
     status: "running",
     reason: "task guard 已通过，进入工程执行。",
   });
-  const payload = attachRetroContext({
+  const contextRetro = buildAndWriteContextRetroReport(ROOT, { taskId });
+  const payload = attachContextRetro(attachRetroContext({
     ok: true,
     preflight: preflight.preflight,
     companion: compResult.companion,
@@ -263,7 +276,7 @@ function runTaskPreflight(changePolicy, taskId) {
     lock_check: { ok: true, conflicts: [], suggested_execution_mode: null },
     reason: "完整 task guard 已通过。",
     ...output,
-  }, retroContext);
+  }, retroContext), contextRetro);
   recordPreTaskResult(taskId, payload);
   return { exitCode: 0, payload };
 }

@@ -299,6 +299,48 @@ class SummaryHarnessCliTests(unittest.TestCase):
         self.assertNotIn("expired.json", payload["teeFiles"])
         self.assertLessEqual(len(payload["teeFiles"]), 2)
 
+    def test_context_packet_events_flow_into_dashboard_density(self) -> None:
+        source = """
+        const { recordContextPacketEvent, buildCommandGainReport } = require("./scripts/ai/lib/command-gain.ts");
+
+        const root = process.cwd();
+        recordContextPacketEvent(root, {
+          profileId: "feature_context_balanced",
+          profileVersion: "1",
+          taskId: "t-101",
+          originalCmd: "pnpm ai:feature-context -- --taskPath=tasks/queue/task-101.md",
+          inputTokensEst: 400,
+          outputTokensEst: 120,
+          rawBytes: 1600,
+          compactBytes: 480,
+          outputText: "balanced packet",
+        });
+        recordContextPacketEvent(root, {
+          profileId: "build_context_expanded",
+          profileVersion: "1",
+          taskId: "t-101",
+          originalCmd: "pnpm ai:build-context tasks/queue/task-101.md --expanded",
+          inputTokensEst: 600,
+          outputTokensEst: 260,
+          rawBytes: 2400,
+          compactBytes: 1040,
+          outputText: "expanded packet",
+        });
+
+        const report = buildCommandGainReport(root, { days: 30 });
+        console.log(JSON.stringify(report));
+        """
+        completed = self.run_node(textwrap.dedent(source))
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        payload = json.loads(completed.stdout)
+        density = payload["dashboard"]["context_density"]
+
+        self.assertEqual(density["total_packets"], 2)
+        self.assertEqual(density["balanced_runs"], 1)
+        self.assertEqual(density["expanded_runs"], 1)
+        self.assertEqual(density["total_saved_tokens_est"], 620)
+        self.assertEqual(density["top_context_heavy_tasks"][0]["task_id"], "t-101")
+
     def test_tree_summary_reports_directory_distribution(self) -> None:
         (self.target / "apps" / "studio").mkdir(parents=True, exist_ok=True)
         (self.target / "apps" / "studio" / "page.tsx").write_text("export default function Page() {}\n", encoding="utf8")

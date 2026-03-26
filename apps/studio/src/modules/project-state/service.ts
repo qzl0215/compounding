@@ -11,6 +11,9 @@ import {
 import { buildProjectJudgementContract } from "../../../../../shared/project-judgement";
 import type { ProjectStateSnapshot } from "./types";
 
+type AiEfficiencyDashboardOptions = Parameters<typeof buildAiEfficiencyDashboard>[1];
+type ContextRetroReport = NonNullable<AiEfficiencyDashboardOptions>["contextRetroReport"];
+
 export async function getProjectStateSnapshot(input?: { deliverySnapshot?: DeliverySnapshot }): Promise<ProjectStateSnapshot> {
   const workspaceRoot = getWorkspaceRoot();
   const deliverySnapshot = input?.deliverySnapshot ?? (await getDeliverySnapshot());
@@ -121,9 +124,13 @@ function summarizeRuntimeAlert(
 }
 
 function getAiEfficiencyDashboard(workspaceRoot: string) {
+  const contextRetroReport = readContextRetroReport(workspaceRoot);
   const eventsPath = path.join(workspaceRoot, "output", "ai", "command-gain", "events.jsonl");
   if (!fs.existsSync(eventsPath)) {
-    return buildAiEfficiencyDashboard([]);
+    return buildAiEfficiencyDashboard([], {
+      contextRetroReport,
+      supportedProfiles: AI_EFFICIENCY_SUPPORTED_PROFILES,
+    });
   }
 
   const events = fs
@@ -140,5 +147,18 @@ function getAiEfficiencyDashboard(workspaceRoot: string) {
     })
     .filter((event): event is ReturnType<typeof normalizeAiEfficiencyEvent> => Boolean(event));
 
-  return buildAiEfficiencyDashboard(events, { supportedProfiles: AI_EFFICIENCY_SUPPORTED_PROFILES });
+  return buildAiEfficiencyDashboard(events, {
+    supportedProfiles: AI_EFFICIENCY_SUPPORTED_PROFILES,
+    contextRetroReport,
+  });
+}
+
+function readContextRetroReport(workspaceRoot: string): ContextRetroReport {
+  const jsonPath = path.join(workspaceRoot, "output", "ai", "context-retro", "latest.json");
+  if (!fs.existsSync(jsonPath)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(jsonPath, "utf8")) as ContextRetroReport;
+  } catch {
+    return null;
+  }
 }

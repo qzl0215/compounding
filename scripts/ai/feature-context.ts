@@ -1,7 +1,8 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { emitResult, exitWithError, parseCliArgs } = require("./lib/cli-kernel.js");
-const { buildFeatureContextPacket, renderFeatureContextMarkdown } = require("./lib/feature-context.ts");
+const { recordContextPacketEvent } = require("./lib/command-gain.ts");
+const { buildFeatureContextPacket, estimateContextPacketSourceBytes, renderFeatureContextMarkdown } = require("./lib/feature-context.ts");
 
 const cli = parseCliArgs(process.argv.slice(2));
 const argv = cli.flags;
@@ -32,8 +33,20 @@ try {
     route,
     taskPath,
   });
+  const rendered = renderFeatureContextMarkdown(packet);
+  const inputBytes = estimateContextPacketSourceBytes(root, packet);
 
   if (cli.json) {
+    recordContextPacketEvent(root, {
+      profileId: "feature_context_balanced",
+      profileVersion: "1",
+      taskId: packet.task_overlay?.shortId || packet.task_overlay?.taskId || null,
+      originalCmd: packet.default_flow.entry_command,
+      rawBytes: inputBytes,
+      compactBytes: Buffer.byteLength(rendered, "utf8"),
+      outputText: rendered,
+      agentSurface: "repo_cli",
+    });
     emitResult({ ok: true, ...packet }, cli);
     process.exit(0);
   }
@@ -45,7 +58,17 @@ try {
   const outputDir = path.join(root, "output", "ai", "feature-context");
   const outputPath = path.join(outputDir, `${slug}.md`);
   fs.mkdirSync(outputDir, { recursive: true });
-  fs.writeFileSync(outputPath, renderFeatureContextMarkdown(packet));
+  fs.writeFileSync(outputPath, rendered);
+  recordContextPacketEvent(root, {
+    profileId: "feature_context_balanced",
+    profileVersion: "1",
+    taskId: packet.task_overlay?.shortId || packet.task_overlay?.taskId || null,
+    originalCmd: packet.default_flow.entry_command,
+    rawBytes: inputBytes,
+    compactBytes: Buffer.byteLength(rendered, "utf8"),
+    outputText: rendered,
+    agentSurface: "repo_cli",
+  });
   emitResult(
     {
       ok: true,
@@ -58,4 +81,3 @@ try {
 } catch (error) {
   exitWithError(error instanceof Error ? error.message : "Failed to build feature context.", cli);
 }
-

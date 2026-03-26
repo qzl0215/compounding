@@ -9,6 +9,7 @@ export default async function AiEfficiencyPage() {
   const projectState = await getProjectStateSnapshot();
   const dashboard = projectState.aiEfficiency.dashboard;
   const topAlert = dashboard.adoption.alerts[0] || null;
+  const topTimeLoss = dashboard.context_waste.top_time_loss_patterns[0] || null;
 
   return (
     <div className="space-y-6">
@@ -20,6 +21,7 @@ export default async function AiEfficiencyPage() {
           note="所有数字都来自 output/ai/command-gain/events.jsonl，属于估算值，只用于趋势与 ROI。"
           metrics={[
             { label: "summary runs", value: `${dashboard.overview.summary_runs} 次`, tone: "accent" },
+            { label: "context packets", value: `${dashboard.overview.context_packets} 次` },
             { label: "估算输入", value: `~${formatEstimatedTokens(dashboard.overview.total_input_tokens_est)}` },
             { label: "估算节省", value: `~${formatEstimatedTokens(dashboard.overview.total_saved_tokens_est)}`, tone: "success" },
             { label: "平均节省率", value: `${dashboard.overview.avg_savings_pct_est}%`, tone: "success" },
@@ -107,6 +109,55 @@ export default async function AiEfficiencyPage() {
               body: `节省约 ${formatEstimatedTokens(item.saved_tokens_est)}，平均压缩率 ${item.savings_pct_est}%。`,
             }))}
             emptyText="当前还没有 7 天节省趋势。"
+          />
+        </div>
+      </section>
+
+      <section id="ai-efficiency-context">
+        <PageHeader
+          eyebrow="Context"
+          title="把时间浪费模式和上下文密度放进同一页"
+          description="这一屏只回答两件事：最近时间浪费在哪里，以及当前默认上下文包是否继续保持高密度。"
+          note={topTimeLoss ? `${topTimeLoss.signature} 是最近最大的 time-loss pattern。` : "当前窗口内没有明显 time-loss pattern。"}
+          metrics={[
+            { label: "context packets", value: `${dashboard.context_density.total_packets} 次`, tone: "accent" },
+            { label: "balanced 占比", value: `${dashboard.context_density.balanced_pct}%`, tone: dashboard.context_density.balanced_pct >= 60 ? "success" : "warning" },
+            { label: "上下文节省", value: `~${formatEstimatedTokens(dashboard.context_density.total_saved_tokens_est)}`, tone: "success" },
+            { label: "promotion 候选", value: `${dashboard.context_waste.promotion_candidates.length} 个`, tone: dashboard.context_waste.promotion_candidates.length ? "warning" : "accent" },
+          ]}
+        />
+        <div className="grid gap-4 xl:grid-cols-2">
+          <DetailList
+            title="Top Time-Loss Patterns"
+            items={dashboard.context_waste.top_time_loss_patterns.map((item) => ({
+              label: item.signature,
+              body: `${item.task_count} 个 tasks，累计浪费约 ${Math.round(item.lost_time_ms / 60000 * 10) / 10} 分钟。${item.which_summary_shortcut_to_use ? ` 建议先跑 ${item.which_summary_shortcut_to_use}。` : ""}`,
+            }))}
+            emptyText="当前窗口内还没有高价值 time-loss pattern。"
+          />
+          <DetailList
+            title="Top Missed Shortcuts"
+            items={dashboard.context_waste.top_missed_shortcuts.map((item) => ({
+              label: item.shortcut_id,
+              body: `${item.missed_count} 次漏用，涉及 ${item.task_count} 个 tasks，潜在浪费约 ${formatEstimatedTokens(item.missed_savings_est)}。${item.which_summary_shortcut_to_use ? ` 建议命令：${item.which_summary_shortcut_to_use}` : ""}`,
+            }))}
+            emptyText="当前没有显著的 shortcut 漏用模式。"
+          />
+          <DetailList
+            title="Promotion Candidates"
+            items={dashboard.context_waste.promotion_candidates.map((item) => ({
+              label: item.label,
+              body: `${item.reason} ${item.evidence}`,
+            }))}
+            emptyText="当前没有达到升格阈值的候选。"
+          />
+          <DetailList
+            title="Context-Heavy Tasks"
+            items={dashboard.context_density.top_context_heavy_tasks.map((item) => ({
+              label: item.task_id,
+              body: `${item.runs} 次 packet，输入约 ${formatEstimatedTokens(item.input_tokens_est)}，节省约 ${formatEstimatedTokens(item.saved_tokens_est)}。`,
+            }))}
+            emptyText="当前没有 task 级 context packet 样本。"
           />
         </div>
       </section>

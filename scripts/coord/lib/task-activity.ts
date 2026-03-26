@@ -580,6 +580,7 @@ module.exports = {
   finishActiveStageIfOpen,
   finishWaitStage,
   finishWaitStageIfOpen,
+  readLatestLiveSummary,
   recordBlocker,
   recordNote,
   refreshRetroCandidates,
