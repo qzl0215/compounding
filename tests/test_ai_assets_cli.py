@@ -111,6 +111,77 @@ class AiAssetsCliTests(unittest.TestCase):
             any(candidate["category"] == "stale-doc" and "docs/WORK_MODES.md" in candidate["paths"] for candidate in report["candidates"])
         )
 
+    def test_retro_candidates_only_emit_repeated_blockers(self) -> None:
+        companion_dir = self.target / "agent-coordination" / "tasks"
+        companion_dir.mkdir(parents=True, exist_ok=True)
+        companion_dir.joinpath("task-111-a.json").write_text(
+            json.dumps(
+                {
+                    "task_id": "t-111",
+                    "task_path": "tasks/queue/task-111-a.md",
+                    "artifacts": {
+                        "iteration_digest": {
+                            "top_blockers": [
+                                {
+                                    "signature": "preflight:工作区未清理",
+                                    "stage": "preflight",
+                                    "reason": "工作区未清理",
+                                    "repeat_count": 1,
+                                    "lost_time_ms": 4000,
+                                    "related_docs": ["AGENTS.md"],
+                                }
+                            ]
+                        }
+                    },
+                },
+                ensure_ascii=False,
+            ),
+            encoding="utf8",
+        )
+        companion_dir.joinpath("task-112-b.json").write_text(
+            json.dumps(
+                {
+                    "task_id": "t-112",
+                    "task_path": "tasks/queue/task-112-b.md",
+                    "artifacts": {
+                        "iteration_digest": {
+                            "top_blockers": [
+                                {
+                                    "signature": "preflight:工作区未清理",
+                                    "stage": "preflight",
+                                    "reason": "工作区未清理",
+                                    "repeat_count": 1,
+                                    "lost_time_ms": 3000,
+                                    "related_docs": ["docs/DEV_WORKFLOW.md"],
+                                },
+                                {
+                                    "signature": "scope:范围越界",
+                                    "stage": "review",
+                                    "reason": "范围越界",
+                                    "repeat_count": 1,
+                                    "lost_time_ms": 2000,
+                                    "related_docs": ["AGENTS.md"],
+                                },
+                            ]
+                        }
+                    },
+                },
+                ensure_ascii=False,
+            ),
+            encoding="utf8",
+        )
+
+        completed = self.run_script("scripts/ai/retro-candidates.ts")
+        payload = json.loads(completed.stdout)
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        report = json.loads(Path(payload["json_path"]).read_text(encoding="utf8"))
+        self.assertEqual(report["candidate_count"], 1)
+        self.assertEqual(report["candidates"][0]["signature"], "preflight:工作区未清理")
+        self.assertEqual(report["candidates"][0]["repeat_count"], 2)
+        self.assertEqual(sorted(report["candidates"][0]["affected_tasks"]), ["t-111", "t-112"])
+        self.assertEqual(report["candidates"][0]["lost_time_ms"], 7000)
+
 
 if __name__ == "__main__":
     unittest.main()

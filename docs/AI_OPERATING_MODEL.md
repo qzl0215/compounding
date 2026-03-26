@@ -2,7 +2,7 @@
 title: AI_OPERATING_MODEL
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-25
+last_reviewed_at: 2026-03-26
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -26,6 +26,7 @@ related_docs:
 - 遇到 unfamiliar pattern / infra / runtime capability，先搜已有实现、主源与成熟解，再决定是否自建。
 - `Boil the Lake` 只适用于小而边界清楚的 task；大而跨阶段的事项留在 plan。
 - 当需要找低风险熵减机会时，优先运行 `pnpm ai:cleanup-candidates` 读取瞬时候选，而不是先扩新 backlog 或新状态源。
+- 当已绑定 `structural / release` task 时，先看 `pnpm preflight -- --taskId=t-xxx` 输出里的 `retro_hints`；默认先继承上一轮的耗时/阻塞结论，再决定是否继续试新路径。
 - `scripts/ai/create-task.ts` 可直接接收 `boundary / doneWhen / outOfScope / constraints / testStrategy`，把已收口的决策写成 task 合同，而不是只写摘要。
 - 新建 task 时，摘要本身就是人类标题，必须使用中文直给概述；`task-xxx` / `t-xxx` 只作索引，不代替标题。
 - task 只承接可执行边界；companion 只保留机器执行上下文；release 只保留验收与运行事实。
@@ -44,6 +45,7 @@ related_docs:
 - 执行链默认脚本：`scripts/ai/build-context.ts`、`node --experimental-strip-types scripts/ai/validate-change-trace.ts`、`node --experimental-strip-types scripts/ai/validate-task-git-link.ts`、`node --experimental-strip-types scripts/ai/validate-knowledge-assets.ts`
 - 交付链默认脚本：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`、`node --experimental-strip-types scripts/release/accept-dev-release.ts`、`node --experimental-strip-types scripts/release/reject-dev-release.ts`、`node --experimental-strip-types scripts/release/rollback-release.ts`
 - 熵减候选默认脚本：`node --experimental-strip-types scripts/ai/cleanup-candidates.ts`，只在计划评审、release 复盘或当前没有更高优先级产品任务时运行。
+- 复盘候选默认脚本：`node --experimental-strip-types scripts/ai/retro-candidates.ts`，只读取 companion digest 聚合重复 blocker，不回写长期经验主源。
 - 这些脚本只承接最小契约，不替代 `docs/WORK_MODES.md`、`docs/DEV_WORKFLOW.md` 或任务边界。
 
 ## 上下文与记忆
@@ -51,6 +53,7 @@ related_docs:
 - `code_index/module-index.md` 给模块入口。
 - `code_index/dependency-map.md` 给依赖方向。
 - `code_index/function-index.json` 给粗粒度函数索引。
+- `output/agent_session/task-activity/*` 是 24 小时 TTL 的临时轨迹，不是主源；长期只保留 companion 里的 `iteration_digest` 和 `output/ai/retro-candidates/*` 候选。
 - 新经验先进入 `memory/experience/*`，稳定后再升格到 `docs/*` 或 `AGENTS.md`。
 - 当前项目状态、roadmap 和 operating blueprint 在 `memory/project/*`。
 

@@ -1,5 +1,6 @@
 const childProcess = require("node:child_process");
 const path = require("node:path");
+const { finishWaitStageIfOpen, recordBlocker } = require("../coord/lib/task-activity.ts");
 const {
   clearChannelSymlink,
   clearPendingDevRelease,
@@ -22,6 +23,7 @@ function parseArg(name) {
 }
 
 const releaseId = parseArg("--release");
+let activityTaskId = null;
 
 try {
   const result = withReleaseLock(() => {
@@ -29,6 +31,7 @@ try {
     if (!pending || pending.channel !== "dev" || pending.acceptance_status !== "pending") {
       throw new Error("当前没有可驳回的 pending dev 预览。");
     }
+    activityTaskId = pending.primary_task_id || null;
 
     const rejected = {
       ...pending,
@@ -63,7 +66,28 @@ try {
       registry: result.registry,
     })
   );
+  if (activityTaskId) {
+    recordBlocker(activityTaskId, "acceptance_wait", {
+      source: "release:reject-dev",
+      status: "rejected",
+      reason: "dev 预览在验收阶段被驳回。",
+      relatedDocs: ["docs/DEV_WORKFLOW.md"],
+    });
+    finishWaitStageIfOpen(activityTaskId, "acceptance_wait", {
+      source: "release:reject-dev",
+      status: "rejected",
+      reason: "dev 预览被驳回，等待重新修改。",
+    });
+  }
 } catch (error) {
+  if (activityTaskId) {
+    recordBlocker(activityTaskId, "acceptance_wait", {
+      source: "release:reject-dev",
+      status: "failed",
+      reason: error instanceof Error ? error.message : "Failed to reject dev release.",
+      relatedDocs: ["docs/DEV_WORKFLOW.md"],
+    });
+  }
   console.log(
     JSON.stringify({
       ok: false,

@@ -2,7 +2,7 @@
 title: ROADMAP
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-27
+last_reviewed_at: 2026-03-26
 source_of_truth: memory/project/roadmap.md
 related_docs:
   - AGENTS.md
@@ -32,13 +32,13 @@ AI feature 开发提效闭环
 
 ## 当前优先级
 
-优先继续收短 AI 加功能入口和派生产物入口：在 task 标题已经收成中文直给概述之后，下一步先统一 `code_index/*`、`output/*`、coordination 产物和 runtime 事实的语义，让团队只维护“主源 / 派生物”两层心智；随后继续压跨页面唯一 snapshot、`pnpm preflight` 单入口和 release 单一状态机。
+优先继续收短派生产物入口和跨页面读链：`pnpm preflight` 单入口与 task 级 retro digest 已落地，下一步先统一 `code_index/*`、`output/*`、coordination 产物和 runtime 事实的语义，让团队只维护“主源 / 派生物”两层心智；随后继续压跨页面唯一 snapshot 和 release 单一状态机。
 
 ## 下一阶段方向
 
 - 继续统一派生产物语义，减少 `code_index`、`output`、coordination 与 runtime 各自命名的重复心智
 - 继续压跨页面唯一 snapshot，避免首页 / 任务页 / 发布页重新长出本地翻译
 - 继续把 AI 加 feature 的默认上下文收成更短、更稳定的入口
-- 继续压实 `pnpm preflight` 单入口，减少 task guard / pre-task / decision card 的多入口感
+- 继续压实 release 单一状态机，减少 task / release / runtime 之间的兼容壳
 - 继续在不增加新状态源的前提下退休低价值解释层和重复外壳
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

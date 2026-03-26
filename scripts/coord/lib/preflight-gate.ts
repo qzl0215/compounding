@@ -1,6 +1,7 @@
 const { getChangePolicy } = require("../../ai/lib/change-policy.ts");
 const { ensureCompanion } = require("./task-meta.ts");
 const { recordPreTaskResult } = require("./companion-lifecycle.ts");
+const { buildRetroContext, finishActiveStage, recordBlocker, startActiveStage } = require("./task-activity.ts");
 const { createDecisionCard } = require("./pre-task-decision.ts");
 const {
   checkLocks,
@@ -31,6 +32,15 @@ function buildBaseOutput(changePolicy, guardLevel, taskId) {
     change_class: changePolicy.change_class,
     policy: changePolicy.policy,
     changed_files: changePolicy.changed_files,
+  };
+}
+
+function attachRetroContext(payload, retroContext = {}) {
+  return {
+    ...payload,
+    iteration_digest_path: retroContext.iteration_digest_path || null,
+    retro_candidates_path: retroContext.retro_candidates_path || null,
+    retro_hints: Array.isArray(retroContext.retro_hints) ? retroContext.retro_hints : [],
   };
 }
 
@@ -126,18 +136,20 @@ function runTaskPreflight(changePolicy, taskId) {
     };
   }
 
+  const retroContext = buildRetroContext(taskId);
+  const preflightStartedAt = new Date().toISOString();
   const preflight = runPreflight();
   if (!preflight.ok) {
     return {
       exitCode: 1,
-      payload: {
+      payload: attachRetroContext({
         ok: false,
         step: "preflight",
         error: preflight.error,
         preflight,
         reason: "完整 task guard 在基础 preflight 阶段失败。",
         ...output,
-      },
+      }, retroContext),
     };
   }
 
@@ -150,7 +162,7 @@ function runTaskPreflight(changePolicy, taskId) {
         step: "task_companion",
         error: compResult.error,
         reason: "无法初始化 task companion。",
-        ...output,
+        ...attachRetroContext(output, retroContext),
       },
     };
   }
@@ -186,9 +198,29 @@ function runTaskPreflight(changePolicy, taskId) {
     });
   }
 
+  startActiveStage(taskId, "preflight", {
+    source: "coord:preflight",
+    recordedAt: preflightStartedAt,
+    status: "running",
+    reason: "开始执行完整 task guard。",
+  });
   if (blockers.length > 0) {
+    for (const blocker of blockers) {
+      const stage = blocker.step === "runtime_check" || blocker.step === "scope_guard" || blocker.step === "lock_check" ? "preflight" : "preflight";
+      recordBlocker(taskId, stage, {
+        source: `coord:${blocker.step || "preflight"}`,
+        status: "blocked",
+        reason: blocker.issue || "task guard blocker",
+        relatedDocs: ["AGENTS.md", "docs/DEV_WORKFLOW.md"],
+      });
+    }
+    finishActiveStage(taskId, "preflight", {
+      source: "coord:preflight",
+      status: "blocked",
+      reason: "完整 task guard 检测到 blocker。",
+    });
     const decisionCard = createDecisionCard(taskId, preflightCheck, runtimeCheck, scopeCheck, lockCheck);
-    const payload = {
+    const payload = attachRetroContext({
       ok: false,
       step: "pre_task_guard",
       blockers,
@@ -204,12 +236,23 @@ function runTaskPreflight(changePolicy, taskId) {
       decision_card: decisionCard,
       reason: "完整 task guard 检测到 runtime、scope、lock 或 git blocker，请先处理后重试。",
       ...output,
-    };
+    }, retroContext);
     recordPreTaskResult(taskId, payload);
     return { exitCode: 1, payload };
   }
 
-  const payload = {
+  finishActiveStage(taskId, "preflight", {
+    source: "coord:preflight",
+    recordedAt: new Date().toISOString(),
+    status: "passed",
+    reason: "完整 task guard 已通过。",
+  });
+  startActiveStage(taskId, "execution", {
+    source: "coord:task:start",
+    status: "running",
+    reason: "task guard 已通过，进入工程执行。",
+  });
+  const payload = attachRetroContext({
     ok: true,
     preflight: preflight.preflight,
     companion: compResult.companion,
@@ -220,7 +263,7 @@ function runTaskPreflight(changePolicy, taskId) {
     lock_check: { ok: true, conflicts: [], suggested_execution_mode: null },
     reason: "完整 task guard 已通过。",
     ...output,
-  };
+  }, retroContext);
   recordPreTaskResult(taskId, payload);
   return { exitCode: 0, payload };
 }
