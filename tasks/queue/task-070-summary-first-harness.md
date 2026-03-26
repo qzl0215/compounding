@@ -53,7 +53,7 @@
 
 ## 交付结果
 
-- 状态：doing
+- 状态：已完成
 - 体验验收结果：
   新增 summary harness、六个 wrapper、fail-safe tee、JSONL gain tracking 和 shortcut adoption 后，核心 flow 已能输出短摘要并保留 raw tee；当前实现与专项测试已通过，等待合并前的仓库级 gate 收尾。
 - 交付结果：
@@ -63,7 +63,7 @@
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 ## 分支
 

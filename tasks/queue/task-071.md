@@ -50,7 +50,7 @@
 
 ## 交付结果
 
-- 状态：doing
+- 状态：已完成
 - 体验验收结果：
   已补齐最小 kernel profile / capability_groups、`doctor` 体检入口和更稳的项目形态刷新逻辑；新老项目 fixture 能区分 `protocol_only`、`governance`，并给出下一步入口建议。
 - 交付结果：
@@ -60,7 +60,7 @@
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 ## 分支
 
