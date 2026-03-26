@@ -43,17 +43,17 @@ shared/ai-efficiency.ts,scripts/ai/lib/feature-context.ts,scripts/ai/lib/operato
 
 ## 交付结果
 
-- 状态：
+- 状态：已完成
 - 体验验收结果：
-  
+  摘要优先默认链现在同时出现在 feature-context、AI Efficiency 卡片、首页逻辑板和 operator runbook，默认入口不再依赖人工记忆。
 - 交付结果：
-  
+  已把 summary-first 默认工作流抽成共享定义，并同步到 Studio 可见入口、operator 资产生成链、bootstrap shell 分类口径和 onboarding checklist。
 - 复盘：
-  
+  adoption 提升的关键不是继续加 wrapper，而是把默认链做成同一份共享常量并让人和 AI 在相同入口里看到它。
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 ## 分支
 

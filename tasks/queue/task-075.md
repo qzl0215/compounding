@@ -66,7 +66,7 @@
 
 ## 交付结果
 
-- 状态：进行中
+- 状态：已完成
 - 体验验收结果：
   AI 默认入口现在会显式给出 summary-first commands 与 raw fallback commands；Studio `/ai-efficiency` 页面已经能同时回答覆盖面、趋势变化和任务级耗用，不再只看总节省。
 - 交付结果：
@@ -76,7 +76,7 @@
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 ## 分支
 
