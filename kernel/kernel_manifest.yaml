@@ -117,6 +117,8 @@ packs:
       - scripts/ai/review-summary.ts
       - scripts/ai/preview-summary.ts
       - scripts/ai/prod-summary.ts
+      - scripts/ai/diff-summary.ts
+      - scripts/ai/tree-summary.ts
       - scripts/ai/validate-static-summary.ts
       - scripts/ai/validate-build-summary.ts
       - scripts/ai/command-gain.ts

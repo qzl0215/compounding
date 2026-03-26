@@ -1,7 +1,9 @@
+import fs from "node:fs";
 import path from "node:path";
 import { getWorkspaceRoot } from "@/lib/workspace";
 import { readDoc } from "@/modules/docs";
 import { getDeliverySnapshot, type DeliverySnapshot } from "@/modules/delivery";
+import { buildAiEfficiencyDashboard, normalizeAiEfficiencyEvent } from "../../../../../shared/ai-efficiency";
 import { buildProjectJudgementContract } from "../../../../../shared/project-judgement";
 import type { ProjectStateSnapshot } from "./types";
 
@@ -88,6 +90,9 @@ export async function getProjectStateSnapshot(input?: { deliverySnapshot?: Deliv
       conclusion: judgement.conclusion,
       nextAction: judgement.nextAction,
     },
+    aiEfficiency: {
+      dashboard: getAiEfficiencyDashboard(workspaceRoot),
+    },
     activeStage: judgement.activeStage,
     judgement,
   };
@@ -109,4 +114,27 @@ function summarizeRuntimeAlert(
   if (prodStatus !== "running") return `production 异常：${prodReason}`;
   if (hasPendingAcceptance && devStatus !== "running") return `dev 预览异常：${devReason}`;
   return null;
+}
+
+function getAiEfficiencyDashboard(workspaceRoot: string) {
+  const eventsPath = path.join(workspaceRoot, "output", "ai", "command-gain", "events.jsonl");
+  if (!fs.existsSync(eventsPath)) {
+    return buildAiEfficiencyDashboard([]);
+  }
+
+  const events = fs
+    .readFileSync(eventsPath, "utf8")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      try {
+        return normalizeAiEfficiencyEvent(JSON.parse(line));
+      } catch {
+        return null;
+      }
+    })
+    .filter((event): event is ReturnType<typeof normalizeAiEfficiencyEvent> => Boolean(event));
+
+  return buildAiEfficiencyDashboard(events);
 }

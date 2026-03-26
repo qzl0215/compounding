@@ -1,5 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const { buildAiEfficiencyDashboard, formatEstimatedTokens } = require("../../../shared/ai-efficiency.ts");
 
 const SCHEMA_VERSION = "1";
 const RETENTION_DAYS = 90;
@@ -179,12 +180,7 @@ function recordShortcutOpportunityFromEnv(root = process.cwd(), defaults = {}) {
   });
 }
 
-function formatTokens(value) {
-  const amount = Math.max(0, Math.round(toNumber(value)));
-  if (amount >= 1_000_000) return `${(amount / 1_000_000).toFixed(1)}M`;
-  if (amount >= 1_000) return `${(amount / 1_000).toFixed(1)}K`;
-  return String(amount);
-}
+const formatTokens = formatEstimatedTokens;
 
 function aggregateByPeriod(events, getKey) {
   const buckets = new Map();
@@ -342,6 +338,7 @@ function buildCommandGainReport(root = process.cwd(), options = {}) {
     by_month: aggregateByPeriod(summaryEvents, (event) => toIsoMonth(event.timestamp)),
     by_profile: buildProfileStats(events),
     shortcut_adoption: buildShortcutStats(events),
+    dashboard: buildAiEfficiencyDashboard(events),
   };
 }
 
@@ -382,6 +379,15 @@ function formatCommandGainReportText(report) {
       } else {
         lines.push(`  - ${shortcut.shortcut_id}: ${shortcut.usage_count} uses, ~${formatTokens(shortcut.saved_tokens_est)} saved`);
       }
+    }
+  }
+
+  if (report.dashboard?.adoption?.alerts?.length) {
+    lines.push("- adoption alerts:");
+    for (const alert of report.dashboard.adoption.alerts) {
+      lines.push(
+        `  - ${alert.shortcut_id}: adoption ${alert.adoption_pct}%, missed ~${formatTokens(alert.missed_savings_est)} tokens across ${alert.opportunity_count} opportunities`
+      );
     }
   }
 

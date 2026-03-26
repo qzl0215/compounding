@@ -62,6 +62,8 @@ related_docs:
 
 - 默认 feature 上下文：`pnpm ai:feature-context -- --surface=home`
 - 带 task 的 feature 上下文：`pnpm ai:feature-context -- --taskPath=tasks/queue/task-xxx.md`
+- 看当前令牌效率：`pnpm ai:command-gain --json` 或打开 `/ai-efficiency`
+- 看改动摘要：`pnpm ai:diff:summary`；看仓结构：`pnpm ai:tree:summary`
 - 默认先看 feature packet 里的 `Project Judgement` 和 `Default Loop`，再动手改代码。
 
 ## 服务器访问面
@@ -153,5 +155,13 @@ related_docs:
 - 优先使用 production 健康摘要：`pnpm ai:prod:summary`
   - 适用场景：需要确认本地 production 运行态，而不是看完整健康检查 JSON
   - 原因：直接给出 production 状态、端口、drift 与失败原因，并统计 shortcut adoption
+  - 工具面：`codex`、`claude`、`cursor`、`opencode`
+- 优先使用改动摘要：`pnpm ai:diff:summary`
+  - 适用场景：需要看当前变更范围和主要改动文件，而不是整段 git diff
+  - 原因：聚焦文件变更数、增删行和主要改动文件，减少 diff 噪音
+  - 工具面：`codex`、`claude`、`cursor`、`opencode`
+- 优先使用仓结构摘要：`pnpm ai:tree:summary`
+  - 适用场景：需要快速了解仓库结构和热点目录，而不是展开整段文件列表
+  - 原因：聚焦目录分布、文件类型和少量代表路径，减少读仓噪音
   - 工具面：`codex`、`claude`、`cursor`、`opencode`
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

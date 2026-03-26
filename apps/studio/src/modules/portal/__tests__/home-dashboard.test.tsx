@@ -73,6 +73,11 @@ const snapshotFixture: HomeLogicMapSnapshot = {
     runtimeAlert: null,
     healthSummary: "当前无待验收版本，运行正常，可继续按当前焦点推进。",
   },
+  aiEfficiency: {
+    totalSavedLabel: "~54.8K",
+    avgSavingsLabel: "97.97%",
+    alert: null,
+  },
 };
 
 describe("home logic board", () => {

@@ -264,7 +264,86 @@ function applyStructureOnly(context) {
   pushUnique(context.reduced.highlights, [normalizeString(payload.message), normalizeString(payload.reason)]);
 }
 
+function applyProfileSpecificStructure(context) {
+  if (context.profile.profile_id === "tree_summary") {
+    const lines = context.normalized.lines
+      .filter(Boolean)
+      .map((line) => line.replace(/^\.\//, ""));
+    const topDirs = new Map();
+    const extensions = new Map();
+    for (const line of lines) {
+      const normalized = normalizeString(line);
+      if (!normalized) continue;
+      const topDir = normalized.includes("/") ? normalized.split("/")[0] : "(root)";
+      topDirs.set(topDir, (topDirs.get(topDir) || 0) + 1);
+      const ext = path.extname(normalized) || "[no_ext]";
+      extensions.set(ext, (extensions.get(ext) || 0) + 1);
+    }
+    const topDirHighlights = Array.from(topDirs.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([dir, count]) => `${dir} (${count})`);
+    const extensionHighlights = Array.from(extensions.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 4)
+      .map(([ext, count]) => `${ext} (${count})`);
+    context.reduced.summary = lines.length ? "仓库结构已摘要" : "当前范围没有可列出的文件";
+    context.reduced.stats.total_files = lines.length;
+    context.reduced.stats.top_dirs = topDirHighlights;
+    context.reduced.stats.file_types = extensionHighlights;
+    pushUnique(context.reduced.highlights, [
+      topDirHighlights.length ? `目录分布：${topDirHighlights.join(" | ")}` : "",
+      extensionHighlights.length ? `文件类型：${extensionHighlights.join(" | ")}` : "",
+      ...lines.slice(0, 5),
+    ]);
+    return true;
+  }
+
+  if (context.profile.profile_id === "diff_summary") {
+    const lines = context.normalized.lines.filter(Boolean);
+    const fileStats = new Map();
+    let additions = 0;
+    let deletions = 0;
+    let currentFile = "";
+    for (const line of lines) {
+      const diffMatch = line.match(/^diff --git a\/(.+?) b\/(.+)$/);
+      if (diffMatch) {
+        currentFile = diffMatch[2] || diffMatch[1];
+        if (!fileStats.has(currentFile)) fileStats.set(currentFile, { additions: 0, deletions: 0 });
+        continue;
+      }
+      if (!currentFile) continue;
+      if (line.startsWith("+++ ") || line.startsWith("--- ")) continue;
+      if (line.startsWith("+")) {
+        additions += 1;
+        fileStats.get(currentFile).additions += 1;
+      } else if (line.startsWith("-")) {
+        deletions += 1;
+        fileStats.get(currentFile).deletions += 1;
+      }
+    }
+    const changedFiles = Array.from(fileStats.entries())
+      .map(([file, stats]) => ({ file, ...stats, total: stats.additions + stats.deletions }))
+      .sort((a, b) => b.total - a.total);
+    context.reduced.summary = changedFiles.length ? "差异已摘要" : "当前没有未提交差异";
+    context.reduced.stats.files_changed = changedFiles.length;
+    context.reduced.stats.additions = additions;
+    context.reduced.stats.deletions = deletions;
+    pushUnique(
+      context.reduced.highlights,
+      changedFiles.slice(0, 6).map((item) => `${item.file}: +${item.additions} -${item.deletions}`)
+    );
+    return true;
+  }
+
+  return false;
+}
+
 function applyStatsExtraction(context) {
+  if (applyProfileSpecificStructure(context)) {
+    context.reduced.stats.raw_lines = context.normalized.lines.length;
+    return;
+  }
   const payload = context.parsed.json;
   if (payload && typeof payload === "object" && !Array.isArray(payload)) {
     if (!context.reduced.summary) {
@@ -311,6 +390,9 @@ function applyFailureFocus(context) {
   const payload = context.parsed.json;
   if (payload && typeof payload === "object" && payload.ok !== false && context.capture.exit_code === 0) return;
   context.reduced.raw_focus_lines = collectFailureLines(context.normalized.lines);
+  if (context.profile.profile_id === "diff_summary" && !context.reduced.raw_focus_lines.length) {
+    context.reduced.raw_focus_lines = context.reduced.highlights.slice(0, 6);
+  }
 }
 
 function applyErrorOnly(context) {
@@ -321,6 +403,9 @@ function applyErrorOnly(context) {
   }
   const source = context.reduced.raw_focus_lines.length ? context.reduced.raw_focus_lines : context.normalized.lines;
   const lines = source.filter((line) => ERROR_PATTERN.test(line));
+  if (!lines.length && context.profile.profile_id === "diff_summary" && context.reduced.highlights.length) {
+    return;
+  }
   if (!lines.length && context.capture.exit_code !== 0) {
     context.reduced.highlights = source.slice(-6);
     return;

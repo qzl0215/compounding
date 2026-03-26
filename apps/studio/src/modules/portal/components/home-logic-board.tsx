@@ -135,6 +135,29 @@ export function HomeLogicBoard({ snapshot }: { snapshot: HomeLogicMapSnapshot })
           </Card>
         </div>
       </section>
+
+      <section id="home-ai-efficiency">
+        <Card>
+          <div className="grid gap-4 xl:grid-cols-[1.15fr_1fr_1fr]">
+            <div>
+              <p className="text-xs uppercase tracking-[0.24em] text-sky-700">AI Efficiency</p>
+              <h2 className="mt-3 text-2xl font-semibold text-slate-900">令牌主要花在哪里，也主要省在哪里</h2>
+              <p className="mt-3 text-sm leading-7 text-slate-600">这块只看 summary wrapper 的估算结果，用来判断当前 AI 开发流是不是继续高效。</p>
+            </div>
+            <article className="rounded-[1.5rem] border border-emerald-200 bg-emerald-50 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-emerald-700">累计节省</p>
+              <p className="mt-3 text-xl font-semibold text-slate-900">{snapshot.aiEfficiency.totalSavedLabel}</p>
+              <p className="mt-3 text-sm leading-6 text-slate-600">平均节省率 {snapshot.aiEfficiency.avgSavingsLabel}</p>
+            </article>
+            <article className="rounded-[1.5rem] border border-slate-200 bg-white p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-500">当前提醒</p>
+              <p className="mt-3 text-sm leading-7 text-slate-700">
+                {snapshot.aiEfficiency.alert || "当前没有明显 adoption 警报，继续用 summary wrapper 保持上下文干净。"}
+              </p>
+            </article>
+          </div>
+        </Card>
+      </section>
     </div>
   );
 }

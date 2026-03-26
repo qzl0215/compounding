@@ -16,6 +16,7 @@ class SummaryHarnessCliTests(unittest.TestCase):
         self.temp_dir = tempfile.TemporaryDirectory()
         self.target = Path(self.temp_dir.name)
         shutil.copytree(ROOT / "scripts" / "ai", self.target / "scripts" / "ai")
+        shutil.copytree(ROOT / "shared", self.target / "shared")
         (self.target / "scripts" / "coord").mkdir(parents=True, exist_ok=True)
         (self.target / "scripts" / "local-runtime").mkdir(parents=True, exist_ok=True)
         (self.target / "scripts" / "fake").mkdir(parents=True, exist_ok=True)
@@ -169,6 +170,11 @@ class SummaryHarnessCliTests(unittest.TestCase):
             env=os.environ.copy(),
         )
 
+    def init_git_repo(self) -> None:
+        subprocess.run(["git", "init"], cwd=self.target, check=True, capture_output=True, text=True)
+        subprocess.run(["git", "config", "user.name", "Test User"], cwd=self.target, check=True, capture_output=True, text=True)
+        subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=self.target, check=True, capture_output=True, text=True)
+
     def read_events(self) -> list[dict]:
         events_path = self.target / "output" / "ai" / "command-gain" / "events.jsonl"
         if not events_path.exists():
@@ -292,6 +298,45 @@ class SummaryHarnessCliTests(unittest.TestCase):
         self.assertIn("test_profile", payload["profiles"])
         self.assertNotIn("expired.json", payload["teeFiles"])
         self.assertLessEqual(len(payload["teeFiles"]), 2)
+
+    def test_tree_summary_reports_directory_distribution(self) -> None:
+        (self.target / "apps" / "studio").mkdir(parents=True, exist_ok=True)
+        (self.target / "apps" / "studio" / "page.tsx").write_text("export default function Page() {}\n", encoding="utf8")
+        (self.target / "shared").mkdir(parents=True, exist_ok=True)
+        (self.target / "shared" / "feature-context.ts").write_text("export const value = 1;\n", encoding="utf8")
+        (self.target / "docs" / "guide.md").parent.mkdir(parents=True, exist_ok=True)
+        (self.target / "docs" / "guide.md").write_text("# guide\n", encoding="utf8")
+
+        completed = self.run_script("scripts/ai/tree-summary.ts")
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertIn("summary: 仓库结构已摘要", completed.stdout)
+        self.assertIn("total_files=", completed.stdout)
+        self.assertIn("目录分布：", completed.stdout)
+
+    def test_diff_summary_reports_changed_files(self) -> None:
+        self.init_git_repo()
+        target_file = self.target / "README.md"
+        target_file.write_text("line 1\nline 2\n", encoding="utf8")
+        subprocess.run(["git", "add", "README.md"], cwd=self.target, check=True, capture_output=True, text=True)
+        subprocess.run(["git", "commit", "-m", "baseline"], cwd=self.target, check=True, capture_output=True, text=True)
+        target_file.write_text("line 1\nline 2 updated\nline 3\n", encoding="utf8")
+
+        completed = self.run_script("scripts/ai/diff-summary.ts")
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertIn("summary: 差异已摘要", completed.stdout)
+        self.assertIn("files_changed=1", completed.stdout)
+        self.assertIn("README.md: +2 -1", completed.stdout)
+
+    def test_command_gain_json_includes_dashboard(self) -> None:
+        self.run_script("scripts/ai/validate-static-summary.ts")
+        report = self.run_script("scripts/ai/command-gain.ts", "--json")
+        payload = json.loads(report.stdout)
+
+        self.assertIn("dashboard", payload)
+        self.assertIn("overview", payload["dashboard"])
+        self.assertIn("consumption", payload["dashboard"])
+        self.assertIn("savings", payload["dashboard"])
+        self.assertIn("adoption", payload["dashboard"])
 
 
 if __name__ == "__main__":
