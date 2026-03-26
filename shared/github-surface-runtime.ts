@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { buildGithubSurfaceReadinessReport, type GithubSurfaceReadinessReport } from "./github-surface";
+import { buildGithubSurfaceReadinessReport, type GithubSurfaceReadinessReport } from "./github-surface.ts";
 
 type GithubSurfaceContractSnapshot = {
   enabled: boolean;
