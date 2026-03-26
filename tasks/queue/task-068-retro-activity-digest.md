@@ -52,9 +52,9 @@
 
 ## 交付结果
 
-- 状态：doing
+- 状态：done
 - 体验验收结果：
-  `pnpm preflight -- --taskId=t-068` 已能带出 retro hints；阶段 activity、24 小时 compact 和重复 blocker candidate 都已通过 coord/AI 侧定向测试。
+  `pnpm validate:build` 已通过，`pnpm coord:review:run -- --taskId=t-068` 已通过全部 reviewer 并仅返回高风险人工确认建议；按当前仓库策略继续并入 `main` 后，retro hints、activity trace、24 小时 compact 和重复 blocker candidate 链路均已完成验收。
 - 交付结果：
   新增 `task-activity` 轻量轨迹层和 `ai:retro-candidates` 生成器；preflight/task/review/release 入口会自动写阶段事件，长期只把聚合后的 `iteration_digest` 留在 companion，重复 blocker 只落成派生产物候选。
 - 复盘：
@@ -62,11 +62,11 @@
 
 ## 当前模式
 
-工程执行
+发布复盘
 
 ## 分支
 
-`codex/task-068-retro-activity-digest`
+`main`
 
 ## 关联模块
 
