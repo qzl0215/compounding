@@ -106,6 +106,7 @@ function mergeCompanion(existing, parsed) {
       decision_cards: mergeArtifactList(current.artifacts?.decision_cards, next.artifacts?.decision_cards, "path"),
       diff_summaries: mergeArtifactList(current.artifacts?.diff_summaries, next.artifacts?.diff_summaries, "path"),
       handoff_notes: mergeArtifactList(current.artifacts?.handoff_notes, next.artifacts?.handoff_notes, "recorded_at"),
+      iteration_digest: current.artifacts?.iteration_digest || next.artifacts?.iteration_digest || null,
       review_notes: mergeArtifactList(current.artifacts?.review_notes, next.artifacts?.review_notes, "recorded_at"),
       release_notes: mergeArtifactList(current.artifacts?.release_notes, next.artifacts?.release_notes, "release_id"),
       search_evidence: mergeArtifactList(current.artifacts?.search_evidence, next.artifacts?.search_evidence, "recorded_at"),

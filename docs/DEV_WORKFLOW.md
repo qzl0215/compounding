@@ -2,7 +2,7 @@
 title: DEV_WORKFLOW
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-25
+last_reviewed_at: 2026-03-26
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -31,6 +31,7 @@ related_docs:
 - 动手前统一入口是 `pnpm preflight`。
 - `light` 改动默认只执行基础 gate；`structural / release` task 动手前默认跑 `pnpm preflight -- --taskId=t-xxx`。
 - `coord:check:pre-task` 只保留为兼容别名，输出 contract 与 `pnpm preflight -- --taskId=t-xxx` 一致。
+- 完整 task guard 输出会附带 `iteration_digest_path / retro_candidates_path / retro_hints`；新 Agent 开工前先看上一轮时间主要耗在哪个阶段、最近 blocker 是什么、有没有现成 shortcut。
 - 若属于 unfamiliar pattern / infra / runtime capability，先用 `coord:task:search` 记录最小 search evidence。
 - 完整 task guard 默认检查：
   - 工作区是否干净
@@ -48,6 +49,7 @@ related_docs:
 - planning 只留在 `memory/project/operating-blueprint.md`；边界、范围外、完成定义和约束清楚后，再用 `scripts/ai/create-task.ts` 创建执行 task。
 - 新建 task 的人类标题必须直接写在中文摘要里，不要把 `task-xxx`、英文缩写或英文路径当标题。
 - 计划评审、release 复盘或当前没有更高优先级产品任务时，可运行 `pnpm ai:cleanup-candidates` 暴露小型熵减候选；报告只作为临时输入，不回写成新的状态源。
+- 若要集中看重复耗时/阻塞模式，可运行 `pnpm ai:retro-candidates`；它只扫描 companion digest 生成候选，不会直接写 `memory/experience/*`。
 
 ## 执行链
 
@@ -55,6 +57,7 @@ related_docs:
 - 进入模块和运行时边界前，再补 `docs/ARCHITECTURE.md`。
 - 需要上下文压缩时，用 `scripts/ai/build-context.ts`。
 - 动手前先跑 `pnpm preflight`；若已绑定 `structural / release` task，则跑 `pnpm preflight -- --taskId=t-xxx`。
+- `coord:task:handoff`、`coord:review:run`、`release:prepare`、`accept-dev-release`、`reject-dev-release` 与 `rollback-release` 会自动写阶段 activity；raw trace 24 小时后 compact 进 companion digest。
 - 小而边界清楚的 task，默认做到最小完整闭环；若边界重新变大，退回 plan。
 
 ## 交付链

@@ -1,5 +1,6 @@
 const path = require("node:path");
 const { recordReleaseHandoff } = require("../coord/lib/companion-lifecycle.ts");
+const { finishActiveStage, recordBlocker, startActiveStage, startWaitStage } = require("../coord/lib/task-activity.ts");
 const {
   changeSummary,
   currentActiveRelease,
@@ -64,6 +65,14 @@ function main() {
   if (!["dev", "prod"].includes(channel)) {
     console.log(JSON.stringify({ ok: false, message: `Unsupported channel: ${channel}` }));
     process.exit(1);
+  }
+
+  if (primaryTaskId) {
+    startActiveStage(primaryTaskId, "release_prepare", {
+      source: "release:prepare",
+      status: "running",
+      reason: `开始准备 ${channel} release。`,
+    });
   }
 
   const layout = ensureLayout();
@@ -202,6 +211,29 @@ function main() {
       notes: [error instanceof Error ? error.message : "failed to prepare release"],
     };
     message = channel === "dev" ? "dev 预览准备失败。" : "Release prepare failed.";
+  }
+
+  if (primaryTaskId) {
+    if (!ok) {
+      recordBlocker(primaryTaskId, "release_prepare", {
+        source: "release:prepare",
+        status: "blocked",
+        reason: message,
+        relatedDocs: ["docs/DEV_WORKFLOW.md"],
+      });
+    }
+    finishActiveStage(primaryTaskId, "release_prepare", {
+      source: "release:prepare",
+      status: ok ? "prepared" : "blocked",
+      reason: message,
+    });
+    if (ok && channel === "dev") {
+      startWaitStage(primaryTaskId, "acceptance_wait", {
+        source: "release:prepare",
+        status: "pending",
+        reason: "dev 预览已生成，等待验收。",
+      });
+    }
   }
 
   console.log(

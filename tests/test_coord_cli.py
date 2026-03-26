@@ -274,6 +274,58 @@ console.log(JSON.stringify({{
         self.assertNotIn("companion_phase", raw)
         self.assertNotIn("summary_artifacts", raw)
 
+    def test_task_activity_compacts_expired_trace_into_iteration_digest(self) -> None:
+        script_root = ROOT.as_posix()
+        payload = self.run_node(
+            f"""
+const fs = require("node:fs");
+const path = require("node:path");
+const {{ ensureCompanion, readCompanion }} = require("{script_root}/scripts/coord/lib/task-meta.ts");
+const {{
+  compactExpiredActivity,
+  recordBlocker,
+  startActiveStage,
+  finishActiveStage,
+}} = require("{script_root}/scripts/coord/lib/task-activity.ts");
+ensureCompanion("t-999");
+startActiveStage("t-999", "preflight", {{
+  source: "test:preflight",
+  recordedAt: "2026-03-20T00:00:00.000Z",
+}});
+recordBlocker("t-999", "preflight", {{
+  source: "test:preflight",
+  recordedAt: "2026-03-20T00:00:05.000Z",
+  reason: "工作区未清理",
+  status: "blocked",
+}});
+finishActiveStage("t-999", "preflight", {{
+  source: "test:preflight",
+  recordedAt: "2026-03-20T00:00:05.000Z",
+  status: "blocked",
+  reason: "工作区未清理",
+}});
+compactExpiredActivity({{ now: "2026-03-22T01:00:00.000Z" }});
+const activityDir = path.join(process.cwd(), "output", "agent_session", "task-activity", "task-999-sample");
+const remaining = fs.existsSync(activityDir)
+  ? fs.readdirSync(activityDir).filter((entry) => entry.endsWith(".jsonl"))
+  : [];
+console.log(JSON.stringify({{
+  companion: readCompanion("t-999"),
+  remaining,
+}}, null, 2));
+"""
+        )
+
+        digest = payload["companion"]["artifacts"]["iteration_digest"]
+        self.assertEqual(payload["remaining"], [])
+        self.assertEqual(digest["attempt_count"], 1)
+        self.assertEqual(digest["active_ms_by_stage"]["preflight"], 5000)
+        self.assertEqual(digest["top_blockers"][0]["reason"], "工作区未清理")
+        self.assertEqual(digest["top_blockers"][0]["repeat_count"], 1)
+        self.assertEqual(digest["top_blockers"][0]["lost_time_ms"], 5000)
+        self.assertEqual(digest["last_attempt"]["dominant_stage"], "preflight")
+        self.assertTrue(any("最近一次主要 blocker" in hint for hint in digest["next_agent_hints"]))
+
     def test_release_context_prefers_companion_release_handoff(self) -> None:
         script_root = ROOT.as_posix()
         payload = self.run_node(
@@ -460,6 +512,86 @@ console.log(JSON.stringify(readCompanion("t-999"), null, 2));
         self.assertEqual(sorted(preflight_payload["runtime_check"].keys()), sorted(legacy_payload["runtime_check"].keys()))
         self.assertEqual(sorted(preflight_payload["scope_check"].keys()), sorted(legacy_payload["scope_check"].keys()))
 
+    def test_preflight_task_output_includes_retro_hints(self) -> None:
+        self.install_preflight_fixtures()
+        self.init_git_repo()
+
+        self.run_node(
+            f"""
+const fs = require("node:fs");
+const path = require("node:path");
+const {{ ensureCompanion, updateCompanion }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-meta.ts");
+ensureCompanion("task-999-sample");
+updateCompanion("task-999-sample", (companion) => {{
+  companion.artifacts.iteration_digest = {{
+    updated_at: "2026-03-21T00:00:00.000Z",
+    attempt_count: 2,
+    active_ms_by_stage: {{ review: 2000 }},
+    wait_ms_by_stage: {{ review_wait: 9000 }},
+    top_blockers: [
+      {{
+        signature: "preflight:工作区未清理",
+        stage: "preflight",
+        reason: "工作区未清理",
+        repeat_count: 2,
+        lost_time_ms: 5000,
+        related_docs: ["AGENTS.md"],
+        why_it_repeats: "task 合同和 worktree 没有先收口。",
+        suggested_shortcut: "先单独提交 task 合同。",
+        promotion_hint: "可升格成 runbook。",
+      }}
+    ],
+    last_attempt: {{
+      attempt_id: "attempt-1",
+      started_at: "2026-03-21T00:00:00.000Z",
+      ended_at: "2026-03-21T00:00:11.000Z",
+      dominant_stage: "review_wait",
+      dominant_blocker: "工作区未清理",
+      summary: "主要耗时在 review_wait；主要阻塞是 工作区未清理",
+    }},
+    next_agent_hints: ["上一轮时间主要耗在 review_wait。"],
+  }};
+  return companion;
+}});
+const retroDir = path.join(process.cwd(), "output", "ai", "retro-candidates");
+fs.mkdirSync(retroDir, {{ recursive: true }});
+fs.writeFileSync(
+  path.join(retroDir, "latest.json"),
+  JSON.stringify({{
+    ok: true,
+    candidate_count: 1,
+    candidates: [
+      {{
+        candidate_id: "retro-001-preflight",
+        signature: "preflight:工作区未清理",
+        repeat_count: 2,
+        affected_tasks: ["t-999"],
+        lost_time_ms: 5000,
+        why_it_repeats: "task 合同和 worktree 没有先收口。",
+        suggested_shortcut: "先单独提交 task 合同。",
+        related_docs: ["AGENTS.md"],
+        promotion_hint: "可升格成 runbook。",
+      }}
+    ],
+  }}, null, 2)
+);
+console.log(JSON.stringify({{ ok: true }}));
+"""
+        )
+        subprocess.run(["git", "add", "."], cwd=self.target, check=True)
+        subprocess.run(["git", "commit", "-m", "seed retro context"], cwd=self.target, check=True)
+
+        completed = self.run_script("scripts/coord/preflight.ts", "--taskId=task-999-sample")
+        payload = json.loads(completed.stdout)
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertTrue(payload["ok"])
+        self.assertTrue(payload["iteration_digest_path"].endswith("agent-coordination/tasks/task-999-sample.json"))
+        self.assertTrue(payload["retro_candidates_path"].endswith("output/ai/retro-candidates/latest.json"))
+        self.assertTrue(any("review_wait" in hint for hint in payload["retro_hints"]))
+        self.assertTrue(any("工作区未清理" in hint for hint in payload["retro_hints"]))
+        self.assertTrue(any("shortcut" in hint for hint in payload["retro_hints"]))
+
     def test_coord_task_start_uses_unified_preflight_entry(self) -> None:
         self.install_preflight_fixtures()
         self.init_git_repo()
@@ -471,6 +603,52 @@ console.log(JSON.stringify(readCompanion("t-999"), null, 2));
         self.assertTrue(payload["ok"])
         self.assertEqual(payload["guard_level"], "task")
         self.assertEqual(payload["task_id"], "task-999-sample")
+
+    def test_task_handoff_transitions_execution_into_review_wait(self) -> None:
+        self.init_git_repo()
+        self.run_node(
+            f"""
+const {{ ensureCompanion }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-meta.ts");
+const {{ startActiveStage }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-activity.ts");
+ensureCompanion("task-999-sample");
+startActiveStage("task-999-sample", "execution", {{
+  source: "test:start",
+}});
+console.log(JSON.stringify({{ ok: true }}));
+"""
+        )
+
+        completed = self.run_script("scripts/coord/task.ts", "handoff", "--taskId=task-999-sample")
+        payload = json.loads(completed.stdout)
+        activity = self.run_node(
+            """
+const fs = require("node:fs");
+const path = require("node:path");
+const dir = path.join(process.cwd(), "output", "agent_session", "task-activity", "task-999-sample");
+const current = JSON.parse(fs.readFileSync(path.join(dir, "current.json"), "utf8"));
+const trace = fs
+  .readdirSync(dir)
+  .filter((entry) => entry.endsWith(".jsonl"))
+  .sort()
+  .flatMap((entry) =>
+    fs
+      .readFileSync(path.join(dir, entry), "utf8")
+      .trim()
+      .split(/\\r?\\n/)
+      .filter(Boolean)
+      .map((line) => JSON.parse(line))
+  );
+console.log(JSON.stringify({ current, trace }, null, 2));
+"""
+        )
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertTrue(payload["ok"])
+        self.assertEqual(activity["current"]["open_stage"]["stage"], "review_wait")
+        self.assertEqual(activity["trace"][-2]["event_type"], "phase_finished")
+        self.assertEqual(activity["trace"][-2]["stage"], "execution")
+        self.assertEqual(activity["trace"][-1]["event_type"], "wait_started")
+        self.assertEqual(activity["trace"][-1]["stage"], "review_wait")
 
     def test_validate_task_git_link_ignores_unchanged_historical_task_noise(self) -> None:
         scripts_dir = self.target / "scripts"

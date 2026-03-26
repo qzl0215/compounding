@@ -8,21 +8,21 @@ related_docs:
   - memory/project/roadmap.md
   - memory/project/current-state.md
   - docs/DEV_WORKFLOW.md
-last_reviewed_at: 2026-03-25
+last_reviewed_at: 2026-03-26
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 运营蓝图
 
 ## 需求总览
 
-继续把结构收口落到真正会制造熵增的边界上：`t-058` 与 `t-059` 已经把 CLI 外壳和 release/task 状态链收正，`t-061` 已把 `portal` 读模型聚合层收成薄 barrel，`t-062` 已把首页 shell 收成薄入口，`t-064` 已把首页从 `Kernel / Project` 工程视角改成人类可扫读的项目逻辑态势图；当前主线转向跨页面唯一 snapshot 与 release 单一状态机，目标仍是减少对象歧义和重复外壳，而不是增加新框架。
+继续把结构收口落到真正会制造熵增的边界上：`t-058` 与 `t-059` 已经把 CLI 外壳和 release/task 状态链收正，`t-061` 已把 `portal` 读模型聚合层收成薄 barrel，`t-062` 已把首页 shell 收成薄入口，`t-064` 已把首页从 `Kernel / Project` 工程视角改成人类可扫读的项目逻辑态势图；`t-063` 已把对外门禁收成 `pnpm preflight`，`t-068` 已把耗时/弯路复盘先收成轻量 TTL 轨迹、companion digest 和候选派生产物。当前主线回到派生产物语义收口、跨页面唯一 snapshot 与 release 单一状态机，目标仍是减少对象歧义和重复外壳，而不是增加新框架。
 `t-065` 已完成：把 Studio 整体切到浅色实验室风格，统一首页、任务、证据和发布页的底色、卡片、导航与控件语气，避免局部改版继续把控制台感重新带回首屏。
 `t-066` 已完成：高频模块已补成可机读 feature 合同，`build-context` 已升级成 feature 入口，首页、任务页、发布页也开始读取同一份项目状态摘要；diff-aware 选测已经收成 `required / recommended`，AI 加功能时不必再手工拼第一轮上下文。
 
 ## 待思考
 
 - 首页逻辑图还需要多大粒度的节点和摘要，才能真正帮助人快速判断项目态势，而不是换一层新的说明书
-- preflight / pre-task / basic gate 应怎样彻底收成一个对外入口，而不打断 companion、scope guard 和 decision card 现有 contract
+- `code_index/*`、`output/*`、coordination 产物和 runtime 事实应怎样进一步收成统一的“主源 / 派生物”语义，而不是继续保留 4 套名字
 - `fix-first` 的 gate registry 后续是否还值得进一步数据化，还是保持当前轻量脚本更划算
 - task 模板渲染与经验模板渲染是否还需要再统一一层，还是只共享 task 合同底座已经足够
 
@@ -32,7 +32,7 @@ last_reviewed_at: 2026-03-25
 - 跨页面唯一 snapshot：把首页、任务页、发布页的主摘要收成单一读链，避免继续各自翻译
 - release 单一状态机：继续清掉 task / release / runtime 之间残余的状态兼容壳
 - feature context 第二轮：根据第一批模块合同和 smoke 结果，再收短 `build-context` / `preflight` / `SelectedChecks` 的默认入口
-- `t-063` 完成后，按既定顺序继续推进派生产物语义收口、跨页面唯一 snapshot 和 release 单一状态机
+- `t-068` 完成后，按既定顺序继续推进派生产物语义收口、跨页面唯一 snapshot 和 release 单一状态机
 - `README`、文档门户和 bootstrap manifest 怎样继续表达主干 / 附录分层，而不增加新文档族
 - 第二个老项目 attach 样本应怎样选择，才能尽快验证 `project_brief / bootstrap_report / proposal` 在非本仓库上的复用性
 - 新项目最小 shell 里哪些协议入口应继续压缩，避免 bootstrap 又回到“复制整套仓库”的旧路
@@ -73,7 +73,8 @@ last_reviewed_at: 2026-03-25
 - `t-064`：把首页重构为项目逻辑态势图，移除 `Kernel / Project` 工程视角并让逻辑节点可点击（已完成）
 - `t-065`：把 Studio 整体切到浅色实验室风格，统一首屏、列表、文档和发布页的视觉语气（已完成）
 - `t-066`：给高频模块补 feature 合同，把 `build-context` 升级成 feature 入口，引入共享项目状态摘要与 required / recommended 选测（已完成）
-- `t-063`：统一 preflight 入口，让 `pnpm preflight` 成为唯一对外推荐门禁，并让完整 task guard 不再依赖当前 diff 误判（进行中）
+- `t-063`：统一 preflight 入口，让 `pnpm preflight` 成为唯一对外推荐门禁，并让完整 task guard 不再依赖当前 diff 误判（已完成）
+- `t-068`：记录 structural/release task 的阶段耗时与重复 blocker，把 raw trace 压成 companion digest 与 retro candidate（已完成）
 
 ## 下一步对话
 

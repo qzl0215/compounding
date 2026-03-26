@@ -8,6 +8,7 @@ const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 const { ensureCompanion } = require("./lib/task-meta.ts");
 const { recordCreated, recordHandoff, recordSearchEvidence } = require("./lib/companion-lifecycle.ts");
+const { finishActiveStageIfOpen, recordNote, startWaitStage } = require("./lib/task-activity.ts");
 
 const ROOT = process.cwd();
 const PREFLIGHT_ENTRY = path.join(__dirname, "preflight.ts");
@@ -119,6 +120,16 @@ function handoff(args) {
     branch_name: branchName || comp.companion.branch_name,
     git_head: gitHead || null,
   });
+  finishActiveStageIfOpen(taskId, "execution", {
+    source: "coord:task:handoff",
+    status: "handoff_ready",
+    reason: "工程执行已交接，等待 review。",
+  });
+  startWaitStage(taskId, "review_wait", {
+    source: "coord:task:handoff",
+    status: "waiting",
+    reason: "已交接，等待 review 开始。",
+  });
   console.log(
     JSON.stringify({
       ok: true,
@@ -149,6 +160,11 @@ function search(args) {
     scope: args.scope || "unfamiliar_pattern",
     sources,
     conclusion,
+  });
+  recordNote(taskId, "search_evidence", {
+    source: "coord:task:search",
+    status: "recorded",
+    reason: conclusion,
   });
   console.log(
     JSON.stringify({

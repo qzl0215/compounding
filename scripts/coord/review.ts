@@ -9,6 +9,7 @@ const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 const { loadManifest } = require("./lib/manifest.ts");
 const { recordReviewResult } = require("./lib/companion-lifecycle.ts");
+const { finishActiveStage, finishWaitStageIfOpen, recordBlocker, startActiveStage } = require("./lib/task-activity.ts");
 
 const ROOT = process.cwd();
 const LOCK_REGISTRY_PATH = path.join(ROOT, "agent-coordination", "locks", "lock-registry.json");
@@ -190,6 +191,19 @@ function main() {
   const args = parseArgs();
   const taskId = args.taskId;
 
+  if (taskId) {
+    finishWaitStageIfOpen(taskId, "review_wait", {
+      source: "coord:review:run",
+      status: "entered_review",
+      reason: "review 已开始。",
+    });
+    startActiveStage(taskId, "review", {
+      source: "coord:review:run",
+      status: "running",
+      reason: "进入 review 阶段。",
+    });
+  }
+
   const scopeResult = runScopeReviewer(taskId);
   const changedFiles = scopeResult.raw?.actual_files || [];
   const lockResult = runLockReviewer(taskId, changedFiles);
@@ -218,6 +232,22 @@ function main() {
   };
 
   if (taskId) {
+    if (!allPass) {
+      recordBlocker(taskId, "review", {
+        source: "coord:review:run",
+        status: "blocked",
+        reason: reviewers
+          .filter((reviewer) => !reviewer.pass)
+          .map((reviewer) => reviewer.name)
+          .join(", "),
+        relatedDocs: ["docs/DEV_WORKFLOW.md"],
+      });
+    }
+    finishActiveStage(taskId, "review", {
+      source: "coord:review:run",
+      status: allPass ? mergeOut.merge_decision : "blocked",
+      reason: mergeOut.merge_decision_explanation || (allPass ? "review 通过。" : "review 未通过。"),
+    });
     recordReviewResult(taskId, output);
   }
 

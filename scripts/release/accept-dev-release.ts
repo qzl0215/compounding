@@ -1,5 +1,6 @@
 const childProcess = require("node:child_process");
 const { recordReleaseHandoff } = require("../coord/lib/companion-lifecycle.ts");
+const { finishWaitStageIfOpen, recordBlocker } = require("../coord/lib/task-activity.ts");
 const {
   clearChannelSymlink,
   clearPendingDevRelease,
@@ -40,6 +41,7 @@ function runGit(args) {
 }
 
 const releaseId = parseArg("--release");
+let activityTaskId = null;
 
 try {
   const result = withReleaseLock(() => {
@@ -47,6 +49,7 @@ try {
     if (!pending || pending.channel !== "dev" || pending.acceptance_status !== "pending") {
       throw new Error("当前没有可验收的 pending dev 预览。");
     }
+    activityTaskId = pending.primary_task_id || null;
 
     const originalBranch = runGit(["branch", "--show-current"]);
     runGit(["checkout", "main"]);
@@ -141,7 +144,22 @@ try {
       registry: result.registry,
     })
   );
+  if (activityTaskId) {
+    finishWaitStageIfOpen(activityTaskId, "acceptance_wait", {
+      source: "release:accept-dev",
+      status: "accepted",
+      reason: "dev 预览已验收并晋升到 main。",
+    });
+  }
 } catch (error) {
+  if (activityTaskId) {
+    recordBlocker(activityTaskId, "acceptance_wait", {
+      source: "release:accept-dev",
+      status: "failed",
+      reason: error instanceof Error ? error.message : "Failed to accept dev release.",
+      relatedDocs: ["docs/DEV_WORKFLOW.md"],
+    });
+  }
   console.log(
     JSON.stringify({
       ok: false,

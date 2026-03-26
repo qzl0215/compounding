@@ -14,6 +14,7 @@ const {
   withReleaseLock,
 } = require("./lib.ts");
 const { stabilizeLocalProdRuntime } = require("./prod-runtime-stability.ts");
+const { finishActiveStage, recordBlocker, startActiveStage } = require("../coord/lib/task-activity.ts");
 
 function parseArg(name) {
   const index = process.argv.indexOf(name);
@@ -24,6 +25,7 @@ function parseArg(name) {
 }
 
 const releaseId = parseArg("--release");
+let activityTaskId = null;
 
 if (!releaseId) {
   console.error(JSON.stringify({ ok: false, message: "Missing --release <release-id>." }));
@@ -34,6 +36,14 @@ try {
   const result = withReleaseLock(() => {
     const previous = currentActiveRelease();
     const target = readManifest(releaseId);
+    activityTaskId = target.primary_task_id || previous?.primary_task_id || null;
+    if (activityTaskId) {
+      startActiveStage(activityTaskId, "rollback", {
+        source: "release:rollback",
+        status: "running",
+        reason: `开始回滚到 ${releaseId}。`,
+      });
+    }
     if (!target.release_path) {
       throw new Error(`Release ${releaseId} has no release path.`);
     }
@@ -60,7 +70,27 @@ try {
       registry: result.registry,
     })
   );
+  if (activityTaskId) {
+    finishActiveStage(activityTaskId, "rollback", {
+      source: "release:rollback",
+      status: "rolled_back",
+      reason: `已回滚到 ${releaseId}。`,
+    });
+  }
 } catch (error) {
+  if (activityTaskId) {
+    recordBlocker(activityTaskId, "rollback", {
+      source: "release:rollback",
+      status: "failed",
+      reason: error instanceof Error ? error.message : "Rollback failed.",
+      relatedDocs: ["docs/DEV_WORKFLOW.md"],
+    });
+    finishActiveStage(activityTaskId, "rollback", {
+      source: "release:rollback",
+      status: "failed",
+      reason: error instanceof Error ? error.message : "Rollback failed.",
+    });
+  }
   console.log(
     JSON.stringify({
       ok: false,

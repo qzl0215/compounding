@@ -28,6 +28,7 @@
     "ai:validate-assets": "node --experimental-strip-types scripts/ai/validate-knowledge-assets.ts",
     "ai:validate-assets:strict": "node --experimental-strip-types scripts/ai/validate-knowledge-assets.ts --strict",
     "ai:cleanup-candidates": "node --experimental-strip-types scripts/ai/cleanup-candidates.ts",
+    "ai:retro-candidates": "node --experimental-strip-types scripts/ai/retro-candidates.ts",
     "validate:static": "pnpm lint && pnpm ai:scan-health && pnpm ai:validate-trace && pnpm ai:validate-task-git && pnpm ai:validate-assets",
     "validate:static:strict": "pnpm lint && pnpm ai:scan-health:strict && pnpm ai:validate-trace && pnpm ai:validate-task-git && pnpm ai:validate-assets:strict",
     "validate:build": "pnpm test && pnpm build && pnpm bootstrap:audit",
