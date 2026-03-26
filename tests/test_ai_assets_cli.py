@@ -20,7 +20,9 @@ class AiAssetsCliTests(unittest.TestCase):
         shutil.copytree(ROOT / "code_index", self.target / "code_index")
         shutil.copytree(ROOT / "bootstrap", self.target / "bootstrap")
         shutil.copytree(ROOT / "schemas", self.target / "schemas")
+        shutil.copytree(ROOT / "shared", self.target / "shared")
         shutil.copytree(ROOT / "scripts" / "ai", self.target / "scripts" / "ai")
+        shutil.copytree(ROOT / "scripts" / "coord", self.target / "scripts" / "coord")
         shutil.copytree(ROOT / "scripts" / "release", self.target / "scripts" / "release")
         shutil.copytree(ROOT / "tasks" / "templates", self.target / "tasks" / "templates")
         shutil.copy(ROOT / "package.json", self.target / "package.json")
@@ -199,6 +201,8 @@ class AiAssetsCliTests(unittest.TestCase):
         self.assertIn("bootstrap/project_operator.yaml", (self.target / "docs" / "OPERATOR_RUNBOOK.md").read_text(encoding="utf8"))
         self.assertIn("AGENTS.md", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
         self.assertIn("pnpm ai:preflight:summary", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
+        self.assertIn("三模式入口", (self.target / "docs" / "OPERATOR_RUNBOOK.md").read_text(encoding="utf8"))
+        self.assertIn("pnpm ai:feature-context -- --surface=home", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
 
     def test_validate_operator_contract_rejects_secret_like_refs(self) -> None:
         target = self.target / "bootstrap" / "project_operator.yaml"
@@ -226,6 +230,15 @@ class AiAssetsCliTests(unittest.TestCase):
 
         self.assertNotEqual(completed.returncode, 0)
         self.assertTrue(any("Agent shortcut mode must be suggest" in error for error in payload["errors"]))
+
+    def test_validate_judgement_contract_smoke(self) -> None:
+        completed = self.run_script("scripts/ai/validate-judgement-contract.ts")
+        payload = json.loads(completed.stdout)
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["layer"], "judgement-contract")
+        self.assertIn("home", payload["details"]["checked_surfaces"])
 
 
 if __name__ == "__main__":

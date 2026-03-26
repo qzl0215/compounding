@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { getDeliverySnapshot } from "@/modules/delivery";
-import { getProjectStateSnapshot } from "@/modules/project-state";
+import { getProjectStateSnapshot, ProjectJudgementStrip } from "@/modules/project-state";
 import { DiffAwarePanel } from "@/modules/delivery/components/diff-aware-panel";
 import { getManagementAccessState, getRuntimeStatusExplanation } from "@/modules/releases";
 import type { LocalRuntimeStatus } from "@/modules/releases";
@@ -60,6 +60,10 @@ export default async function ReleasesPage() {
             },
           ]}
         />
+      </section>
+
+      <section id="release-judgement">
+        <ProjectJudgementStrip judgement={projectState.judgement} />
       </section>
 
       <section id="runtime-status">

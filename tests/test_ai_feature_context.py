@@ -22,6 +22,10 @@ class FeatureContextCliTests(unittest.TestCase):
         self.assertEqual(payload["target_surface"], "home")
         self.assertIn("portal", payload["related_modules"])
         self.assertIn("memory/project/roadmap.md", payload["must_read"])
+        self.assertIn("project_judgement", payload)
+        self.assertIn("default_flow", payload)
+        self.assertTrue(payload["default_flow"]["entry_command"].startswith("pnpm ai:feature-context"))
+        self.assertTrue(payload["project_judgement"]["recommendedSurface"]["href"].startswith("/"))
 
     def test_releases_route_context_smoke(self) -> None:
         payload = self.run_feature_context("--route=/releases")
@@ -30,6 +34,8 @@ class FeatureContextCliTests(unittest.TestCase):
         self.assertIn("delivery", payload["related_modules"])
         self.assertIn("docs/DEV_WORKFLOW.md", payload["must_read"])
         self.assertGreater(len(payload["required_checks"]), 0)
+        self.assertGreater(len(payload["project_judgement"]["overallSummary"]), 0)
+        self.assertIn("next_action", payload["default_flow"])
 
     def test_task_overlay_context_smoke(self) -> None:
         payload = self.run_feature_context("--taskPath=tasks/queue/task-066-feature-context-and-shared-state.md")
@@ -37,3 +43,4 @@ class FeatureContextCliTests(unittest.TestCase):
         self.assertEqual(payload["task_overlay"]["taskId"], "task-066-feature-context-and-shared-state")
         self.assertIn("tasks/queue/task-066-feature-context-and-shared-state.md", payload["must_read"])
         self.assertIn("tasks/queue/task-066-feature-context-and-shared-state.md", payload["likely_files"])
+        self.assertIn("tasks/queue/task-066-feature-context-and-shared-state.md", payload["default_flow"]["entry_command"])

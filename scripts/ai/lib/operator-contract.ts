@@ -321,6 +321,8 @@ function renderRunbook(contract) {
     `- create task：\`${normalizeString(contract.toolchain_commands?.create_task)}\``,
     `- review：\`${normalizeString(contract.toolchain_commands?.review)}\``,
     "",
+    ...renderModeGuide(contract),
+    ...renderAiFeatureEntry(contract),
     "## 服务器访问面",
     "",
     serverSections.trim(),
@@ -377,6 +379,44 @@ function renderShortcutLines(contract) {
   );
 }
 
+function hasAiExecPack(contract) {
+  const requiredPacks = Array.isArray(contract.project?.required_packs) ? contract.project.required_packs : [];
+  return requiredPacks.includes("ai_exec_pack");
+}
+
+function renderModeGuide(contract) {
+  const attach = normalizeString(contract.toolchain_commands?.bootstrap_attach);
+  const doctor = normalizeString(contract.toolchain_commands?.bootstrap_doctor);
+  const audit = normalizeString(contract.toolchain_commands?.bootstrap_audit);
+  return [
+    "## 三模式入口",
+    "",
+    "- `cold_start`：新项目冷启动",
+    `  - 推荐命令：\`python3 scripts/init_project_compounding.py bootstrap --target . --mode=cold_start\``,
+    "  - 适用：空仓或新仓，先装协议层、operator 契约和 repo-local AI 入口。",
+    "- `normalize`：老项目规范化",
+    `  - 推荐命令：\`${attach} --mode=normalize\``,
+    "  - 适用：已有业务代码，但还没有统一协议、operator contract 和 AI 入口。",
+    "- `ai_upgrade`：老项目 AI 底座升级",
+    `  - 推荐命令：\`${attach} --mode=ai_upgrade\``,
+    `  - 先自检：\`${doctor} --mode=ai_upgrade\` / \`${audit}\``,
+    "  - 适用：项目已准备长期按 AI feature 流开发，需要 preflight/task/review 与 summary harness。",
+    "",
+  ];
+}
+
+function renderAiFeatureEntry(contract) {
+  if (!hasAiExecPack(contract)) return [];
+  return [
+    "## AI 默认入口",
+    "",
+    "- 默认 feature 上下文：`pnpm ai:feature-context -- --surface=home`",
+    "- 带 task 的 feature 上下文：`pnpm ai:feature-context -- --taskPath=tasks/queue/task-xxx.md`",
+    "- 默认先看 feature packet 里的 `Project Judgement` 和 `Default Loop`，再动手改代码。",
+    "",
+  ];
+}
+
 function renderClaudeEntry(contract) {
   return [
     "# CLAUDE",
@@ -386,6 +426,7 @@ function renderClaudeEntry(contract) {
     `- 人类扫读版在 \`${OPERATOR_RUNBOOK_PATH}\``,
     `- 当前 mode：\`${normalizeString(contract.project?.bootstrap_mode)}\`；adapter：\`${normalizeString(contract.project?.adapter_id)}\``,
     `- 推荐 preflight：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
+    ...(hasAiExecPack(contract) ? ["- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`"] : []),
     "",
     "## 优先摘要命令",
     "",
@@ -403,6 +444,7 @@ function renderOpenCodeEntry(contract) {
     `- 人类扫读版在 \`${OPERATOR_RUNBOOK_PATH}\``,
     `- 当前 mode：\`${normalizeString(contract.project?.bootstrap_mode)}\`；adapter：\`${normalizeString(contract.project?.adapter_id)}\``,
     `- 推荐 preflight：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
+    ...(hasAiExecPack(contract) ? ["- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`"] : []),
     "",
     "## 优先摘要命令",
     "",
@@ -422,6 +464,7 @@ function renderCursorEntry(contract) {
     `- 人类扫读版在 \`${OPERATOR_RUNBOOK_PATH}\``,
     `- 当前 mode：\`${normalizeString(contract.project?.bootstrap_mode)}\`；adapter：\`${normalizeString(contract.project?.adapter_id)}\``,
     `- 推荐 preflight：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
+    ...(hasAiExecPack(contract) ? ["- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`"] : []),
     "",
     "## 优先摘要命令",
     "",

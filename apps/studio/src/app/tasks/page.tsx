@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { getDeliverySnapshot } from "@/modules/delivery";
-import { getProjectStateSnapshot } from "@/modules/project-state";
+import { getProjectStateSnapshot, ProjectJudgementStrip } from "@/modules/project-state";
 import { DeliveryTable } from "@/modules/tasks/components/delivery-table";
 import { buildSubtaskTableRows } from "@/modules/tasks/subtask-table";
 
@@ -46,8 +46,12 @@ export default async function TasksPage() {
               tone: blockedCount > 0 ? "danger" : "success",
             },
           ]}
-          />
-        </section>
+        />
+      </section>
+
+      <section id="task-judgement">
+        <ProjectJudgementStrip judgement={projectState.judgement} />
+      </section>
 
       <section id="task-table">
         <Card className="p-4 lg:p-5">

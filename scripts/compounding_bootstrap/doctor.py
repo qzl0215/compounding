@@ -14,7 +14,17 @@ from .config_resolution import (
     normalize_brief_payload,
 )
 from .defaults import BOOTSTRAP_REPORT_PATH, BRIEF_PATH
-from .packs import infer_adapter_id, infer_bootstrap_mode, load_kernel_manifest, mode_required_packs, mode_smoke_commands, resolve_supported_mode, selected_pack_paths
+from .packs import (
+    adapter_supports_mode,
+    infer_adapter_id,
+    infer_bootstrap_mode,
+    list_mode_packs,
+    load_kernel_manifest,
+    mode_required_packs,
+    mode_smoke_commands,
+    resolve_supported_mode,
+    selected_pack_paths,
+)
 from .yaml_io import load_yaml
 
 
@@ -92,6 +102,32 @@ def evaluate_capability_groups(target: Path, manifest: dict[str, Any], selected_
     return results
 
 
+def build_mode_guides(manifest: dict[str, Any], adapter_id: str) -> list[dict[str, Any]]:
+    guides: list[dict[str, Any]] = []
+    for mode_pack in list_mode_packs(manifest):
+        if not isinstance(mode_pack, dict):
+            continue
+        mode_id = str(mode_pack.get("mode_id") or "").strip()
+        if not mode_id:
+            continue
+        guides.append(
+            {
+                "mode_id": mode_id,
+                "label": str(mode_pack.get("label") or mode_id),
+                "description": str(mode_pack.get("description") or "").strip(),
+                "supported": adapter_supports_mode(manifest, adapter_id, mode_id),
+                "required_packs": mode_required_packs(manifest, mode_id),
+                "smoke_commands": mode_smoke_commands(manifest, mode_id),
+                "entry_command": (
+                    f"python3 scripts/init_project_compounding.py bootstrap --target . --mode={mode_id}"
+                    if mode_id == "cold_start"
+                    else f"python3 scripts/init_project_compounding.py attach --target . --mode={mode_id}"
+                ),
+            }
+        )
+    return guides
+
+
 def doctor(config_path: Path | None, target: Path, bootstrap_mode: str | None = None) -> dict[str, Any]:
     manifest = load_kernel_manifest()
     brief, has_brief = load_brief_snapshot(target, config_path, bootstrap_mode=bootstrap_mode)
@@ -101,6 +137,7 @@ def doctor(config_path: Path | None, target: Path, bootstrap_mode: str | None = 
     requested_mode = bootstrap_mode or str(brief.get("bootstrap_mode") or inferred_mode)
     resolved_mode = resolve_supported_mode(manifest, adapter_id, requested_mode, inferred_mode)
     required_packs = mode_required_packs(manifest, resolved_mode)
+    mode_guides = build_mode_guides(manifest, adapter_id)
     capability_results = evaluate_capability_groups(target, manifest, brief["kernel"]["profile"])
     required_results = [item for item in capability_results if item["required_for_profile"]]
     pack_results = evaluate_required_packs(target, manifest, required_packs)
@@ -149,6 +186,7 @@ def doctor(config_path: Path | None, target: Path, bootstrap_mode: str | None = 
         "recommended_mode": resolved_mode,
         "requested_mode": requested_mode,
         "recommended_entry": recommended_entry,
+        "mode_guides": mode_guides,
         "required_packs": required_packs,
         "pack_status": pack_results,
         "protocol_entries": detect_protocol_entries(target),

@@ -112,6 +112,7 @@ packs:
       - scripts/coord/lib/*.ts
       - scripts/ai/create-task.ts
       - scripts/ai/build-context.ts
+      - scripts/ai/validate-judgement-contract.ts
       - scripts/ai/preflight-summary.ts
       - scripts/ai/review-summary.ts
       - scripts/ai/preview-summary.ts
