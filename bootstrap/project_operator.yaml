@@ -149,6 +149,20 @@ agent_shortcuts:
     why: 聚焦目录分布、文件类型和少量代表路径，减少读仓噪音
     tool_surfaces: [codex, claude, cursor, opencode]
     mode: suggest
+  - shortcut_id: find_summary
+    label: 优先使用查找摘要
+    canonical_command: pnpm ai:find:summary -- --query=keyword
+    applies_when: 需要找某个标识符、模块或文档线索，而不是直接把整段 rg 输出塞进上下文
+    why: 聚焦命中总数、命中文件和代表性命中行，减少搜索噪音
+    tool_surfaces: [codex, claude, cursor, opencode]
+    mode: suggest
+  - shortcut_id: read_summary
+    label: 优先使用读文件摘要
+    canonical_command: pnpm ai:read:summary -- --path=memory/project/current-state.md
+    applies_when: 需要先了解文件结构和关键段落，而不是直接展开整份文件
+    why: 对 module/task/markdown/code/json/yaml 做结构摘要，信息不足时再回退原文
+    tool_surfaces: [codex, claude, cursor, opencode]
+    mode: suggest
 notes:
   - 该文件只保存服务器访问面、GitHub 接入面和标准发布流的非密钥事实。
   - 真实密钥只放在 env、gh auth、ssh config 或外部 secret manager。

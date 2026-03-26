@@ -1,6 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const { buildAiEfficiencyDashboard, formatEstimatedTokens } = require("../../../shared/ai-efficiency.ts");
+const { AI_EFFICIENCY_SUPPORTED_PROFILES, buildAiEfficiencyDashboard, formatEstimatedTokens } = require("../../../shared/ai-efficiency.ts");
 
 const SCHEMA_VERSION = "1";
 const RETENTION_DAYS = 90;
@@ -317,6 +317,7 @@ function buildCommandGainReport(root = process.cwd(), options = {}) {
   const totalOutput = summaryEvents.reduce((sum, event) => sum + Math.max(0, toNumber(event.output_tokens_est)), 0);
   const totalSaved = summaryEvents.reduce((sum, event) => sum + Math.max(0, toNumber(event.saved_tokens_est)), 0);
   const fallbackCount = summaryEvents.filter((event) => event.was_fallback).length;
+  const dashboard = buildAiEfficiencyDashboard(events, { supportedProfiles: AI_EFFICIENCY_SUPPORTED_PROFILES });
 
   return {
     ok: true,
@@ -338,7 +339,10 @@ function buildCommandGainReport(root = process.cwd(), options = {}) {
     by_month: aggregateByPeriod(summaryEvents, (event) => toIsoMonth(event.timestamp)),
     by_profile: buildProfileStats(events),
     shortcut_adoption: buildShortcutStats(events),
-    dashboard: buildAiEfficiencyDashboard(events),
+    coverage: dashboard.coverage,
+    trend_delta: dashboard.trend_delta,
+    task_rollups: dashboard.task_rollups,
+    dashboard,
   };
 }
 
@@ -387,6 +391,22 @@ function formatCommandGainReportText(report) {
     for (const alert of report.dashboard.adoption.alerts) {
       lines.push(
         `  - ${alert.shortcut_id}: adoption ${alert.adoption_pct}%, missed ~${formatTokens(alert.missed_savings_est)} tokens across ${alert.opportunity_count} opportunities`
+      );
+    }
+  }
+
+  if (report.coverage?.never_used_profiles?.length) {
+    lines.push("- never used wrappers:");
+    for (const profileId of report.coverage.never_used_profiles.slice(0, 6)) {
+      lines.push(`  - ${profileId}`);
+    }
+  }
+
+  if (report.task_rollups?.length) {
+    lines.push("- top task rollups:");
+    for (const task of report.task_rollups.slice(0, 5)) {
+      lines.push(
+        `  - ${task.task_id}: ${task.summary_runs} runs, ~${formatTokens(task.saved_tokens_est)} saved, avg ${task.avg_savings_pct_est}%`
       );
     }
   }

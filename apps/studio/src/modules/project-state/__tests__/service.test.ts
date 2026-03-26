@@ -19,6 +19,9 @@ describe("project state snapshot", () => {
     expect(snapshot.judgement.nextAction).toBe(snapshot.release.nextAction);
     expect(snapshot.aiEfficiency.dashboard.overview.summary_runs).toBeGreaterThanOrEqual(0);
     expect(snapshot.aiEfficiency.dashboard.consumption.top_profiles_by_input.length).toBeGreaterThanOrEqual(0);
+    expect(snapshot.aiEfficiency.dashboard.coverage.supported_profiles.length).toBeGreaterThan(0);
+    expect(snapshot.aiEfficiency.dashboard.trend_delta.last_7d_input).toBeGreaterThanOrEqual(0);
+    expect(snapshot.aiEfficiency.dashboard.task_rollups.length).toBeGreaterThanOrEqual(0);
   }, SERVICE_TIMEOUT_MS);
 
   it("keeps release conclusion aligned with pending acceptance and runtime state", async () => {

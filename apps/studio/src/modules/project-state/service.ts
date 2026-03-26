@@ -3,7 +3,11 @@ import path from "node:path";
 import { getWorkspaceRoot } from "@/lib/workspace";
 import { readDoc } from "@/modules/docs";
 import { getDeliverySnapshot, type DeliverySnapshot } from "@/modules/delivery";
-import { buildAiEfficiencyDashboard, normalizeAiEfficiencyEvent } from "../../../../../shared/ai-efficiency";
+import {
+  AI_EFFICIENCY_SUPPORTED_PROFILES,
+  buildAiEfficiencyDashboard,
+  normalizeAiEfficiencyEvent,
+} from "../../../../../shared/ai-efficiency";
 import { buildProjectJudgementContract } from "../../../../../shared/project-judgement";
 import type { ProjectStateSnapshot } from "./types";
 
@@ -91,7 +95,7 @@ export async function getProjectStateSnapshot(input?: { deliverySnapshot?: Deliv
       nextAction: judgement.nextAction,
     },
     aiEfficiency: {
-      dashboard: getAiEfficiencyDashboard(workspaceRoot),
+    dashboard: getAiEfficiencyDashboard(workspaceRoot),
     },
     activeStage: judgement.activeStage,
     judgement,
@@ -136,5 +140,5 @@ function getAiEfficiencyDashboard(workspaceRoot: string) {
     })
     .filter((event): event is ReturnType<typeof normalizeAiEfficiencyEvent> => Boolean(event));
 
-  return buildAiEfficiencyDashboard(events);
+  return buildAiEfficiencyDashboard(events, { supportedProfiles: AI_EFFICIENCY_SUPPORTED_PROFILES });
 }

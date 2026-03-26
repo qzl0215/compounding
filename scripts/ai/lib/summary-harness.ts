@@ -1,6 +1,8 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { spawnSync } = require("node:child_process");
+const { parseModuleFeatureContract } = require(path.join(process.cwd(), "shared", "module-feature-contract.ts"));
+const { parseTaskContract } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
 const {
   appendCommandGainEvent,
   byteLength,
@@ -145,6 +147,8 @@ function createContext(root, profile, commandSpec, capture, options = {}) {
     },
     normalized: {
       lines: normalizeLines(combined),
+      stdout_lines: normalizeLines(stdout),
+      stderr_lines: normalizeLines(stderr),
     },
     parsed: {
       json: tryParseJsonFromText(stdout) || tryParseJsonFromText(combined),
@@ -265,6 +269,182 @@ function applyStructureOnly(context) {
 }
 
 function applyProfileSpecificStructure(context) {
+  if (context.profile.profile_id === "find_summary") {
+    const query = normalizeString(context.options?.summaryArgs?.query);
+    const searchPath = normalizeString(context.options?.summaryArgs?.path, ".");
+    const stdoutLines = context.normalized.stdout_lines.filter(Boolean);
+    const matchedFiles = new Map();
+
+    for (const line of stdoutLines) {
+      const match = line.match(/^(.+?):(\d+):(.*)$/);
+      if (!match) continue;
+      const filePath = normalizeString(match[1]);
+      if (!filePath) continue;
+      matchedFiles.set(filePath, (matchedFiles.get(filePath) || 0) + 1);
+    }
+
+    const topFiles = Array.from(matchedFiles.entries())
+      .map(([filePath, count]) => ({ filePath, count }))
+      .sort((a, b) => b.count - a.count || a.filePath.localeCompare(b.filePath))
+      .slice(0, 6)
+      .map((item) => `${item.filePath} (${item.count})`);
+    const representativeLines = stdoutLines.slice(0, 8);
+
+    if (stdoutLines.length === 0 && context.capture.exit_code === 1 && !context.normalized.stderr_lines.length) {
+      context.reduced.summary = "未找到匹配";
+    } else if (context.capture.exit_code !== 0 && context.normalized.stderr_lines.length) {
+      context.reduced.summary = "查找执行失败";
+    } else {
+      context.reduced.summary = stdoutLines.length ? "查找结果已摘要" : "当前没有可摘要的命中结果";
+    }
+
+    context.reduced.stats.query = query || "[unspecified]";
+    context.reduced.stats.search_path = searchPath || ".";
+    context.reduced.stats.total_matches = stdoutLines.length;
+    context.reduced.stats.matched_files = matchedFiles.size;
+    if (topFiles.length) {
+      context.reduced.stats.top_files = topFiles;
+    }
+    context.reduced.raw_focus_lines = representativeLines;
+    return true;
+  }
+
+  if (context.profile.profile_id === "read_summary") {
+    const relativePath = normalizeString(context.options?.summaryArgs?.path);
+    const content = context.capture.stdout || "";
+    const lineCount = content ? normalizeLines(content).length : 0;
+    const byteCount = byteLength(content);
+    const fileName = path.posix.basename(relativePath);
+    const ext = path.posix.extname(relativePath).toLowerCase();
+
+    context.reduced.stats.path = relativePath;
+    context.reduced.stats.lines = lineCount;
+    context.reduced.stats.bytes = byteCount;
+
+    if (!content.trim()) {
+      throw new Error(`read_summary could not parse empty file: ${relativePath}`);
+    }
+
+    if (lineCount <= 3 && byteCount <= 120) {
+      context.reduced.summary = "文件很短，建议直接看原文";
+      pushUnique(context.reduced.highlights, [relativePath, normalizeLines(content).slice(0, 4).join(" | ")]);
+      return true;
+    }
+
+    if (fileName === "module.md") {
+      const contract = parseModuleFeatureContract(relativePath, content);
+      context.reduced.summary = `${contract.moduleId} 模块合同已摘要`;
+      context.reduced.stats.entrypoints = contract.entrypoints.length;
+      context.reduced.stats.invariants = contract.invariants.length;
+      context.reduced.stats.recommended_checks = contract.recommendedChecks.length;
+      pushUnique(context.reduced.highlights, [
+        contract.goal,
+        contract.entrypoints.length ? `入口：${contract.entrypoints.slice(0, 3).map((entry) => `${entry.label}=${entry.target}`).join(" | ")}` : "",
+        contract.likelyFiles.length ? `常改文件：${contract.likelyFiles.slice(0, 4).join(" | ")}` : "",
+      ]);
+      return true;
+    }
+
+    if (/^tasks\/queue\/task-.*\.md$/.test(relativePath) || /^task-\d+.*\.md$/.test(fileName)) {
+      const contract = parseTaskContract(relativePath, content);
+      context.reduced.summary = `${contract.shortId} 任务合同已摘要`;
+      context.reduced.stats.task_id = contract.shortId;
+      pushUnique(context.reduced.highlights, [contract.summary, contract.boundary, contract.doneWhen]);
+      return true;
+    }
+
+    if (ext === ".md") {
+      const headings = Array.from(content.matchAll(/^#{1,3}\s+(.+)$/gm)).map((match) => normalizeString(match[1])).filter(Boolean);
+      const bullets = content
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter((line) => line.startsWith("- "))
+        .map((line) => line.replace(/^-+\s*/, "").trim());
+      const lead = content
+        .split(/\r?\n\r?\n/)
+        .map((block) => block.replace(/\s+/g, " ").trim())
+        .find((block) => block && !block.startsWith("#") && !block.startsWith("- "));
+      context.reduced.summary = "Markdown 结构已摘要";
+      context.reduced.stats.headings = headings.length;
+      context.reduced.stats.bullets = bullets.length;
+      pushUnique(context.reduced.highlights, [
+        lead,
+        headings.length ? `标题：${headings.slice(0, 4).join(" | ")}` : "",
+        bullets.length ? `要点：${bullets.slice(0, 6).join(" | ")}` : "",
+      ]);
+      return true;
+    }
+
+    if ([".ts", ".tsx", ".js", ".jsx", ".py"].includes(ext)) {
+      const lines = content.split(/\r?\n/);
+      const headerCommentLines = [];
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          if (headerCommentLines.length) break;
+          continue;
+        }
+        if (trimmed.startsWith("//") || trimmed.startsWith("#")) {
+          headerCommentLines.push(trimmed.replace(/^\/\/\s?/, "").replace(/^#\s?/, ""));
+          continue;
+        }
+        if (trimmed.startsWith("/*")) {
+          headerCommentLines.push(trimmed.replace(/^\/\*\s?/, "").replace(/\*\/$/, ""));
+          continue;
+        }
+        break;
+      }
+      const imports = lines
+        .map((line) => line.trim())
+        .filter((line) => /^(import\s+.+\s+from\s+|from\s+\S+\s+import\s+)/.test(line))
+        .slice(0, 6);
+      const exports = lines
+        .map((line) => line.trim())
+        .filter((line) => /^(export\s+|module\.exports|exports\.)/.test(line))
+        .slice(0, 6);
+      const symbols = Array.from(
+        new Set(
+          lines
+            .map((line) => line.match(/^(?:export\s+)?(?:default\s+)?(?:async\s+)?(?:function|class|const|let|var)\s+([A-Za-z0-9_]+)/)?.[1])
+            .filter(Boolean)
+        )
+      ).slice(0, 8);
+      context.reduced.summary = "代码文件结构已摘要";
+      context.reduced.stats.imports = imports.length;
+      context.reduced.stats.exports = exports.length;
+      context.reduced.stats.symbols = symbols.length;
+      pushUnique(context.reduced.highlights, [
+        headerCommentLines.length ? `文件头：${headerCommentLines.slice(0, 2).join(" | ")}` : "",
+        imports.length ? `imports：${imports.slice(0, 3).join(" | ")}` : "",
+        exports.length ? `exports：${exports.slice(0, 3).join(" | ")}` : "",
+        symbols.length ? `顶层符号：${symbols.join(" | ")}` : "",
+      ]);
+      return true;
+    }
+
+    if (ext === ".json") {
+      const payload = JSON.parse(content);
+      const keys = payload && typeof payload === "object" && !Array.isArray(payload) ? Object.keys(payload) : [];
+      context.reduced.summary = "JSON 结构已摘要";
+      context.reduced.stats.top_level_keys = keys.length;
+      pushUnique(context.reduced.highlights, [keys.length ? `顶层 keys：${keys.slice(0, 10).join(" | ")}` : "顶层没有 object keys"]);
+      return true;
+    }
+
+    if (ext === ".yaml" || ext === ".yml") {
+      const keys = content
+        .split(/\r?\n/)
+        .map((line) => line.match(/^([A-Za-z0-9_.-]+):\s*(?:#.*)?$/)?.[1] || "")
+        .filter(Boolean);
+      context.reduced.summary = "YAML 结构已摘要";
+      context.reduced.stats.top_level_keys = keys.length;
+      pushUnique(context.reduced.highlights, [keys.length ? `顶层 keys：${keys.slice(0, 10).join(" | ")}` : "未识别到顶层 keys"]);
+      return true;
+    }
+
+    throw new Error(`read_summary does not support ${ext || "this file type"} yet`);
+  }
+
   if (context.profile.profile_id === "tree_summary") {
     const lines = context.normalized.lines
       .filter(Boolean)
@@ -403,6 +583,9 @@ function applyErrorOnly(context) {
   }
   const source = context.reduced.raw_focus_lines.length ? context.reduced.raw_focus_lines : context.normalized.lines;
   const lines = source.filter((line) => ERROR_PATTERN.test(line));
+  if (!lines.length && context.capture.exit_code === 0 && context.reduced.highlights.length) {
+    return;
+  }
   if (!lines.length && context.profile.profile_id === "diff_summary" && context.reduced.highlights.length) {
     return;
   }
@@ -685,6 +868,7 @@ function runSummaryHarness(options = {}) {
       profile_version: profile.profile_version,
       parser_slots: profile.parser_slots || [],
       pipeline: profile.pipeline || [],
+      summary_args: options.summaryArgs || null,
       shortcut_id: normalizeString(profile.shortcut_id) || null,
       task_id: taskId,
       agent_surface: agentSurface,

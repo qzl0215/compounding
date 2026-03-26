@@ -1,5 +1,18 @@
 export type AiEfficiencyEventKind = "summary_run" | "shortcut_opportunity";
 
+export const AI_EFFICIENCY_SUPPORTED_PROFILES = [
+  "preflight_summary",
+  "validate_static_summary",
+  "validate_build_summary",
+  "review_summary",
+  "preview_summary",
+  "prod_summary",
+  "diff_summary",
+  "tree_summary",
+  "find_summary",
+  "read_summary",
+] as const;
+
 export type AiEfficiencyEvent = {
   schema_version: string;
   profile_version: string;
@@ -58,6 +71,26 @@ export type AiEfficiencyDashboard = {
     usage_shortcuts: Array<{ shortcut_id: string; usage_count: number; saved_tokens_est: number }>;
     alerts: Array<{ shortcut_id: string; adoption_pct: number; missed_savings_est: number; opportunity_count: number }>;
   };
+  coverage: {
+    supported_profiles: string[];
+    observed_profiles: string[];
+    never_used_profiles: string[];
+  };
+  trend_delta: {
+    last_7d_input: number;
+    prev_7d_input: number;
+    last_7d_saved: number;
+    prev_7d_saved: number;
+    last_7d_adoption: number;
+    prev_7d_adoption: number;
+  };
+  task_rollups: Array<{
+    task_id: string;
+    summary_runs: number;
+    input_tokens_est: number;
+    saved_tokens_est: number;
+    avg_savings_pct_est: number;
+  }>;
   health: {
     raw_trace_rate_pct: number;
     nonzero_exit_raw_trace_rate_pct: number;
@@ -95,6 +128,15 @@ function toIsoDay(value: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
   return date.toISOString().slice(0, 10);
+}
+
+function parseEpoch(value: string) {
+  const epoch = Date.parse(value);
+  return Number.isFinite(epoch) ? epoch : null;
+}
+
+function uniqueStrings(values: string[]) {
+  return Array.from(new Set(values.map((value) => normalizeString(value)).filter(Boolean)));
 }
 
 function aggregateRows<T extends { [key: string]: unknown }>(
@@ -147,10 +189,14 @@ export function formatEstimatedTokens(value: number) {
   return String(amount);
 }
 
-export function buildAiEfficiencyDashboard(inputEvents: Array<Record<string, unknown>>): AiEfficiencyDashboard {
+export function buildAiEfficiencyDashboard(
+  inputEvents: Array<Record<string, unknown>>,
+  options: { supportedProfiles?: readonly string[] } = {},
+): AiEfficiencyDashboard {
   const events = inputEvents.map(normalizeAiEfficiencyEvent);
   const summaryEvents = events.filter((event) => event.event_kind === "summary_run");
   const opportunityEvents = events.filter((event) => event.event_kind === "shortcut_opportunity");
+  const supportedProfiles = uniqueStrings([...(options.supportedProfiles || AI_EFFICIENCY_SUPPORTED_PROFILES)]);
 
   const totalInput = summaryEvents.reduce((sum, event) => sum + event.input_tokens_est, 0);
   const totalOutput = summaryEvents.reduce((sum, event) => sum + event.output_tokens_est, 0);
@@ -250,6 +296,65 @@ export function buildAiEfficiencyDashboard(inputEvents: Array<Record<string, unk
 
   const nonzeroSummary = summaryEvents.filter((event) => event.exit_code !== 0);
   const nonzeroWithRawTrace = nonzeroSummary.filter((event) => Boolean(event.tee_path)).length;
+  const observedProfiles = uniqueStrings(summaryEvents.map((event) => event.profile_id || ""));
+  const coverage = {
+    supported_profiles: supportedProfiles,
+    observed_profiles: observedProfiles,
+    never_used_profiles: supportedProfiles.filter((profileId) => !observedProfiles.includes(profileId)),
+  };
+  const eventEpochs = summaryEvents
+    .map((event) => parseEpoch(event.timestamp))
+    .filter((value): value is number => typeof value === "number");
+  const referenceNow = eventEpochs.length ? Math.max(...eventEpochs) + 1 : Date.now();
+  const weekMs = 7 * 24 * 60 * 60 * 1000;
+  const sumWindow = (rows: AiEfficiencyEvent[], field: "input_tokens_est" | "saved_tokens_est", start: number, end: number) =>
+    rows
+      .filter((event) => {
+        const epoch = parseEpoch(event.timestamp);
+        return epoch !== null && epoch >= start && epoch < end;
+      })
+      .reduce((sum, event) => sum + event[field], 0);
+  const adoptionWindow = (rows: AiEfficiencyEvent[], start: number, end: number) => {
+    const scoped = rows.filter((event) => {
+      const epoch = parseEpoch(event.timestamp);
+      return (
+        epoch !== null &&
+        epoch >= start &&
+        epoch < end &&
+        Boolean(event.shortcut_id) &&
+        TRUE_DENOMINATOR_SHORTCUTS.has(event.shortcut_id || "")
+      );
+    });
+    const opportunityCount = scoped.length;
+    const adoptedCount = scoped.filter((event) => event.adopted === true).length;
+    return opportunityCount > 0 ? Number(((adoptedCount / opportunityCount) * 100).toFixed(2)) : 0;
+  };
+  const trend_delta = {
+    last_7d_input: sumWindow(summaryEvents, "input_tokens_est", referenceNow - weekMs, referenceNow),
+    prev_7d_input: sumWindow(summaryEvents, "input_tokens_est", referenceNow - 2 * weekMs, referenceNow - weekMs),
+    last_7d_saved: sumWindow(summaryEvents, "saved_tokens_est", referenceNow - weekMs, referenceNow),
+    prev_7d_saved: sumWindow(summaryEvents, "saved_tokens_est", referenceNow - 2 * weekMs, referenceNow - weekMs),
+    last_7d_adoption: adoptionWindow(opportunityEvents, referenceNow - weekMs, referenceNow),
+    prev_7d_adoption: adoptionWindow(opportunityEvents, referenceNow - 2 * weekMs, referenceNow - weekMs),
+  };
+  const task_rollups = aggregateRows(
+    summaryEvents.filter((event) => Boolean(event.task_id)),
+    (event) => event.task_id || "",
+    () => ({ summary_runs: 0, input_tokens_est: 0, saved_tokens_est: 0 }),
+    (bucket, event) => {
+      bucket.summary_runs += 1;
+      bucket.input_tokens_est += event.input_tokens_est;
+      bucket.saved_tokens_est += event.saved_tokens_est;
+    },
+  )
+    .map((row) => ({
+      task_id: row.key,
+      summary_runs: row.summary_runs,
+      input_tokens_est: row.input_tokens_est,
+      saved_tokens_est: row.saved_tokens_est,
+      avg_savings_pct_est: row.input_tokens_est > 0 ? Number(((row.saved_tokens_est / row.input_tokens_est) * 100).toFixed(2)) : 0,
+    }))
+    .sort((a, b) => b.input_tokens_est - a.input_tokens_est || a.task_id.localeCompare(b.task_id));
 
   return {
     overview: {
@@ -290,6 +395,9 @@ export function buildAiEfficiencyDashboard(inputEvents: Array<Record<string, unk
           opportunity_count: shortcut.opportunity_count,
         })),
     },
+    coverage,
+    trend_delta,
+    task_rollups,
     health: {
       raw_trace_rate_pct: summaryEvents.length > 0 ? Number(((teeCount / summaryEvents.length) * 100).toFixed(2)) : 0,
       nonzero_exit_raw_trace_rate_pct:

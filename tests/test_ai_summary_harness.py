@@ -313,6 +313,153 @@ class SummaryHarnessCliTests(unittest.TestCase):
         self.assertIn("total_files=", completed.stdout)
         self.assertIn("目录分布：", completed.stdout)
 
+    def test_find_summary_reports_match_counts(self) -> None:
+        (self.target / "apps" / "studio").mkdir(parents=True, exist_ok=True)
+        (self.target / "apps" / "studio" / "page.tsx").write_text("export const portalKeyword = 'home';\n", encoding="utf8")
+        (self.target / "docs").mkdir(parents=True, exist_ok=True)
+        (self.target / "docs" / "guide.md").write_text("portalKeyword appears here too\n", encoding="utf8")
+
+        completed = self.run_script("scripts/ai/find-summary.ts", "--query=portalKeyword")
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertIn("summary: 查找结果已摘要", completed.stdout)
+        self.assertIn("total_matches=2", completed.stdout)
+        self.assertIn("matched_files=2", completed.stdout)
+        self.assertIn("top_files=", completed.stdout)
+
+    def test_find_summary_zero_match_preserves_exit_code(self) -> None:
+        completed = self.run_script("scripts/ai/find-summary.ts", "--query=missingKeyword")
+        self.assertEqual(completed.returncode, 1, msg=completed.stdout or completed.stderr)
+        self.assertIn("summary: 未找到匹配", completed.stdout)
+        self.assertIn("raw tee:", completed.stdout)
+
+    def test_read_summary_supports_module_task_markdown_code_and_data(self) -> None:
+        self.write_stub(
+            "apps/studio/src/modules/sample/module.md",
+            """
+            # sample
+
+            ## 模块目标
+
+            让 sample 模块成为读仓摘要测试样本。
+
+            ## 入口与拥有面
+
+            - 页面：`/sample`
+            - CLI：`pnpm sample`
+
+            ## 常改文件
+
+            - `apps/studio/src/modules/sample/index.ts`
+
+            ## 不变量
+
+            - 输出必须稳定
+
+            ## 推荐校验
+
+            - `pnpm lint`
+            """,
+        )
+        self.write_stub(
+            "tasks/queue/task-900-demo.md",
+            """
+            # 演示任务
+
+            ## 任务摘要
+
+            - 任务 ID：`task-900-demo`
+            - 短编号：`t-900`
+            - 父计划：`memory/project/operating-blueprint.md`
+            - 任务摘要：补演示任务
+            - 为什么现在：需要验证 read_summary
+            - 承接边界：只验证任务合同解析
+            - 完成定义：输出任务合同摘要
+
+            ## 执行合同
+
+            ### 要做
+
+            - `tasks/queue/task-900-demo.md`
+
+            ## 当前模式
+
+            工程执行
+
+            ## 分支
+
+            `codex/task-900`
+            """,
+        )
+        self.write_stub(
+            "docs/read-summary.md",
+            """
+            # Read Summary
+
+            这是一份通用 markdown 文档，用于验证 headings 和 bullet 组提取。
+
+            ## Checklist
+
+            - first bullet
+            - second bullet
+
+            ## Notes
+
+            - third bullet
+            """,
+        )
+        self.write_stub(
+            "scripts/fake/reader.ts",
+            """
+            // Reader entry for summary tests
+            import fs from "node:fs";
+
+            export function readValue() {
+              return fs.readFileSync("README.md", "utf8");
+            }
+
+            export const readerName = "summary-reader";
+            """,
+        )
+        self.write_stub(
+            "config/sample.json",
+            """
+            {
+              "name": "sample",
+              "enabled": true,
+              "paths": ["apps", "docs"]
+            }
+            """,
+        )
+        self.write_stub(
+            "config/sample.yaml",
+            """
+            name: sample
+            enabled: true
+            entry: docs/read-summary.md
+            mode: summary
+            """,
+        )
+
+        module_summary = self.run_script("scripts/ai/read-summary.ts", "--path=apps/studio/src/modules/sample/module.md")
+        task_summary = self.run_script("scripts/ai/read-summary.ts", "--path=tasks/queue/task-900-demo.md")
+        markdown_summary = self.run_script("scripts/ai/read-summary.ts", "--path=docs/read-summary.md")
+        code_summary = self.run_script("scripts/ai/read-summary.ts", "--path=scripts/fake/reader.ts")
+        json_summary = self.run_script("scripts/ai/read-summary.ts", "--path=config/sample.json")
+        yaml_summary = self.run_script("scripts/ai/read-summary.ts", "--path=config/sample.yaml")
+
+        self.assertIn("summary: sample 模块合同已摘要", module_summary.stdout)
+        self.assertIn("summary: t-900 任务合同已摘要", task_summary.stdout)
+        self.assertIn("summary: Markdown 结构已摘要", markdown_summary.stdout)
+        self.assertIn("summary: 代码文件结构已摘要", code_summary.stdout)
+        self.assertIn("summary: JSON 结构已摘要", json_summary.stdout)
+        self.assertIn("summary: YAML 结构已摘要", yaml_summary.stdout)
+
+    def test_read_summary_missing_file_falls_back_to_raw(self) -> None:
+        completed = self.run_script("scripts/ai/read-summary.ts", "--path=missing-file.md")
+        self.assertEqual(completed.returncode, 1, msg=completed.stdout or completed.stderr)
+        self.assertIn("fallback:", completed.stdout)
+        self.assertIn("raw tee:", completed.stdout)
+
     def test_diff_summary_reports_changed_files(self) -> None:
         self.init_git_repo()
         target_file = self.target / "README.md"
@@ -333,10 +480,16 @@ class SummaryHarnessCliTests(unittest.TestCase):
         payload = json.loads(report.stdout)
 
         self.assertIn("dashboard", payload)
+        self.assertIn("coverage", payload)
+        self.assertIn("trend_delta", payload)
+        self.assertIn("task_rollups", payload)
         self.assertIn("overview", payload["dashboard"])
         self.assertIn("consumption", payload["dashboard"])
         self.assertIn("savings", payload["dashboard"])
         self.assertIn("adoption", payload["dashboard"])
+        self.assertIn("coverage", payload["dashboard"])
+        self.assertIn("trend_delta", payload["dashboard"])
+        self.assertIn("task_rollups", payload["dashboard"])
 
 
 if __name__ == "__main__":

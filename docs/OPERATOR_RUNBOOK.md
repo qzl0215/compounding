@@ -62,8 +62,9 @@ related_docs:
 
 - 默认 feature 上下文：`pnpm ai:feature-context -- --surface=home`
 - 带 task 的 feature 上下文：`pnpm ai:feature-context -- --taskPath=tasks/queue/task-xxx.md`
+- 默认摘要链：`pnpm ai:preflight:summary` / `pnpm ai:diff:summary` / `pnpm ai:tree:summary` / `pnpm ai:find:summary -- --query=keyword` / `pnpm ai:read:summary -- --path=memory/project/current-state.md`
+- 原始回退链：`pnpm preflight` / `git diff` / `rg --files --hidden` / `rg -n --hidden keyword` / `sed -n '1,200p' <path>`
 - 看当前令牌效率：`pnpm ai:command-gain --json` 或打开 `/ai-efficiency`
-- 看改动摘要：`pnpm ai:diff:summary`；看仓结构：`pnpm ai:tree:summary`
 - 默认先看 feature packet 里的 `Project Judgement` 和 `Default Loop`，再动手改代码。
 
 ## 服务器访问面
@@ -163,5 +164,13 @@ related_docs:
 - 优先使用仓结构摘要：`pnpm ai:tree:summary`
   - 适用场景：需要快速了解仓库结构和热点目录，而不是展开整段文件列表
   - 原因：聚焦目录分布、文件类型和少量代表路径，减少读仓噪音
+  - 工具面：`codex`、`claude`、`cursor`、`opencode`
+- 优先使用查找摘要：`pnpm ai:find:summary -- --query=keyword`
+  - 适用场景：需要找某个标识符、模块或文档线索，而不是直接把整段 rg 输出塞进上下文
+  - 原因：聚焦命中总数、命中文件和代表性命中行，减少搜索噪音
+  - 工具面：`codex`、`claude`、`cursor`、`opencode`
+- 优先使用读文件摘要：`pnpm ai:read:summary -- --path=memory/project/current-state.md`
+  - 适用场景：需要先了解文件结构和关键段落，而不是直接展开整份文件
+  - 原因：对 module/task/markdown/code/json/yaml 做结构摘要，信息不足时再回退原文
   - 工具面：`codex`、`claude`、`cursor`、`opencode`
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->
