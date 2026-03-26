@@ -2,6 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const childProcess = require("node:child_process");
 const { parseModuleFeatureContract, collectLikelyTests } = require(path.join(process.cwd(), "shared", "module-feature-contract.ts"));
+const { buildProjectJudgementContract } = require(path.join(process.cwd(), "shared", "project-judgement.ts"));
 const { parseTaskContract, parseTaskMachineFacts } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
 const { readCompanion } = require(path.join(process.cwd(), "scripts", "coord", "lib", "task-meta.ts"));
 
@@ -234,6 +235,10 @@ function dedupeChecks(checks) {
   });
 }
 
+function flattenCommands(checks) {
+  return unique(checks.flatMap((check) => check.commands || []).map((command) => String(command || "").trim()).filter(Boolean));
+}
+
 function buildLikelyFiles(moduleContracts, taskOverlay) {
   return unique([
     ...(taskOverlay ? [taskOverlay.taskPath] : []),
@@ -276,6 +281,42 @@ function buildInvariants(moduleContracts) {
   return unique(moduleContracts.flatMap((contract) => contract.invariants));
 }
 
+function buildProjectJudgement(root) {
+  return buildProjectJudgementContract({
+    currentStateContent: readIfExists(root, "memory/project/current-state.md"),
+    roadmapContent: readIfExists(root, "memory/project/roadmap.md"),
+    blueprintContent: readIfExists(root, "memory/project/operating-blueprint.md"),
+  });
+}
+
+function buildEntryCommand(options, overlay, targetSurface) {
+  if (overlay?.taskPath) {
+    return `pnpm ai:feature-context -- --taskPath=${overlay.taskPath}`;
+  }
+  if (options.surface) {
+    return `pnpm ai:feature-context -- --surface=${normalizeSurface(options.surface)}`;
+  }
+  if (options.route) {
+    return `pnpm ai:feature-context -- --route=${options.route}`;
+  }
+  const modules = unique([].concat(options.module || []).map((item) => normalizeModuleToken(item)));
+  if (modules.length === 1) {
+    return `pnpm ai:feature-context -- --module=${modules[0]}`;
+  }
+  return `pnpm ai:feature-context -- --surface=${targetSurface}`;
+}
+
+function buildDefaultFlow(packet, options) {
+  return {
+    entry_command: buildEntryCommand(options, packet.task_overlay, packet.target_surface),
+    required_commands: flattenCommands(packet.required_checks),
+    recommended_commands: flattenCommands(packet.recommended_checks),
+    next_action: packet.project_judgement.nextAction,
+    recommended_surface: packet.project_judgement.recommendedSurface,
+    recommended_read: packet.project_judgement.recommendedRead,
+  };
+}
+
 function buildFeatureContextPacket(root, options = {}) {
   const explicitDocPaths = resolveModuleDocPaths(root, options);
   const { overlay, moduleDocPaths: taskModuleDocPaths } = buildTaskOverlay(root, options.taskPath);
@@ -283,8 +324,8 @@ function buildFeatureContextPacket(root, options = {}) {
   const moduleContracts = loadModuleContracts(root, moduleDocPaths);
   const diffAware = collectSelectedChecks(root);
   const checks = buildChecks(moduleContracts, diffAware);
-
-  return {
+  const projectJudgement = buildProjectJudgement(root);
+  const packet = {
     target_surface: buildTargetSurface(options, moduleContracts),
     related_modules: moduleContracts.map((contract) => contract.moduleId),
     must_read: buildMustRead(moduleContracts, options, overlay),
@@ -295,6 +336,12 @@ function buildFeatureContextPacket(root, options = {}) {
     invariants: buildInvariants(moduleContracts),
     common_changes: buildCommonChanges(moduleContracts),
     task_overlay: overlay,
+    project_judgement: projectJudgement,
+  };
+
+  return {
+    ...packet,
+    default_flow: buildDefaultFlow(packet, options),
   };
 }
 
@@ -424,6 +471,27 @@ function renderFeatureContextMarkdown(packet) {
     lines.push(`- Done When: ${packet.task_overlay.doneWhen}`);
     lines.push("");
   }
+
+  lines.push("## Project Judgement", "");
+  lines.push(`- 当前判断：${packet.project_judgement.overallSummary}`);
+  lines.push(`- 健康结论：${packet.project_judgement.healthSummary}`);
+  lines.push(`- 下一步：${packet.project_judgement.nextAction}`);
+  lines.push(`- 推荐入口：${packet.project_judgement.recommendedSurface.label} (${packet.project_judgement.recommendedSurface.reason})`);
+  lines.push(`- 推荐先读：\`${packet.project_judgement.recommendedRead.path}\``);
+  lines.push("");
+
+  lines.push("## Default Loop", "");
+  lines.push(`- 入口命令：\`${packet.default_flow.entry_command}\``);
+  lines.push(`- 下一步判断：${packet.default_flow.next_action}`);
+  lines.push(`- 先看页面：${packet.default_flow.recommended_surface.label}`);
+  lines.push(`- 先读文档：\`${packet.default_flow.recommended_read.path}\``);
+  lines.push(
+    `- 必跑命令：${packet.default_flow.required_commands.length ? packet.default_flow.required_commands.map((command) => `\`${command}\``).join(" / ") : "暂无"}`
+  );
+  lines.push(
+    `- 附加命令：${packet.default_flow.recommended_commands.length ? packet.default_flow.recommended_commands.map((command) => `\`${command}\``).join(" / ") : "暂无"}`
+  );
+  lines.push("");
 
   lines.push("## Must Read", "");
   for (const item of packet.must_read) {

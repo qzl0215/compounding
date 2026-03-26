@@ -1,3 +1,5 @@
+import type { ProjectJudgementContract } from "../../../../../shared/project-judgement";
+
 export type ProjectStateStage = "thinking" | "planning" | "ready" | "doing" | "acceptance" | "released";
 
 export type ProjectStateSnapshot = {
@@ -46,4 +48,7 @@ export type ProjectStateSnapshot = {
     nextAction: string;
   };
   activeStage: ProjectStateStage;
+  judgement: ProjectJudgementContract;
 };
+
+export type { ProjectJudgementContract, ProjectJudgementStage } from "../../../../../shared/project-judgement";

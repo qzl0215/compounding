@@ -406,9 +406,13 @@ def normalize_brief_payload(
     migrated = not is_new_brief(payload)
     current_bootstrap_mode = str(payload.get("bootstrap_mode") or "").strip()
     normalized["bootstrap_mode"] = (
-        infer_bootstrap_mode(target, inferred_app_type, inferred_profile)
-        if should_refresh_bootstrap_mode(target, current_bootstrap_mode, inferred_app_type, inferred_profile)
-        else current_bootstrap_mode
+        bootstrap_mode.strip()
+        if isinstance(bootstrap_mode, str) and bootstrap_mode.strip()
+        else (
+            infer_bootstrap_mode(target, inferred_app_type, inferred_profile)
+            if should_refresh_bootstrap_mode(target, current_bootstrap_mode, inferred_app_type, inferred_profile)
+            else current_bootstrap_mode
+        )
     )
 
     project_identity = payload.get("project_identity") if isinstance(payload.get("project_identity"), dict) else {}

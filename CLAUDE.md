@@ -5,6 +5,7 @@
 - 人类扫读版在 `docs/OPERATOR_RUNBOOK.md`
 - 当前 mode：`ai_upgrade`；adapter：`node_service`
 - 推荐 preflight：`pnpm preflight`
+- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`
 
 ## 优先摘要命令
 

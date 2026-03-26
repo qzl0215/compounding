@@ -14,6 +14,9 @@ describe("project state snapshot", () => {
     expect(snapshot.focus.summary.length).toBeGreaterThan(0);
     expect(snapshot.execution.counts.total).toBe(deliverySnapshot.projections.taskRows.length);
     expect(["thinking", "planning", "ready", "doing", "acceptance", "released"]).toContain(snapshot.activeStage);
+    expect(snapshot.judgement.overallSummary).toBe(snapshot.headline.overallSummary);
+    expect(snapshot.judgement.focusSummary).toBe(snapshot.focus.summary);
+    expect(snapshot.judgement.nextAction).toBe(snapshot.release.nextAction);
   }, SERVICE_TIMEOUT_MS);
 
   it("keeps release conclusion aligned with pending acceptance and runtime state", async () => {
@@ -29,5 +32,8 @@ describe("project state snapshot", () => {
     } else {
       expect(snapshot.release.healthSummary).toContain("运行正常");
     }
+
+    expect(snapshot.judgement.recommendedSurface.href.startsWith("/")).toBe(true);
+    expect(snapshot.judgement.recommendedRead.path.endsWith(".md")).toBe(true);
   }, SERVICE_TIMEOUT_MS);
 });

@@ -45,6 +45,25 @@ related_docs:
 - create task：`pnpm coord:task:create -- --taskId=t-xxx --summary=\"中文直给概述\" --why=\"为什么现在\"`
 - review：`pnpm coord:review:run -- --taskId=t-xxx`
 
+## 三模式入口
+
+- `cold_start`：新项目冷启动
+  - 推荐命令：`python3 scripts/init_project_compounding.py bootstrap --target . --mode=cold_start`
+  - 适用：空仓或新仓，先装协议层、operator 契约和 repo-local AI 入口。
+- `normalize`：老项目规范化
+  - 推荐命令：`python3 scripts/init_project_compounding.py attach --target . --mode=normalize`
+  - 适用：已有业务代码，但还没有统一协议、operator contract 和 AI 入口。
+- `ai_upgrade`：老项目 AI 底座升级
+  - 推荐命令：`python3 scripts/init_project_compounding.py attach --target . --mode=ai_upgrade`
+  - 先自检：`python3 scripts/init_project_compounding.py doctor --target . --mode=ai_upgrade` / `python3 scripts/init_project_compounding.py audit --target .`
+  - 适用：项目已准备长期按 AI feature 流开发，需要 preflight/task/review 与 summary harness。
+
+## AI 默认入口
+
+- 默认 feature 上下文：`pnpm ai:feature-context -- --surface=home`
+- 带 task 的 feature 上下文：`pnpm ai:feature-context -- --taskPath=tasks/queue/task-xxx.md`
+- 默认先看 feature packet 里的 `Project Judgement` 和 `Default Loop`，再动手改代码。
+
 ## 服务器访问面
 
 ### local-preview
