@@ -1,0 +1,203 @@
+type: object
+required:
+  - version
+  - project
+  - server_surfaces
+  - github_surface
+  - standard_flows
+  - notes
+properties:
+  version:
+    type: string
+  project:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type: string
+  server_surfaces:
+    type: array
+    items:
+      type: object
+      required:
+        - surface_id
+        - purpose
+        - enabled
+        - transport
+        - host
+        - port
+        - base_url
+        - access_via
+        - auth
+        - commands
+        - notes
+      properties:
+        surface_id:
+          type: string
+        purpose:
+          type: string
+          enum: [preview, production, admin, ssh]
+        enabled:
+          type: boolean
+        transport:
+          type: string
+          enum: [local_process, ssh, https, vpn]
+        host:
+          type: string
+        port:
+          type: integer
+        base_url:
+          type: string
+        access_via:
+          type: string
+        auth:
+          type: object
+          required:
+            - mode
+            - secret_refs
+          properties:
+            mode:
+              type: string
+              enum: [none, ssh_config, gh_cli, env_token, manual]
+            secret_refs:
+              type: array
+              items:
+                type: string
+        commands:
+          type: object
+          required:
+            - start
+            - stop
+            - status
+            - check
+          properties:
+            start:
+              type: string
+            stop:
+              type: string
+            status:
+              type: string
+            check:
+              type: string
+        notes:
+          type: array
+          items:
+            type: string
+  github_surface:
+    type: object
+    required:
+      - enabled
+      - provider
+      - owner
+      - repo
+      - remote_name
+      - default_branch
+      - auth
+      - commands
+      - required_checks
+      - notes
+    properties:
+      enabled:
+        type: boolean
+      provider:
+        type: string
+        enum: [github]
+      owner:
+        type: string
+      repo:
+        type: string
+      remote_name:
+        type: string
+      default_branch:
+        type: string
+      auth:
+        type: object
+        required:
+          - mode
+          - secret_refs
+        properties:
+          mode:
+            type: string
+            enum: [gh_cli, env_token, ssh_agent, manual]
+          secret_refs:
+            type: array
+            items:
+              type: string
+      commands:
+        type: object
+        required:
+          - status
+          - sync
+          - open_pr
+          - checks
+        properties:
+          status:
+            type: string
+          sync:
+            type: string
+          open_pr:
+            type: string
+          checks:
+            type: string
+      required_checks:
+        type: array
+        items:
+          type: string
+      notes:
+        type: array
+        items:
+          type: string
+  standard_flows:
+    type: object
+    required:
+      - preflight
+      - preview_release
+      - production_release
+    properties:
+      preflight:
+        type: object
+        required:
+          - basic
+          - task
+        properties:
+          basic:
+            type: string
+          task:
+            type: string
+      preview_release:
+        type: object
+        required:
+          - prepare
+          - accept
+          - reject
+        properties:
+          prepare:
+            type: string
+          accept:
+            type: string
+          reject:
+            type: string
+      production_release:
+        type: object
+        required:
+          - promote_to_main
+          - start_runtime
+          - status
+          - check
+          - rollback
+        properties:
+          promote_to_main:
+            type: string
+          start_runtime:
+            type: string
+          status:
+            type: string
+          check:
+            type: string
+          rollback:
+            type: string
+  notes:
+    type: array
+    items:
+      type: string

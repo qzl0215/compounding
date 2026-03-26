@@ -18,19 +18,31 @@
 
 ### 要做
 
-- 新增 project_operator schema/template/instance\n- 新增 operator 资产生成与校验脚本\n- 接入 bootstrap attach/bootstrap/audit\n- 生成 OPERATOR_RUNBOOK 和跨工具薄入口\n- 更新高频文档与测试
+- 新增 `project_operator` schema/template/instance
+- 新增 operator 资产生成与校验脚本
+- 接入 bootstrap `attach / bootstrap / audit`
+- 生成 `OPERATOR_RUNBOOK` 和跨工具薄入口
+- 更新高频文档与测试
 
 ### 不做
 
-- 不把真实 token、私钥或连接串入库\n- 不新增服务器编排器或远程部署能力\n- 不修改 project_brief 的边界职责\n- 不改 Studio 读模型或页面
+- 不把真实 token、私钥或连接串入库
+- 不新增服务器编排器或远程部署能力
+- 不修改 `project_brief` 的边界职责
+- 不改 Studio 读模型或页面
 
 ### 约束
 
-- AGENTS.md 继续是唯一高频入口\n- 真实密钥只放 env、gh auth、ssh config 或外部 secret manager\n- 跨工具入口只能指向 canonical source，不能复制完整规则\n- project_operator 只记录访问面、命令和 secret 名称，不记录真实 secret 值
+- `AGENTS.md` 继续是唯一高频入口
+- 真实密钥只放 env、`gh auth`、`ssh config` 或外部 secret manager
+- 跨工具入口只能指向 canonical source，不能复制完整规则
+- `project_operator` 只记录访问面、命令和 secret 名称，不记录真实 secret 值
 
 ### 关键风险
 
-- attach/bootstrap/audit 接线容易漏掉新合同\n- 生成入口文件若写死内容，后续会和 AGENTS 分叉\n- secret ref 校验若过宽，会把真实敏感值带进仓库
+- `attach / bootstrap / audit` 接线容易漏掉新合同
+- 生成入口文件若写死内容，后续会和 `AGENTS` 分叉
+- `secret_refs` 校验若过宽，会把真实敏感值带进仓库
 
 ### 测试策略
 
@@ -41,11 +53,11 @@
 
 ## 交付结果
 
-- 状态：todo
+- 状态：doing
 - 体验验收结果：
-  待实现
+  待完成静态 / 构建 / review 收尾
 - 交付结果：
-  待实现
+  operator contract、runbook 生成器、跨工具薄入口、bootstrap/audit 接线与相关测试已实现，待验证链和 closeout 完成后回填。
 - 复盘：
   待实现
 
@@ -60,20 +72,28 @@
 ## 关联模块
 
 - `bootstrap/project_operator.yaml`
-- `schemas/`
-- `templates/`
-- `scripts/init_project_compounding.py`
+- `schemas/project_operator.schema.yaml`
+- `templates/project_operator.template.yaml`
+- `kernel/kernel_manifest.yaml`
 - `scripts/compounding_bootstrap/`
 - `scripts/ai/`
+- `docs/OPERATOR_RUNBOOK.md`
+- `CLAUDE.md`
+- `OPENCODE.md`
+- `.cursor/rules/00-project-entry.mdc`
 - `package.json`
 - `AGENTS.md`
 - `docs/DEV_WORKFLOW.md`
 - `docs/AI_OPERATING_MODEL.md`
+- `memory/project/current-state.md`
+- `memory/project/operating-blueprint.md`
+- `memory/project/roadmap.md`
 - `tests/`
+- `tasks/queue/task-069-operator-contract-and-cross-tool-entry.md`
 
 ## 更新痕迹
 
-- 记忆：pending: 待完成后回写 current-state / operating-blueprint
+- 记忆：updated current-state / operating-blueprint to record operator contract and cross-tool entry flow
 - 索引：no change: 未更新
-- 路线图：pending: 待确认是否需要更新 roadmap 优先级
-- 文档：pending: 待同步 AGENTS / DEV_WORKFLOW / AI_OPERATING_MODEL 与 operator runbook
+- 路线图：updated roadmap priority to include operator contract as landed infrastructure
+- 文档：updated AGENTS / DEV_WORKFLOW / AI_OPERATING_MODEL and generated OPERATOR_RUNBOOK / thin entry files

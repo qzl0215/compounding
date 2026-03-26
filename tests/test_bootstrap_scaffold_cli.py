@@ -15,10 +15,15 @@ class BootstrapKernelShellTests(BootstrapWorkspaceTestCase):
         self.assertTrue((self.target / "docs" / "DEV_WORKFLOW.md").exists())
         self.assertTrue((self.target / "docs" / "ARCHITECTURE.md").exists())
         self.assertTrue((self.target / "schemas" / "project_brief.schema.yaml").exists())
+        self.assertTrue((self.target / "schemas" / "project_operator.schema.yaml").exists())
         self.assertTrue((self.target / "templates" / "proposal.template.yaml").exists())
+        self.assertTrue((self.target / "templates" / "project_operator.template.yaml").exists())
         self.assertTrue((self.target / "kernel" / "kernel_manifest.yaml").exists())
         self.assertTrue((self.target / "tasks" / "templates" / "task-template.md").exists())
         self.assertTrue((self.target / "scripts" / "init_project_compounding.py").exists())
+        self.assertTrue((self.target / "scripts" / "ai" / "generate-operator-assets.ts").exists())
+        self.assertTrue((self.target / "scripts" / "ai" / "validate-operator-contract.ts").exists())
+        self.assertTrue((self.target / "bootstrap" / "project_operator.yaml").exists())
         self.assertTrue((self.target / "output" / "bootstrap" / "bootstrap_report.yaml").exists())
 
     def test_attach_generates_report_and_detects_local_overrides(self) -> None:
@@ -34,6 +39,7 @@ class BootstrapKernelShellTests(BootstrapWorkspaceTestCase):
         self.assertIn("tasks/queue/**", report["detected"]["local_overrides"])
         self.assertIn("apps/**", report["detected"]["local_overrides"])
         self.assertTrue((self.target / "output" / "bootstrap" / "bootstrap_report.yaml").exists())
+        self.assertTrue((self.target / "bootstrap" / "project_operator.yaml").exists())
 
     def test_attach_infers_next_static_site_runtime_and_owned_paths(self) -> None:
         (self.target / "memory" / "project").mkdir(parents=True, exist_ok=True)
@@ -113,6 +119,15 @@ upgrade_policy:
 
         self.assertEqual(report["kernel"]["adoption_mode"], "new")
         self.assertTrue((self.target / "kernel" / "kernel_manifest.yaml").exists())
+
+    def test_audit_requires_project_operator_contract(self) -> None:
+        bootstrap(self.brief_path, self.target)
+        (self.target / "bootstrap" / "project_operator.yaml").unlink()
+
+        result = audit(self.brief_path, self.target)
+
+        self.assertFalse(result.passed)
+        self.assertTrue(any("project_operator.yaml" in error for error in result.errors))
 
 
 if __name__ == "__main__":

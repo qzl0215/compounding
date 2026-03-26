@@ -2,7 +2,7 @@
 title: AI_OPERATING_MODEL
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-26
+last_reviewed_at: 2026-03-28
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -24,6 +24,7 @@ related_docs:
 - 需求不清、边界不清、成功标准不清时，先留在 plan。
 - AI 默认先做三步：扩选项 → 收决策 → 产出 task。
 - 遇到 unfamiliar pattern / infra / runtime capability，先搜已有实现、主源与成熟解，再决定是否自建。
+- 涉及服务器访问、GitHub 接入方式或标准发布动作时，先读 `bootstrap/project_operator.yaml`；需要扫读版时读 `docs/OPERATOR_RUNBOOK.md`。
 - `Boil the Lake` 只适用于小而边界清楚的 task；大而跨阶段的事项留在 plan。
 - 当需要找低风险熵减机会时，优先运行 `pnpm ai:cleanup-candidates` 读取瞬时候选，而不是先扩新 backlog 或新状态源。
 - 当已绑定 `structural / release` task 时，先看 `pnpm preflight -- --taskId=t-xxx` 输出里的 `retro_hints`；默认先继承上一轮的耗时/阻塞结论，再决定是否继续试新路径。
@@ -44,6 +45,7 @@ related_docs:
 - 规划链默认脚本：`scripts/ai/create-task.ts`
 - 执行链默认脚本：`scripts/ai/build-context.ts`、`node --experimental-strip-types scripts/ai/validate-change-trace.ts`、`node --experimental-strip-types scripts/ai/validate-task-git-link.ts`、`node --experimental-strip-types scripts/ai/validate-knowledge-assets.ts`
 - 交付链默认脚本：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`、`node --experimental-strip-types scripts/release/accept-dev-release.ts`、`node --experimental-strip-types scripts/release/reject-dev-release.ts`、`node --experimental-strip-types scripts/release/rollback-release.ts`
+- 运维接入主合同：`bootstrap/project_operator.yaml`；跨工具薄入口只负责把不同工具跳回这份合同与 `AGENTS.md`
 - 熵减候选默认脚本：`node --experimental-strip-types scripts/ai/cleanup-candidates.ts`，只在计划评审、release 复盘或当前没有更高优先级产品任务时运行。
 - 复盘候选默认脚本：`node --experimental-strip-types scripts/ai/retro-candidates.ts`，只读取 companion digest 聚合重复 blocker，不回写长期经验主源。
 - 这些脚本只承接最小契约，不替代 `docs/WORK_MODES.md`、`docs/DEV_WORKFLOW.md` 或任务边界。

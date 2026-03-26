@@ -10,10 +10,13 @@ from .defaults import (
     BRIEF_PATH,
     EXPERIENCE_PROMOTION_TEMPLATE_PATH,
     KERNEL_MANIFEST_PATH,
+    PROJECT_OPERATOR_SCHEMA_PATH,
+    PROJECT_OPERATOR_TEMPLATE_PATH,
     PROJECT_BRIEF_SCHEMA_PATH,
     PROJECT_BRIEF_TEMPLATE_PATH,
     SOURCE_ROOT,
 )
+from .operator_contract import ensure_operator_contract
 from .yaml_io import save_yaml
 
 
@@ -27,6 +30,9 @@ def bootstrap(config_path: Path | None, target: Path) -> dict:
     save_yaml(brief_path, brief_payload)
     if "bootstrap/project_brief.yaml (normalized for new project)" not in created:
         created.append("bootstrap/project_brief.yaml (normalized for new project)")
+    operator_path, _, operator_changed = ensure_operator_contract(target)
+    if operator_changed:
+        created.append(f"{operator_path.relative_to(target).as_posix()} (created or normalized)")
     report = attach(brief_path, target, adoption_mode="new")
     report.setdefault("actions", {}).setdefault("created", []).extend(item for item in created if item not in report["actions"]["created"])
     return report
@@ -45,17 +51,22 @@ def _copy_if_missing(relative_path: str, target: Path, created: list[str]) -> No
 def _copy_kernel_assets(target: Path, created: list[str]) -> None:
     for relative_path in (
         str(PROJECT_BRIEF_SCHEMA_PATH),
+        str(PROJECT_OPERATOR_SCHEMA_PATH),
         "schemas/kernel_manifest.schema.yaml",
         "schemas/bootstrap_report.schema.yaml",
         "schemas/proposal.schema.yaml",
         "schemas/experience_promotion.schema.yaml",
         str(PROJECT_BRIEF_TEMPLATE_PATH),
+        str(PROJECT_OPERATOR_TEMPLATE_PATH),
         "templates/bootstrap_report.template.yaml",
         "templates/proposal.template.yaml",
         str(EXPERIENCE_PROMOTION_TEMPLATE_PATH),
         str(KERNEL_MANIFEST_PATH),
         "tasks/templates/task-template.md",
         "scripts/init_project_compounding.py",
+        "scripts/ai/generate-operator-assets.ts",
+        "scripts/ai/validate-operator-contract.ts",
+        "scripts/ai/lib/operator-contract.ts",
     ):
         _copy_if_missing(relative_path, target, created)
 
@@ -122,6 +133,7 @@ def render_agents(project_name: str) -> str:
 - 需要工作模式时读 `docs/WORK_MODES.md`
 - 需要执行顺序时读 `docs/DEV_WORKFLOW.md`
 - 需要结构边界时读 `docs/ARCHITECTURE.md`
+- 需要服务器 / GitHub / 发布访问面时读 `bootstrap/project_operator.yaml`
 
 ## 当前项目
 
@@ -163,6 +175,7 @@ def render_dev_workflow() -> str:
 - 再用 `audit` 看缺口
 - 再用 `proposal` 看升级建议
 - 新项目先用 `bootstrap` 起最小壳子
+- 服务器、GitHub 和标准发布流统一写在 `bootstrap/project_operator.yaml`
 """
 
 
@@ -198,6 +211,7 @@ def render_ai_operating_model() -> str:
 - 先 audit 看边界和缺口
 - proposal 先于 apply
 - 经验默认留在项目壳子
+- 涉及服务器 / GitHub / 发布访问面时先读 `bootstrap/project_operator.yaml`
 """
 
 

@@ -24,6 +24,9 @@ managed_assets:
   - path: schemas/project_brief.schema.yaml
     ownership: kernel
     sync_mode: auto
+  - path: schemas/project_operator.schema.yaml
+    ownership: kernel
+    sync_mode: auto
   - path: schemas/kernel_manifest.schema.yaml
     ownership: kernel
     sync_mode: auto
@@ -37,6 +40,9 @@ managed_assets:
     ownership: kernel
     sync_mode: auto
   - path: templates/project_brief.template.yaml
+    ownership: kernel
+    sync_mode: auto
+  - path: templates/project_operator.template.yaml
     ownership: kernel
     sync_mode: auto
   - path: templates/bootstrap_report.template.yaml
@@ -57,6 +63,15 @@ managed_assets:
   - path: scripts/init_project_compounding.py
     ownership: kernel
     sync_mode: auto
+  - path: scripts/ai/generate-operator-assets.ts
+    ownership: kernel
+    sync_mode: auto
+  - path: scripts/ai/validate-operator-contract.ts
+    ownership: kernel
+    sync_mode: auto
+  - path: scripts/ai/lib/operator-contract.ts
+    ownership: kernel
+    sync_mode: auto
   - path: scripts/compounding_bootstrap/*
     ownership: kernel
     sync_mode: auto
@@ -74,12 +89,27 @@ generated_assets:
   - path: bootstrap/project_brief.yaml
     source: templates/project_brief.template.yaml
     regenerate_command: python3 scripts/init_project_compounding.py attach --target .
+  - path: bootstrap/project_operator.yaml
+    source: templates/project_operator.template.yaml
+    regenerate_command: python3 scripts/init_project_compounding.py attach --target .
   - path: output/bootstrap/bootstrap_report.yaml
     source: templates/bootstrap_report.template.yaml
     regenerate_command: python3 scripts/init_project_compounding.py attach --target .
   - path: output/proposals/*/proposal.yaml
     source: templates/proposal.template.yaml
     regenerate_command: python3 scripts/init_project_compounding.py proposal --target .
+  - path: docs/OPERATOR_RUNBOOK.md
+    source: bootstrap/project_operator.yaml
+    regenerate_command: node --experimental-strip-types scripts/ai/generate-operator-assets.ts
+  - path: CLAUDE.md
+    source: bootstrap/project_operator.yaml
+    regenerate_command: node --experimental-strip-types scripts/ai/generate-operator-assets.ts
+  - path: OPENCODE.md
+    source: bootstrap/project_operator.yaml
+    regenerate_command: node --experimental-strip-types scripts/ai/generate-operator-assets.ts
+  - path: .cursor/rules/00-project-entry.mdc
+    source: bootstrap/project_operator.yaml
+    regenerate_command: node --experimental-strip-types scripts/ai/generate-operator-assets.ts
 protected_assets:
   - path: apps/**
     reason: 核心业务代码默认只建议，不自动处理。

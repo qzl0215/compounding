@@ -11,7 +11,7 @@ related_docs:
   - memory/project/current-state.md
   - memory/project/operating-blueprint.md
   - docs/ARCHITECTURE.md
-last_reviewed_at: 2026-03-27
+last_reviewed_at: 2026-03-28
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 ## 执行原则
@@ -33,6 +33,7 @@ last_reviewed_at: 2026-03-27
 - 再读 `memory/project/roadmap.md`、`memory/project/current-state.md`、`memory/project/operating-blueprint.md`。
 - 需要判断当前处于什么场景时，读 `docs/WORK_MODES.md`。
 - 需要执行顺序、门禁和发布 runbook 时，读 `docs/DEV_WORKFLOW.md`。
+- 需要服务器访问、GitHub 接入方式或标准发布动作时，读 `bootstrap/project_operator.yaml`；需要人类扫读版时读 `docs/OPERATOR_RUNBOOK.md`。
 - 需要仓库拓扑、依赖方向和运行时边界时，读 `docs/ARCHITECTURE.md`。
 - 已进入 task 时再读 `tasks/queue/*.md`；需要代码导航时再读 `code_index/*`。
 - `docs/PROJECT_RULES.md`、`docs/AI_OPERATING_MODEL.md`、`docs/ASSET_MAINTENANCE.md` 是按需补读的专项附录，不作为默认第一跳。
