@@ -7,6 +7,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { spawnSync } = require("node:child_process");
+const { recordShortcutOpportunityFromEnv } = require("../ai/lib/command-gain.ts");
 const { loadManifest } = require("./lib/manifest.ts");
 const { recordReviewResult } = require("./lib/companion-lifecycle.ts");
 const { finishActiveStage, finishWaitStageIfOpen, recordBlocker, startActiveStage } = require("./lib/task-activity.ts");
@@ -224,12 +225,21 @@ function main() {
 
   const output = {
     ok: allPass,
-    generated_at: new Date().toISOString(),
-    task_id: taskId || null,
-    reviewers,
-    diff_summary: diffSummary,
-    ...mergeOut,
+      generated_at: new Date().toISOString(),
+      task_id: taskId || null,
+      reviewers,
+      diff_summary: diffSummary,
+      ...mergeOut,
   };
+
+  recordShortcutOpportunityFromEnv(process.cwd(), {
+    shortcutId: "review_summary",
+    originalCmd: taskId ? `pnpm coord:review:run -- --taskId=${taskId}` : "pnpm coord:review:run",
+    taskId: taskId || null,
+    profileId: "review_summary",
+    profileVersion: "1",
+    exitCode: allPass ? (mergeOut.merge_decision === "escalate_to_human" ? 2 : 0) : 1,
+  });
 
   if (taskId) {
     if (!allPass) {

@@ -1,5 +1,7 @@
 import unittest
 
+from scripts.compounding_bootstrap.packs import export_packs
+from scripts.compounding_bootstrap.doctor import doctor
 from scripts.compounding_bootstrap.engine import attach, audit, bootstrap, load_yaml, migrate_legacy_config, scaffold, validate_config_file
 from tests.bootstrap_support import BootstrapWorkspaceTestCase
 
@@ -8,12 +10,21 @@ class BootstrapKernelShellTests(BootstrapWorkspaceTestCase):
     def test_bootstrap_creates_minimal_shell_and_audit_passes(self) -> None:
         bootstrap(self.brief_path, self.target)
         result = audit(self.brief_path, self.target)
+        brief = load_yaml(self.brief_path)
+        operator = load_yaml(self.target / "bootstrap" / "project_operator.yaml")
 
         self.assertTrue(result.passed, msg=result.errors)
+        self.assertEqual(brief["bootstrap_mode"], "cold_start")
+        self.assertEqual(brief["kernel"]["profile"], "governance")
+        self.assertEqual(operator["project"]["bootstrap_mode"], "cold_start")
         self.assertTrue((self.target / "AGENTS.md").exists())
         self.assertTrue((self.target / "docs" / "WORK_MODES.md").exists())
         self.assertTrue((self.target / "docs" / "DEV_WORKFLOW.md").exists())
         self.assertTrue((self.target / "docs" / "ARCHITECTURE.md").exists())
+        self.assertTrue((self.target / "docs" / "OPERATOR_RUNBOOK.md").exists())
+        self.assertTrue((self.target / "CLAUDE.md").exists())
+        self.assertTrue((self.target / "OPENCODE.md").exists())
+        self.assertTrue((self.target / ".cursor" / "rules" / "00-project-entry.mdc").exists())
         self.assertTrue((self.target / "schemas" / "project_brief.schema.yaml").exists())
         self.assertTrue((self.target / "schemas" / "project_operator.schema.yaml").exists())
         self.assertTrue((self.target / "templates" / "proposal.template.yaml").exists())
@@ -61,11 +72,52 @@ class BootstrapKernelShellTests(BootstrapWorkspaceTestCase):
         brief = load_yaml(self.brief_path)
 
         self.assertEqual(brief["project_identity"]["one_liner"], "`qianfamily.online` 当前是静态中文宗亲门户站。")
+        self.assertEqual(brief["kernel"]["profile"], "governance")
         self.assertEqual(brief["runtime_boundary"]["app_type"], "nextjs-static-site")
         self.assertEqual(brief["runtime_boundary"]["deploy_target"], "nginx-static-export")
         self.assertIn("src/**", brief["local_overrides"]["owned_paths"])
         self.assertIn("src/**", brief["upgrade_policy"]["blocked_paths"])
         self.assertIn("src/app/**", brief["runtime_boundary"]["critical_paths"])
+
+    def test_attach_infers_python_service_archetype(self) -> None:
+        (self.target / "README.md").write_text("# Service\n\nPython worker\n", encoding="utf8")
+        (self.target / "pyproject.toml").write_text("[project]\nname='worker'\nversion='0.1.0'\n", encoding="utf8")
+        (self.target / "src" / "worker").mkdir(parents=True, exist_ok=True)
+        (self.target / "Dockerfile").write_text("FROM python:3.12-slim\n", encoding="utf8")
+
+        attach(self.brief_path, self.target)
+        brief = load_yaml(self.brief_path)
+
+        self.assertEqual(brief["kernel"]["profile"], "governance")
+        self.assertEqual(brief["runtime_boundary"]["app_type"], "python-service")
+        self.assertEqual(brief["runtime_boundary"]["deploy_target"], "container-service")
+
+    def test_doctor_recommends_bootstrap_for_new_shell(self) -> None:
+        self.brief_path.unlink()
+        payload = doctor(self.brief_path, self.target)
+
+        self.assertFalse(payload["kernel"]["brief_present"])
+        self.assertEqual(payload["kernel"]["profile"], "governance")
+        self.assertEqual(payload["recommended_mode"], "cold_start")
+        self.assertEqual(payload["recommended_entry"], "bootstrap")
+        self.assertEqual(payload["required_packs"], ["protocol_pack", "operator_pack", "tooling_pack"])
+        self.assertEqual(payload["archetype"]["package_manager"], "unknown")
+        self.assertFalse(payload["ready_for_ai_iteration"])
+        self.assertTrue(any("bootstrap" in step for step in payload["next_steps"]))
+
+    def test_doctor_reports_governance_profile_for_attached_repo(self) -> None:
+        (self.target / "README.md").write_text("# Legacy Repo\n\nlegacy app\n", encoding="utf8")
+        (self.target / "package.json").write_text('{"scripts":{"build":"echo build"}}\n', encoding="utf8")
+        attach(self.brief_path, self.target)
+
+        payload = doctor(self.brief_path, self.target)
+
+        self.assertTrue(payload["kernel"]["brief_present"])
+        self.assertEqual(payload["kernel"]["profile"], "governance")
+        self.assertEqual(payload["recommended_entry"], "audit")
+        operator_layer = next(item for item in payload["capabilities"] if item["capability_id"] == "operator_layer")
+        self.assertFalse(operator_layer["ok"])
+        self.assertTrue(any("generate-operator-assets" in step for step in payload["next_steps"]))
 
     def test_validate_config_file_fails_for_invalid_adoption_mode(self) -> None:
         self.brief_path.write_text(
@@ -118,6 +170,7 @@ upgrade_policy:
         report = scaffold(self.brief_path, self.target)
 
         self.assertEqual(report["kernel"]["adoption_mode"], "new")
+        self.assertEqual(report["kernel"]["bootstrap_mode"], "cold_start")
         self.assertTrue((self.target / "kernel" / "kernel_manifest.yaml").exists())
 
     def test_audit_requires_project_operator_contract(self) -> None:
@@ -128,6 +181,37 @@ upgrade_policy:
 
         self.assertFalse(result.passed)
         self.assertTrue(any("project_operator.yaml" in error for error in result.errors))
+
+    def test_bootstrap_ai_upgrade_copies_execution_pack_for_supported_repo(self) -> None:
+        (self.target / "package.json").write_text('{"scripts":{"build":"echo build","test":"echo test"}}\n', encoding="utf8")
+
+        report = bootstrap(self.brief_path, self.target, bootstrap_mode="ai_upgrade")
+        brief = load_yaml(self.brief_path)
+
+        self.assertEqual(brief["bootstrap_mode"], "ai_upgrade")
+        self.assertEqual(brief["kernel"]["profile"], "full_ai_dev")
+        self.assertIn("ai_exec_pack", report["kernel"]["required_packs"])
+        self.assertTrue(report["status"]["ready_for_ai_iteration"])
+        self.assertTrue((self.target / "scripts" / "coord" / "preflight.ts").exists())
+        self.assertTrue((self.target / "scripts" / "ai" / "preflight-summary.ts").exists())
+
+    def test_doctor_downgrades_unsupported_ai_upgrade_to_cold_start(self) -> None:
+        self.brief_path.unlink()
+
+        payload = doctor(self.brief_path, self.target, bootstrap_mode="ai_upgrade")
+
+        self.assertEqual(payload["requested_mode"], "ai_upgrade")
+        self.assertEqual(payload["recommended_mode"], "cold_start")
+        self.assertEqual(payload["archetype"]["adapter_id"], "generic_repo")
+        self.assertNotIn("ai_exec_pack", payload["required_packs"])
+
+    def test_export_packs_writes_pack_and_mode_manifest(self) -> None:
+        export_path = export_packs(self.target / "output" / "bootstrap" / "pack-exports.yaml")
+        payload = load_yaml(export_path)
+
+        self.assertTrue(export_path.exists())
+        self.assertTrue(any(item["pack_id"] == "protocol_pack" and item["file_count"] > 0 for item in payload["packs"]))
+        self.assertTrue(any(item["mode_id"] == "ai_upgrade" and "ai_exec_pack" in item["required_packs"] for item in payload["mode_packs"]))
 
 
 if __name__ == "__main__":

@@ -18,6 +18,7 @@ from .defaults import (
     SOURCE_ROOT,
     AuditResult,
 )
+from .packs import mode_required_packs, selected_pack_paths
 from .schema_validation import validate_payload
 from .yaml_io import load_yaml
 
@@ -55,12 +56,13 @@ def audit(config_path: Path, target: Path) -> AuditResult:
     manifest = load_object(SOURCE_ROOT / KERNEL_MANIFEST_PATH)
     brief = load_object(target / BRIEF_PATH) if (target / BRIEF_PATH).exists() else {}
     report = load_object(target / BOOTSTRAP_REPORT_PATH) if (target / BOOTSTRAP_REPORT_PATH).exists() else {}
-
-    for entry in manifest.get("managed_assets", []):
-        if not isinstance(entry, dict):
-            continue
-        relative_path = str(entry.get("path") or "")
-        if not relative_path:
+    bootstrap_mode = str(brief.get("bootstrap_mode") or "normalize").strip()
+    required_packs = mode_required_packs(manifest, bootstrap_mode)
+    for relative_path in selected_pack_paths(manifest, required_packs, "copy_paths"):
+        if not pattern_exists(target, relative_path):
+            result.missing_assets.append(relative_path)
+    for relative_path in selected_pack_paths(manifest, required_packs, "generated_paths"):
+        if relative_path.startswith("output/"):
             continue
         if not pattern_exists(target, relative_path):
             result.missing_assets.append(relative_path)

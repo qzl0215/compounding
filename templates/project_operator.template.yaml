@@ -1,6 +1,26 @@
 version: 0.1.0
 project:
   name: Example Project
+  bootstrap_mode: cold_start
+  adapter_id: generic_repo
+  profile: governance
+  required_packs:
+    - protocol_pack
+    - operator_pack
+    - tooling_pack
+toolchain_commands:
+  install: ""
+  dev: ""
+  build: ""
+  test: ""
+  bootstrap_doctor: python3 scripts/init_project_compounding.py doctor --target .
+  bootstrap_attach: python3 scripts/init_project_compounding.py attach --target .
+  bootstrap_audit: python3 scripts/init_project_compounding.py audit --target .
+  bootstrap_proposal: python3 scripts/init_project_compounding.py proposal --target .
+  preflight: python3 scripts/init_project_compounding.py doctor --target .
+  task_preflight: python3 scripts/init_project_compounding.py audit --target .
+  create_task: ""
+  review: ""
 server_surfaces:
   - surface_id: local-preview
     purpose: preview
@@ -70,6 +90,7 @@ standard_flows:
     status: pnpm prod:status
     check: pnpm prod:check
     rollback: node --experimental-strip-types scripts/release/rollback-release.ts --release <releaseId>
+agent_shortcuts: []
 notes:
   - 只保存访问面、命令和 secret ref 名称，不保存真实密钥。
   - 人类扫读版由 docs/OPERATOR_RUNBOOK.md 承接。

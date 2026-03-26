@@ -21,10 +21,29 @@ related_docs:
 ## 项目
 
 - 名称：`Compounding AI Operating System`
+- 模式：`ai_upgrade`
+- adapter：`node_service`
+- profile：`full_ai_dev`
+- required packs：`protocol_pack`、`operator_pack`、`ai_exec_pack`、`tooling_pack`
 - 顶层备注：
   - 该文件只保存服务器访问面、GitHub 接入面和标准发布流的非密钥事实。
   - 真实密钥只放在 env、gh auth、ssh config 或外部 secret manager。
   - 人类扫读版由 docs/OPERATOR_RUNBOOK.md 承接；跨工具薄入口只负责把工具跳转到 AGENTS.md 与本文件。
+
+## 推荐命令
+
+- install：`pnpm install`
+- dev：`pnpm dev`
+- build：`pnpm build`
+- test：`pnpm test`
+- bootstrap doctor：`python3 scripts/init_project_compounding.py doctor --target .`
+- bootstrap attach：`python3 scripts/init_project_compounding.py attach --target .`
+- bootstrap audit：`python3 scripts/init_project_compounding.py audit --target .`
+- bootstrap proposal：`python3 scripts/init_project_compounding.py proposal --target .`
+- preflight：`pnpm preflight`
+- task preflight：`pnpm preflight -- --taskId=t-xxx`
+- create task：`pnpm coord:task:create -- --taskId=t-xxx --summary=\"中文直给概述\" --why=\"为什么现在\"`
+- review：`pnpm coord:review:run -- --taskId=t-xxx`
 
 ## 服务器访问面
 
@@ -89,4 +108,31 @@ related_docs:
 - production status：`pnpm prod:status`
 - production check：`pnpm prod:check`
 - rollback：`node --experimental-strip-types scripts/release/rollback-release.ts --release <releaseId>`
+
+## Agent Shortcut
+
+- 优先使用 preflight 摘要：`pnpm ai:preflight:summary`
+  - 适用场景：改动前想快速确认 gate 结果；structural 或 release 场景继续补 -- --taskId=t-xxx
+  - 原因：保留 preflight 判定语义，但把 blocker、note 和 retro hint 压成短摘要，失败时保留 raw tee
+  - 工具面：`codex`、`claude`、`cursor`、`opencode`
+- 优先使用静态校验摘要：`pnpm ai:validate:static:summary`
+  - 适用场景：想看 validate:static 的关键信号，而不是整段脚本输出
+  - 原因：只保留失败项、错误模式和脚本步骤，减少 lint 与 validator 噪音
+  - 工具面：`codex`、`claude`、`cursor`、`opencode`
+- 优先使用构建校验摘要：`pnpm ai:validate:build:summary`
+  - 适用场景：想看 test/build/audit 的结果摘要，而不是整段构建日志
+  - 原因：聚焦失败步骤与关键错误，避免把成功日志整段塞进上下文
+  - 工具面：`codex`、`claude`、`cursor`、`opencode`
+- 优先使用 review 摘要：`pnpm ai:review:summary -- --taskId=t-xxx`
+  - 适用场景：需要看 review 结论、失败 reviewer 和 merge decision
+  - 原因：保留 review contract，但把 reviewer 输出收成短摘要并统计 adoption
+  - 工具面：`codex`、`claude`、`cursor`、`opencode`
+- 优先使用 preview 健康摘要：`pnpm ai:preview:summary`
+  - 适用场景：需要确认本地 preview 运行态，而不是看完整健康检查 JSON
+  - 原因：直接给出 preview 状态、端口、drift 与失败原因，并统计 shortcut adoption
+  - 工具面：`codex`、`claude`、`cursor`、`opencode`
+- 优先使用 production 健康摘要：`pnpm ai:prod:summary`
+  - 适用场景：需要确认本地 production 运行态，而不是看完整健康检查 JSON
+  - 原因：直接给出 production 状态、端口、drift 与失败原因，并统计 shortcut adoption
+  - 工具面：`codex`、`claude`、`cursor`、`opencode`
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

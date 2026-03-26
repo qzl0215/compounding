@@ -2,9 +2,11 @@ type: object
 required:
   - version
   - project
+  - toolchain_commands
   - server_surfaces
   - github_surface
   - standard_flows
+  - agent_shortcuts
   - notes
 properties:
   version:
@@ -13,8 +15,64 @@ properties:
     type: object
     required:
       - name
+      - bootstrap_mode
+      - adapter_id
+      - required_packs
     properties:
       name:
+        type: string
+      bootstrap_mode:
+        type: string
+        enum: [cold_start, normalize, ai_upgrade]
+      adapter_id:
+        type: string
+        enum: [generic_repo, node_service, web_app, python_service]
+      profile:
+        type: string
+        enum: [protocol_only, governance, full_ai_dev]
+      required_packs:
+        type: array
+        items:
+          type: string
+  toolchain_commands:
+    type: object
+    required:
+      - install
+      - dev
+      - build
+      - test
+      - bootstrap_doctor
+      - bootstrap_attach
+      - bootstrap_audit
+      - bootstrap_proposal
+      - preflight
+      - task_preflight
+      - create_task
+      - review
+    properties:
+      install:
+        type: string
+      dev:
+        type: string
+      build:
+        type: string
+      test:
+        type: string
+      bootstrap_doctor:
+        type: string
+      bootstrap_attach:
+        type: string
+      bootstrap_audit:
+        type: string
+      bootstrap_proposal:
+        type: string
+      preflight:
+        type: string
+      task_preflight:
+        type: string
+      create_task:
+        type: string
+      review:
         type: string
   server_surfaces:
     type: array
@@ -197,6 +255,36 @@ properties:
             type: string
           rollback:
             type: string
+  agent_shortcuts:
+    type: array
+    items:
+      type: object
+      required:
+        - shortcut_id
+        - label
+        - canonical_command
+        - applies_when
+        - why
+        - tool_surfaces
+        - mode
+      properties:
+        shortcut_id:
+          type: string
+        label:
+          type: string
+        canonical_command:
+          type: string
+        applies_when:
+          type: string
+        why:
+          type: string
+        tool_surfaces:
+          type: array
+          items:
+            type: string
+        mode:
+          type: string
+          enum: [suggest]
   notes:
     type: array
     items:

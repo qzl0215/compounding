@@ -6,8 +6,9 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
-from .config_resolution import infer_project_name
-from .defaults import PROJECT_OPERATOR_PATH, PROJECT_OPERATOR_SCHEMA_PATH, PROJECT_OPERATOR_TEMPLATE_PATH, SOURCE_ROOT
+from .config_resolution import infer_app_type, infer_kernel_profile, infer_package_manager, infer_project_name
+from .defaults import BRIEF_PATH, PROJECT_OPERATOR_PATH, PROJECT_OPERATOR_SCHEMA_PATH, PROJECT_OPERATOR_TEMPLATE_PATH, SOURCE_ROOT
+from .packs import infer_adapter_id, infer_bootstrap_mode, load_kernel_manifest, mode_required_packs, resolve_supported_mode
 from .schema_validation import validate_payload
 from .yaml_io import load_yaml, save_yaml
 
@@ -136,23 +137,29 @@ def default_github_surface(target: Path) -> dict[str, Any]:
     }
 
 
-def default_standard_flows() -> dict[str, Any]:
+def default_standard_flows(has_ai_exec_pack: bool) -> dict[str, Any]:
+    preflight_basic = "node --experimental-strip-types scripts/coord/preflight.ts" if has_ai_exec_pack else "python3 scripts/init_project_compounding.py doctor --target ."
+    preflight_task = (
+        "node --experimental-strip-types scripts/coord/preflight.ts --taskId=t-xxx"
+        if has_ai_exec_pack
+        else "python3 scripts/init_project_compounding.py audit --target ."
+    )
     return {
         "preflight": {
-            "basic": "pnpm preflight",
-            "task": "pnpm preflight -- --taskId=t-xxx",
+            "basic": preflight_basic,
+            "task": preflight_task,
         },
         "preview_release": {
-            "prepare": "node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev --primary-task <taskId>",
-            "accept": "node --experimental-strip-types scripts/release/accept-dev-release.ts --release <releaseId>",
-            "reject": "node --experimental-strip-types scripts/release/reject-dev-release.ts --release <releaseId>",
+            "prepare": "python3 scripts/init_project_compounding.py proposal --target .",
+            "accept": "python3 scripts/init_project_compounding.py audit --target .",
+            "reject": "python3 scripts/init_project_compounding.py doctor --target .",
         },
         "production_release": {
             "promote_to_main": "git checkout main && git merge --no-ff <validated-branch>",
-            "start_runtime": "pnpm prod:start",
-            "status": "pnpm prod:status",
-            "check": "pnpm prod:check",
-            "rollback": "node --experimental-strip-types scripts/release/rollback-release.ts --release <releaseId>",
+            "start_runtime": "python3 scripts/init_project_compounding.py doctor --target .",
+            "status": "python3 scripts/init_project_compounding.py doctor --target .",
+            "check": "python3 scripts/init_project_compounding.py audit --target .",
+            "rollback": "git revert <commit>",
         },
     }
 
@@ -171,6 +178,98 @@ def normalize_notes(value: Any, fallback: list[str]) -> list[str]:
         return notes or fallback
     note = normalize_string(value)
     return [note] if note else fallback
+
+
+def infer_project_profile(target: Path) -> str:
+    brief_path = target / BRIEF_PATH
+    if brief_path.exists():
+        payload = load_yaml(brief_path)
+        if isinstance(payload, dict):
+            kernel = payload.get("kernel") if isinstance(payload.get("kernel"), dict) else {}
+            profile = normalize_string(kernel.get("profile"))
+            if profile:
+                return profile
+    return infer_kernel_profile(target)
+
+
+def infer_project_bootstrap_mode(target: Path) -> str:
+    manifest = load_kernel_manifest()
+    brief_path = target / BRIEF_PATH
+    if brief_path.exists():
+        payload = load_yaml(brief_path)
+        if isinstance(payload, dict):
+            mode = normalize_string(payload.get("bootstrap_mode"))
+            kernel = payload.get("kernel") if isinstance(payload.get("kernel"), dict) else {}
+            runtime_boundary = payload.get("runtime_boundary") if isinstance(payload.get("runtime_boundary"), dict) else {}
+            profile = normalize_string(kernel.get("profile"))
+            app_type = normalize_string(runtime_boundary.get("app_type"))
+            inferred_app_type = app_type or infer_app_type(target)
+            inferred_mode = infer_bootstrap_mode(target, inferred_app_type, profile or infer_kernel_profile(target))
+            return resolve_supported_mode(manifest, infer_adapter_id(inferred_app_type), mode or inferred_mode, inferred_mode)
+    inferred_app_type = infer_app_type(target)
+    inferred_mode = infer_bootstrap_mode(target, inferred_app_type, infer_kernel_profile(target))
+    return resolve_supported_mode(manifest, infer_adapter_id(inferred_app_type), inferred_mode, inferred_mode)
+
+
+def infer_required_packs(target: Path, bootstrap_mode: str) -> list[str]:
+    return mode_required_packs(load_kernel_manifest(), bootstrap_mode)
+
+
+def default_toolchain_commands(target: Path, adapter_id: str, has_ai_exec_pack: bool) -> dict[str, str]:
+    package_manager = infer_package_manager(target)
+    install = ""
+    dev = ""
+    build = ""
+    test = ""
+
+    if adapter_id in {"node_service", "web_app"}:
+        if package_manager == "pnpm":
+            install, dev, build, test = "pnpm install", "pnpm dev", "pnpm build", "pnpm test"
+        elif package_manager == "yarn":
+            install, dev, build, test = "yarn install", "yarn dev", "yarn build", "yarn test"
+        elif package_manager == "npm":
+            install, dev, build, test = "npm install", "npm run dev", "npm run build", "npm test"
+        elif package_manager == "bun":
+            install, dev, build, test = "bun install", "bun run dev", "bun run build", "bun test"
+    elif adapter_id == "python_service":
+        install = "pip install -r requirements.txt"
+        dev = "python -m app"
+        build = "python -m compileall ."
+        test = "pytest"
+
+    return {
+        "install": install,
+        "dev": dev,
+        "build": build,
+        "test": test,
+        "bootstrap_doctor": "python3 scripts/init_project_compounding.py doctor --target .",
+        "bootstrap_attach": "python3 scripts/init_project_compounding.py attach --target .",
+        "bootstrap_audit": "python3 scripts/init_project_compounding.py audit --target .",
+        "bootstrap_proposal": "python3 scripts/init_project_compounding.py proposal --target .",
+        "preflight": "node --experimental-strip-types scripts/coord/preflight.ts" if has_ai_exec_pack else "python3 scripts/init_project_compounding.py doctor --target .",
+        "task_preflight": "node --experimental-strip-types scripts/coord/preflight.ts --taskId=t-xxx" if has_ai_exec_pack else "python3 scripts/init_project_compounding.py audit --target .",
+        "create_task": "node --experimental-strip-types scripts/ai/create-task.ts task-xxx \"中文直给概述\" \"为什么现在\"" if has_ai_exec_pack else "",
+        "review": "node --experimental-strip-types scripts/coord/review.ts --taskId=t-xxx" if has_ai_exec_pack else "",
+    }
+
+
+def normalize_toolchain_commands(payload: Any, fallback: dict[str, str]) -> dict[str, str]:
+    current = payload if isinstance(payload, dict) else {}
+    return {key: normalize_string(current.get(key), value) for key, value in fallback.items()}
+
+
+def sync_operator_assets(target: Path) -> bool:
+    script_path = target / "scripts" / "ai" / "generate-operator-assets.ts"
+    if not script_path.exists():
+        return False
+    subprocess.run(
+        ["node", "--experimental-strip-types", str(script_path)],
+        cwd=target,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return True
 
 
 def normalize_server_surface(payload: Any, fallback: dict[str, Any]) -> dict[str, Any]:
@@ -231,6 +330,11 @@ def normalize_operator_payload(payload: dict[str, Any], target: Path) -> tuple[d
     if not isinstance(template, dict):
         raise ValueError("Project operator template must be an object.")
 
+    bootstrap_mode = infer_project_bootstrap_mode(target)
+    adapter_id = infer_adapter_id(infer_app_type(target))
+    required_packs = infer_required_packs(target, bootstrap_mode)
+    has_ai_exec_pack = "ai_exec_pack" in required_packs
+
     server_defaults = default_server_surfaces(target)
     server_by_id = {
         normalize_string(item.get("surface_id")): item
@@ -263,12 +367,35 @@ def normalize_operator_payload(payload: dict[str, Any], target: Path) -> tuple[d
             )
         )
 
-    standard_flows = deepcopy(default_standard_flows())
+    standard_flows = deepcopy(default_standard_flows(has_ai_exec_pack))
     current_flows = payload.get("standard_flows") if isinstance(payload.get("standard_flows"), dict) else {}
     for group, commands in standard_flows.items():
         current_group = current_flows.get(group) if isinstance(current_flows.get(group), dict) else {}
         for key, default_command in commands.items():
             commands[key] = normalize_string(current_group.get(key), default_command)
+
+    toolchain_commands = normalize_toolchain_commands(
+        payload.get("toolchain_commands"),
+        default_toolchain_commands(target, adapter_id, has_ai_exec_pack),
+    )
+
+    normalized_shortcuts = []
+    shortcut_values = payload.get("agent_shortcuts") if isinstance(payload.get("agent_shortcuts"), list) else template.get("agent_shortcuts", [])
+    for item in shortcut_values if isinstance(shortcut_values, list) else []:
+        if not isinstance(item, dict):
+            continue
+        tool_surfaces = item.get("tool_surfaces") if isinstance(item.get("tool_surfaces"), list) else []
+        normalized_shortcuts.append(
+            {
+                "shortcut_id": normalize_string(item.get("shortcut_id")),
+                "label": normalize_string(item.get("label")),
+                "canonical_command": normalize_string(item.get("canonical_command")),
+                "applies_when": normalize_string(item.get("applies_when")),
+                "why": normalize_string(item.get("why")),
+                "tool_surfaces": [normalize_string(surface) for surface in tool_surfaces if normalize_string(surface)],
+                "mode": normalize_string(item.get("mode"), "suggest"),
+            }
+        )
 
     normalized = {
         "version": normalize_string(payload.get("version"), normalize_string(template.get("version"), "0.1.0")),
@@ -276,11 +403,17 @@ def normalize_operator_payload(payload: dict[str, Any], target: Path) -> tuple[d
             "name": normalize_string(
                 payload.get("project", {}).get("name") if isinstance(payload.get("project"), dict) else "",
                 infer_project_name(target),
-            )
+            ),
+            "bootstrap_mode": bootstrap_mode,
+            "adapter_id": adapter_id,
+            "profile": infer_project_profile(target),
+            "required_packs": required_packs,
         },
+        "toolchain_commands": toolchain_commands,
         "server_surfaces": normalized_surfaces,
         "github_surface": normalize_github_surface(payload.get("github_surface"), default_github_surface(target)),
         "standard_flows": standard_flows,
+        "agent_shortcuts": normalized_shortcuts,
         "notes": normalize_notes(
             payload.get("notes"),
             [
@@ -323,6 +456,7 @@ __all__ = [
     "default_server_surfaces",
     "default_standard_flows",
     "ensure_operator_contract",
+    "sync_operator_assets",
     "normalize_operator_payload",
     "validate_operator_contract_payload",
 ]

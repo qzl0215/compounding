@@ -21,18 +21,31 @@ properties:
     required:
       - version
       - adoption_mode
+      - bootstrap_mode
+      - adapter_id
+      - required_packs
     properties:
       version:
         type: string
       adoption_mode:
         type: string
         enum: [new, attach, reattach]
+      bootstrap_mode:
+        type: string
+        enum: [cold_start, normalize, ai_upgrade]
+      adapter_id:
+        type: string
+      required_packs:
+        type: array
+        items:
+          type: string
   status:
     type: object
     required:
       - attached
       - attach_score
       - summary
+      - ready_for_ai_iteration
     properties:
       attached:
         type: boolean
@@ -40,6 +53,8 @@ properties:
         type: integer
       summary:
         type: string
+      ready_for_ai_iteration:
+        type: boolean
   detected:
     type: object
     required:

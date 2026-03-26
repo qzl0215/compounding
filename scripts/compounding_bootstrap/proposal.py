@@ -19,6 +19,7 @@ from .defaults import (
     PROPOSAL_SCHEMA_PATH,
     SOURCE_ROOT,
 )
+from .packs import mode_required_packs, selected_pack_paths
 from .proposal_support import git, git_has_staged_changes, git_head, git_is_dirty
 from .schema_validation import validate_payload
 from .yaml_io import load_yaml, save_yaml
@@ -103,7 +104,18 @@ def missing_shell_protocol_assets(target: Path) -> list[str]:
     return [path for path in MINIMAL_MEMORY_DOCS if not pattern_exists(target, path)]
 
 
-def build_conflicts(manifest: dict[str, Any], brief: dict[str, Any], target: Path) -> list[dict[str, str]]:
+def selected_managed_entries(manifest: dict[str, Any], brief: dict[str, Any]) -> list[dict[str, Any]]:
+    bootstrap_mode = str(brief.get("bootstrap_mode") or "normalize").strip()
+    required_packs = mode_required_packs(manifest, bootstrap_mode)
+    selected_paths = set(selected_pack_paths(manifest, required_packs, "copy_paths"))
+    return [
+        entry
+        for entry in manifest.get("managed_assets", [])
+        if isinstance(entry, dict) and str(entry.get("path") or "").strip() in selected_paths
+    ]
+
+
+def build_conflicts(manifest: dict[str, Any], brief: dict[str, Any], target: Path, managed_entries: list[dict[str, Any]]) -> list[dict[str, str]]:
     conflicts: list[dict[str, str]] = []
     upgrade_policy = brief.get("upgrade_policy") if isinstance(brief.get("upgrade_policy"), dict) else {}
     override_paths = local_override_paths(brief)
@@ -115,9 +127,7 @@ def build_conflicts(manifest: dict[str, Any], brief: dict[str, Any], target: Pat
     shell_paths = [str(item.get("path") or "") for item in manifest.get("shell_assets", []) if isinstance(item, dict)]
     protected_paths = [str(item.get("path") or "") for item in manifest.get("protected_assets", []) if isinstance(item, dict)]
 
-    for entry in manifest.get("managed_assets", []):
-        if not isinstance(entry, dict):
-            continue
+    for entry in managed_entries:
         relative_path = str(entry.get("path") or "")
         if path_matches(relative_path, override_paths):
             continue
@@ -157,14 +167,16 @@ def create_proposal(target: Path, config_path: Path | None = None) -> str:
     report = load_report(target)
     brief = load_brief(target)
     manifest = load_manifest()
+    managed_entries = selected_managed_entries(manifest, brief)
+    bootstrap_mode = str(brief.get("bootstrap_mode") or "normalize").strip()
+    required_packs = mode_required_packs(manifest, bootstrap_mode)
 
     changes = {category: [] for category in DIFF_CATEGORIES}
-    for entry in manifest.get("managed_assets", []):
-        if not isinstance(entry, dict):
-            continue
+    for entry in managed_entries:
+        relative_path = str(entry.get("path") or "")
         category, _ = classify_managed_asset(target, entry, brief)
         if category:
-            changes[category].append(str(entry.get("path") or ""))
+            changes[category].append(relative_path)
 
     for entry in manifest.get("shell_assets", []):
         if not isinstance(entry, dict):
@@ -183,7 +195,7 @@ def create_proposal(target: Path, config_path: Path | None = None) -> str:
     for path in missing_shell_protocol_assets(target):
         changes["auto_apply"].append(path)
 
-    conflicts = build_conflicts(manifest, brief, target)
+    conflicts = build_conflicts(manifest, brief, target, managed_entries)
     must_confirm = sorted(set(changes["proposal_required"] + [item["path"] for item in conflicts]))
     optional_followups = sorted(set(changes["suggest_only"] + changes["blocked"]))
 
@@ -199,6 +211,8 @@ def create_proposal(target: Path, config_path: Path | None = None) -> str:
         },
         "kernel_version_from": kernel_version_from,
         "kernel_version_to": str(manifest.get("version") or ""),
+        "bootstrap_mode": bootstrap_mode,
+        "required_packs": required_packs,
         "changes": changes,
         "conflicts": conflicts,
         "operator_actions": {
@@ -222,6 +236,8 @@ def create_proposal(target: Path, config_path: Path | None = None) -> str:
         "base_revision": git_head(target),
         "created_at": datetime.now(timezone.utc).isoformat(),
         "apply_commit_message": f"chore: apply kernel proposal {proposal_id}",
+        "bootstrap_mode": bootstrap_mode,
+        "required_packs": required_packs,
         "auto_apply_paths": proposal["changes"]["auto_apply"],
         "proposal_required_paths": proposal["changes"]["proposal_required"],
         "blocked_paths": proposal["changes"]["blocked"],

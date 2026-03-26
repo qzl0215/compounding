@@ -1,3 +1,4 @@
+bootstrap_mode: normalize
 project_identity:
   name: Compounding AI Operating System
   one_liner: 把当前仓库升级成适合 AI 长期协作、任务驱动、可持续重构与自进化的 AI-Native Repo。
@@ -7,6 +8,7 @@ project_identity:
 kernel:
   version: 0.1.0
   adoption_mode: attach
+  profile: full_ai_dev
 runtime_boundary:
   app_type: ai-native-repo
   deploy_target: local-runtime
