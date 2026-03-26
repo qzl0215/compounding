@@ -21,6 +21,9 @@ export function HomeLogicBoard({ snapshot }: { snapshot: HomeLogicMapSnapshot })
       ? [{ label: "待验收", detail: snapshot.attention.pendingAcceptance, tone: "warning" as const }]
       : []),
     ...(snapshot.attention.runtimeAlert ? [{ label: "运行提醒", detail: snapshot.attention.runtimeAlert, tone: "danger" as const }] : []),
+    ...(snapshot.attention.githubSurfaceAlert
+      ? [{ label: "GitHub 接入", detail: snapshot.attention.githubSurfaceAlert, tone: "warning" as const }]
+      : []),
   ];
 
   return (

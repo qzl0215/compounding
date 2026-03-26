@@ -136,7 +136,21 @@ related_docs:
 - required checks：无
 - 备注：
   - 当前仓库未检测到 remote origin；接入 GitHub 后再补 owner、repo 和 required_checks。
+  - 接入前先运行 `pnpm ai:github-surface:summary`，只看本地还差哪一步，不直接猜 owner/repo。
+  - 最小接入顺序固定为：配置 `origin` -> `git push -u origin main` -> 为活跃 task branch 建 upstream -> 回写 owner/repo/required_checks 并启用 `github_surface.enabled`。
   - 默认优先使用 gh auth / gh cli，而不是把 token 写进仓库。
+
+## GitHub 接入准备
+
+- 本地现状先跑：`pnpm ai:github-surface:summary`
+- 最小接入顺序：
+  - 配置 `origin` remote
+  - 执行 `git push -u origin main`
+  - 为活跃 task 分支执行 `git push -u origin codex/task-xxx`
+  - 在 `bootstrap/project_operator.yaml` 中补齐 owner/repo/required_checks 并开启 `github_surface.enabled`
+- 当前 contract 仍缺 owner/repo。
+- 当前 contract 仍未启用 GitHub surface。
+- 当前 required_checks 仍为空。
 
 ## 标准发布流
 
@@ -176,6 +190,10 @@ related_docs:
 - 优先使用 production 健康摘要：`pnpm ai:prod:summary`
   - 适用场景：需要确认本地 production 运行态，而不是看完整健康检查 JSON
   - 原因：直接给出 production 状态、端口、drift 与失败原因，并统计 shortcut adoption
+  - 工具面：`codex`、`claude`、`cursor`、`opencode`
+- 优先使用 GitHub 接入摘要：`pnpm ai:github-surface:summary`
+  - 适用场景：需要确认 remote / upstream / owner / repo / required_checks 还差哪一步
+  - 原因：把 GitHub 接入缺口压成单页摘要，避免在远端未配置时来回查 git 与 operator contract
   - 工具面：`codex`、`claude`、`cursor`、`opencode`
 - 优先使用改动摘要：`pnpm ai:diff:summary`
   - 适用场景：需要看当前变更范围和主要改动文件，而不是整段 git diff

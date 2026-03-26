@@ -31,6 +31,7 @@
     "ai:review:summary": "node --experimental-strip-types scripts/ai/review-summary.ts",
     "ai:preview:summary": "node --experimental-strip-types scripts/ai/preview-summary.ts",
     "ai:prod:summary": "node --experimental-strip-types scripts/ai/prod-summary.ts",
+    "ai:github-surface:summary": "node --experimental-strip-types scripts/ai/github-surface-summary.ts",
     "ai:diff:summary": "node --experimental-strip-types scripts/ai/diff-summary.ts",
     "ai:tree:summary": "node --experimental-strip-types scripts/ai/tree-summary.ts",
     "ai:find:summary": "node --experimental-strip-types scripts/ai/find-summary.ts",

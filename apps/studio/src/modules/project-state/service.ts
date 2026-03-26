@@ -8,6 +8,7 @@ import {
   buildAiEfficiencyDashboard,
   normalizeAiEfficiencyEvent,
 } from "../../../../../shared/ai-efficiency";
+import { getGithubSurfaceReadiness } from "../../../../../shared/github-surface-runtime";
 import { buildProjectJudgementContract } from "../../../../../shared/project-judgement";
 import type { ProjectStateSnapshot } from "./types";
 
@@ -68,6 +69,7 @@ export async function getProjectStateSnapshot(input?: { deliverySnapshot?: Deliv
       runtimeRunning: releaseDashboard.local_runtime.status === "running",
     },
   });
+  const githubSurface = getGithubSurfaceReadiness(workspaceRoot);
 
   return {
     identity: {
@@ -111,6 +113,7 @@ export async function getProjectStateSnapshot(input?: { deliverySnapshot?: Deliv
       conclusion: judgement.conclusion,
       nextAction: judgement.nextAction,
     },
+    githubSurface,
     aiEfficiency: {
       dashboard: getAiEfficiencyDashboard(workspaceRoot, taskRows.map((row) => row.cost)),
     },

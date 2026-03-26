@@ -77,6 +77,8 @@ github_surface:
   required_checks: []
   notes:
     - 当前仓库未检测到 remote origin；接入 GitHub 后再补 owner、repo 和 required_checks。
+    - 接入前先运行 `pnpm ai:github-surface:summary`，只看本地还差哪一步，不直接猜 owner/repo。
+    - 最小接入顺序固定为：配置 `origin` -> `git push -u origin main` -> 为活跃 task branch 建 upstream -> 回写 owner/repo/required_checks 并启用 `github_surface.enabled`。
     - 默认优先使用 gh auth / gh cli，而不是把 token 写进仓库。
 standard_flows:
   preflight:
@@ -133,6 +135,13 @@ agent_shortcuts:
     canonical_command: pnpm ai:prod:summary
     applies_when: 需要确认本地 production 运行态，而不是看完整健康检查 JSON
     why: 直接给出 production 状态、端口、drift 与失败原因，并统计 shortcut adoption
+    tool_surfaces: [codex, claude, cursor, opencode]
+    mode: suggest
+  - shortcut_id: github_surface_summary
+    label: 优先使用 GitHub 接入摘要
+    canonical_command: pnpm ai:github-surface:summary
+    applies_when: 需要确认 remote / upstream / owner / repo / required_checks 还差哪一步
+    why: 把 GitHub 接入缺口压成单页摘要，避免在远端未配置时来回查 git 与 operator contract
     tool_surfaces: [codex, claude, cursor, opencode]
     mode: suggest
   - shortcut_id: diff_summary

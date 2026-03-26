@@ -390,6 +390,7 @@ function renderRunbook(contract) {
     "- 备注：",
     ...(githubNotes.length ? githubNotes.map((item) => `  - ${item}`) : ["  - 无"]),
     "",
+    ...renderGithubOnboardingGuide(contract),
     "## 标准发布流",
     "",
     `- 基础 preflight：\`${normalizeString(contract.standard_flows?.preflight?.basic)}\``,
@@ -416,6 +417,30 @@ function renderRunbook(contract) {
     "<!-- END MANAGED BLOCK: CANONICAL_CONTENT -->",
     "",
   ].join("\n");
+}
+
+function renderGithubOnboardingGuide(contract) {
+  const github = contract.github_surface || {};
+  const owner = normalizeString(github.owner);
+  const repo = normalizeString(github.repo);
+  const requiredChecks = Array.isArray(github.required_checks) ? github.required_checks.map((item) => normalizeString(item)).filter(Boolean) : [];
+  const enabled = Boolean(github.enabled);
+  const remoteName = normalizeString(github.remote_name, "origin");
+  const defaultBranch = normalizeString(github.default_branch, "main");
+  return [
+    "## GitHub 接入准备",
+    "",
+    "- 本地现状先跑：`pnpm ai:github-surface:summary`",
+    "- 最小接入顺序：",
+    `  - 配置 \`${remoteName}\` remote`,
+    `  - 执行 \`git push -u ${remoteName} ${defaultBranch}\``,
+    `  - 为活跃 task 分支执行 \`git push -u ${remoteName} codex/task-xxx\``,
+    `  - 在 \`${OPERATOR_CONTRACT_PATH}\` 中补齐 owner/repo/required_checks 并开启 \`github_surface.enabled\``,
+    owner && repo ? `- 当前 contract 仓库：\`${owner}/${repo}\`` : "- 当前 contract 仍缺 owner/repo。",
+    enabled ? "- 当前 contract 已启用 GitHub surface。" : "- 当前 contract 仍未启用 GitHub surface。",
+    requiredChecks.length ? `- 当前 required_checks 已配置 ${requiredChecks.length} 项。` : "- 当前 required_checks 仍为空。",
+    "",
+  ];
 }
 
 function renderShortcutLines(contract) {

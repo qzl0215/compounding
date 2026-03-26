@@ -1,5 +1,6 @@
 import type { ProjectJudgementContract } from "../../../../../shared/project-judgement";
 import type { AiEfficiencyDashboard } from "../../../../../shared/ai-efficiency";
+import type { GithubSurfaceReadinessReport } from "../../../../../shared/github-surface";
 
 export type ProjectStateStage = "thinking" | "planning" | "ready" | "doing" | "acceptance" | "released";
 
@@ -55,6 +56,7 @@ export type ProjectStateSnapshot = {
     conclusion: string;
     nextAction: string;
   };
+  githubSurface: GithubSurfaceReadinessReport;
   aiEfficiency: {
     dashboard: AiEfficiencyDashboard;
   };
@@ -64,3 +66,4 @@ export type ProjectStateSnapshot = {
 
 export type { ProjectJudgementContract, ProjectJudgementStage } from "../../../../../shared/project-judgement";
 export type { AiEfficiencyDashboard } from "../../../../../shared/ai-efficiency";
+export type { GithubSurfaceReadinessReport, GithubSurfaceReadinessStep } from "../../../../../shared/github-surface";

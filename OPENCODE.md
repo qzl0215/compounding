@@ -18,6 +18,7 @@
 - 优先使用 review 摘要：`pnpm ai:review:summary -- --taskId=t-xxx`
 - 优先使用 preview 健康摘要：`pnpm ai:preview:summary`
 - 优先使用 production 健康摘要：`pnpm ai:prod:summary`
+- 优先使用 GitHub 接入摘要：`pnpm ai:github-surface:summary`
 - 优先使用改动摘要：`pnpm ai:diff:summary`
 - 优先使用仓结构摘要：`pnpm ai:tree:summary`
 - 优先使用查找摘要：`pnpm ai:find:summary -- --query=keyword`

@@ -31,6 +31,7 @@ export type BuildHomeLogicMapInput = {
   blockers: string[];
   pendingAcceptance: string | null;
   runtimeAlert: string | null;
+  githubSurfaceAlert: string | null;
   healthSummary: string;
   aiEfficiency: {
     totalSavedLabel: string;
@@ -98,6 +99,7 @@ export function buildHomeLogicMapSnapshot(input: BuildHomeLogicMapInput): HomeLo
       blockers: input.blockers,
       pendingAcceptance: input.pendingAcceptance,
       runtimeAlert: input.runtimeAlert,
+      githubSurfaceAlert: input.githubSurfaceAlert,
       healthSummary: input.healthSummary,
     },
     aiEfficiency: input.aiEfficiency,

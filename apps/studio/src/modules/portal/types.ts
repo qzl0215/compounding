@@ -72,6 +72,7 @@ export type HomeLogicMapSnapshot = {
     blockers: string[];
     pendingAcceptance: string | null;
     runtimeAlert: string | null;
+    githubSurfaceAlert: string | null;
     healthSummary: string;
   };
   aiEfficiency: {

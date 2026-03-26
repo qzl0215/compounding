@@ -21,6 +21,8 @@ describe("project state snapshot", () => {
     expect(snapshot.judgement.overallSummary).toBe(snapshot.headline.overallSummary);
     expect(snapshot.judgement.focusSummary).toBe(snapshot.focus.summary);
     expect(snapshot.judgement.nextAction).toBe(snapshot.release.nextAction);
+    expect(snapshot.githubSurface.summary.length).toBeGreaterThan(0);
+    expect(snapshot.githubSurface.steps.length).toBeGreaterThan(0);
     expect(snapshot.aiEfficiency.dashboard.overview.summary_runs).toBeGreaterThanOrEqual(0);
     expect(snapshot.aiEfficiency.dashboard.consumption.top_profiles_by_input.length).toBeGreaterThanOrEqual(0);
     expect(snapshot.aiEfficiency.dashboard.coverage.supported_profiles.length).toBeGreaterThan(0);
@@ -45,6 +47,7 @@ describe("project state snapshot", () => {
 
     expect(snapshot.judgement.recommendedSurface.href.startsWith("/")).toBe(true);
     expect(snapshot.judgement.recommendedRead.path.endsWith(".md")).toBe(true);
+    expect(snapshot.githubSurface.missingCount).toBeGreaterThanOrEqual(0);
     expect(snapshot.aiEfficiency.dashboard.health.raw_trace_rate_pct).toBeGreaterThanOrEqual(0);
   }, SERVICE_TIMEOUT_MS);
 });

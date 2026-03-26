@@ -46,6 +46,7 @@ export async function getHomeStatusBoard(): Promise<HomeLogicMapSnapshot> {
     blockers: projectState.focus.blockers,
     pendingAcceptance: projectState.release.pendingAcceptance,
     runtimeAlert: projectState.release.runtimeAlert,
+    githubSurfaceAlert: projectState.githubSurface.missingCount > 0 ? projectState.githubSurface.summary : null,
     healthSummary: projectState.release.healthSummary,
     aiEfficiency: {
       totalSavedLabel: `~${formatEstimatedTokens(projectState.aiEfficiency.dashboard.overview.total_saved_tokens_est)}`,
