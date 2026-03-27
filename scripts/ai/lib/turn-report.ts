@@ -34,6 +34,15 @@ function formatDurationMs(value) {
   return `${Math.max(1, Math.round(duration / 1000))}s`;
 }
 
+function formatWindowLabel(value) {
+  const normalized = normalizeString(value).toLowerCase();
+  const match = normalized.match(/^(\d+)([hd])$/);
+  if (!match) return normalized || "当前窗口";
+  const amount = Number(match[1]);
+  if (!Number.isFinite(amount) || amount <= 0) return normalized || "当前窗口";
+  return match[2] === "h" ? `最近 ${amount} 小时` : `最近 ${amount} 天`;
+}
+
 function buildRetroWindow(since, generatedAt) {
   const deltaMs = Math.max(1, generatedAt.getTime() - since.getTime());
   const hours = Math.max(1, Math.ceil(deltaMs / (60 * 60 * 1000)));
@@ -64,13 +73,45 @@ function averageSavedByShortcut(events, shortcutId) {
   return totalSaved / matchingRuns.length;
 }
 
-function formatMissedShortcutHint(shortcutId, missedSavingsEst) {
+function buildMissedShortcutRows(events, minimumCount = 1) {
+  return Array.from(
+    events
+      .filter((event) => event.event_kind === "shortcut_opportunity")
+      .filter((event) => DETERMINISTIC_SHORTCUTS.has(normalizeString(event.shortcut_id)))
+      .filter((event) => event.adopted !== true)
+      .reduce((acc, event) => {
+        const shortcutId = normalizeString(event.shortcut_id);
+        const current = acc.get(shortcutId) || { shortcut_id: shortcutId, count: 0, missed_savings_est: 0 };
+        current.count += 1;
+        current.missed_savings_est = Math.round(current.count * averageSavedByShortcut(events, shortcutId));
+        acc.set(shortcutId, current);
+        return acc;
+      }, new Map())
+      .values()
+  )
+    .filter((row) => row.count >= minimumCount)
+    .sort((left, right) => right.missed_savings_est - left.missed_savings_est || right.count - left.count);
+}
+
+function formatMissedShortcutHint(shortcutId, missedSavingsEst, scope = "turn", windowLabel = "") {
   const normalizedShortcutId = normalizeString(shortcutId);
   if (!normalizedShortcutId || toNumber(missedSavingsEst) <= 0) return null;
+  if (scope === "task_history") {
+    return `当前 task 历史上未充分使用 ${normalizedShortcutId}，累计潜在可节省 ~${formatEstimatedTokens(toNumber(missedSavingsEst))} tokens`;
+  }
+  if (scope === "window") {
+    const label = formatWindowLabel(windowLabel);
+    return `${label}未充分使用 ${normalizedShortcutId}，累计潜在可节省 ~${formatEstimatedTokens(toNumber(missedSavingsEst))} tokens`;
+  }
   return `本轮未使用 ${normalizedShortcutId}，潜在可节省 ~${formatEstimatedTokens(toNumber(missedSavingsEst))} tokens`;
 }
 
 function buildTopHint(root, { taskId = null, since, generatedAt }) {
+  const allEvents = readCommandGainEvents(root).map(normalizeGainEvent);
+  const filteredEvents = filterEventsSince(allEvents, since, taskId);
+  const taskScopedEvents = taskId
+    ? allEvents.filter((event) => normalizeString(event.task_id) === normalizeString(taskId))
+    : [];
   try {
     const { buildContextRetroReport } = require("./context-retro.ts");
     const report = buildContextRetroReport(root, {
@@ -82,7 +123,7 @@ function buildTopHint(root, { taskId = null, since, generatedAt }) {
     );
     if (taskShortcutAlert) {
       const shortcutId = normalizeString(taskShortcutAlert.signature).replace(/^shortcut:/, "");
-      const hint = formatMissedShortcutHint(shortcutId, taskShortcutAlert.missed_savings_est);
+      const hint = formatMissedShortcutHint(shortcutId, taskShortcutAlert.missed_savings_est, "task_history");
       if (hint) return hint;
     }
     const taskAlert = (report?.current_task?.alerts || []).find(
@@ -91,32 +132,32 @@ function buildTopHint(root, { taskId = null, since, generatedAt }) {
     if (taskAlert) {
       return `${normalizeString(taskAlert.signature)}：${normalizeString(taskAlert.next_agent_should_do_instead)}`;
     }
+    const topFallback = buildMissedShortcutRows(filteredEvents)[0];
+    if (topFallback?.shortcut_id) {
+      return formatMissedShortcutHint(topFallback.shortcut_id, topFallback.missed_savings_est, "turn");
+    }
+    const topTaskHistory = buildMissedShortcutRows(taskScopedEvents, 2)[0];
+    if (topTaskHistory?.shortcut_id) {
+      return formatMissedShortcutHint(topTaskHistory.shortcut_id, topTaskHistory.missed_savings_est, "task_history");
+    }
     const missedShortcut = report?.top_missed_shortcuts?.[0];
     if (missedShortcut) {
-      const hint = formatMissedShortcutHint(missedShortcut.shortcut_id, missedShortcut.missed_savings_est);
+      const hint = formatMissedShortcutHint(
+        missedShortcut.shortcut_id,
+        missedShortcut.missed_savings_est,
+        "window",
+        report?.window,
+      );
       if (hint) return hint;
     }
   } catch {}
-
-  const filteredEvents = filterEventsSince(readCommandGainEvents(root), since, taskId);
-  const fallbackRows = filteredEvents
-    .filter((event) => event.event_kind === "shortcut_opportunity")
-    .filter((event) => DETERMINISTIC_SHORTCUTS.has(normalizeString(event.shortcut_id)))
-    .filter((event) => event.adopted !== true)
-    .reduce((acc, event) => {
-      const shortcutId = normalizeString(event.shortcut_id);
-      const current = acc.get(shortcutId) || { shortcut_id: shortcutId, count: 0, missed_savings_est: 0 };
-      current.count += 1;
-      current.missed_savings_est = Math.round(current.count * averageSavedByShortcut(filteredEvents, shortcutId));
-      acc.set(shortcutId, current);
-      return acc;
-    }, new Map());
-
-  const topFallback = Array.from(fallbackRows.values()).sort(
-    (left, right) => right.missed_savings_est - left.missed_savings_est || right.count - left.count
-  )[0];
+  const topFallback = buildMissedShortcutRows(filteredEvents)[0];
   if (topFallback?.shortcut_id) {
     return formatMissedShortcutHint(topFallback.shortcut_id, topFallback.missed_savings_est);
+  }
+  const topTaskHistory = buildMissedShortcutRows(taskScopedEvents, 2)[0];
+  if (topTaskHistory?.shortcut_id) {
+    return formatMissedShortcutHint(topTaskHistory.shortcut_id, topTaskHistory.missed_savings_est, "task_history");
   }
   return null;
 }

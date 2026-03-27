@@ -554,6 +554,7 @@ class SummaryHarnessCliTests(unittest.TestCase):
     def test_turn_report_aggregates_recent_summary_and_context_costs(self) -> None:
         since = "2026-03-26T00:00:00.000Z"
         source = f"""
+        require("node:fs").mkdirSync("tasks/queue", {{ recursive: true }});
         const {{ appendCommandGainEvent }} = require("./scripts/ai/lib/command-gain.ts");
         const {{ buildTurnReport, formatTurnReportText }} = require("./scripts/ai/lib/turn-report.ts");
 
@@ -726,6 +727,88 @@ class SummaryHarnessCliTests(unittest.TestCase):
         payload = json.loads(completed.stdout)
         self.assertEqual(payload["report"]["top_hint"], "本轮未使用 preflight_summary，潜在可节省 ~900 tokens")
         self.assertIn("提示：本轮未使用 preflight_summary，潜在可节省 ~900 tokens", payload["text"])
+
+    def test_turn_report_labels_historical_task_shortcut_hints_as_task_history(self) -> None:
+        since = "2026-03-26T01:30:00.000Z"
+        source = f"""
+        const {{ appendCommandGainEvent }} = require("./scripts/ai/lib/command-gain.ts");
+        const {{ buildTurnReport, formatTurnReportText }} = require("./scripts/ai/lib/turn-report.ts");
+
+        const root = process.cwd();
+        appendCommandGainEvent(root, {{
+          event_kind: "summary_run",
+          timestamp: "2026-03-26T01:00:00.000Z",
+          profile_id: "preflight_summary",
+          profile_version: "1",
+          task_id: "t-202",
+          original_cmd: "pnpm preflight -- --taskId=t-202",
+          input_tokens_est: 1000,
+          output_tokens_est: 100,
+          saved_tokens_est: 900,
+          savings_pct_est: 90,
+          exec_time_ms: 1200,
+          exit_code: 0,
+          was_fallback: false,
+          filter_error: null,
+          raw_bytes: 4000,
+          compact_bytes: 400,
+          tee_path: null,
+          shortcut_id: "preflight_summary",
+        }});
+        appendCommandGainEvent(root, {{
+          event_kind: "shortcut_opportunity",
+          timestamp: "2026-03-26T01:05:00.000Z",
+          profile_id: "preflight_summary",
+          profile_version: "1",
+          task_id: "t-202",
+          shortcut_id: "preflight_summary",
+          original_cmd: "pnpm preflight -- --taskId=t-202",
+          input_tokens_est: 0,
+          output_tokens_est: 0,
+          saved_tokens_est: 0,
+          savings_pct_est: 0,
+          exec_time_ms: 0,
+          exit_code: 0,
+          was_fallback: false,
+          filter_error: null,
+          raw_bytes: 0,
+          compact_bytes: 0,
+          tee_path: null,
+          adopted: false,
+        }});
+        appendCommandGainEvent(root, {{
+          event_kind: "shortcut_opportunity",
+          timestamp: "2026-03-26T01:10:00.000Z",
+          profile_id: "preflight_summary",
+          profile_version: "1",
+          task_id: "t-202",
+          shortcut_id: "preflight_summary",
+          original_cmd: "pnpm preflight -- --taskId=t-202",
+          input_tokens_est: 0,
+          output_tokens_est: 0,
+          saved_tokens_est: 0,
+          savings_pct_est: 0,
+          exec_time_ms: 0,
+          exit_code: 0,
+          was_fallback: false,
+          filter_error: null,
+          raw_bytes: 0,
+          compact_bytes: 0,
+          tee_path: null,
+          adopted: false,
+        }});
+
+        const report = buildTurnReport(root, {{ since: "{since}", taskId: "t-202" }});
+        console.log(JSON.stringify({{
+          report,
+          text: formatTurnReportText(report),
+        }}));
+        """
+        completed = self.run_node(textwrap.dedent(source))
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        payload = json.loads(completed.stdout)
+        self.assertEqual(payload["report"]["top_hint"], "当前 task 历史上未充分使用 preflight_summary，累计潜在可节省 ~1.8K tokens")
+        self.assertIn("提示：当前 task 历史上未充分使用 preflight_summary，累计潜在可节省 ~1.8K tokens", payload["text"])
 
 
 if __name__ == "__main__":
