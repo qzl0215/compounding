@@ -18,6 +18,18 @@ function readTask(taskPath) {
   return parseTaskContract(taskPath, fs.readFileSync(path.join(root, taskPath), "utf8"));
 }
 
+function branchTaskId(branch) {
+  const normalized = String(branch || "").trim();
+  const match = normalized.match(/^codex\/(task-\d+)(?:$|[-/].*)/);
+  return match ? match[1] : "";
+}
+
+function matchesTaskBranch(taskPath, branchTask) {
+  if (!branchTask) return false;
+  const baseName = path.basename(String(taskPath || "").trim(), ".md");
+  return baseName === branchTask || baseName.startsWith(`${branchTask}-`);
+}
+
 function validateTask(taskPath, errors, options = {}) {
   const task = readTask(taskPath);
   const strictPlaceholders = Boolean(options.strictPlaceholders);
@@ -85,8 +97,8 @@ function main() {
   changedTaskFiles.forEach((taskPath) => validateTask(taskPath, errors, { strictPlaceholders }));
 
   if (changePolicy.policy.strict_task_binding && activeBranch.startsWith("codex/") && changedTaskFiles.length > 0) {
-    const branchTaskId = activeBranch.replace(/^codex\//, "");
-    const matchesBranchTask = changedTaskFiles.some((taskPath) => taskPath.endsWith(`${branchTaskId}.md`));
+    const activeTaskId = branchTaskId(activeBranch);
+    const matchesBranchTask = changedTaskFiles.some((taskPath) => matchesTaskBranch(taskPath, activeTaskId));
     if (!matchesBranchTask) {
       errors.push(`当前分支 ${activeBranch} 有代码改动，但本次变更的 task 中没有与分支同名的执行 task。`);
     }

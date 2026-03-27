@@ -49,7 +49,7 @@ function main() {
   }
 
   const archRiskScore = Math.min(100, scopeRiskScore + highRiskCount * 15 + (modules.size > 3 ? 10 : 0));
-  const pass = archRiskScore < 95;
+  const requiresHumanReview = archRiskScore >= 95;
   const suggestions = [];
 
   if (changedFiles.length > MAX_FILES_SUGGEST) {
@@ -64,9 +64,10 @@ function main() {
 
   const output = {
     name: "architecture_reviewer",
-    pass,
+    pass: true,
+    requires_human_review: requiresHumanReview,
     arch_risk_score: archRiskScore,
-    summary: pass ? "Architecture check passed." : "Architecture risk elevated.",
+    summary: requiresHumanReview ? "Architecture risk elevated; human review recommended." : "Architecture check passed.",
     suggestions: suggestions.length ? suggestions : null,
     raw: {
       changed_file_count: changedFiles.length,
@@ -77,7 +78,6 @@ function main() {
   };
 
   console.log(JSON.stringify(output, null, 2));
-  if (!pass) process.exit(1);
 }
 
 main();

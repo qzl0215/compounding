@@ -54,13 +54,12 @@
 
 ## 交付结果
 
-- 状态：
-- 体验验收结果：
-  
+- 状态：进行中（补 review 门禁与 trace 校验收尾）
+- 体验验收结果：待验收
 - 交付结果：
-  
+  已补齐 follow-up 收尾：`coord:review:run` 按 canonical `state_id` 幂等进入 review、`architecture_reviewer` 改为 advisory escalate、`pre-push-review.sh` 允许 `exit 2` 的人工复核分支继续 push、`validate-change-trace` 支持 `codex/task-079-*` 绑定同数字 task 前缀。
 - 复盘：
-  
+  待这轮 review 门禁验证通过后补最终复盘。
 
 ## 分支
 

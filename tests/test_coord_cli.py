@@ -669,6 +669,144 @@ console.log(JSON.stringify(readCompanion("t-999"), null, 2));
         self.assertEqual(payload["change_class"], "structural")
         self.assertTrue(any("没有任何 tasks/queue/*.md 变更" in error for error in payload["errors"]))
 
+    def test_validate_change_trace_accepts_branch_suffix_bound_to_numeric_task_id(self) -> None:
+        scripts_dir = self.target / "scripts"
+        scripts_dir.mkdir(parents=True, exist_ok=True)
+        sample_script = scripts_dir / "sample.ts"
+        task_path = self.target / "tasks" / "queue" / "task-999-sample.md"
+        sample_script.write_text("export const value = 1;\n", encoding="utf8")
+        self.init_git_repo()
+        subprocess.run(["git", "checkout", "-b", "codex/task-999-state-machine"], cwd=self.target, check=True)
+        sample_script.write_text("export const value = 2;\n", encoding="utf8")
+        task_path.write_text(
+            SAMPLE_TASK_MARKDOWN.replace("验证 companion 生命周期。", "验证 companion 生命周期与分支绑定。"),
+            encoding="utf8",
+        )
+
+        completed = self.run_script("scripts/ai/validate-change-trace.ts")
+        payload = json.loads(completed.stdout)
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["change_class"], "structural")
+        self.assertEqual(payload["changed_tasks"], ["tasks/queue/task-999-sample.md"])
+
+    def test_architecture_reviewer_escalates_without_failing_process(self) -> None:
+        manifest_dir = self.target / "agent-coordination" / "manifest"
+        manifest_dir.mkdir(parents=True, exist_ok=True)
+        (manifest_dir / "manifest.json").write_text(
+            json.dumps(
+                {
+                    "files": {
+                        "src/high-risk.ts": {
+                            "module": "src",
+                            "risk_level": "core",
+                        }
+                    }
+                }
+            ),
+            encoding="utf8",
+        )
+
+        completed = self.run_script(
+            "scripts/coord/architecture-reviewer.ts",
+            "--changedFiles=src/high-risk.ts",
+            "--scopeRiskScore=80",
+        )
+        payload = json.loads(completed.stdout)
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertTrue(payload["pass"])
+        self.assertTrue(payload["requires_human_review"])
+        self.assertEqual(payload["arch_risk_score"], 95)
+        self.assertIn("human review", payload["summary"])
+
+    def test_review_run_is_idempotent_for_reviewing_state_and_keeps_human_escalation_in_review(self) -> None:
+        scripts_dir = self.target / "scripts"
+        coord_dir = scripts_dir / "coord"
+        coord_dir.mkdir(parents=True, exist_ok=True)
+        (coord_dir / "scope-guard.ts").write_text(
+            'console.log(JSON.stringify({"pass":true,"scope_risk_score":80,"scope_summary":"ok","actual_files":["src/high-risk.ts"]}));\n',
+            encoding="utf8",
+        )
+        (coord_dir / "contract-reviewer.ts").write_text(
+            'console.log(JSON.stringify({"name":"contract_reviewer","pass":true,"summary":"ok"}));\n',
+            encoding="utf8",
+        )
+        (coord_dir / "diff-summary.ts").write_text(
+            'console.log(JSON.stringify({"path":"agent-coordination/reports/diff-summary-main-HEAD.json","diff_summary":{"ref_a":"main","ref_b":"HEAD"}}));\n',
+            encoding="utf8",
+        )
+        manifest_dir = self.target / "agent-coordination" / "manifest"
+        manifest_dir.mkdir(parents=True, exist_ok=True)
+        (manifest_dir / "manifest.json").write_text(
+            json.dumps(
+                {
+                    "files": {
+                        "src/high-risk.ts": {
+                            "module": "src",
+                            "risk_level": "core",
+                        }
+                    }
+                }
+            ),
+            encoding="utf8",
+        )
+        policy_dir = self.target / "agent-coordination" / "policies"
+        policy_dir.mkdir(parents=True, exist_ok=True)
+        (policy_dir / "merge-policy.json").write_text(
+            json.dumps(
+                {
+                    "thresholds": {
+                        "high_risk": {
+                            "auto_merge_confidence": 1.0,
+                            "default_action": "escalate_to_human",
+                        }
+                    }
+                }
+            ),
+            encoding="utf8",
+        )
+        (self.target / "package.json").write_text(
+            json.dumps(
+                {
+                    "name": "coord-cli-fixtures",
+                    "private": True,
+                    "scripts": {
+                        "validate:static": "node -e \"process.exit(0)\"",
+                    },
+                }
+            ),
+            encoding="utf8",
+        )
+        self.init_git_repo()
+        subprocess.run(["git", "checkout", "-b", "codex/task-999-sample"], cwd=self.target, check=True)
+        self.run_node(
+            f"""
+const {{ applyTaskTransition }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-machine.ts");
+applyTaskTransition("t-999", "plan_approved", {{ source: "test" }});
+applyTaskTransition("t-999", "preflight_passed", {{ source: "test", change_class: "structural" }});
+applyTaskTransition("t-999", "handoff_created", {{ source: "test" }});
+applyTaskTransition("t-999", "review_started", {{ source: "test" }});
+console.log(JSON.stringify({{ ok: true }}));
+"""
+        )
+
+        completed = self.run_script("scripts/coord/review.ts", "--taskId=t-999")
+        payload = json.loads(completed.stdout)
+        companion = self.run_node(
+            f"""
+const {{ readCompanion }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-meta.ts");
+console.log(JSON.stringify(readCompanion("t-999"), null, 2));
+"""
+        )
+
+        self.assertEqual(completed.returncode, 2, msg=completed.stdout or completed.stderr)
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["review_gate"]["action"], "resume_review")
+        self.assertEqual(payload["merge_decision"], "escalate_to_human")
+        self.assertEqual(companion["machine"]["state_id"], "reviewing")
+
     def test_preflight_uses_basic_guard_without_task_id(self) -> None:
         self.install_preflight_fixtures()
         self.init_git_repo()

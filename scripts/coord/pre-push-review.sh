@@ -15,8 +15,17 @@ esac
 
 if [ -n "$task_id" ]; then
   echo "coord:review for $task_id..."
-  pnpm coord:review:run --taskId="$task_id"
-  ret=$?
-  [ $ret -eq 0 ] || exit $ret
+  if pnpm coord:review:run --taskId="$task_id"; then
+    ret=0
+  else
+    ret=$?
+  fi
+
+  if [ "$ret" -eq 2 ]; then
+    echo "coord:review escalated to human review; allowing push."
+    exit 0
+  fi
+
+  [ "$ret" -eq 0 ] || exit "$ret"
 fi
 exit 0

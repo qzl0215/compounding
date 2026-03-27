@@ -10,6 +10,7 @@ const { spawnSync } = require("node:child_process");
 const { recordShortcutOpportunityFromEnv } = require("../ai/lib/command-gain.ts");
 const { loadManifest } = require("./lib/manifest.ts");
 const { applyTaskTransition } = require("./lib/task-machine.ts");
+const { readCompanion } = require("./lib/task-meta.ts");
 const { recordReviewResult } = require("./lib/companion-lifecycle.ts");
 const { finishActiveStage, finishWaitStageIfOpen, recordBlocker, startActiveStage } = require("./lib/task-activity.ts");
 
@@ -94,16 +95,20 @@ function runArchitectureReviewer(changedFiles, scopeRiskScore) {
     return {
       name: "architecture_reviewer",
       pass: out.pass !== false,
+      requires_human_review: out.requires_human_review === true,
       arch_risk_score: out.arch_risk_score ?? 0,
       summary: out.summary ?? "",
+      suggestions: Array.isArray(out.suggestions) ? out.suggestions : null,
       raw: out,
     };
   } catch {
     return {
       name: "architecture_reviewer",
       pass: false,
+      requires_human_review: false,
       arch_risk_score: 100,
       summary: "Architecture check failed to run.",
+      suggestions: null,
       raw: {},
     };
   }
@@ -143,12 +148,12 @@ function loadMergePolicy() {
 }
 
 function computeMergeDecision(reviewers, changedFiles, manifest) {
-  const allPass = reviewers.every((r) => r.pass);
+  const blockingFailures = reviewers.filter((reviewer) => reviewer.pass === false);
   const scopeResult = reviewers.find((r) => r.name === "scope_reviewer");
   const archResult = reviewers.find((r) => r.name === "architecture_reviewer");
   const scopeRisk = scopeResult?.scope_risk_score ?? 0;
   const archRisk = archResult?.arch_risk_score ?? 0;
-  const confidence = allPass ? Math.max(0.7, 0.9 - (scopeRisk + archRisk) / 200) : 0.3;
+  const confidence = blockingFailures.length === 0 ? Math.max(0.7, 0.9 - (scopeRisk + archRisk) / 200) : 0.3;
 
   let hasHighRisk = false;
   for (const f of changedFiles || []) {
@@ -163,22 +168,25 @@ function computeMergeDecision(reviewers, changedFiles, manifest) {
   const highThreshold = policy?.thresholds?.high_risk?.auto_merge_confidence ?? 1.0;
   const defaultEscalate = policy?.thresholds?.high_risk?.default_action === "escalate_to_human";
 
-  if (!allPass) {
+  if (blockingFailures.length > 0) {
     return {
       merge_decision: "block_and_retry",
       merge_confidence_score: 0.3,
-      merge_decision_explanation: reviewers
-        .filter((r) => !r.pass)
+      merge_decision_explanation: blockingFailures
         .map((r) => `${r.name} failed`)
         .join(". "),
     };
   }
 
-  if (hasHighRisk && defaultEscalate && confidence < highThreshold) {
+  const requiresHumanReview = archResult?.requires_human_review === true;
+  if ((requiresHumanReview || hasHighRisk) && defaultEscalate && confidence < highThreshold) {
+    const archSuggestions = archResult?.suggestions || archResult?.raw?.suggestions || [];
     return {
       merge_decision: "escalate_to_human",
       merge_confidence_score: confidence,
-      merge_decision_explanation: "High-risk files modified; human review recommended.",
+      merge_decision_explanation: archSuggestions.length
+        ? `High-risk files modified; human review recommended. ${archSuggestions.join(" ")}`
+        : "High-risk files modified; human review recommended.",
     };
   }
 
@@ -189,24 +197,104 @@ function computeMergeDecision(reviewers, changedFiles, manifest) {
   };
 }
 
-function main() {
-  const args = parseArgs();
-  const taskId = args.taskId;
+function resolveReviewEntry(taskId) {
+  const companion = readCompanion(taskId);
+  if (!companion) {
+    return {
+      ok: false,
+      state_id: null,
+      action: null,
+      error: `Task ${taskId} not found.`,
+    };
+  }
 
-  if (taskId) {
-    finishWaitStageIfOpen(taskId, "review_wait", {
-      source: "coord:review:run",
-      status: "entered_review",
-      reason: "review 已开始。",
-    });
+  const stateId = companion.machine?.state_id || "planning";
+  if (stateId === "review_pending") {
+    return {
+      ok: true,
+      state_id: stateId,
+      action: "start_review",
+      error: null,
+    };
+  }
+  if (stateId === "reviewing") {
+    return {
+      ok: true,
+      state_id: stateId,
+      action: "resume_review",
+      error: null,
+    };
+  }
+
+  return {
+    ok: false,
+    state_id: stateId,
+    action: null,
+    error:
+      stateId === "executing"
+        ? `Task ${taskId} is still in executing; run coord:task:handoff before review.`
+        : `Task ${taskId} is in ${stateId}; review can only run from review_pending or reviewing.`,
+  };
+}
+
+function enterReview(taskId) {
+  const entry = resolveReviewEntry(taskId);
+  if (!entry.ok) return entry;
+
+  finishWaitStageIfOpen(taskId, "review_wait", {
+    source: "coord:review:run",
+    status: "entered_review",
+    reason: "review 已开始。",
+  });
+  if (entry.action === "start_review") {
     applyTaskTransition(taskId, "review_started", {
       source: "coord:review:run",
     });
-    startActiveStage(taskId, "review", {
-      source: "coord:review:run",
-      status: "running",
-      reason: "进入 review 阶段。",
-    });
+  }
+  startActiveStage(taskId, "review", {
+    source: "coord:review:run",
+    status: "running",
+    reason: entry.action === "resume_review" ? "继续 review。" : "进入 review 阶段。",
+  });
+  return entry;
+}
+
+function main() {
+  const args = parseArgs();
+  const taskId = args.taskId;
+  let reviewEntry = null;
+
+  if (taskId) {
+    reviewEntry = enterReview(taskId);
+    if (!reviewEntry.ok) {
+      const output = {
+        ok: false,
+        generated_at: new Date().toISOString(),
+        task_id: taskId,
+        reviewers: [],
+        diff_summary: null,
+        merge_decision: "block_and_retry",
+        merge_confidence_score: 0,
+        merge_decision_explanation: reviewEntry.error,
+        review_gate: reviewEntry,
+      };
+      recordShortcutOpportunityFromEnv(process.cwd(), {
+        shortcutId: "review_summary",
+        originalCmd: `pnpm coord:review:run -- --taskId=${taskId}`,
+        taskId,
+        profileId: "review_summary",
+        profileVersion: "1",
+        exitCode: 1,
+      });
+      recordBlocker(taskId, "review", {
+        source: "coord:review:run",
+        status: "blocked",
+        reason: reviewEntry.error,
+        relatedDocs: ["docs/DEV_WORKFLOW.md"],
+      });
+      console.log(JSON.stringify(output, null, 2));
+      process.exit(1);
+    }
   }
 
   const scopeResult = runScopeReviewer(taskId);
@@ -226,14 +314,16 @@ function main() {
   } catch (_) {}
 
   const mergeOut = computeMergeDecision(reviewers, changedFiles, manifest);
+  const exitCode = allPass ? (mergeOut.merge_decision === "escalate_to_human" ? 2 : 0) : 1;
 
   const output = {
     ok: allPass,
-      generated_at: new Date().toISOString(),
-      task_id: taskId || null,
-      reviewers,
-      diff_summary: diffSummary,
-      ...mergeOut,
+    generated_at: new Date().toISOString(),
+    task_id: taskId || null,
+    reviewers,
+    diff_summary: diffSummary,
+    review_gate: reviewEntry,
+    ...mergeOut,
   };
 
   recordShortcutOpportunityFromEnv(process.cwd(), {
@@ -242,7 +332,7 @@ function main() {
     taskId: taskId || null,
     profileId: "review_summary",
     profileVersion: "1",
-    exitCode: allPass ? (mergeOut.merge_decision === "escalate_to_human" ? 2 : 0) : 1,
+    exitCode,
   });
 
   if (taskId) {
@@ -262,7 +352,7 @@ function main() {
       status: allPass ? mergeOut.merge_decision : "blocked",
       reason: mergeOut.merge_decision_explanation || (allPass ? "review 通过。" : "review 未通过。"),
     });
-    if (allPass) {
+    if (allPass && mergeOut.merge_decision === "auto_merge") {
       applyTaskTransition(taskId, "review_passed", {
         source: "coord:review:run",
       });
@@ -271,8 +361,16 @@ function main() {
   }
 
   console.log(JSON.stringify(output, null, 2));
-  if (!allPass) process.exit(1);
-  if (mergeOut.merge_decision === "escalate_to_human") process.exit(2);
+  process.exit(exitCode);
 }
 
-main();
+if (require.main === module) {
+  main();
+} else {
+  module.exports = {
+    computeMergeDecision,
+    enterReview,
+    main,
+    resolveReviewEntry,
+  };
+}
