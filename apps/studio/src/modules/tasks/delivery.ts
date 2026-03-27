@@ -2,6 +2,7 @@ import type { ReleaseRecord } from "@/modules/releases/types";
 import { getWorkspaceRoot } from "@/lib/workspace";
 import { findEffectivePendingDevRelease } from "../../../../../shared/release-registry";
 import { buildTaskCostLedger } from "../../../../../scripts/ai/lib/task-cost";
+import { deriveTaskDeliveryStatusFromStateId } from "../../../../../shared/task-state-machine";
 import type { TaskCard, TaskDeliveryRow, TaskDeliveryStatus } from "./types";
 
 export const TASK_DELIVERY_LABELS: Record<TaskDeliveryStatus, string> = {
@@ -67,11 +68,17 @@ function resolveDeliveryStatus(
   activeProd: ReleaseRecord | null,
   latestProd: ReleaseRecord | null,
 ): TaskDeliveryStatus {
-  if (task.status === "blocked") {
-    return "blocked";
-  }
+  const canonical = deriveTaskDeliveryStatusFromStateId(task.machine.stateId);
+  if (canonical === "blocked") return "blocked";
   if (pendingDev?.primary_task_id === task.id) {
     return "pending_acceptance";
+  }
+  if (canonical === "pending_acceptance") return "pending_acceptance";
+  if (canonical === "rolled_back") return "rolled_back";
+  if (canonical === "released") return "released";
+  if (canonical === "in_progress") return "in_progress";
+  if (task.status === "blocked") {
+    return "blocked";
   }
   if (task.status === "done" && latestProd?.status === "rolled_back") {
     return "rolled_back";

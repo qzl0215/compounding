@@ -1,5 +1,6 @@
 const path = require("node:path");
 const { recordReleaseHandoff } = require("../coord/lib/companion-lifecycle.ts");
+const { applyTaskTransition } = require("../coord/lib/task-machine.ts");
 const { finishActiveStage, recordBlocker, startActiveStage, startWaitStage } = require("../coord/lib/task-activity.ts");
 const {
   changeSummary,
@@ -146,6 +147,11 @@ function main() {
           const preview = ensurePreviewAvailable(releaseId, releasePath);
           const release = { ...prepared, notes: [...prepared.notes, preview.note].filter(Boolean) };
           upsertRelease(release);
+          if (preview.ok && taskMeta?.id) {
+            applyTaskTransition(taskMeta.id, "release_prepared", {
+              source: "release:prepare",
+            });
+          }
           return {
             ok: preview.ok,
             message: preview.ok ? `dev 预览 ${releaseId} 已就绪：${previewBaseUrl()}` : preview.message,

@@ -84,6 +84,7 @@ function summarizePreflight(preflight) {
   const blockers = [];
   const notes = [];
   const payload = preflight?.preflight || preflight || {};
+  const syncStatus = String(payload.sync_status || "").trim();
   if (payload.worktree_clean === false) {
     blockers.push({
       step: "preflight",
@@ -91,7 +92,7 @@ function summarizePreflight(preflight) {
       details: payload,
     });
   }
-  if (payload.has_remote && payload.sync_status && !["clean", "no_remote", "up_to_date", "ahead"].includes(payload.sync_status)) {
+  if (payload.has_remote && ["behind", "diverged", "fetch_failed", "sync_unknown"].includes(syncStatus)) {
     blockers.push({
       step: "preflight",
       issue: "分支不同步",
@@ -102,6 +103,12 @@ function summarizePreflight(preflight) {
     notes.push({
       step: "preflight",
       issue: "无远端或未校验同步状态",
+      details: payload,
+    });
+  } else if (syncStatus === "no_upstream") {
+    notes.push({
+      step: "preflight",
+      issue: "分支未配置 upstream，本地允许继续",
       details: payload,
     });
   } else if (["clean", "up_to_date", "ahead"].includes(payload.sync_status)) {

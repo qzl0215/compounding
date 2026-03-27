@@ -19,6 +19,7 @@ def render_task_template(values: dict[str, str], template_path: Path = TASK_TEMP
         "why_now": "需要确认 companion 生命周期与发布交接仍能围绕统一合同运作。",
         "boundary": "只验证 task companion、review 与 release handoff 的闭环，不扩到页面投影。",
         "done_when": "companion 生命周期记录完整，且 release context 能优先读取 companion handoff。",
+        "delivery_track": "undetermined",
         "in_scope": "- 验证 companion 初始化与生命周期回写。\n- 验证 release handoff 读取逻辑。",
         "out_of_scope": "- 不测试 UI 页面。\n- 不测试真实 release 切换。",
         "constraints": "- 保持 task 文档为执行合同，机器事实下沉到 companion。",
@@ -31,7 +32,6 @@ def render_task_template(values: dict[str, str], template_path: Path = TASK_TEMP
         "acceptance_result": "待验收",
         "delivery_result": "让 review 与 release 可以复用同一份 companion。",
         "retro": "未复盘",
-        "current_mode": "工程执行",
         "branch": "codex/task-999-sample",
         "related_modules": "",
         "update_trace_memory": "no change: 未更新",
@@ -56,12 +56,18 @@ class CoordCliTestCase(unittest.TestCase):
         (self.target / "tasks" / "templates").mkdir(parents=True, exist_ok=True)
         (self.target / "shared").mkdir(parents=True, exist_ok=True)
         (self.target / "bootstrap").mkdir(parents=True, exist_ok=True)
+        (self.target / "kernel").mkdir(parents=True, exist_ok=True)
+        (self.target / "schemas").mkdir(parents=True, exist_ok=True)
         shutil.copy(ROOT / "shared" / "task-identity.ts", self.target / "shared" / "task-identity.ts")
         shutil.copy(ROOT / "shared" / "task-contract.ts", self.target / "shared" / "task-contract.ts")
+        shutil.copy(ROOT / "shared" / "simple-yaml.ts", self.target / "shared" / "simple-yaml.ts")
+        shutil.copy(ROOT / "shared" / "task-state-machine.ts", self.target / "shared" / "task-state-machine.ts")
         shutil.copy(ROOT / "shared" / "branch-cleanup.ts", self.target / "shared" / "branch-cleanup.ts")
         shutil.copy(ROOT / "shared" / "module-feature-contract.ts", self.target / "shared" / "module-feature-contract.ts")
         shutil.copy(ROOT / "shared" / "feature-context.ts", self.target / "shared" / "feature-context.ts")
         shutil.copy(ROOT / "bootstrap" / "heading_aliases.json", self.target / "bootstrap" / "heading_aliases.json")
+        shutil.copy(ROOT / "kernel" / "task-state-machine.yaml", self.target / "kernel" / "task-state-machine.yaml")
+        shutil.copy(ROOT / "schemas" / "task-state-machine.schema.yaml", self.target / "schemas" / "task-state-machine.schema.yaml")
         shutil.copy(TASK_TEMPLATE_PATH, self.target / "tasks" / "templates" / "task-template.md")
         (self.target / "tasks" / "queue" / "task-999-sample.md").write_text(SAMPLE_TASK_MARKDOWN, encoding="utf8")
 
@@ -117,6 +123,18 @@ class CoordCliTestCase(unittest.TestCase):
                 '"undeclared": [], '
                 '"high_risk_undeclared": [], '
                 '"declared_but_unchanged": []'
+                '}));\n'
+            ),
+            encoding="utf8",
+        )
+        (coord_dir / "decision.ts").write_text(
+            (
+                'console.log(JSON.stringify({'
+                '"ok": true, '
+                '"decision_id": "dec-test", '
+                '"path": "agent-coordination/decisions/dec-test.json", '
+                '"type": "pre_task_guard", '
+                '"generated_at": "2026-03-20T00:00:00.000Z"'
                 '}));\n'
             ),
             encoding="utf8",

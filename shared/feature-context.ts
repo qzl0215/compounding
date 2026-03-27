@@ -7,10 +7,14 @@ export type FeatureContextCheck = {
 
 export type FeatureTaskOverlay = {
   taskId: string;
+  shortId: string;
   taskPath: string;
   summary: string;
   boundary: string;
   doneWhen: string;
+  stateId: string | null;
+  modeId: string | null;
+  deliveryTrack: string;
 };
 
 export type FeatureContextPacket = {
@@ -25,4 +29,3 @@ export type FeatureContextPacket = {
   common_changes: string[];
   task_overlay?: FeatureTaskOverlay | null;
 };
-

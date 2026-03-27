@@ -1,6 +1,7 @@
 const { getChangePolicy } = require("../../ai/lib/change-policy.ts");
 const { buildAndWriteContextRetroReport, summarizeContextRetroHints } = require("../../ai/lib/context-retro.ts");
 const { ensureCompanion } = require("./task-meta.ts");
+const { applyTaskTransition } = require("./task-machine.ts");
 const { recordPreTaskResult } = require("./companion-lifecycle.ts");
 const { buildRetroContext, finishActiveStage, recordBlocker, startActiveStage } = require("./task-activity.ts");
 const { createDecisionCard } = require("./pre-task-decision.ts");
@@ -258,6 +259,15 @@ function runTaskPreflight(changePolicy, taskId) {
     recordedAt: new Date().toISOString(),
     status: "passed",
     reason: "完整 task guard 已通过。",
+  });
+  if (compResult.companion?.machine?.state_id === "planning") {
+    applyTaskTransition(taskId, "plan_approved", {
+      source: "coord:preflight",
+    });
+  }
+  applyTaskTransition(taskId, "preflight_passed", {
+    source: "coord:preflight",
+    change_class: changePolicy.change_class,
   });
   startActiveStage(taskId, "execution", {
     source: "coord:task:start",

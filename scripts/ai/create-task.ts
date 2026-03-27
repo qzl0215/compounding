@@ -1,5 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const childProcess = require("node:child_process");
 const { listTaskRecords } = require("./lib/task-resolver.ts");
 const { ensureCompanion } = require("../coord/lib/task-meta.ts");
 const { emitResult, exitWithError, parseCliArgs, renderTaskTemplate } = require("./lib/cli-kernel.js");
@@ -14,8 +15,8 @@ if (!taskId || !summary || !whyNow) {
     [
       "Usage: node --experimental-strip-types scripts/ai/create-task.ts <task-id> <summary> <why-now>",
       "Optional flags: --parentPlan=... --boundary=... --doneWhen=... --inScope=... --outOfScope=... --constraints=...",
-      "                --risk=... --testReason=... --testScope=... --testSkip=... --testRoi=... --status=...",
-      "                --acceptanceResult=... --deliveryResult=... --retro=... --currentMode=... --branch=...",
+      "                --deliveryTrack=... --risk=... --testReason=... --testScope=... --testSkip=... --testRoi=... --status=...",
+      "                --acceptanceResult=... --deliveryResult=... --retro=... --branch=...",
       "                --relatedModules='- `path/file`\\n- `dir/`' --updateTraceMemory=... --updateTraceIndex=...",
       "                --updateTraceRoadmap=... --updateTraceDocs=...",
     ].join("\n")
@@ -47,6 +48,7 @@ const body = renderTaskTemplate(
     why_now: argv.whyNow || argv.why_now || whyNow,
     boundary: argv.boundary,
     done_when: argv.doneWhen || argv.done_when,
+    delivery_track: argv.deliveryTrack || argv.delivery_track || "undetermined",
     in_scope: argv.inScope || argv.in_scope,
     out_of_scope: argv.outOfScope || argv.out_of_scope,
     constraints: argv.constraints,
@@ -59,8 +61,7 @@ const body = renderTaskTemplate(
     acceptance_result: argv.acceptanceResult || argv.acceptance_result,
     delivery_result: argv.deliveryResult || argv.delivery_result,
     retro: argv.retro,
-    current_mode: argv.currentMode || argv.current_mode || "工程执行",
-    branch: argv.branch || `codex/${taskId}`,
+    branch: argv.branch || detectCurrentBranch(root) || `codex/${taskId}`,
     related_modules: argv.relatedModules || argv.related_modules || "",
     update_trace_memory: argv.updateTraceMemory || argv.update_trace_memory || "no change: 未更新",
     update_trace_index: argv.updateTraceIndex || argv.update_trace_index || "no change: 未更新",
@@ -97,5 +98,17 @@ function assertChineseSummary(value, cli) {
       ].join("\n"),
       cli
     );
+  }
+}
+
+function detectCurrentBranch(root) {
+  try {
+    return childProcess.execFileSync("git", ["branch", "--show-current"], {
+      cwd: root,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+  } catch {
+    return "";
   }
 }

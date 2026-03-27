@@ -14,6 +14,7 @@ const {
   withReleaseLock,
 } = require("./lib.ts");
 const { stabilizeLocalProdRuntime } = require("./prod-runtime-stability.ts");
+const { applyTaskTransition } = require("../coord/lib/task-machine.ts");
 const { finishActiveStage, recordBlocker, startActiveStage } = require("../coord/lib/task-activity.ts");
 const { recordReleaseCleanupCancellation } = require("../coord/lib/companion-lifecycle.ts");
 
@@ -72,6 +73,9 @@ try {
     })
   );
   if (activityTaskId) {
+    applyTaskTransition(activityTaskId, "rollback_completed", {
+      source: "release:rollback",
+    });
     finishActiveStage(activityTaskId, "rollback", {
       source: "release:rollback",
       status: "rolled_back",

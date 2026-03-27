@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 
 const require = createRequire(import.meta.url);
 const { deriveShortId, matchesTaskReference, normalizeTaskReference, taskIdFromPath } = require("./task-identity.ts");
+const { normalizeTaskDeliveryTrack, normalizeTaskModeId } = require("./task-state-machine.ts");
 
 export type TaskUpdateTrace = {
   memory: string;
@@ -34,6 +35,7 @@ export type ParsedTaskContract = {
 
 export type ParsedTaskMachineFacts = {
   currentMode: string;
+  deliveryTrack: string;
   branch: string;
   recentCommit: string;
   relatedModules: string[];
@@ -153,8 +155,11 @@ export function parseTaskContract(path: string, content: string): ParsedTaskCont
 }
 
 export function parseTaskMachineFacts(content: string): ParsedTaskMachineFacts {
+  const rawMode = inline(extractLegacyField(content, ["当前模式"]));
+  const normalizedModeId = normalizeTaskModeId(rawMode);
   return {
-    currentMode: inline(extractLegacyField(content, ["当前模式"])),
+    currentMode: normalizedModeId ? String(rawMode || "").trim() || normalizedModeId : rawMode,
+    deliveryTrack: normalizeTaskDeliveryTrack(inline(extractLegacyField(content, ["交付轨道"]))),
     branch: inline(extractLegacyField(content, ["分支"])),
     recentCommit: inline(extractLegacyField(content, ["最近提交"])),
     relatedModules: parseRelatedModules(content),

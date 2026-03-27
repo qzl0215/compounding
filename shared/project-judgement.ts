@@ -45,6 +45,7 @@ type ProjectJudgementInput = {
   blueprintContent: string;
   counts?: {
     total: number;
+    planning: number;
     ready: number;
     doing: number;
     blocked: number;
@@ -73,6 +74,7 @@ export function buildProjectJudgementContract(input: ProjectJudgementInput): Pro
   const planningBacklog = parseBulletList(extractSection(input.blueprintContent, "planning_backlog") ?? "");
   const counts = input.counts ?? {
     total: 0,
+    planning: 0,
     ready: 0,
     doing: 0,
     blocked: 0,
@@ -128,6 +130,7 @@ function resolveProjectStateStage(
   if (pendingAcceptance || counts.acceptance > 0) return "acceptance";
   if (counts.doing > 0 || counts.blocked > 0) return "doing";
   if (counts.ready > 0) return "ready";
+  if (counts.planning > 0) return "planning";
   if (planningBacklog.length > 0) return "planning";
   if (thinkingBacklog.length > 0) return "thinking";
   return "released";

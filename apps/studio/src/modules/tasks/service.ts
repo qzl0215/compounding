@@ -4,6 +4,7 @@ import { resolveTaskGitInfo } from "./git";
 import { parseTaskCard, parseTaskMachineFields } from "./parsing";
 import type { TaskCard, TaskGroup, TaskStatus } from "./types";
 import { assertUniqueTaskIdentities } from "../../../../../shared/task-identity";
+import { deriveCompatTaskMachine, deriveTaskStatusFromStateId, getTaskModeLabel, getTaskStateLabel } from "../../../../../shared/task-state-machine";
 
 export const TASK_STATUS_ORDER: TaskStatus[] = ["todo", "doing", "blocked", "done"];
 export const TASK_STATUS_LABELS: Record<TaskStatus, string> = {
@@ -34,17 +35,40 @@ export async function listTaskCards(): Promise<TaskCard[]> {
       const parsed = parseTaskCard(taskPath, docs[index].content);
       const parsedMachine = parseTaskMachineFields(taskPath, docs[index].content);
       const companion = readTaskCompanionFacts(parsed.id);
+      const fallbackMachine = !companion.contractHash
+        ? deriveCompatTaskMachine({
+            task_status: parsed.status,
+            current_mode: parsedMachine.currentMode,
+            delivery_track: parsedMachine.deliveryTrack,
+          })
+        : null;
+      const machineState = fallbackMachine || {
+        state_id: companion.stateId,
+        mode_id: companion.modeId,
+        delivery_track: companion.deliveryTrack,
+        blocked_from_state: companion.blockedFromState,
+        resume_to_state: companion.resumeToState,
+        blocked_reason: companion.blockedReason,
+        last_transition: companion.lastTransitionEvent ? { event_id: companion.lastTransitionEvent } : null,
+      };
       const branch = parsedMachine.branch || companion.branch;
       const recentCommit = parsedMachine.recentCommit || companion.recentCommit;
-      const currentMode = normalizeExecutionMode(
-        companion.currentMode || parsedMachine.currentMode || defaultModeForStatus(parsed.status),
-        parsed.status
-      );
+      const currentMode = companion.currentMode || getTaskModeLabel(machineState.mode_id);
+      const derivedStatus = deriveTaskStatusFromStateId(machineState.state_id);
       return {
         ...parsed,
+        status: derivedStatus as TaskStatus,
         currentMode,
         machine: {
           contractHash: companion.contractHash,
+          stateId: machineState.state_id,
+          stateLabel: fallbackMachine ? getTaskStateLabel(machineState.state_id) : companion.stateLabel,
+          modeId: machineState.mode_id,
+          deliveryTrack: machineState.delivery_track,
+          blockedFromState: machineState.blocked_from_state,
+          resumeToState: machineState.resume_to_state,
+          blockedReason: machineState.blocked_reason || "",
+          lastTransitionEvent: fallbackMachine ? null : companion.lastTransitionEvent,
           branch,
           recentCommit,
           completionMode: companion.completionMode,
@@ -58,7 +82,7 @@ export async function listTaskCards(): Promise<TaskCard[]> {
           artifactRefs: companion.artifactRefs,
           latestSearchEvidence: companion.latestSearchEvidence,
           branchCleanup: companion.branchCleanup,
-          git: resolveTaskGitInfo(parsed.status, branch, recentCommit, companion.branchCleanup),
+          git: resolveTaskGitInfo(derivedStatus as TaskStatus, branch, recentCommit, companion.branchCleanup),
         },
       };
     })
@@ -76,16 +100,4 @@ function mergeMachineModules(taskPath: string, relatedModules: string[], planned
 
 function uniqueStrings(values: string[]) {
   return Array.from(new Set(values.map((value) => String(value || "").trim()).filter(Boolean)));
-}
-
-function defaultModeForStatus(status: TaskStatus) {
-  return status === "done" ? "质量验收" : "工程执行";
-}
-
-function normalizeExecutionMode(currentMode: string, status: TaskStatus) {
-  const normalized = String(currentMode || "").trim();
-  if (normalized === "战略澄清" || normalized === "方案评审") {
-    return status === "done" ? "质量验收" : "工程执行";
-  }
-  return normalized || defaultModeForStatus(status);
 }

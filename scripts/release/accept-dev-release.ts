@@ -1,5 +1,6 @@
 const childProcess = require("node:child_process");
 const { recordReleaseCleanupSchedule, recordReleaseHandoff } = require("../coord/lib/companion-lifecycle.ts");
+const { applyTaskTransition } = require("../coord/lib/task-machine.ts");
 const { finishWaitStageIfOpen, recordBlocker } = require("../coord/lib/task-activity.ts");
 const {
   clearChannelSymlink,
@@ -155,6 +156,9 @@ try {
     })
   );
   if (activityTaskId) {
+    applyTaskTransition(activityTaskId, "acceptance_accepted", {
+      source: "release:accept-dev",
+    });
     finishWaitStageIfOpen(activityTaskId, "acceptance_wait", {
       source: "release:accept-dev",
       status: "accepted",

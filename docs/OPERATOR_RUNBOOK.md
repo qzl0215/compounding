@@ -27,6 +27,7 @@ related_docs:
 - required packs：`protocol_pack`、`operator_pack`、`ai_exec_pack`、`tooling_pack`
 - 顶层备注：
   - 该文件只保存服务器访问面、GitHub 接入面和标准发布流的非密钥事实。
+  - 任务编排 contract 明确了 canonical state machine、主命令与 override 命令。
   - 真实密钥只放在 env、gh auth、ssh config 或外部 secret manager。
   - 人类扫读版由 docs/OPERATOR_RUNBOOK.md 承接；跨工具薄入口只负责把工具跳转到 AGENTS.md 与本文件。
 
@@ -44,7 +45,24 @@ related_docs:
 - 原始 preflight gate：`pnpm preflight`
 - 原始 task preflight gate：`pnpm preflight -- --taskId=t-xxx`
 - create task：`pnpm coord:task:create -- --taskId=t-xxx --summary=\"中文直给概述\" --why=\"为什么现在\"`
+- task transition：`pnpm coord:task:transition -- --taskId=t-xxx --event=block --reason=\"说明原因\"`
 - review：`pnpm coord:review:run -- --taskId=t-xxx`
+
+## Task Orchestration
+
+- canonical state machine：`kernel/task-state-machine.yaml`
+- companion schema：`4`
+- create：`pnpm coord:task:create -- --taskId=t-xxx --summary=\"中文直给概述\" --why=\"为什么现在\"`
+- start：`pnpm coord:task:start -- --taskId=t-xxx`
+- handoff：`pnpm coord:task:handoff -- --taskId=t-xxx`
+- review：`pnpm coord:review:run -- --taskId=t-xxx`
+- override transition：`pnpm coord:task:transition -- --taskId=t-xxx --event=<event> --reason=\"说明原因\"`
+- canonical fields：`machine.state_id`、`machine.mode_id`、`machine.delivery_track`、`machine.blocked_from_state`、`machine.resume_to_state`、`machine.blocked_reason`、`machine.last_transition`
+- compatibility aliases：`pnpm coord:check:pre-task -- --taskId=t-xxx`
+- 备注：
+  - 任务 canonical state 只写 companion.machine；task 正文与 release registry 只做派生展示或兼容读取。
+  - block / resume / replan / abandon 只能通过 override_transition 触发，且必须带 reason。
+  - 新 task 默认 create_task -> planning，delivery_track 默认 undetermined。
 
 ## 三模式入口
 

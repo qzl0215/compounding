@@ -10,6 +10,7 @@ const path = require("node:path");
  * @property {string} [why_now]
  * @property {string} [boundary]
  * @property {string} [done_when]
+ * @property {string} [delivery_track]
  * @property {string} [in_scope]
  * @property {string} [out_of_scope]
  * @property {string} [constraints]
@@ -22,7 +23,6 @@ const path = require("node:path");
  * @property {string} [acceptance_result]
  * @property {string} [delivery_result]
  * @property {string} [retro]
- * @property {string} [current_mode]
  * @property {string} [branch]
  * @property {string} [related_modules]
  * @property {string} [update_trace_memory]
@@ -39,6 +39,7 @@ const DEFAULT_TASK_TEMPLATE_VALUES = Object.freeze({
   why_now: "待补充：说明为什么现在要做。",
   boundary: "待补充：写明这个 task 从 plan 承接的那一段清晰边界；若价值判断、范围外或 taste decision 仍未收口，请先回到 plan。",
   done_when: "待补充：写明体验级交付结果，而不是实现动作；若仍是实现动作，说明决策未收口。",
+  delivery_track: "undetermined",
   in_scope: "- 待补充：列出这次明确要做的事项。",
   out_of_scope: "- 待补充：列出这次明确不做的事项。",
   constraints: "- 待补充：列出必须遵守的边界、依赖和冻结项；仍需人判断的只允许是价值判断、体验取舍或最终验收。",
@@ -51,7 +52,6 @@ const DEFAULT_TASK_TEMPLATE_VALUES = Object.freeze({
   acceptance_result: "待验收",
   delivery_result: "未交付",
   retro: "未复盘",
-  current_mode: "工程执行",
   branch: "codex/task-XXX",
   related_modules: "",
   update_trace_memory: "no change: 未更新",

@@ -3,6 +3,7 @@ required:
   - version
   - project
   - toolchain_commands
+  - task_orchestration
   - server_surfaces
   - github_surface
   - standard_flows
@@ -48,6 +49,7 @@ properties:
       - preflight
       - task_preflight
       - create_task
+      - task_transition
       - review
     properties:
       install:
@@ -72,8 +74,55 @@ properties:
         type: string
       create_task:
         type: string
+      task_transition:
+        type: string
       review:
         type: string
+  task_orchestration:
+    type: object
+    required:
+      - state_machine_path
+      - companion_schema_version
+      - canonical_fields
+      - primary_commands
+      - compatibility_aliases
+      - notes
+    properties:
+      state_machine_path:
+        type: string
+      companion_schema_version:
+        type: string
+      canonical_fields:
+        type: array
+        items:
+          type: string
+      primary_commands:
+        type: object
+        required:
+          - create
+          - start
+          - handoff
+          - review
+          - override_transition
+        properties:
+          create:
+            type: string
+          start:
+            type: string
+          handoff:
+            type: string
+          review:
+            type: string
+          override_transition:
+            type: string
+      compatibility_aliases:
+        type: array
+        items:
+          type: string
+      notes:
+        type: array
+        items:
+          type: string
   server_surfaces:
     type: array
     items:

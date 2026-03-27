@@ -28,8 +28,9 @@ export async function getProjectStateSnapshot(input?: { deliverySnapshot?: Deliv
   const taskRows = deliverySnapshot.projections.taskRows;
   const counts = {
     total: taskRows.length,
-    ready: taskRows.filter((row) => row.deliveryStatus === "not_started").length,
-    doing: taskRows.filter((row) => row.deliveryStatus === "in_progress").length,
+    planning: taskRows.filter((row) => row.machine.stateId === "planning").length,
+    ready: taskRows.filter((row) => row.machine.stateId === "ready").length,
+    doing: taskRows.filter((row) => ["executing", "review_pending", "reviewing", "release_preparing"].includes(row.machine.stateId)).length,
     blocked: taskRows.filter((row) => row.deliveryStatus === "blocked").length,
     acceptance: taskRows.filter((row) => row.deliveryStatus === "pending_acceptance").length,
     released: taskRows.filter((row) => row.deliveryStatus === "released" || row.deliveryStatus === "rolled_back").length,

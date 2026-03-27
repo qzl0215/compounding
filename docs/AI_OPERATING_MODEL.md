@@ -17,7 +17,8 @@ related_docs:
 ## 最小起步顺序
 
 - 先按 `AGENTS.md` 的默认读链进入对应主源。
-- 再补当前 task、相关 `module.md`、`code_index/*`，必要时先跑 `pnpm preflight`；若已进入 `structural / release` task，则跑 `pnpm preflight -- --taskId=t-xxx`。
+- 再读 `kernel/task-state-machine.yaml` 判断当前 `mode_id / state_id` 契约。
+- 最后按 mode 补当前 task、相关 `module.md`、`code_index/*`；若已进入 `structural / release` task，则跑 `pnpm preflight -- --taskId=t-xxx`。
 
 ## 行为原则
 
@@ -32,7 +33,22 @@ related_docs:
 - 新建 task 时，摘要本身就是人类标题，必须使用中文直给概述；`task-xxx` / `t-xxx` 只作索引，不代替标题。
 - task 只承接可执行边界；companion 只保留机器执行上下文；release 只保留验收与运行事实。
 - 只把价值判断、体验取舍、结果验收和高风险不可逆动作抛给人；实现级细节默认不向人要确认。
-- 业务链与进入退出条件以 `docs/WORK_MODES.md` 为准，这里只保留 AI 应如何处理问题，不重复展开模式定义。
+- AI 装配上下文时只看当前 `mode_id`，不再按“战略澄清 / 方案评审 / 工程执行 / 质量验收 / 发布复盘”人工场景猜测。
+
+## Mode Context Assembly
+
+- `planning`
+  输入：task 合同草案、`roadmap`、`operating-blueprint`、`current-state`、必要模块上下文。
+  输出：边界、完成定义、范围外、约束、测试策略、`delivery_track`。
+- `execution`
+  输入：已收口 task 合同、`current-state`、相关模块/索引、retro hints、search evidence。
+  输出：实现改动、handoff、最小验证结果、必要 search evidence。
+- `review`
+  输入：task 合同、diff summary、scope/architecture/test 结果。
+  输出：merge decision、review note、是否进入 release。
+- `release`
+  输入：通过 review 的结果、`delivery_track`、operator/runtime/release facts。
+  输出：preview、accept/reject、prod promote、rollback 结果。
 
 ## 交互契约
 
@@ -42,9 +58,11 @@ related_docs:
 
 ## 最小脚本契约
 
-- 规划链默认脚本：`scripts/ai/create-task.ts`
-- 执行链默认脚本：`scripts/ai/build-context.ts`、`node --experimental-strip-types scripts/ai/validate-change-trace.ts`、`node --experimental-strip-types scripts/ai/validate-task-git-link.ts`、`node --experimental-strip-types scripts/ai/validate-knowledge-assets.ts`
+- 规划链默认脚本：`scripts/ai/create-task.ts`、`pnpm coord:task:start -- --taskId=t-xxx`
+- 执行链默认脚本：`scripts/ai/build-context.ts`、`pnpm preflight -- --taskId=t-xxx`、`pnpm coord:task:handoff -- --taskId=t-xxx`
+- 评审链默认脚本：`pnpm coord:review:run -- --taskId=t-xxx`
 - 交付链默认脚本：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`、`node --experimental-strip-types scripts/release/accept-dev-release.ts`、`node --experimental-strip-types scripts/release/reject-dev-release.ts`、`node --experimental-strip-types scripts/release/rollback-release.ts`
+- override 状态入口：`pnpm coord:task:transition -- --taskId=t-xxx --event=<event> --reason="..."`
 - 运维接入主合同：`bootstrap/project_operator.yaml`；跨工具薄入口只负责把不同工具跳回这份合同与 `AGENTS.md`
 - 熵减候选默认脚本：`node --experimental-strip-types scripts/ai/cleanup-candidates.ts`，只在计划评审、release 复盘或当前没有更高优先级产品任务时运行。
 - 复盘候选默认脚本：`node --experimental-strip-types scripts/ai/retro-candidates.ts`，只读取 companion digest 聚合重复 blocker，不回写长期经验主源。

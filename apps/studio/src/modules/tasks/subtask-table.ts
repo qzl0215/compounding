@@ -2,7 +2,7 @@ import type { DemandStage } from "@/modules/portal";
 import { resolveTaskDemandStage } from "@/modules/portal/stage-model";
 import type { TaskDeliveryRow } from "./types";
 
-const STAGE_ORDER: DemandStage[] = ["acceptance", "doing", "ready", "released"];
+const STAGE_ORDER: DemandStage[] = ["acceptance", "doing", "ready", "planning", "released"];
 
 export function buildSubtaskTableRows(rows: TaskDeliveryRow[]) {
   return [...rows]

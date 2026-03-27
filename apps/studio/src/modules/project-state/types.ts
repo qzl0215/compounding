@@ -28,6 +28,7 @@ export type ProjectStateSnapshot = {
     summary: string;
     counts: {
       total: number;
+      planning: number;
       ready: number;
       doing: number;
       blocked: number;

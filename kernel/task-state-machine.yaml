@@ -1,0 +1,155 @@
+version: 0.1.0
+modes:
+  - mode_id: planning
+    label: 规划
+    inputs:
+      - task 合同草案
+      - memory/project/roadmap.md
+      - memory/project/operating-blueprint.md
+      - memory/project/current-state.md
+      - 必要模块上下文
+    outputs:
+      - 承接边界
+      - 完成定义
+      - 范围外
+      - 约束
+      - 测试策略
+      - delivery_track
+  - mode_id: execution
+    label: 执行
+    inputs:
+      - 已收口 task 合同
+      - memory/project/current-state.md
+      - 相关模块与 code_index
+      - retro_hints
+      - search_evidence
+    outputs:
+      - 实现改动
+      - handoff
+      - 必要 search evidence
+  - mode_id: review
+    label: 评审
+    inputs:
+      - task 合同
+      - diff summary
+      - scope reviewer 结果
+      - architecture reviewer 结果
+      - test reviewer 结果
+    outputs:
+      - merge decision
+      - review note
+      - 是否进入 release
+  - mode_id: release
+    label: 发布
+    inputs:
+      - 通过 review 的结果
+      - delivery_track
+      - operator/runtime/release facts
+    outputs:
+      - preview
+      - accept 或 reject
+      - prod promote
+      - rollback 结果
+states:
+  - state_id: planning
+    label: 待规划
+    default_mode_id: planning
+    terminal: false
+  - state_id: ready
+    label: 待执行
+    default_mode_id: planning
+    terminal: false
+  - state_id: executing
+    label: 执行中
+    default_mode_id: execution
+    terminal: false
+  - state_id: review_pending
+    label: 待评审
+    default_mode_id: review
+    terminal: false
+  - state_id: reviewing
+    label: 评审中
+    default_mode_id: review
+    terminal: false
+  - state_id: release_preparing
+    label: 待生成预览
+    default_mode_id: release
+    terminal: false
+  - state_id: acceptance_pending
+    label: 待验收
+    default_mode_id: release
+    terminal: false
+  - state_id: released
+    label: 已发布
+    default_mode_id: release
+    terminal: true
+  - state_id: rolled_back
+    label: 已回滚
+    default_mode_id: release
+    terminal: true
+  - state_id: blocked
+    label: 已阻塞
+    default_mode_id: execution
+    terminal: false
+  - state_id: abandoned
+    label: 已放弃
+    default_mode_id: planning
+    terminal: true
+transitions:
+  - event_id: create_task
+    from: [__new__]
+    to: planning
+  - event_id: plan_approved
+    from: [planning, blocked]
+    to: ready
+  - event_id: preflight_passed
+    from: [ready, blocked]
+    to: executing
+  - event_id: handoff_created
+    from: [executing]
+    to: review_pending
+  - event_id: review_started
+    from: [review_pending]
+    to: reviewing
+  - event_id: review_passed
+    from: [reviewing]
+    to: __track__
+    dynamic_track: true
+  - event_id: release_prepared
+    from: [release_preparing]
+    to: acceptance_pending
+  - event_id: acceptance_accepted
+    from: [acceptance_pending]
+    to: released
+  - event_id: acceptance_rejected
+    from: [acceptance_pending]
+    to: blocked
+    requires_reason: true
+  - event_id: rollback_completed
+    from: [release_preparing, acceptance_pending, released]
+    to: rolled_back
+  - event_id: block
+    from: [planning, ready, executing, review_pending, reviewing, release_preparing, acceptance_pending]
+    to: blocked
+    requires_reason: true
+  - event_id: resume
+    from: [blocked]
+    to: __resume__
+    requires_reason: true
+    dynamic_resume: true
+  - event_id: replan
+    from: [ready, executing, review_pending, reviewing, release_preparing, acceptance_pending, blocked]
+    to: planning
+    requires_reason: true
+  - event_id: abandon
+    from: [planning, ready, executing, review_pending, reviewing, release_preparing, acceptance_pending, blocked]
+    to: abandoned
+    requires_reason: true
+delivery_tracks:
+  - undetermined
+  - direct_merge
+  - preview_release
+default_delivery_tracks:
+  light: direct_merge
+  structural: direct_merge
+  release: preview_release

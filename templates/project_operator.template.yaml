@@ -20,7 +20,29 @@ toolchain_commands:
   preflight: python3 scripts/init_project_compounding.py doctor --target .
   task_preflight: python3 scripts/init_project_compounding.py audit --target .
   create_task: ""
+  task_transition: ""
   review: ""
+task_orchestration:
+  state_machine_path: kernel/task-state-machine.yaml
+  companion_schema_version: "4"
+  canonical_fields:
+    - machine.state_id
+    - machine.mode_id
+    - machine.delivery_track
+    - machine.blocked_from_state
+    - machine.resume_to_state
+    - machine.blocked_reason
+    - machine.last_transition
+  primary_commands:
+    create: ""
+    start: ""
+    handoff: ""
+    review: ""
+    override_transition: ""
+  compatibility_aliases:
+    - pnpm coord:check:pre-task -- --taskId=t-xxx
+  notes:
+    - canonical state 只写 companion.machine。
 server_surfaces:
   - surface_id: local-preview
     purpose: preview

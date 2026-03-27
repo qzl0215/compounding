@@ -9,6 +9,7 @@ const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 const { recordShortcutOpportunityFromEnv } = require("../ai/lib/command-gain.ts");
 const { loadManifest } = require("./lib/manifest.ts");
+const { applyTaskTransition } = require("./lib/task-machine.ts");
 const { recordReviewResult } = require("./lib/companion-lifecycle.ts");
 const { finishActiveStage, finishWaitStageIfOpen, recordBlocker, startActiveStage } = require("./lib/task-activity.ts");
 
@@ -198,6 +199,9 @@ function main() {
       status: "entered_review",
       reason: "review 已开始。",
     });
+    applyTaskTransition(taskId, "review_started", {
+      source: "coord:review:run",
+    });
     startActiveStage(taskId, "review", {
       source: "coord:review:run",
       status: "running",
@@ -258,6 +262,11 @@ function main() {
       status: allPass ? mergeOut.merge_decision : "blocked",
       reason: mergeOut.merge_decision_explanation || (allPass ? "review 通过。" : "review 未通过。"),
     });
+    if (allPass) {
+      applyTaskTransition(taskId, "review_passed", {
+        source: "coord:review:run",
+      });
+    }
     recordReviewResult(taskId, output);
   }
 

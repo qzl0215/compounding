@@ -45,6 +45,8 @@ class FeatureContextCliTests(unittest.TestCase):
         payload = self.run_feature_context("--taskPath=tasks/queue/task-066-feature-context-and-shared-state.md")
         self.assertTrue(payload["ok"])
         self.assertEqual(payload["task_overlay"]["taskId"], "task-066-feature-context-and-shared-state")
+        self.assertIn("deliveryTrack", payload["task_overlay"])
+        self.assertIn("modeId", payload["task_overlay"])
         self.assertIn("tasks/queue/task-066-feature-context-and-shared-state.md", payload["must_read"])
         self.assertIn("tasks/queue/task-066-feature-context-and-shared-state.md", payload["likely_files"])
         self.assertIn("tasks/queue/task-066-feature-context-and-shared-state.md", payload["default_flow"]["entry_command"])

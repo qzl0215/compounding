@@ -1,6 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { buildTaskBranchCleanupView, normalizeBranchCleanupRecord, type TaskBranchCleanupView } from "../../../../../shared/branch-cleanup";
+import {
+  getTaskModeLabel,
+  getTaskStateLabel,
+  normalizeTaskMachineState,
+  type TaskMachineState,
+} from "../../../../../shared/task-state-machine";
 
 type CompanionReleaseNote = {
   release_id?: string | null;
@@ -33,6 +39,7 @@ type TaskCompanionShape = {
   completion_mode?: string | null;
   planned_files?: string[];
   planned_modules?: string[];
+  machine?: Partial<TaskMachineState> | null;
   locks?: CompanionLock[];
   lifecycle?: CompanionLifecycle;
   artifacts?: {
@@ -47,6 +54,14 @@ type TaskCompanionShape = {
 export type TaskCompanionFacts = {
   currentMode: string;
   contractHash: string;
+  stateId: TaskMachineState["state_id"];
+  stateLabel: string;
+  modeId: TaskMachineState["mode_id"];
+  deliveryTrack: TaskMachineState["delivery_track"];
+  blockedFromState: TaskMachineState["blocked_from_state"];
+  resumeToState: TaskMachineState["resume_to_state"];
+  blockedReason: string;
+  lastTransitionEvent: TaskMachineState["last_transition"] extends { event_id: infer T } ? T | null : string | null;
   branch: string;
   recentCommit: string;
   completionMode: string;
@@ -66,6 +81,14 @@ export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
     return {
       currentMode: "",
       contractHash: "",
+      stateId: "planning",
+      stateLabel: getTaskStateLabel("planning"),
+      modeId: "planning",
+      deliveryTrack: "undetermined",
+      blockedFromState: null,
+      resumeToState: null,
+      blockedReason: "",
+      lastTransitionEvent: null,
       branch: "",
       recentCommit: "",
       completionMode: "close_full_contract",
@@ -92,9 +115,18 @@ export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
           .filter(Boolean)
       )
     );
+    const machine = normalizeTaskMachineState(companion.machine);
     return {
-      currentMode: String(companion.current_mode || "").trim(),
+      currentMode: String(companion.current_mode || "").trim() || getTaskModeLabel(machine.mode_id),
       contractHash: String(companion.contract_hash || "").trim(),
+      stateId: machine.state_id,
+      stateLabel: getTaskStateLabel(machine.state_id),
+      modeId: machine.mode_id,
+      deliveryTrack: machine.delivery_track,
+      blockedFromState: machine.blocked_from_state,
+      resumeToState: machine.resume_to_state,
+      blockedReason: String(machine.blocked_reason || "").trim(),
+      lastTransitionEvent: machine.last_transition?.event_id || null,
       branch: String(companion.branch_name || "").trim(),
       recentCommit: sanitizeCommit(companion.lifecycle?.handoff?.git_head),
       completionMode: String(companion.completion_mode || "").trim() || "close_full_contract",
@@ -114,6 +146,14 @@ export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
     return {
       currentMode: "",
       contractHash: "",
+      stateId: "planning",
+      stateLabel: getTaskStateLabel("planning"),
+      modeId: "planning",
+      deliveryTrack: "undetermined",
+      blockedFromState: null,
+      resumeToState: null,
+      blockedReason: "",
+      lastTransitionEvent: null,
       branch: "",
       recentCommit: "",
       completionMode: "close_full_contract",

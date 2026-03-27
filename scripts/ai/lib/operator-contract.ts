@@ -1,5 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const { loadSimpleYamlFile, validateSimpleSchema: validateYamlSchema } = require(path.join(process.cwd(), "shared", "simple-yaml.ts"));
 
 const OPERATOR_CONTRACT_PATH = "bootstrap/project_operator.yaml";
 const OPERATOR_SCHEMA_PATH = "schemas/project_operator.schema.yaml";
@@ -261,8 +262,7 @@ function defaultPreflightSummaryCommand() {
 }
 
 function readYamlFile(root, relativePath) {
-  const absolutePath = path.join(root, relativePath);
-  return parseSimpleYaml(fs.readFileSync(absolutePath, "utf8"));
+  return loadSimpleYamlFile(path.join(root, relativePath));
 }
 
 function loadPackageScripts(root) {
@@ -365,8 +365,10 @@ function renderRunbook(contract) {
     `- 原始 preflight gate：\`${normalizeString(contract.toolchain_commands?.preflight)}\``,
     `- 原始 task preflight gate：\`${normalizeString(contract.toolchain_commands?.task_preflight)}\``,
     `- create task：\`${normalizeString(contract.toolchain_commands?.create_task)}\``,
+    `- task transition：\`${normalizeString(contract.toolchain_commands?.task_transition)}\``,
     `- review：\`${normalizeString(contract.toolchain_commands?.review)}\``,
     "",
+    ...renderTaskOrchestrationGuide(contract),
     ...renderModeGuide(contract),
     ...renderBootstrapChecklists(contract),
     ...renderAiFeatureEntry(contract),
@@ -449,6 +451,29 @@ function renderShortcutLines(contract) {
   return shortcuts.map(
     (shortcut) => `- ${normalizeString(shortcut.label)}：\`${normalizeString(shortcut.canonical_command)}\``
   );
+}
+
+function renderTaskOrchestrationGuide(contract) {
+  const taskOrchestration = contract.task_orchestration || {};
+  const canonicalFields = Array.isArray(taskOrchestration.canonical_fields) ? taskOrchestration.canonical_fields : [];
+  const aliases = Array.isArray(taskOrchestration.compatibility_aliases) ? taskOrchestration.compatibility_aliases : [];
+  const notes = normalizeNotes(taskOrchestration.notes);
+  return [
+    "## Task Orchestration",
+    "",
+    `- canonical state machine：\`${normalizeString(taskOrchestration.state_machine_path)}\``,
+    `- companion schema：\`${normalizeString(taskOrchestration.companion_schema_version)}\``,
+    `- create：\`${normalizeString(taskOrchestration.primary_commands?.create)}\``,
+    `- start：\`${normalizeString(taskOrchestration.primary_commands?.start)}\``,
+    `- handoff：\`${normalizeString(taskOrchestration.primary_commands?.handoff)}\``,
+    `- review：\`${normalizeString(taskOrchestration.primary_commands?.review)}\``,
+    `- override transition：\`${normalizeString(taskOrchestration.primary_commands?.override_transition)}\``,
+    `- canonical fields：${canonicalFields.map((item) => `\`${normalizeString(item)}\``).join("、") || "无"}`,
+    `- compatibility aliases：${aliases.map((item) => `\`${normalizeString(item)}\``).join("、") || "无"}`,
+    "- 备注：",
+    ...(notes.length ? notes.map((item) => `  - ${item}`) : ["  - 无"]),
+    "",
+  ];
 }
 
 function hasAiExecPack(contract) {
@@ -667,7 +692,7 @@ function validateOperatorContract(root = process.cwd()) {
   const contract = loadOperatorContract(root);
   const schema = readYamlFile(root, OPERATOR_SCHEMA_PATH);
   checkedFiles.push(OPERATOR_CONTRACT_PATH, OPERATOR_SCHEMA_PATH);
-  errors.push(...validateSimpleSchema(contract, schema));
+  errors.push(...validateYamlSchema(contract, schema));
 
   const serverSurfaces = Array.isArray(contract.server_surfaces) ? contract.server_surfaces : [];
   for (const surface of serverSurfaces) {
@@ -743,6 +768,18 @@ function validateOperatorContract(root = process.cwd()) {
     }
     if (!Array.isArray(shortcut.tool_surfaces) || shortcut.tool_surfaces.length === 0) {
       errors.push(`Agent shortcut must declare tool_surfaces: ${normalizeString(shortcut.shortcut_id)}`);
+    }
+  }
+
+  const taskOrchestration = contract.task_orchestration || {};
+  if (!normalizeString(taskOrchestration.state_machine_path)) {
+    errors.push("task_orchestration.state_machine_path is required.");
+  } else if (!fs.existsSync(path.join(root, normalizeString(taskOrchestration.state_machine_path)))) {
+    errors.push(`Task state machine file is missing: ${normalizeString(taskOrchestration.state_machine_path)}`);
+  }
+  for (const [label, command] of Object.entries(taskOrchestration.primary_commands || {})) {
+    if (!commandExists(command, root, packageScripts)) {
+      errors.push(`Task orchestration command is missing or invalid: task_orchestration.primary_commands.${label}`);
     }
   }
 

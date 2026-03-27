@@ -7,6 +7,7 @@ capability_groups:
       - docs/WORK_MODES.md
       - docs/DEV_WORKFLOW.md
       - docs/ARCHITECTURE.md
+      - kernel/task-state-machine.yaml
       - memory/project/roadmap.md
       - memory/project/current-state.md
       - memory/project/operating-blueprint.md
@@ -56,6 +57,7 @@ packs:
       - docs/AI_OPERATING_MODEL.md
       - docs/ASSET_MAINTENANCE.md
       - schemas/project_brief.schema.yaml
+      - schemas/task-state-machine.schema.yaml
       - schemas/kernel_manifest.schema.yaml
       - schemas/bootstrap_report.schema.yaml
       - schemas/proposal.schema.yaml
@@ -65,6 +67,7 @@ packs:
       - templates/proposal.template.yaml
       - templates/experience_promotion.template.yaml
       - kernel/kernel_manifest.yaml
+      - kernel/task-state-machine.yaml
       - tasks/templates/task-template.md
       - scripts/init_project_compounding.py
       - scripts/compounding_bootstrap/*
@@ -207,6 +210,9 @@ managed_assets:
   - path: schemas/project_operator.schema.yaml
     ownership: kernel
     sync_mode: auto
+  - path: schemas/task-state-machine.schema.yaml
+    ownership: kernel
+    sync_mode: auto
   - path: schemas/kernel_manifest.schema.yaml
     ownership: kernel
     sync_mode: auto
@@ -237,6 +243,9 @@ managed_assets:
   - path: kernel/kernel_manifest.yaml
     ownership: kernel
     sync_mode: auto
+  - path: kernel/task-state-machine.yaml
+    ownership: kernel
+    sync_mode: auto
   - path: tasks/templates/task-template.md
     ownership: kernel
     sync_mode: auto
@@ -250,6 +259,12 @@ managed_assets:
     ownership: kernel
     sync_mode: auto
   - path: scripts/ai/lib/operator-contract.ts
+    ownership: kernel
+    sync_mode: auto
+  - path: shared/simple-yaml.ts
+    ownership: kernel
+    sync_mode: auto
+  - path: shared/task-state-machine.ts
     ownership: kernel
     sync_mode: auto
   - path: scripts/compounding_bootstrap/*

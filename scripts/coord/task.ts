@@ -7,6 +7,7 @@
 const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 const { ensureCompanion } = require("./lib/task-meta.ts");
+const { applyTaskTransition } = require("./lib/task-machine.ts");
 const { recordCreated, recordHandoff, recordSearchEvidence } = require("./lib/companion-lifecycle.ts");
 const { finishActiveStageIfOpen, recordNote, startWaitStage } = require("./lib/task-activity.ts");
 
@@ -64,6 +65,7 @@ function buildCreateTaskFlags(args) {
     parentPlan: "parentPlan",
     boundary: "boundary",
     doneWhen: "doneWhen",
+    deliveryTrack: "deliveryTrack",
     inScope: "inScope",
     outOfScope: "outOfScope",
     constraints: "constraints",
@@ -88,6 +90,16 @@ function start(args) {
   if (!taskId) {
     console.error(JSON.stringify({ ok: false, error: "taskId required. Use --taskId=t-025" }));
     process.exit(1);
+  }
+  const companionResult = ensureCompanion(taskId);
+  if (!companionResult.ok) {
+    console.error(JSON.stringify({ ok: false, error: companionResult.error }));
+    process.exit(1);
+  }
+  if (companionResult.companion?.machine?.state_id === "planning") {
+    applyTaskTransition(taskId, "plan_approved", {
+      source: "coord:task:start",
+    });
   }
   const result = spawnSync("node", ["--experimental-strip-types", PREFLIGHT_ENTRY, `--taskId=${taskId}`], {
     cwd: ROOT,
@@ -119,6 +131,9 @@ function handoff(args) {
     source: "coord:task:handoff",
     branch_name: branchName || comp.companion.branch_name,
     git_head: gitHead || null,
+  });
+  applyTaskTransition(taskId, "handoff_created", {
+    source: "coord:task:handoff",
   });
   finishActiveStageIfOpen(taskId, "execution", {
     source: "coord:task:handoff",
@@ -196,6 +211,44 @@ function merge(args) {
   process.exit(result.status || 0);
 }
 
+function transition(args) {
+  const taskId = args.taskId;
+  const eventId = args.event;
+  const overrideEvents = new Set(["block", "resume", "replan", "abandon"]);
+  if (!taskId || !eventId) {
+    console.error(JSON.stringify({ ok: false, error: "taskId and event required. Use --taskId=t-025 --event=block" }));
+    process.exit(1);
+  }
+  if (!overrideEvents.has(String(eventId))) {
+    console.error(JSON.stringify({ ok: false, error: `Unsupported override event: ${eventId}` }));
+    process.exit(1);
+  }
+  try {
+    const result = applyTaskTransition(taskId, eventId, {
+      source: "coord:task:transition",
+      reason: args.reason || null,
+      delivery_track: args.deliveryTrack || args.delivery_track || null,
+      resume_to_state: args.resumeToState || args.resume_to_state || null,
+    });
+    if (!result.ok) {
+      console.error(JSON.stringify(result));
+      process.exit(1);
+    }
+    console.log(
+      JSON.stringify({
+        ok: true,
+        task_id: taskId,
+        event: eventId,
+        machine: result.companion.machine,
+        current_mode: result.companion.current_mode,
+      })
+    );
+  } catch (error) {
+    console.error(JSON.stringify({ ok: false, error: error instanceof Error ? error.message : "transition failed" }));
+    process.exit(1);
+  }
+}
+
 const { cmd, args } = parseArgs();
 
 if (cmd === "create") create(args);
@@ -203,12 +256,13 @@ else if (cmd === "start") start(args);
 else if (cmd === "handoff") handoff(args);
 else if (cmd === "search") search(args);
 else if (cmd === "merge") merge(args);
+else if (cmd === "transition") transition(args);
 else {
   console.error(
     JSON.stringify({
       ok: false,
       error:
-        "Usage: task.ts create|start|search|handoff|merge [--taskId=...] [--summary=...] [--why=...] [--boundary=...] [--doneWhen=...] ...",
+        "Usage: task.ts create|start|search|handoff|merge|transition [--taskId=...] [--summary=...] [--why=...] [--boundary=...] [--doneWhen=...] ...",
     })
   );
   process.exit(1);

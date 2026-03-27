@@ -20,55 +20,57 @@ related_docs:
 - `dev` 是 preview channel，不是长期 git 主分支。
 - 同一时间只允许一个待验收 `dev`。
 
-## 进入前判断
+## Canonical State
 
-- 先按 `docs/WORK_MODES.md` 判断当前处于哪个场景，再决定是否建 task、是否直接执行。
-- `task` 是执行边界，不承接未成熟需求；模糊事项继续留在 `roadmap / operating-blueprint`。
-- 当前只允许一层 plan；唯一 plan 主源是 `memory/project/operating-blueprint.md`。
+- 任务唯一状态机主源是 `kernel/task-state-machine.yaml`。
+- 当前状态只写 companion `machine.state_id / mode_id / delivery_track / blocked_* / last_transition`。
+- task 正文 `状态` 只作派生展示；顶层 `current_mode` 只保留兼容读。
+- 历史 task 不批量迁移；缺少 canonical machine 时按兼容规则派生。
 
-## 预任务护栏
+## 状态与事件
+
+- `create_task -> planning`
+- `plan_approved -> ready`
+- `preflight_passed -> executing`
+- `handoff_created -> review_pending`
+- `review_started -> reviewing`
+- `review_passed + direct_merge -> released`
+- `review_passed + preview_release -> release_preparing -> acceptance_pending -> released`
+- `acceptance_rejected -> blocked(resume_to=executing)`
+- `rollback_completed -> rolled_back`
+- `block / resume / replan / abandon` 只能通过显式 override 事件触发，且必须带 `reason`
+
+## Guard
 
 - 动手前统一入口是 `pnpm preflight`。
-- `light` 改动默认只执行基础 gate；`structural / release` task 动手前默认跑 `pnpm preflight -- --taskId=t-xxx`。
-- `coord:check:pre-task` 只保留为兼容别名，输出 contract 与 `pnpm preflight -- --taskId=t-xxx` 一致。
-- 完整 task guard 输出会附带 `iteration_digest_path / retro_candidates_path / retro_hints`；新 Agent 开工前先看上一轮时间主要耗在哪个阶段、最近 blocker 是什么、有没有现成 shortcut。
-- 涉及服务器访问、GitHub 接入方式或标准发布动作时，先读 `bootstrap/project_operator.yaml`；人类扫读版在 `docs/OPERATOR_RUNBOOK.md`。
-- 若属于 unfamiliar pattern / infra / runtime capability，先用 `coord:task:search` 记录最小 search evidence。
-- 完整 task guard 默认检查：
-  - 工作区是否干净
-  - 任务 companion
-  - search evidence
-  - scope guard
-  - 运行态状态
-  - file/module 锁状态
-- 若发现工作区未清理、运行态异常、scope 越界或锁冲突，完整 task guard 输出决策卡，不直接开工。
+- `light` 改动默认只过基础 gate；`structural / release` task 默认跑 `pnpm preflight -- --taskId=t-xxx`。
+- 完整 task guard 检查：worktree、companion、search evidence、scope guard、runtime、lock。
+- 发现 worktree 不干净、分支不同步、scope 越界、运行态异常或锁冲突时，先解决 guard，不跳过。
+- unfamiliar pattern / infra / runtime capability 先用 `pnpm coord:task:search -- --taskId=t-xxx --conclusion="..."` 记录最小 evidence。
 
-## 规划链
+## 命令入口
 
-- 先读 `memory/project/operating-blueprint.md`，再对齐 `memory/project/roadmap.md`。
-- 先扩选项，再收关键决策。
-- planning 只留在 `memory/project/operating-blueprint.md`；边界、范围外、完成定义和约束清楚后，再用 `scripts/ai/create-task.ts` 创建执行 task。
-- 新建 task 的人类标题必须直接写在中文摘要里，不要把 `task-xxx`、英文缩写或英文路径当标题。
-- 计划评审、release 复盘或当前没有更高优先级产品任务时，可运行 `pnpm ai:cleanup-candidates` 暴露小型熵减候选；报告只作为临时输入，不回写成新的状态源。
-- 若要集中看重复耗时/阻塞模式，可运行 `pnpm ai:retro-candidates`；它只扫描 companion digest 生成候选，不会直接写 `memory/experience/*`。
+- 创建 task：`pnpm coord:task:create -- --taskId=t-xxx --summary="中文直给概述" --why="为什么现在"`
+- planning -> ready：`pnpm coord:task:start -- --taskId=t-xxx`
+- ready -> executing：`pnpm preflight -- --taskId=t-xxx`
+- execution -> review_pending：`pnpm coord:task:handoff -- --taskId=t-xxx`
+- review：`pnpm coord:review:run -- --taskId=t-xxx`
+- override transition：`pnpm coord:task:transition -- --taskId=t-xxx --event=<event> --reason="..."`
+- preview prepare：`pnpm release:prepare -- --ref HEAD --channel dev --primary-task task-xxx`
+- preview accept / reject：`pnpm release:accept-dev -- --release <releaseId>` / `node --experimental-strip-types scripts/release/reject-dev-release.ts --release <releaseId>`
+- rollback：`pnpm release:rollback -- --release <releaseId>`
 
-## 执行链
+## 主链 Runbook
 
-- 先读当前 task、`memory/project/current-state.md`、相关 `module.md`、`code_index/*`。
-- 进入模块和运行时边界前，再补 `docs/ARCHITECTURE.md`。
-- 需要上下文压缩时，用 `scripts/ai/build-context.ts`。
-- 动手前先跑 `pnpm preflight`；若已绑定 `structural / release` task，则跑 `pnpm preflight -- --taskId=t-xxx`。
-- `coord:task:handoff`、`coord:review:run`、`release:prepare`、`accept-dev-release`、`reject-dev-release` 与 `rollback-release` 会自动写阶段 activity；raw trace 24 小时后 compact 进 companion digest。
-- 小而边界清楚的 task，默认做到最小完整闭环；若边界重新变大，退回 plan。
-
-## 交付链
-
-- 先跑 `node --experimental-strip-types scripts/ai/validate-change-trace.ts` 与 `node --experimental-strip-types scripts/ai/validate-task-git-link.ts`。
-- 再准备 `dev` 预览：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`；这一步默认同时完成 release build 与 smoke gate。
-- 若已有未验收 `dev`，先提醒用户验收上一个 `dev`。
-- 用户验收通过后，再晋升到 `main` 与本地生产。
-- 最后用 `pnpm prod:status`、`pnpm prod:check` 和 `/releases` 完成生产验收。
-- 具体服务器访问面、GitHub 接入方式和标准命令以 `bootstrap/project_operator.yaml` 为准，不再散落写在多份 runbook 里。
+1. 需求值得推进但仍未收口时，先留在 `memory/project/operating-blueprint.md`，不要直接建 execution task。
+2. 建 task 后默认进入 `planning + undetermined`。
+3. `coord:task:start` 代表 planning 已批准，任务进入 `ready`。
+4. `pnpm preflight -- --taskId=t-xxx` 通过后自动写 `preflight_passed`，进入 `executing`，并在必要时补决策 `delivery_track`。
+5. 完成实现后执行 `coord:task:handoff`，进入 `review_pending`。
+6. `coord:review:run` 会自动写 `review_started / review_passed`。
+7. `direct_merge` 轨道通过 review 后直接收口为 `released`；`preview_release` 轨道进入 `release_preparing`。
+8. preview 通过 `prepare-release` 进入 `acceptance_pending`；验收通过写 `acceptance_accepted`，拒绝写 `acceptance_rejected` 并回到 `blocked(resume_to=executing)`。
+9. rollback 成功后写 `rollback_completed`。
 
 ## 分层验证顺序
 
@@ -91,6 +93,7 @@ related_docs:
   - `为什么现在`
   - `承接边界`
   - `完成定义`
+  - `交付轨道`
   - `要做`
   - `不做`
   - `约束`
@@ -102,12 +105,4 @@ related_docs:
   - `复盘`
 - `light` 改动可只更新 `docs / memory / code_index / 现有 task`。
 - 任务页与门户展示默认优先读中文任务摘要；若标题只是 `任务 task-xxx` 这类机器壳，会自动回退到摘要。
-
-## 发布规则
-
-- 每轮 release 默认绑定 1 个主 task，可选少量辅助 task。
-- `dev` 预览先出，再验收，再晋升到 `main` 和本地生产。
-- 发布和回滚动作必须串行执行。
-- 本地生产默认不自动拉起；需要手动执行 `pnpm prod:start`。
-- 若新版异常，优先继续在 `main` 修下一次 release，或直接回滚到上一个健康 release。
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

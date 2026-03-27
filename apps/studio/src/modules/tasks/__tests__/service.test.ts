@@ -26,12 +26,12 @@ describe("tasks service", () => {
     expect(current?.machine.recentCommit).toBe("bd37dec");
     expect(current?.machine.git.state).toBeDefined();
     expect(planned?.status).toBe("done");
-    expect(planned?.currentMode).toBe("发布复盘");
+    expect(planned?.currentMode).toBe("发布");
     expect(planned?.deliveryResult.length).toBeGreaterThan(0);
     expect(planned?.machine.branch).toBe("codex/task-009-ai-work-modes-productization");
     expect(planned?.machine.git.state).toBe("merged");
     expect(active?.status).toBe("doing");
-    expect(active?.currentMode).toBe("工程执行");
+    expect(active?.currentMode).toBe("执行");
     expect(Array.isArray(first?.machine.companionReleaseIds)).toBe(true);
   }, SERVICE_TIMEOUT_MS);
 
@@ -154,6 +154,14 @@ describe("tasks service", () => {
       currentMode: "工程执行",
       machine: {
         contractHash: "hash-038",
+        stateId: "executing",
+        stateLabel: "执行中",
+        modeId: "execution",
+        deliveryTrack: "direct_merge",
+        blockedFromState: null,
+        resumeToState: null,
+        blockedReason: "",
+        lastTransitionEvent: null,
         branch: "codex/task-038-autonomy-entropy-reduction",
         recentCommit: "abc1234",
         completionMode: "close_full_contract",
@@ -319,6 +327,14 @@ describe("tasks service", () => {
           currentMode: "质量验收",
           machine: {
             contractHash: "hash-099",
+            stateId: "released",
+            stateLabel: "已发布",
+            modeId: "release",
+            deliveryTrack: "direct_merge",
+            blockedFromState: null,
+            resumeToState: null,
+            blockedReason: "",
+            lastTransitionEvent: null,
             branch: "codex/task-099-branch-cleanup",
             recentCommit: "abc9999",
             completionMode: "close_full_contract",

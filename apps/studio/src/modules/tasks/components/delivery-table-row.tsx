@@ -26,6 +26,12 @@ const STAGE_TONE: Record<string, string> = {
   released: "border-slate-200 bg-slate-50 text-slate-700",
 };
 
+const TASK_TRACK_LABELS: Record<string, string> = {
+  undetermined: "未定交付轨道",
+  direct_merge: "直接并入 main",
+  preview_release: "走 preview/release",
+};
+
 type Props = {
   row: TaskDeliveryRow;
   isExpanded: boolean;
@@ -54,7 +60,8 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
             <span className={`inline-flex rounded-full border px-3 py-1 text-xs ${STAGE_TONE[stage] || STAGE_TONE.ready}`}>
               {DEMAND_STAGE_LABELS[stage]}
             </span>
-            {row.currentMode ? <p className="text-xs text-slate-500">{row.currentMode}</p> : null}
+            <p className="text-xs text-slate-500">{row.machine.stateLabel}</p>
+            {row.currentMode ? <p className="text-xs text-slate-400">{row.currentMode}</p> : null}
           </div>
         </Cell>
         <Cell className="min-w-[260px] text-slate-700">
@@ -147,7 +154,10 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
               </DetailBlock>
               <DetailBlock title="机器事实">
                 <p>任务路径：{row.path}</p>
-                <p>当前模式：{row.currentMode || "未标注"}</p>
+                <p>Canonical 状态：{row.machine.stateLabel}</p>
+                <p>Mode：{row.currentMode || "未标注"}</p>
+                <p>交付轨道：{TASK_TRACK_LABELS[row.machine.deliveryTrack] || row.machine.deliveryTrack}</p>
+                {row.machine.blockedReason ? <p>阻塞原因：{row.machine.blockedReason}</p> : null}
                 <p>完成策略：{row.machine.completionMode === "close_full_contract" ? "做透当前合同" : row.machine.completionMode || "未标注"}</p>
                 <p>搜索结论：{row.machine.latestSearchEvidence || "未记录"}</p>
                 <p>合同哈希：{row.machine.contractHash || "未生成"}</p>

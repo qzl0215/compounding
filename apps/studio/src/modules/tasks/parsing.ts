@@ -30,6 +30,7 @@ export function parseTaskMachineFields(_path: string, content: string) {
   const parsed = parseTaskMachineFacts(content);
   return {
     currentMode: parsed.currentMode,
+    deliveryTrack: parsed.deliveryTrack,
     branch: parsed.branch,
     recentCommit: parsed.recentCommit,
     primaryRelease: parsed.primaryRelease || "未生成",

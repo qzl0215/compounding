@@ -8,6 +8,12 @@ from pathlib import Path
 
 ROOT = Path.cwd()
 OUTPUT = ROOT / "output" / "agent_session" / "latest_pre_mutation_check.json"
+IGNORED_STATUS_PREFIXES = (
+    "agent-coordination/",
+    "output/agent_session/",
+    "output/ai/context-retro/",
+    "output/ai/retro-candidates/",
+)
 
 def run_git(args: list[str]) -> tuple[bool, str]:
     try:
@@ -40,7 +46,16 @@ def has_upstream() -> bool:
 
 def worktree_clean() -> bool:
     ok, output = run_git(["status", "--porcelain"])
-    return ok and not output.strip()
+    if not ok:
+        return False
+    entries = [line.strip() for line in output.splitlines() if line.strip()]
+    relevant = []
+    for entry in entries:
+        path = entry[3:].strip() if len(entry) > 3 else entry
+        if any(path.startswith(prefix) for prefix in IGNORED_STATUS_PREFIXES):
+            continue
+        relevant.append(entry)
+    return not relevant
 
 def sync_status() -> str:
     if not has_remote():

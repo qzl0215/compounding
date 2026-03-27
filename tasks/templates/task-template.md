@@ -13,6 +13,7 @@
   {{boundary}}
 - 完成定义：
   {{done_when}}
+- 交付轨道：`{{delivery_track}}`
 
 ## 执行合同
 
@@ -48,10 +49,6 @@
   {{delivery_result}}
 - 复盘：
   {{retro}}
-
-## 当前模式
-
-{{current_mode}}
 
 ## 分支
 

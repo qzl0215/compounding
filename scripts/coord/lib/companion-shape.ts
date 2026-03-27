@@ -1,4 +1,10 @@
 const { normalizeBranchCleanupRecord } = require("../../../shared/branch-cleanup.ts");
+const {
+  deriveCompatTaskMachine,
+  deriveTaskStatusFromStateId,
+  getTaskModeLabel,
+  normalizeTaskMachineState,
+} = require("../../../shared/task-state-machine.ts");
 
 function cleanString(value, fallback = "") {
   const normalized = String(value || "").trim();
@@ -46,6 +52,18 @@ function createEmptyArtifacts() {
   };
 }
 
+function createEmptyMachine() {
+  return {
+    state_id: "planning",
+    mode_id: "planning",
+    delivery_track: "undetermined",
+    blocked_from_state: null,
+    resume_to_state: null,
+    blocked_reason: null,
+    last_transition: null,
+  };
+}
+
 function normalizeLocks(locks = []) {
   return (Array.isArray(locks) ? locks : [])
     .filter((lock) => lock && typeof lock === "object")
@@ -68,13 +86,7 @@ function normalizeLegacyStatus(taskStatus) {
 }
 
 function buildCompanionPhase(companion) {
-  if (companion.lifecycle?.release_handoff?.channel === "prod") return "released";
-  if (companion.lifecycle?.release_handoff) return "release_handoff";
-  if (companion.lifecycle?.review) return "reviewed";
-  if (companion.lifecycle?.handoff) return "handoff_ready";
-  if (companion.lifecycle?.pre_task) return "pre_task_checked";
-  if (companion.lifecycle?.created) return "created";
-  return "initialized";
+  return companion.machine?.state_id || "planning";
 }
 
 function collectSummaryArtifacts(companion) {
@@ -86,18 +98,36 @@ function collectSummaryArtifacts(companion) {
 }
 
 function normalizeCompanion(companion = {}) {
+  const lifecycle = { ...createEmptyLifecycle(), ...(companion.lifecycle || {}) };
+  const machine = normalizeTaskMachineState(
+    companion.machine ||
+      deriveCompatTaskMachine({
+        task_status: cleanString(companion.status || companion.contract?.status || "", "todo"),
+        current_mode: cleanString(companion.current_mode),
+        delivery_track: cleanString(companion.delivery_track || companion.machine?.delivery_track || ""),
+        pending_acceptance:
+          lifecycle.release_handoff?.channel === "dev" &&
+          String(lifecycle.release_handoff?.acceptance_status || "").trim() === "pending",
+        released: lifecycle.release_handoff?.channel === "prod",
+        rolled_back: String(lifecycle.release_handoff?.status || "").trim() === "rolled_back",
+        blocked: cleanString(companion.status).toLowerCase() === "blocked",
+        has_handoff: Boolean(lifecycle.handoff),
+        has_review: Boolean(lifecycle.review),
+      }),
+  );
   const normalized = {
-    schema_version: cleanString(companion.schema_version, "3"),
+    schema_version: cleanString(companion.schema_version, "4"),
     task_id: cleanString(companion.short_id || companion.task_id),
     task_path: cleanString(companion.task_path),
     contract_hash: cleanString(companion.contract_hash),
-    current_mode: cleanString(companion.current_mode, "工程执行"),
+    current_mode: cleanString(companion.current_mode, getTaskModeLabel(machine.mode_id)),
     branch_name: cleanString(companion.branch_name || companion.contract?.branch_name, ""),
     completion_mode: cleanString(companion.completion_mode, "close_full_contract"),
     planned_files: uniqueStrings(companion.planned_files || companion.contract?.planned_files || []),
     planned_modules: uniqueStrings(companion.planned_modules || companion.contract?.planned_modules || []),
     locks: normalizeLocks(companion.locks),
-    lifecycle: { ...createEmptyLifecycle(), ...(companion.lifecycle || {}) },
+    lifecycle,
+    machine: machine || createEmptyMachine(),
     artifacts: {
       ...createEmptyArtifacts(),
       ...(companion.artifacts || {}),
@@ -124,9 +154,7 @@ function buildCompatView(companion) {
     branch_name: normalized.branch_name,
     planned_files: normalized.planned_files,
     planned_modules: normalized.planned_modules,
-    status: normalizeLegacyStatus(
-      normalized.lifecycle?.release_handoff?.channel === "prod" ? "done" : normalized.lifecycle?.handoff ? "doing" : "todo"
-    ),
+    status: normalizeLegacyStatus(deriveTaskStatusFromStateId(normalized.machine.state_id)),
     companion_phase: buildCompanionPhase(normalized),
     summary_artifacts: collectSummaryArtifacts(normalized),
   };
@@ -138,6 +166,7 @@ module.exports = {
   cleanString,
   collectSummaryArtifacts,
   createEmptyArtifacts,
+  createEmptyMachine,
   createEmptyLifecycle,
   mergeArtifactList,
   normalizeCompanion,

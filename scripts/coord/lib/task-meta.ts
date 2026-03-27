@@ -6,6 +6,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { resolveTaskRecord } = require("../../ai/lib/task-resolver.ts");
 const { parseTaskContract, parseTaskMachineFacts, taskContractFingerprint } = require("../../../shared/task-contract.ts");
+const { createInitialTaskMachine, deriveCompatTaskMachine } = require("../../../shared/task-state-machine.ts");
 const {
   deriveBranchCleanupOverallState,
   normalizeBranchCleanupRecord,
@@ -54,6 +55,10 @@ function serializeCompanion(companion) {
   return normalizeCompanion(companion);
 }
 
+function usesCanonicalTaskContract(content) {
+  return String(content || "").includes("交付轨道") && !String(content || "").includes("## 当前模式");
+}
+
 function parseTaskToCompanion(taskLike, content) {
   const record = getTaskRecord(taskLike);
   if (!record) return null;
@@ -67,9 +72,19 @@ function parseTaskToCompanion(taskLike, content) {
   if (!plannedFiles.includes(record.path)) {
     plannedFiles.unshift(record.path);
   }
+  const machine = usesCanonicalTaskContract(content)
+    ? createInitialTaskMachine({
+        delivery_track: parsedMachine.deliveryTrack,
+        source: "coord:task:create",
+      })
+    : deriveCompatTaskMachine({
+        task_status: parsed.status,
+        current_mode: currentMode,
+        delivery_track: parsedMachine.deliveryTrack,
+      });
 
   const companion = normalizeCompanion({
-    schema_version: "3",
+    schema_version: "4",
     task_id: record.shortId,
     task_path: record.path,
     contract_hash: taskContractFingerprint(parsed),
@@ -79,6 +94,7 @@ function parseTaskToCompanion(taskLike, content) {
     planned_files: plannedFiles,
     planned_modules: modules.filter((item) => !plannedFiles.includes(item)),
     locks: [],
+    machine,
     lifecycle: createEmptyLifecycle(),
     artifacts: createEmptyArtifacts(),
   });
@@ -141,17 +157,22 @@ function mergeCompanion(existing, parsed) {
   const current = normalizeCompanion(existing);
   const next = normalizeCompanion(parsed);
   const explicitCurrentMode = typeof parsed?.current_mode === "string" ? parsed.current_mode.trim() : "";
+  const preferNextMachine =
+    next.schema_version === "4" &&
+    (current.schema_version !== "4" || !current.machine?.last_transition);
   return normalizeCompanion({
     ...current,
+    schema_version: preferNextMachine ? next.schema_version : current.schema_version || next.schema_version,
     task_id: next.task_id || current.task_id,
     task_path: next.task_path || current.task_path,
     contract_hash: next.contract_hash || current.contract_hash,
-    current_mode: explicitCurrentMode || current.current_mode || next.current_mode,
+    current_mode: explicitCurrentMode || (preferNextMachine ? next.current_mode : current.current_mode || next.current_mode),
     branch_name: next.branch_name || current.branch_name,
     completion_mode: next.completion_mode || current.completion_mode,
     planned_files: uniqueStrings([...(current.planned_files || []), ...(next.planned_files || [])]),
     planned_modules: uniqueStrings([...(current.planned_modules || []), ...(next.planned_modules || [])]),
     locks: next.locks?.length ? next.locks : current.locks || [],
+    machine: preferNextMachine ? next.machine : current.machine || next.machine,
     lifecycle: { ...createEmptyLifecycle(), ...(current.lifecycle || {}) },
     artifacts: {
       ...createEmptyArtifacts(),

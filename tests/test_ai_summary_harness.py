@@ -17,6 +17,8 @@ class SummaryHarnessCliTests(unittest.TestCase):
         self.target = Path(self.temp_dir.name)
         shutil.copytree(ROOT / "scripts" / "ai", self.target / "scripts" / "ai")
         shutil.copytree(ROOT / "shared", self.target / "shared")
+        shutil.copytree(ROOT / "kernel", self.target / "kernel")
+        shutil.copytree(ROOT / "schemas", self.target / "schemas")
         (self.target / "scripts" / "coord").mkdir(parents=True, exist_ok=True)
         (self.target / "scripts" / "local-runtime").mkdir(parents=True, exist_ok=True)
         (self.target / "scripts" / "fake").mkdir(parents=True, exist_ok=True)

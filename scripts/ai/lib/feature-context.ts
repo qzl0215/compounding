@@ -6,6 +6,7 @@ const { buildSummaryFirstWorkflow } = require(path.join(process.cwd(), "shared",
 const { buildContextRetroReport } = require("./context-retro.ts");
 const { buildProjectJudgementContract } = require(path.join(process.cwd(), "shared", "project-judgement.ts"));
 const { parseTaskContract, parseTaskMachineFacts } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
+const { deriveCompatTaskMachine } = require(path.join(process.cwd(), "shared", "task-state-machine.ts"));
 const { readCompanion } = require(path.join(process.cwd(), "scripts", "coord", "lib", "task-meta.ts"));
 
 const SURFACE_TO_MODULES = {
@@ -140,6 +141,13 @@ function buildTaskOverlay(root, taskPath) {
   const taskContract = parseTaskContract(relTask, taskContent);
   const taskMachineFacts = parseTaskMachineFacts(taskContent);
   const companion = readCompanion(taskContract.id);
+  const machine =
+    companion?.machine ||
+    deriveCompatTaskMachine({
+      task_status: taskContract.status,
+      current_mode: taskMachineFacts.currentMode,
+      delivery_track: taskMachineFacts.deliveryTrack,
+    });
   const moduleDocPaths = unique(
     [
       ...taskMachineFacts.relatedModules,
@@ -158,6 +166,9 @@ function buildTaskOverlay(root, taskPath) {
       summary: taskContract.summary,
       boundary: taskContract.boundary,
       doneWhen: taskContract.doneWhen,
+      stateId: machine?.state_id || null,
+      modeId: machine?.mode_id || null,
+      deliveryTrack: machine?.delivery_track || taskMachineFacts.deliveryTrack || "undetermined",
     },
     moduleDocPaths,
   };
@@ -185,6 +196,15 @@ function buildMustRead(moduleContracts, options, taskOverlay) {
 
   if (taskOverlay) {
     mustRead.push(taskOverlay.taskPath);
+    if (taskOverlay.modeId === "planning") {
+      mustRead.push("memory/project/roadmap.md", "memory/project/operating-blueprint.md");
+    }
+    if (taskOverlay.modeId === "review") {
+      mustRead.push("docs/DEV_WORKFLOW.md");
+    }
+    if (taskOverlay.modeId === "release") {
+      mustRead.push("docs/DEV_WORKFLOW.md", "bootstrap/project_operator.yaml");
+    }
   }
 
   mustRead.push(...moduleContracts.map((contract) => contract.path));
@@ -511,6 +531,9 @@ function renderFeatureContextMarkdown(packet) {
     lines.push(`- Summary: ${packet.task_overlay.summary}`);
     lines.push(`- Boundary: ${packet.task_overlay.boundary}`);
     lines.push(`- Done When: ${packet.task_overlay.doneWhen}`);
+    lines.push(`- Canonical State: \`${packet.task_overlay.stateId || "unknown"}\``);
+    lines.push(`- Mode: \`${packet.task_overlay.modeId || "unknown"}\``);
+    lines.push(`- Delivery Track: \`${packet.task_overlay.deliveryTrack}\``);
     lines.push("");
   }
 

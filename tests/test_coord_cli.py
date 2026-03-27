@@ -50,8 +50,23 @@ class CoordCliTests(CoordCliTestCase):
         created = (self.target / "tasks" / "queue" / "task-123-generated.md").read_text(encoding="utf8")
         self.assertIn("# 建立单点模板", created)
         self.assertIn("- 任务 ID：`task-123-generated`", created)
+        self.assertIn("- 交付轨道：`undetermined`", created)
         self.assertIn("## 执行合同（单点模板）", created)
+        self.assertNotIn("## 当前模式", created)
         self.assertNotIn("{{", created)
+
+        payload = self.run_node(
+            f"""
+const fs = require("node:fs");
+const {{ getCompanionPath }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-meta.ts");
+const file = getCompanionPath("task-123-generated");
+console.log(fs.readFileSync(file, "utf8"));
+"""
+        )
+        self.assertEqual(payload["schema_version"], "4")
+        self.assertEqual(payload["machine"]["state_id"], "planning")
+        self.assertEqual(payload["machine"]["mode_id"], "planning")
+        self.assertEqual(payload["machine"]["delivery_track"], "undetermined")
 
     def test_create_task_accepts_plan_contract_fields(self) -> None:
         completed = self.run_script(
@@ -82,8 +97,8 @@ class CoordCliTests(CoordCliTestCase):
         self.assertIn("体验级验收标准已经清楚，且 task 可直接进入执行", created)
         self.assertIn("验证 Autoplan 可以把关键决策直接落到 task 合同。", created)
         self.assertIn("# 把边界说清", created)
-        self.assertIn("## 当前模式", created)
-        self.assertIn("工程执行", created)
+        self.assertIn("- 交付轨道：`undetermined`", created)
+        self.assertNotIn("## 当前模式", created)
         self.assertIn("`codex/task-124-contract-draft`", created)
         self.assertNotIn("{{", created)
 
@@ -143,6 +158,45 @@ console.log(fs.readFileSync(file, "utf8"));
                 "schemas/",
             ],
         )
+
+    def test_task_transition_only_allows_override_events_and_requires_reason(self) -> None:
+        blocked = self.run_script("scripts/coord/task.ts", "transition", "--taskId=t-999", "--event=block")
+        self.assertNotEqual(blocked.returncode, 0)
+        self.assertIn("requires reason", blocked.stderr)
+
+        invalid = self.run_script("scripts/coord/task.ts", "transition", "--taskId=t-999", "--event=review_started", "--reason=test")
+        self.assertNotEqual(invalid.returncode, 0)
+        self.assertIn("Unsupported override event", invalid.stderr)
+
+        ok = self.run_script("scripts/coord/task.ts", "transition", "--taskId=t-999", "--event=block", "--reason=等待外部依赖")
+        payload = json.loads(ok.stdout)
+        self.assertEqual(ok.returncode, 0, msg=ok.stdout or ok.stderr)
+        self.assertEqual(payload["machine"]["state_id"], "blocked")
+        self.assertEqual(payload["machine"]["blocked_reason"], "等待外部依赖")
+
+        resumed = self.run_script("scripts/coord/task.ts", "transition", "--taskId=t-999", "--event=resume", "--reason=继续执行")
+        resumed_payload = json.loads(resumed.stdout)
+        self.assertEqual(resumed.returncode, 0, msg=resumed.stdout or resumed.stderr)
+        self.assertEqual(resumed_payload["machine"]["state_id"], "ready")
+
+    def test_summarize_preflight_treats_no_upstream_as_note(self) -> None:
+        payload = self.run_node(
+            f"""
+const {{ summarizePreflight }} = require("{ROOT.as_posix()}/scripts/coord/lib/pre-task-runtime.ts");
+console.log(JSON.stringify(summarizePreflight({{
+  preflight: {{
+    has_remote: true,
+    has_upstream: false,
+    worktree_clean: true,
+    sync_status: "no_upstream",
+  }},
+}})));
+"""
+        )
+
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["blockers"], [])
+        self.assertEqual(payload["notes"][0]["issue"], "分支未配置 upstream，本地允许继续")
 
     def test_template_feedback_orchestrator_uses_canonical_task_template(self) -> None:
         template_path = self.target / "tasks" / "templates" / "task-template.md"
@@ -277,7 +331,8 @@ console.log(JSON.stringify({{
         companion = payload["companion"]
         raw = payload["raw"]
 
-        self.assertEqual(companion["companion_phase"], "released")
+        self.assertEqual(companion["companion_phase"], "planning")
+        self.assertEqual(companion["machine"]["state_id"], "planning")
         self.assertEqual(companion["lifecycle"]["handoff"]["summary"], "handoff summary")
         self.assertEqual(companion["lifecycle"]["review"]["merge_decision"], "auto_merge")
         self.assertEqual(companion["lifecycle"]["release_handoff"]["release_id"], "20260320-abc-prod")
@@ -776,8 +831,11 @@ console.log(JSON.stringify({{ ok: true }}));
         self.run_node(
             f"""
 const {{ ensureCompanion }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-meta.ts");
+const {{ applyTaskTransition }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-machine.ts");
 const {{ startActiveStage }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-activity.ts");
 ensureCompanion("task-999-sample");
+applyTaskTransition("task-999-sample", "plan_approved", {{ source: "test:start" }});
+applyTaskTransition("task-999-sample", "preflight_passed", {{ source: "test:start", delivery_track: "direct_merge" }});
 startActiveStage("task-999-sample", "execution", {{
   source: "test:start",
 }});

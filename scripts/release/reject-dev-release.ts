@@ -1,5 +1,6 @@
 const childProcess = require("node:child_process");
 const path = require("node:path");
+const { applyTaskTransition } = require("../coord/lib/task-machine.ts");
 const { finishWaitStageIfOpen, recordBlocker } = require("../coord/lib/task-activity.ts");
 const {
   clearChannelSymlink,
@@ -67,6 +68,10 @@ try {
     })
   );
   if (activityTaskId) {
+    applyTaskTransition(activityTaskId, "acceptance_rejected", {
+      source: "release:reject-dev",
+      reason: "dev 预览在验收阶段被驳回。",
+    });
     recordBlocker(activityTaskId, "acceptance_wait", {
       source: "release:reject-dev",
       status: "rejected",

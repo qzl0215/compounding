@@ -1,5 +1,6 @@
 import type { TaskCostLedger } from "../../../../../shared/task-cost";
 import type { TaskBranchCleanupView } from "../../../../../shared/branch-cleanup";
+import type { TaskDeliveryTrack, TaskModeId, TaskStateId, TaskTransitionEventId } from "../../../../../shared/task-state-machine";
 
 export type TaskStatus = "todo" | "doing" | "blocked" | "done";
 
@@ -24,6 +25,14 @@ export type TaskGitInfo = {
 
 export type TaskMachineFacts = {
   contractHash: string;
+  stateId: TaskStateId;
+  stateLabel: string;
+  modeId: TaskModeId;
+  deliveryTrack: TaskDeliveryTrack;
+  blockedFromState: TaskStateId | null;
+  resumeToState: TaskStateId | null;
+  blockedReason: string;
+  lastTransitionEvent: TaskTransitionEventId | null;
   branch: string;
   recentCommit: string;
   completionMode: string;

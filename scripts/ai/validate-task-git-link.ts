@@ -3,6 +3,12 @@ const path = require("node:path");
 const childProcess = require("node:child_process");
 const { getChangePolicy } = require("./lib/change-policy.ts");
 const { parseTaskContract, parseTaskMachineFacts } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
+const {
+  deriveCompatTaskMachine,
+  deriveTaskStatusFromStateId,
+  getTaskModeLabel,
+  normalizeTaskModeId,
+} = require(path.join(process.cwd(), "shared", "task-state-machine.ts"));
 const { normalizeBranchCleanupRecord } = require(path.join(process.cwd(), "shared", "branch-cleanup.ts"));
 const { collectTaskIdentityErrors, taskIdFromPath } = require(path.join(process.cwd(), "shared", "task-identity.ts"));
 const { readCompanion } = require("../coord/lib/task-meta.ts");
@@ -48,14 +54,23 @@ function parseTask(pathname) {
   const parsed = parseTaskContract(pathname, content);
   const parsedMachine = parseTaskMachineFacts(content);
   const companion = readCompanion(parsed.id);
+  const machine =
+    companion?.machine ||
+    deriveCompatTaskMachine({
+      task_status: parsed.status,
+      current_mode: parsedMachine.currentMode,
+      delivery_track: parsedMachine.deliveryTrack,
+    });
   return {
     id: taskIdFromPath(pathname),
     shortId: parsed.shortId,
     rawShortId: parsed.shortId,
     path: pathname,
     title: parsed.title,
-    status: normalizeStatus(parsed.status),
-    currentMode: cleanValue(companion?.current_mode || parsedMachine.currentMode || ""),
+    status: deriveTaskStatusFromStateId(machine.state_id),
+    stateId: machine.state_id,
+    modeId: machine.mode_id,
+    currentMode: cleanValue(companion?.current_mode || parsedMachine.currentMode || getTaskModeLabel(machine.mode_id)),
     branch: cleanValue(companion?.branch_name || parsedMachine.branch || ""),
     recentCommit: cleanValue(companion?.lifecycle?.handoff?.git_head || parsedMachine.recentCommit || ""),
     branchCleanup: normalizeBranchCleanupRecord(companion?.artifacts?.branch_cleanup),
@@ -74,8 +89,6 @@ function normalizeStatus(value) {
 function cleanValue(value) {
   return String(value || "").replace(/`/g, "").trim();
 }
-
-const ALLOWED_MODES = new Set(["战略澄清", "方案评审", "工程执行", "质量验收", "发布复盘"]);
 
 function isLegacyMainBranch(branch) {
   return branch === "main" || branch.startsWith("main ");
@@ -146,7 +159,7 @@ function validateTask(task, errors) {
 
   if (!task.currentMode) {
     errors.push(`${task.path}: 缺少当前模式机器事实。`);
-  } else if (!ALLOWED_MODES.has(task.currentMode)) {
+  } else if (!normalizeTaskModeId(task.currentMode)) {
     errors.push(`${task.path}: 当前模式不在允许列表内。`);
   }
 
@@ -215,6 +228,8 @@ function main() {
       short_id: task.shortId,
       path: task.path,
       status: task.status,
+      state_id: task.stateId,
+      mode_id: task.modeId,
       current_mode: task.currentMode,
       branch: snapshot.branch,
       merged_to_main: snapshot.mergedToMain,
