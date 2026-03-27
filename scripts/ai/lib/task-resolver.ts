@@ -5,8 +5,8 @@ const {
   matchesTaskReference,
   normalizeTaskReference,
   taskIdFromPath,
-} = require(path.join(detectWorkspaceRoot(), "shared", "task-identity.ts"));
-const { parseTaskContract } = require(path.join(detectWorkspaceRoot(), "shared", "task-contract.ts"));
+} = require("../../../shared/task-identity.ts");
+const { parseTaskContract } = require("../../../shared/task-contract.ts");
 
 function detectWorkspaceRoot(startDir = process.cwd()) {
   let currentDir = path.resolve(startDir);

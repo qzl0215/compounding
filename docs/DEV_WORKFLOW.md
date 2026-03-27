@@ -43,10 +43,23 @@ related_docs:
 ## Guard
 
 - 动手前统一入口是 `pnpm preflight`。
-- `light` 改动默认只过基础 gate；`structural / release` task 默认跑 `pnpm preflight -- --taskId=t-xxx`。
-- 完整 task guard 检查：worktree、companion、search evidence、scope guard、runtime、lock。
-- 发现 worktree 不干净、分支不同步、scope 越界、运行态异常或锁冲突时，先解决 guard，不跳过。
-- unfamiliar pattern / infra / runtime capability 先用 `pnpm coord:task:search -- --taskId=t-xxx --conclusion="..."` 记录最小 evidence。
+- `light` 改动默认只执行基础 gate；`structural / release` task 动手前默认跑 `pnpm preflight -- --taskId=t-xxx`。
+- change observation 默认分成两种 mode：
+  - `worktree`：truth source 只认当前 `git status --short` 的 repo-tracked 改动；供 `preflight` / `scope-guard` 判断“现在能不能开始改”，不看最近提交。
+  - `recent`：truth source 认“最近一次 repo-tracked 改动”，优先当前 worktree，worktree 干净时再回退到 `HEAD^..HEAD`；供 `validate-change-trace` / `validate-task-git-link` 这类提交后校验使用，不用于决定下一轮是否允许开工。
+- 切分 observation mode 的目标只是不再把 clean tree 误报成 structural / release；不改变 `light / structural / release` 分类规则，也不降低真实 structural change 的 task binding 强度。
+- `coord:check:pre-task` 只保留为兼容别名，输出 contract 与 `pnpm preflight -- --taskId=t-xxx` 一致。
+- 完整 task guard 输出会附带 `iteration_digest_path / retro_candidates_path / retro_hints`；新 Agent 开工前先看上一轮时间主要耗在哪个阶段、最近 blocker 是什么、有没有现成 shortcut。
+- 涉及服务器访问、GitHub 接入方式或标准发布动作时，先读 `bootstrap/project_operator.yaml`；人类扫读版在 `docs/OPERATOR_RUNBOOK.md`。
+- 若属于 unfamiliar pattern / infra / runtime capability，先用 `coord:task:search` 记录最小 search evidence。
+- 完整 task guard 默认检查：
+  - 工作区是否干净
+  - 任务 companion
+  - search evidence
+  - scope guard
+  - 运行态状态
+  - file/module 锁状态
+- 若发现工作区未清理、运行态异常、scope 越界或锁冲突，完整 task guard 输出决策卡，不直接开工。
 
 ## 命令入口
 
@@ -78,6 +91,9 @@ related_docs:
 - 构建门禁：`pnpm validate:build`
 - 运行时门禁：`pnpm preview:check`、`pnpm prod:check`
 - AI 输出门禁：`pnpm validate:ai-output`
+- `pnpm test` 是仓级最小回归包，由 `apps/studio` 的 Vitest 模块测试和 `tests/` 的 Python 仓级契约测试组成，不是额外的一层门禁
+- 同一行为只保留一层主断言；模块内部行为优先放在就近 `__tests__`，跨进程、跨工作区和 CLI 行为放在 `tests/`
+- 一页版测试矩阵见 `docs/TEST_MATRIX.md`，用于快速判断某类失败应该落在哪一层
 - knowledge assets 默认在 `pnpm ai:validate-assets` 中给出 freshness / quality 结论；`pnpm validate:static:strict` 会把高频主干文档 stale 状态升级成硬失败。
 - 默认顺序是静态 → 构建 → 运行时 → AI 输出；只有 AI 相关资产变化时再补 AI 输出门禁。
 

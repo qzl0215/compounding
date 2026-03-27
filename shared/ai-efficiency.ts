@@ -262,13 +262,6 @@ export function normalizeAiEfficiencyEvent(event: Record<string, unknown> = {}):
   };
 }
 
-export function formatEstimatedTokens(value: number) {
-  const amount = roundInt(value);
-  if (amount >= 1_000_000) return `${(amount / 1_000_000).toFixed(1)}M`;
-  if (amount >= 1_000) return `${(amount / 1_000).toFixed(1)}K`;
-  return String(amount);
-}
-
 export function buildSummaryShortcutCommand(shortcutId: string, options: AiSummaryShortcutOptions = {}) {
   const taskId = normalizeString(options.taskId);
   const querySeed = normalizeString(options.querySeed) || "keyword";

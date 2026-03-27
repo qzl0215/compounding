@@ -11,12 +11,12 @@ import {
   selectSuggestedChecks,
 } from "./diff-aware-analysis";
 import { buildRetirementSuggestions, buildSelectedChecks } from "./diff-aware-summaries";
-import { readDiffSnapshot, type DiffStats } from "./diff-aware-source";
+import { readDiffSnapshot } from "./diff-aware-source";
+import type { DiffSnapshot, DiffStats } from "./diff-snapshot";
 import type { DiffAwareArtifact } from "./types";
 
 export function collectDiffAwareArtifact(): DiffAwareArtifact {
-  const { changedFiles, stats } = readDiffSnapshot();
-  return buildDiffAwareArtifactFromFiles(changedFiles, stats);
+  return buildDiffAwareArtifactFromSnapshot(readDiffSnapshot());
 }
 
 export function buildDiffAwareArtifactFromFiles(changedFiles: string[], stats: DiffStats): DiffAwareArtifact {
@@ -53,4 +53,8 @@ export function buildDiffAwareArtifactFromFiles(changedFiles: string[], stats: D
     healthScore,
     stats,
   };
+}
+
+function buildDiffAwareArtifactFromSnapshot(snapshot: DiffSnapshot): DiffAwareArtifact {
+  return buildDiffAwareArtifactFromFiles(snapshot.changed_files, snapshot.stats);
 }

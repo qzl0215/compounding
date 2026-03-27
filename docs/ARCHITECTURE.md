@@ -143,6 +143,16 @@ related_docs:
 - `scripts/compounding_bootstrap/*` 只依赖 bootstrap 内部模块和 canonical assets，不继续堆单一巨型入口。
 - `code_index/*`、`docs/ASSET_MAINTENANCE.md`、代码量快照等生成物都是下游缓存，不反向充当主真相源。
 
+## 测试拓扑
+
+- `tests/`：仓级契约、CLI、工作区和 golden matrix 测试，适合跨进程、跨工作区、跨命令的行为。
+- `apps/studio/src/**/__tests__`：模块、服务、组件和纯函数测试，适合单个模块内能直接观察到的行为。
+- `shared/*`：先由最窄的消费者层覆盖；只有当 helper 被多个高价路径共享，或它本身就是跨层契约时，才补直接单测。
+- `scripts/*`：只通过 `tests/` 里的 CLI / workspace fixture 或最小 smoke 覆盖，不另起第三套长期测试族。
+- `tasks/queue/*` 里的测试策略只记录该任务的最小检查集和不测边界，不是可执行测试。
+- 新测试先挂能直接看到失败的最轻层；如果更轻的层已经能观察失败，就不要再升到更重的层。
+- 同一行为只保留一层主断言，避免在 module、CLI 和 e2e 三层重复断言同一件事。
+
 ## 运行时拓扑
 
 - 运行根目录由 `AI_OS_RELEASE_ROOT` 决定；默认是仓库同级的 `.compounding-runtime`

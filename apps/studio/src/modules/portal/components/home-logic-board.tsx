@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { cn } from "@/lib/classnames";
 import { buildSummaryFirstWorkflow } from "../../../../../../shared/ai-efficiency";
+import { formatEstimatedTokens } from "../../../../../../shared/token-format";
 import { HOME_ENTRY_LINKS } from "../constants";
 import type { HomeLogicMapSnapshot, HomeLogicNode, HomeLogicNodeState } from "../types";
 

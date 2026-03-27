@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { AiEfficiencyCard, getProjectStateSnapshot } from "@/modules/project-state";
-import { formatEstimatedTokens } from "../../../../../shared/ai-efficiency";
+import { formatEstimatedTokens } from "../../../../../shared/token-format";
 import { formatTaskCostCodeDelta, formatTaskCostDuration, summarizeTaskCostEffect } from "../../../../../shared/task-cost";
 
 export const dynamic = "force-dynamic";

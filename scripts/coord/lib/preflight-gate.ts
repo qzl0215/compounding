@@ -1,4 +1,4 @@
-const { getChangePolicy } = require("../../ai/lib/change-policy.ts");
+const { attachChangePacketAliases, buildChangePacket } = require("../../ai/lib/change-policy.ts");
 const { buildAndWriteContextRetroReport, summarizeContextRetroHints } = require("../../ai/lib/context-retro.ts");
 const { ensureCompanion } = require("./task-meta.ts");
 const { applyTaskTransition } = require("./task-machine.ts");
@@ -27,14 +27,11 @@ function parseFlagArgs(argv = []) {
   return args;
 }
 
-function buildBaseOutput(changePolicy, guardLevel, taskId) {
-  return {
+function buildBaseOutput(changePacket, guardLevel, taskId) {
+  return attachChangePacketAliases({
     guard_level: guardLevel,
     task_id: taskId || null,
-    change_class: changePolicy.change_class,
-    policy: changePolicy.policy,
-    changed_files: changePolicy.changed_files,
-  };
+  }, changePacket);
 }
 
 function attachRetroContext(payload, retroContext = {}) {
@@ -56,24 +53,24 @@ function attachContextRetro(payload, contextRetro = null) {
   };
 }
 
-function taskGuardRequired(changePolicy) {
-  return TASK_REQUIRED_CLASSES.has(changePolicy.change_class);
+function taskGuardRequired(changePacket) {
+  return TASK_REQUIRED_CLASSES.has(changePacket.change_class);
 }
 
-function buildTaskBindingBlocker(changePolicy) {
+function buildTaskBindingBlocker(changePacket) {
   return {
     step: "task_binding",
     issue: "结构或发布改动必须绑定 taskId",
     details: {
-      change_class: changePolicy.change_class,
+      change_class: changePacket.change_class,
       suggestion: "重新执行 `pnpm preflight -- --taskId=t-xxx`。",
     },
   };
 }
 
-function runBasicPreflight(changePolicy) {
+function runBasicPreflight(changePacket) {
   const preflight = runPreflight();
-  const output = buildBaseOutput(changePolicy, "basic", null);
+  const output = buildBaseOutput(changePacket, "basic", null);
 
   if (!preflight.ok) {
     return {
@@ -91,9 +88,9 @@ function runBasicPreflight(changePolicy) {
 
   const preflightCheck = summarizePreflight(preflight);
   const blockers = [...preflightCheck.blockers];
-  const missingTask = taskGuardRequired(changePolicy);
+  const missingTask = taskGuardRequired(changePacket);
   if (missingTask) {
-    blockers.push(buildTaskBindingBlocker(changePolicy));
+    blockers.push(buildTaskBindingBlocker(changePacket));
   }
 
   const ok = blockers.length === 0;
@@ -115,10 +112,10 @@ function runBasicPreflight(changePolicy) {
   };
 }
 
-function collectSearchCheck(changePolicy, companion) {
+function collectSearchCheck(changePacket, companion) {
   const evidence = companion?.artifacts?.search_evidence || [];
   const latest = evidence.length > 0 ? evidence[evidence.length - 1] : null;
-  const required = taskGuardRequired(changePolicy);
+  const required = taskGuardRequired(changePacket);
   return {
     required,
     recorded: Boolean(latest),
@@ -134,8 +131,8 @@ function collectSearchCheck(changePolicy, companion) {
   };
 }
 
-function runTaskPreflight(changePolicy, taskId) {
-  const output = buildBaseOutput(changePolicy, "task", taskId);
+function runTaskPreflight(changePacket, taskId) {
+  const output = buildBaseOutput(changePacket, "task", taskId);
   if (!taskId) {
     return {
       exitCode: 1,
@@ -180,7 +177,7 @@ function runTaskPreflight(changePolicy, taskId) {
   }
 
   const preflightCheck = summarizePreflight(preflight);
-  const searchCheck = collectSearchCheck(changePolicy, compResult.companion);
+  const searchCheck = collectSearchCheck(changePacket, compResult.companion);
   const runtimeCheck = collectRuntimeStatuses();
   const scopeCheck = runScopeGuard(taskId);
   const lockCheck = checkLocks(taskId, compResult.companion.planned_files);
@@ -292,12 +289,12 @@ function runTaskPreflight(changePolicy, taskId) {
 }
 
 function runPreflightGate(args = {}, options = {}) {
-  const changePolicy = getChangePolicy(ROOT);
+  const changePacket = buildChangePacket(ROOT, { mode: "worktree" });
   const taskId = typeof args.taskId === "string" && args.taskId.trim() ? args.taskId.trim() : null;
   if (taskId || options.requireTaskId) {
-    return runTaskPreflight(changePolicy, taskId);
+    return runTaskPreflight(changePacket, taskId);
   }
-  return runBasicPreflight(changePolicy);
+  return runBasicPreflight(changePacket);
 }
 
 module.exports = {

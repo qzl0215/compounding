@@ -1,7 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const childProcess = require("node:child_process");
-const { getChangePolicy } = require("./lib/change-policy.ts");
+const { attachChangePacketAliases, buildChangePacket } = require("./lib/change-policy.ts");
 const { parseTaskContract, parseTaskMachineFacts } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
 const {
   deriveCompatTaskMachine,
@@ -201,13 +201,13 @@ function validateTask(task, errors) {
 }
 
 function main() {
-  const changePolicy = getChangePolicy(root);
+  const changePacket = buildChangePacket(root, { mode: "recent" });
   const errors = [];
   const activeBranch = currentBranch();
-  const changedTaskPaths = changePolicy.changed_files.filter((file) => /^tasks\/queue\/.+\.md$/.test(file));
+  const changedTaskPaths = changePacket.changed_files.filter((file) => /^tasks\/queue\/.+\.md$/.test(file));
   const allTasks = listTaskPaths().map((taskPath) => parseTask(taskPath));
   const branchMatchedTasks =
-    changePolicy.policy.strict_task_binding && activeBranch.startsWith("codex/")
+    changePacket.policy.strict_task_binding && activeBranch.startsWith("codex/")
       ? allTasks.filter((task) => cleanValue(task.branch) === activeBranch)
       : [];
   const relevantTasks = Array.from(
@@ -238,23 +238,21 @@ function main() {
     };
   });
 
-  if (changePolicy.policy.strict_task_binding && activeBranch.startsWith("codex/")) {
+  if (changePacket.policy.strict_task_binding && activeBranch.startsWith("codex/")) {
     if (branchMatchedTasks.length === 0) {
       errors.push(`当前分支 ${activeBranch} 没有对应的 task 绑定。`);
     }
   }
 
   const ok = errors.length === 0;
-  const payload = {
+  const payload = attachChangePacketAliases({
     ok,
     tasks: snapshots,
     errors,
     changed_task_paths: changedTaskPaths,
     validated_task_paths: relevantTasks.map((task) => task.path),
-    change_class: changePolicy.change_class,
-    policy: changePolicy.policy,
-    skipped_task_binding: !changePolicy.policy.strict_task_binding,
-  };
+    skipped_task_binding: !changePacket.policy.strict_task_binding,
+  }, changePacket);
   console.log(JSON.stringify(payload, null, 2));
   if (!ok) {
     process.exit(1);

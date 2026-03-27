@@ -11,25 +11,8 @@ const {
   toTaskCostSnapshot,
 } = require("../../../shared/task-cost.ts");
 
-function detectWorkspaceRoot(startDir = process.cwd()) {
-  let currentDir = path.resolve(startDir);
-
-  while (true) {
-    if (fs.existsSync(path.join(currentDir, "shared", "task-contract.ts")) && fs.existsSync(path.join(currentDir, "tasks", "queue"))) {
-      return currentDir;
-    }
-
-    const parentDir = path.dirname(currentDir);
-    if (parentDir === currentDir) {
-      return path.resolve(startDir);
-    }
-    currentDir = parentDir;
-  }
-}
-
-const WORKSPACE_ROOT = detectWorkspaceRoot();
-const { parseTaskContract, parseTaskMachineFacts } = require(path.join(WORKSPACE_ROOT, "shared", "task-contract.ts"));
-const { matchesTaskReference } = require(path.join(WORKSPACE_ROOT, "shared", "task-identity.ts"));
+const { parseTaskContract, parseTaskMachineFacts } = require("../../../shared/task-contract.ts");
+const { matchesTaskReference } = require("../../../shared/task-identity.ts");
 const { readCommandGainEvents, normalizeGainEvent } = require("./command-gain.ts");
 const { resolveTaskRecord } = require("./task-resolver.ts");
 const { readLatestLiveSummary } = require("../../coord/lib/task-activity.ts");
