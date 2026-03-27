@@ -1,7 +1,7 @@
 import type { ReleaseRecord } from "../types";
 import { resolveReleaseContractSummary } from "../release-summary";
-import { formatEstimatedTokens } from "../../../../../../shared/ai-efficiency";
 import { formatTaskCostCodeDelta, formatTaskCostDuration, summarizeTaskCostEffect } from "../../../../../../shared/task-cost";
+import { formatEstimatedTokens } from "../../../../../../shared/token-format";
 
 type HistoryProps = {
   releases: ReleaseRecord[];

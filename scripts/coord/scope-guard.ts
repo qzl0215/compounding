@@ -4,11 +4,9 @@
  * Usage: node --experimental-strip-types scripts/coord/scope-guard.ts [--taskId=t-025]
  */
 
-const fs = require("node:fs");
-const path = require("node:path");
-const { execFileSync } = require("node:child_process");
-const { readCompanion, ensureCompanion } = require("./lib/task-meta.ts");
+const { ensureCompanion } = require("./lib/task-meta.ts");
 const { loadManifest } = require("./lib/manifest.ts");
+const { attachChangePacketAliases, buildChangePacket } = require("../ai/lib/change-policy.ts");
 
 const ROOT = process.cwd();
 
@@ -24,41 +22,10 @@ function parseArgs() {
   return args;
 }
 
-function git(args) {
-  try {
-    return execFileSync("git", args, { cwd: ROOT, encoding: "utf8" }).trim();
-  } catch {
-    return "";
-  }
-}
-
-function listChangedFiles() {
-  const status = git(["status", "--short"]);
-  if (status) {
-    return status
-      .split("\n")
-      .map((line) => {
-        const m = line.match(/^.. (.+)$/);
-        if (!m) return "";
-        const v = m[1].trim();
-        return v.includes(" -> ") ? v.split(" -> ").pop().trim() : v;
-      })
-      .filter((p) => p && !p.startsWith("output/"));
-  }
-  try {
-    const prev = git(["rev-parse", "HEAD^"]);
-    return git(["diff", "--name-only", `${prev}..HEAD`])
-      .split("\n")
-      .map((l) => l.trim())
-      .filter(Boolean);
-  } catch {
-    return [];
-  }
-}
-
 function main() {
   const args = parseArgs();
   const taskId = args.taskId;
+  const changePacket = buildChangePacket(ROOT, { mode: "worktree" });
 
   let plannedFiles = [];
   if (taskId) {
@@ -66,9 +33,9 @@ function main() {
     if (compResult.ok && compResult.companion.planned_files) plannedFiles = compResult.companion.planned_files;
   }
 
-  const actualFiles = listChangedFiles();
+  const actualFiles = changePacket.changed_files;
   if (actualFiles.length === 0) {
-    const out = {
+    const out = attachChangePacketAliases({
       ok: true,
       pass: true,
       scope_risk_score: 0,
@@ -77,7 +44,7 @@ function main() {
       actual_files: [],
       undeclared: [],
       declared_but_unchanged: plannedFiles.filter((p) => !actualFiles.includes(p)),
-    };
+    }, changePacket);
     console.log(JSON.stringify(out, null, 2));
     return;
   }
@@ -115,7 +82,7 @@ function main() {
     scope_summary = "Pass: All changed files are in planned_files.";
   }
 
-  const output = {
+  const output = attachChangePacketAliases({
     ok: pass,
     pass,
     scope_risk_score,
@@ -125,7 +92,7 @@ function main() {
     undeclared,
     high_risk_undeclared: highRiskUndeclared,
     declared_but_unchanged: declaredButUnchanged,
-  };
+  }, changePacket);
 
   console.log(JSON.stringify(output, null, 2));
   if (!pass) process.exit(1);

@@ -1,6 +1,6 @@
 const path = require("node:path");
 const childProcess = require("node:child_process");
-const { getChangePolicy } = require("./lib/change-policy.ts");
+const { attachChangePacketAliases, buildChangePacket } = require("./lib/change-policy.ts");
 const { parseTaskContract } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
 
 const root = process.cwd();
@@ -54,18 +54,16 @@ function isPlaceholderValue(value) {
 }
 
 function main() {
-  const changePolicy = getChangePolicy(root);
-  const changedFiles = changePolicy.changed_files;
+  const changePacket = buildChangePacket(root, { mode: "recent" });
+  const changedFiles = changePacket.changed_files;
   if (changedFiles.length === 0) {
     console.log(
       JSON.stringify(
-        {
+        attachChangePacketAliases({
           ok: true,
           message: "No repo-tracked changes to validate.",
           changed_files: [],
-          change_class: changePolicy.change_class,
-          policy: changePolicy.policy,
-        },
+        }, changePacket),
         null,
         2
       )
@@ -77,14 +75,14 @@ function main() {
   const errors = [];
   const activeBranch = currentBranch();
 
-  if (changePolicy.policy.requires_task && changedTaskFiles.length === 0) {
+  if (changePacket.policy.requires_task && changedTaskFiles.length === 0) {
     errors.push("存在 repo-tracked 改动，但没有任何 tasks/queue/*.md 变更。");
   }
 
-  const strictPlaceholders = changePolicy.policy.requires_task || activeBranch.startsWith("codex/");
+  const strictPlaceholders = changePacket.policy.requires_task || activeBranch.startsWith("codex/");
   changedTaskFiles.forEach((taskPath) => validateTask(taskPath, errors, { strictPlaceholders }));
 
-  if (changePolicy.policy.strict_task_binding && activeBranch.startsWith("codex/") && changedTaskFiles.length > 0) {
+  if (changePacket.policy.strict_task_binding && activeBranch.startsWith("codex/") && changedTaskFiles.length > 0) {
     const branchTaskId = activeBranch.replace(/^codex\//, "");
     const matchesBranchTask = changedTaskFiles.some((taskPath) => taskPath.endsWith(`${branchTaskId}.md`));
     if (!matchesBranchTask) {
@@ -93,14 +91,11 @@ function main() {
   }
 
   const ok = errors.length === 0;
-  const payload = {
+  const payload = attachChangePacketAliases({
     ok,
-    changed_files: changedFiles,
     changed_tasks: changedTaskFiles,
-    change_class: changePolicy.change_class,
-    policy: changePolicy.policy,
     errors,
-  };
+  }, changePacket);
 
   console.log(JSON.stringify(payload, null, 2));
   if (!ok) {

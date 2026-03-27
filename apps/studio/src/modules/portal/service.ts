@@ -1,7 +1,7 @@
 import { getProjectStateSnapshot } from "@/modules/project-state";
-import { formatEstimatedTokens } from "../../../../../shared/ai-efficiency";
 import { buildHomeLogicMapSnapshot } from "./builders";
 import { HOME_ENTRY_LINKS } from "./constants";
+import { formatEstimatedTokens } from "../../../../../shared/token-format";
 import type { HomeLogicMapSnapshot, SemanticEntry, SemanticEntryGroup } from "./types";
 
 export { DEFAULT_DOC_PATH, HOME_ENTRY_LINKS } from "./constants";

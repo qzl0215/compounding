@@ -1,5 +1,5 @@
 import type { DiffAwareCategory, DiffAwareCheckLayer, SelectedChecks } from "./types";
-import type { DiffStats } from "./diff-aware-source";
+import type { DiffStats } from "./diff-snapshot";
 import { categoryLabel, dedupe, type FileImpact } from "./diff-aware-impact";
 
 export function calculateHealthScore(changedFiles: string[], impacts: FileImpact[], stats: DiffStats) {

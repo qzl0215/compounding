@@ -21,6 +21,11 @@ class AiAssetsCliTests(unittest.TestCase):
         shutil.copytree(ROOT / "bootstrap", self.target / "bootstrap")
         shutil.copytree(ROOT / "schemas", self.target / "schemas")
         shutil.copytree(ROOT / "shared", self.target / "shared")
+        (self.target / "apps" / "studio" / "src" / "modules" / "releases").mkdir(parents=True, exist_ok=True)
+        shutil.copy(
+            ROOT / "apps" / "studio" / "src" / "modules" / "releases" / "validation.ts",
+            self.target / "apps" / "studio" / "src" / "modules" / "releases" / "validation.ts",
+        )
         shutil.copytree(ROOT / "scripts" / "ai", self.target / "scripts" / "ai")
         shutil.copytree(ROOT / "scripts" / "coord", self.target / "scripts" / "coord")
         shutil.copytree(ROOT / "scripts" / "release", self.target / "scripts" / "release")
@@ -254,6 +259,7 @@ class AiAssetsCliTests(unittest.TestCase):
         self.assertTrue(any("Agent shortcut mode must be suggest" in error for error in payload["errors"]))
 
     def test_validate_judgement_contract_smoke(self) -> None:
+        self.init_git_repo()
         completed = self.run_script("scripts/ai/validate-judgement-contract.ts")
         payload = json.loads(completed.stdout)
 

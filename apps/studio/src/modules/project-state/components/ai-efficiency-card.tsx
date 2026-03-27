@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/classnames";
-import { buildSummaryFirstWorkflow, formatEstimatedTokens } from "../../../../../../shared/ai-efficiency";
+import { buildSummaryFirstWorkflow } from "../../../../../../shared/ai-efficiency";
+import { formatEstimatedTokens } from "../../../../../../shared/token-format";
 import type { AiEfficiencyDashboard } from "../types";
 
 export function AiEfficiencyCard({ dashboard, compact = false }: { dashboard: AiEfficiencyDashboard; compact?: boolean }) {

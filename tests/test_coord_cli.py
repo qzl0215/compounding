@@ -31,6 +31,16 @@ class CoordCliTests(CoordCliTestCase):
         subprocess.run(["git", "merge", "--ff-only", "codex/task-999-sample"], cwd=self.target, check=True)
         return feature_sha
 
+    def assert_change_packet_aliases(self, payload: dict) -> None:
+        packet = payload["change_packet"]
+        self.assertEqual(packet["observation_mode"], payload["observation_mode"])
+        self.assertEqual(packet["change_source"], payload["change_source"])
+        self.assertEqual(packet["changed_files"], payload["changed_files"])
+        self.assertEqual(packet["change_class"], payload["change_class"])
+        self.assertEqual(packet["change_reason"], payload["change_reason"])
+        self.assertEqual(packet["change_evidence"], payload["change_evidence"])
+        self.assertEqual(packet["policy"], payload["policy"])
+
 
     def test_create_task_renders_from_canonical_template(self) -> None:
         template_path = self.target / "tasks" / "templates" / "task-template.md"
@@ -527,7 +537,11 @@ console.log(JSON.stringify(readCompanionReleaseContext("t-999"), null, 2));
 
         self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
         self.assertTrue(payload["ok"])
+        self.assert_change_packet_aliases(payload)
+        self.assertEqual(payload["observation_mode"], "recent")
+        self.assertEqual(payload["change_source"], "worktree")
         self.assertEqual(payload["change_class"], "light")
+        self.assertEqual(payload["change_evidence"]["classification_rule"], "all_light_files")
         self.assertEqual(payload["changed_tasks"], [])
 
     def test_validate_change_trace_rejects_placeholder_task_contract_fields(self) -> None:
@@ -611,8 +625,55 @@ console.log(JSON.stringify(readCompanion("t-999"), null, 2));
 
         self.assertNotEqual(completed.returncode, 0)
         self.assertFalse(payload["ok"])
+        self.assert_change_packet_aliases(payload)
+        self.assertEqual(payload["observation_mode"], "recent")
+        self.assertEqual(payload["change_source"], "worktree")
         self.assertEqual(payload["change_class"], "structural")
+        self.assertEqual(payload["change_evidence"]["classification_rule"], "has_non_light_non_release_files")
         self.assertTrue(any("没有任何 tasks/queue/*.md 变更" in error for error in payload["errors"]))
+
+    def test_build_change_packet_reports_worktree_clean_basis(self) -> None:
+        self.init_git_repo()
+        payload = self.run_node(
+            f"""
+const {{ buildChangePacket }} = require("{ROOT.as_posix()}/scripts/ai/lib/change-policy.ts");
+console.log(JSON.stringify(buildChangePacket(process.cwd(), {{ mode: "worktree" }}), null, 2));
+"""
+        )
+
+        self.assertEqual(payload["observation_mode"], "worktree")
+        self.assertEqual(payload["change_source"], "none")
+        self.assertEqual(payload["changed_files"], [])
+        self.assertEqual(payload["change_class"], "light")
+        self.assertEqual(payload["change_evidence"]["classification_rule"], "no_observed_changes")
+        self.assertEqual(payload["change_evidence"]["observation_basis"]["sources_checked"], ["git_status"])
+        self.assertEqual(payload["change_evidence"]["observation_basis"]["selected_source"], "none")
+        self.assertIsNone(payload["change_evidence"]["observation_basis"]["selected_ref"])
+
+    def test_build_change_packet_reports_recent_commit_basis_when_worktree_is_clean(self) -> None:
+        scripts_dir = self.target / "scripts"
+        scripts_dir.mkdir(parents=True, exist_ok=True)
+        script_path = scripts_dir / "sample.ts"
+        script_path.write_text("export const value = 1;\n", encoding="utf8")
+        self.init_git_repo()
+        script_path.write_text("export const value = 2;\n", encoding="utf8")
+        subprocess.run(["git", "add", "scripts/sample.ts"], cwd=self.target, check=True)
+        subprocess.run(["git", "commit", "-m", "recent structural change"], cwd=self.target, check=True)
+
+        payload = self.run_node(
+            f"""
+const {{ buildChangePacket }} = require("{ROOT.as_posix()}/scripts/ai/lib/change-policy.ts");
+console.log(JSON.stringify(buildChangePacket(process.cwd(), {{ mode: "recent" }}), null, 2));
+"""
+        )
+
+        self.assertEqual(payload["observation_mode"], "recent")
+        self.assertEqual(payload["change_source"], "recent_commit")
+        self.assertEqual(payload["change_class"], "structural")
+        self.assertEqual(payload["change_evidence"]["classification_rule"], "has_non_light_non_release_files")
+        self.assertEqual(payload["change_evidence"]["observation_basis"]["sources_checked"], ["git_status", "head_parent_diff"])
+        self.assertEqual(payload["change_evidence"]["observation_basis"]["selected_source"], "recent_commit")
+        self.assertEqual(payload["change_evidence"]["observation_basis"]["selected_ref"], "HEAD^..HEAD")
 
     def test_preflight_uses_basic_guard_without_task_id(self) -> None:
         self.install_preflight_fixtures()
@@ -623,10 +684,38 @@ console.log(JSON.stringify(readCompanion("t-999"), null, 2));
 
         self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
         self.assertTrue(payload["ok"])
+        self.assert_change_packet_aliases(payload)
         self.assertEqual(payload["guard_level"], "basic")
         self.assertIsNone(payload["task_id"])
+        self.assertEqual(payload["observation_mode"], "worktree")
+        self.assertEqual(payload["change_source"], "none")
         self.assertEqual(payload["change_class"], "light")
+        self.assertEqual(payload["change_evidence"]["classification_rule"], "no_observed_changes")
+        self.assertEqual(payload["change_evidence"]["observation_basis"]["sources_checked"], ["git_status"])
         self.assertIn("preflight_check", payload)
+
+    def test_preflight_keeps_dirty_light_change_at_light_but_still_blocks_on_unclean_worktree(self) -> None:
+        self.install_preflight_fixtures()
+        docs_dir = self.target / "docs"
+        docs_dir.mkdir(parents=True, exist_ok=True)
+        doc_path = docs_dir / "notes.md"
+        doc_path.write_text("# Notes\n\ninitial\n", encoding="utf8")
+        self.init_git_repo()
+        doc_path.write_text("# Notes\n\nupdated\n", encoding="utf8")
+
+        completed = self.run_script("scripts/coord/preflight.ts")
+        payload = json.loads(completed.stdout)
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertFalse(payload["ok"])
+        self.assert_change_packet_aliases(payload)
+        self.assertEqual(payload["guard_level"], "basic")
+        self.assertEqual(payload["observation_mode"], "worktree")
+        self.assertEqual(payload["change_source"], "worktree")
+        self.assertEqual(payload["change_class"], "light")
+        self.assertEqual(payload["change_evidence"]["classification_rule"], "all_light_files")
+        self.assertEqual(payload["changed_files"], ["docs/notes.md"])
+        self.assertTrue(any(item["step"] == "preflight" for item in payload["blockers"]))
 
     def test_preflight_rejects_structural_change_without_task_id(self) -> None:
         self.install_preflight_fixtures()
@@ -641,9 +730,56 @@ console.log(JSON.stringify(readCompanion("t-999"), null, 2));
 
         self.assertNotEqual(completed.returncode, 0)
         self.assertFalse(payload["ok"])
+        self.assert_change_packet_aliases(payload)
         self.assertEqual(payload["guard_level"], "basic")
+        self.assertEqual(payload["observation_mode"], "worktree")
+        self.assertEqual(payload["change_source"], "worktree")
         self.assertEqual(payload["change_class"], "structural")
+        self.assertEqual(payload["change_evidence"]["classification_rule"], "has_non_light_non_release_files")
         self.assertTrue(any(item["step"] == "task_binding" for item in payload["blockers"]))
+
+    def test_preflight_ignores_recent_structural_commit_when_worktree_is_clean(self) -> None:
+        self.install_preflight_fixtures()
+        scripts_dir = self.target / "scripts"
+        scripts_dir.mkdir(parents=True, exist_ok=True)
+        script_path = scripts_dir / "sample.ts"
+        script_path.write_text("export const value = 1;\n", encoding="utf8")
+        self.init_git_repo()
+        script_path.write_text("export const value = 2;\n", encoding="utf8")
+        subprocess.run(["git", "add", "scripts/sample.ts"], cwd=self.target, check=True)
+        subprocess.run(["git", "commit", "-m", "recent structural change"], cwd=self.target, check=True)
+
+        completed = self.run_script("scripts/coord/preflight.ts")
+        payload = json.loads(completed.stdout)
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertTrue(payload["ok"])
+        self.assert_change_packet_aliases(payload)
+        self.assertEqual(payload["observation_mode"], "worktree")
+        self.assertEqual(payload["change_source"], "none")
+        self.assertEqual(payload["change_class"], "light")
+        self.assertEqual(payload["change_evidence"]["classification_rule"], "no_observed_changes")
+        self.assertEqual(payload["changed_files"], [])
+
+    def test_scope_guard_reads_actual_files_from_change_packet(self) -> None:
+        docs_dir = self.target / "docs"
+        docs_dir.mkdir(parents=True, exist_ok=True)
+        doc_path = docs_dir / "notes.md"
+        doc_path.write_text("# Notes\n\ninitial\n", encoding="utf8")
+        self.init_git_repo()
+        doc_path.write_text("# Notes\n\nupdated\n", encoding="utf8")
+
+        completed = self.run_script("scripts/coord/scope-guard.ts")
+        payload = json.loads(completed.stdout)
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertTrue(payload["ok"])
+        self.assert_change_packet_aliases(payload)
+        self.assertEqual(payload["observation_mode"], "worktree")
+        self.assertEqual(payload["change_source"], "worktree")
+        self.assertEqual(payload["change_class"], "light")
+        self.assertEqual(payload["actual_files"], payload["change_packet"]["changed_files"])
+        self.assertEqual(payload["change_evidence"]["observation_basis"]["sources_checked"], ["git_status"])
 
     def test_preflight_runs_task_guard_when_task_id_is_present(self) -> None:
         self.install_preflight_fixtures()
@@ -674,8 +810,11 @@ console.log(JSON.stringify(readCompanion("t-999"), null, 2));
         self.assertEqual(legacy.returncode, 0, msg=legacy.stdout or legacy.stderr)
         self.assertEqual(preflight_payload["guard_level"], "task")
         self.assertEqual(legacy_payload["guard_level"], "task")
+        self.assert_change_packet_aliases(preflight_payload)
+        self.assert_change_packet_aliases(legacy_payload)
         self.assertEqual(preflight_payload["task_id"], legacy_payload["task_id"])
         self.assertEqual(preflight_payload["change_class"], legacy_payload["change_class"])
+        self.assertEqual(preflight_payload["change_packet"], legacy_payload["change_packet"])
         self.assertEqual(sorted(preflight_payload["runtime_check"].keys()), sorted(legacy_payload["runtime_check"].keys()))
         self.assertEqual(sorted(preflight_payload["scope_check"].keys()), sorted(legacy_payload["scope_check"].keys()))
 
@@ -891,10 +1030,36 @@ console.log(JSON.stringify({{ ok: true }}));
 
         self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
         self.assertTrue(payload["ok"])
+        self.assert_change_packet_aliases(payload)
+        self.assertEqual(payload["observation_mode"], "recent")
+        self.assertEqual(payload["change_source"], "worktree")
         self.assertEqual(payload["change_class"], "structural")
         self.assertEqual(payload["changed_task_paths"], [])
         self.assertEqual(payload["validated_task_paths"], ["tasks/queue/task-999-sample.md"])
         self.assertEqual([task["path"] for task in payload["tasks"]], ["tasks/queue/task-999-sample.md"])
+
+    def test_validate_change_trace_uses_recent_committed_structural_change_when_worktree_is_clean(self) -> None:
+        scripts_dir = self.target / "scripts"
+        scripts_dir.mkdir(parents=True, exist_ok=True)
+        script_path = scripts_dir / "sample.ts"
+        script_path.write_text("export const value = 1;\n", encoding="utf8")
+        self.init_git_repo()
+        script_path.write_text("export const value = 2;\n", encoding="utf8")
+        subprocess.run(["git", "add", "scripts/sample.ts"], cwd=self.target, check=True)
+        subprocess.run(["git", "commit", "-m", "recent structural change"], cwd=self.target, check=True)
+
+        completed = self.run_script("scripts/ai/validate-change-trace.ts")
+        payload = json.loads(completed.stdout)
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertFalse(payload["ok"])
+        self.assert_change_packet_aliases(payload)
+        self.assertEqual(payload["observation_mode"], "recent")
+        self.assertEqual(payload["change_source"], "recent_commit")
+        self.assertEqual(payload["change_class"], "structural")
+        self.assertEqual(payload["change_evidence"]["classification_rule"], "has_non_light_non_release_files")
+        self.assertEqual(payload["change_evidence"]["observation_basis"]["sources_checked"], ["git_status", "head_parent_diff"])
+        self.assertTrue(any("没有任何 tasks/queue/*.md 变更" in error for error in payload["errors"]))
 
     def test_release_cleanup_lifecycle_can_schedule_and_cancel(self) -> None:
         feature_sha = self.prepare_merged_sample_branch()

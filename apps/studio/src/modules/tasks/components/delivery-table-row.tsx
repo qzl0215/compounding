@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { Fragment, type ReactNode } from "react";
 import { DEMAND_STAGE_LABELS, resolveTaskDemandStage } from "@/modules/portal/stage-model";
-import { formatEstimatedTokens } from "../../../../../../shared/ai-efficiency";
 import { formatBranchCleanupStateLabel } from "../../../../../../shared/branch-cleanup";
+import { formatEstimatedTokens } from "../../../../../../shared/token-format";
 import { formatTaskCostCodeDelta, formatTaskCostDuration, summarizeTaskCostEffect } from "../../../../../../shared/task-cost";
-import { TASK_DELIVERY_LABELS } from "../delivery";
+import { TASK_DELIVERY_LABELS } from "../delivery-labels";
 import type { TaskDeliveryRow, TaskDeliveryStatus } from "../types";
 
 const DELIVERY_TONE: Record<TaskDeliveryStatus, string> = {

@@ -1,9 +1,10 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const childProcess = require("node:child_process");
 const { parseModuleFeatureContract, collectLikelyTests } = require(path.join(process.cwd(), "shared", "module-feature-contract.ts"));
 const { buildSummaryFirstWorkflow } = require(path.join(process.cwd(), "shared", "ai-efficiency.ts"));
+const { VALIDATION_LAYERS } = require(path.join(process.cwd(), "apps", "studio", "src", "modules", "releases", "validation.ts"));
 const { buildContextRetroReport } = require("./context-retro.ts");
+const { buildChangePacket } = require("./change-policy.ts");
 const { buildProjectJudgementContract } = require(path.join(process.cwd(), "shared", "project-judgement.ts"));
 const { parseTaskContract, parseTaskMachineFacts } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
 const { readCompanion } = require(path.join(process.cwd(), "scripts", "coord", "lib", "task-meta.ts"));
@@ -23,6 +24,40 @@ const ROUTE_TO_MODULES = {
   "/knowledge-base": SURFACE_TO_MODULES.docs,
 };
 
+const VALIDATION_LAYER_BY_ID = new Map(VALIDATION_LAYERS.map((layer) => [layer.id, layer]));
+
+const FEATURE_CONTEXT_LAYER_OVERRIDES = {
+  static: {
+    commands: ["pnpm lint"],
+    summary: "先拦结构和语义漂移。",
+    runWhen: "所有改动",
+    failureMeaning: "当前改动存在静态问题。",
+    nextStep: "先修静态问题，再继续。",
+  },
+  build: {
+    commands: ["pnpm build"],
+    summary: "确认类型、依赖和打包没有回归。",
+    runWhen: "源码、依赖、配置变化",
+    failureMeaning: "构建链被破坏。",
+    nextStep: "先修构建失败，再讨论运行态。",
+  },
+  runtime: {
+    title: "运行时检查",
+    commands: ["pnpm preview:check"],
+    summary: "确认预览或 production 运行态仍可用。",
+    runWhen: "页面、状态模型、发布链变化",
+    failureMeaning: "当前运行态可能不可用。",
+    nextStep: "先看 release/runtime 面板再继续。",
+  },
+  "ai-output": {
+    commands: ["pnpm validate:ai-output"],
+    summary: "确认 prompt 与 AI 脚本输出结构没有漂移。",
+    runWhen: "AI 资产变化",
+    failureMeaning: "AI 输出契约已漂移。",
+    nextStep: "先修输出契约，再恢复 feature 开发。",
+  },
+};
+
 function readIfExists(root, relPath) {
   const absolute = path.join(root, relPath);
   if (!fs.existsSync(absolute)) return "";
@@ -31,6 +66,17 @@ function readIfExists(root, relPath) {
 
 function unique(values) {
   return Array.from(new Set(values.map((value) => String(value || "").trim()).filter(Boolean)));
+}
+
+function getFeatureValidationLayer(id) {
+  const layer = VALIDATION_LAYER_BY_ID.get(id);
+  if (!layer) {
+    throw new Error(`Unknown validation layer: ${id}`);
+  }
+  return {
+    ...layer,
+    ...(FEATURE_CONTEXT_LAYER_OVERRIDES[id] || {}),
+  };
 }
 
 function normalizeString(value, fallback = "") {
@@ -357,7 +403,8 @@ function buildFeatureContextPacket(root, options = {}) {
   const { overlay, moduleDocPaths: taskModuleDocPaths } = buildTaskOverlay(root, options.taskPath);
   const moduleDocPaths = unique([...explicitDocPaths, ...taskModuleDocPaths]);
   const moduleContracts = loadModuleContracts(root, moduleDocPaths);
-  const diffAware = collectSelectedChecks(root);
+  const changePacket = buildChangePacket(root, { mode: "worktree" });
+  const diffAware = collectSelectedChecks(changePacket.changed_files);
   const checks = buildChecks(moduleContracts, diffAware);
   const projectJudgement = buildProjectJudgement(root);
   const readPlan = buildReadPlan(buildMustRead(moduleContracts, options, overlay), projectJudgement, overlay);
@@ -387,86 +434,44 @@ function buildFeatureContextPacket(root, options = {}) {
   };
 }
 
-function collectSelectedChecks(root) {
-  const changedFiles = readChangedFiles(root);
+function collectSelectedChecks(changedFiles) {
+  const normalizedChangedFiles = Array.isArray(changedFiles) ? changedFiles : [];
   const selected = {
     required: [],
     recommended: [],
   };
 
-  if (changedFiles.length === 0) {
+  if (normalizedChangedFiles.length === 0) {
     return { selectedChecks: selected };
   }
 
   selected.required.push({
-    id: "static",
-    title: "静态门禁",
-    summary: "先拦结构和语义漂移。",
-    commands: ["pnpm lint"],
-    runWhen: "所有改动",
-    failureMeaning: "当前改动存在静态问题。",
-    nextStep: "先修静态问题，再继续。",
+    ...getFeatureValidationLayer("static"),
     reason: "所有 feature 改动都先过静态门禁，避免把结构漂移带进后续链路。",
   });
 
-  if (changedFiles.some((file) => isBuildSensitive(file))) {
+  if (normalizedChangedFiles.some((file) => isBuildSensitive(file))) {
     selected.required.push({
-      id: "build",
-      title: "构建门禁",
-      summary: "确认类型、依赖和打包没有回归。",
-      commands: ["pnpm build"],
-      runWhen: "源码、依赖、配置变化",
-      failureMeaning: "构建链被破坏。",
-      nextStep: "先修构建失败，再讨论运行态。",
+      ...getFeatureValidationLayer("build"),
       reason: "当前 diff 涉及源码/依赖/配置，必须先确认构建链保持稳定。",
     });
   }
 
-  if (changedFiles.some((file) => isRuntimeSensitive(file))) {
+  if (normalizedChangedFiles.some((file) => isRuntimeSensitive(file))) {
     selected.recommended.push({
-      id: "runtime",
-      title: "运行时检查",
-      summary: "确认预览或 production 运行态仍可用。",
-      commands: ["pnpm preview:check"],
-      runWhen: "页面、状态模型、发布链变化",
-      failureMeaning: "当前运行态可能不可用。",
-      nextStep: "先看 release/runtime 面板再继续。",
+      ...getFeatureValidationLayer("runtime"),
       reason: "当前改动可能影响真实页面或发布链，建议补一层运行时确认。",
     });
   }
 
-  if (changedFiles.some((file) => file.startsWith("docs/prompts/") || file.startsWith("scripts/ai/"))) {
+  if (normalizedChangedFiles.some((file) => file.startsWith("docs/prompts/") || file.startsWith("scripts/ai/"))) {
     selected.required.push({
-      id: "ai-output",
-      title: "AI 输出门禁",
-      summary: "确认 prompt 与 AI 脚本输出结构没有漂移。",
-      commands: ["pnpm validate:ai-output"],
-      runWhen: "AI 资产变化",
-      failureMeaning: "AI 输出契约已漂移。",
-      nextStep: "先修输出契约，再恢复 feature 开发。",
+      ...getFeatureValidationLayer("ai-output"),
       reason: "当前改动直接触碰 AI 资产，必须补这一层输出验证。",
     });
   }
 
   return { selectedChecks: selected };
-}
-
-function readChangedFiles(root) {
-  try {
-    const output = childProcess.execSync("git status --short", {
-      cwd: root,
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "ignore"],
-    });
-    return output
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .filter(Boolean)
-      .map((line) => line.slice(3).trim())
-      .filter(Boolean);
-  } catch {
-    return [];
-  }
 }
 
 function isBuildSensitive(file) {

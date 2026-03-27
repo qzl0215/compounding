@@ -1,15 +1,14 @@
 import { execFileSync } from "node:child_process";
 import { getWorkspaceRoot } from "../../lib/workspace";
+import { parseGitChangedFiles } from "../../../../../shared/git-changed-files";
+import type { DiffSnapshot, DiffSnapshotSourceMode, DiffStats } from "./diff-snapshot";
 
-export type DiffStats = {
-  files: number;
-  insertions: number;
-  deletions: number;
-};
+const WORKTREE_STATUS_REF = "git status --short";
+const MAIN_BRANCH = "main";
 
 function git(args: string[]) {
   try {
-    return execFileSync("git", args, { cwd: getWorkspaceRoot(), encoding: "utf8" }).trim();
+    return execFileSync("git", args, { cwd: getWorkspaceRoot(), encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trimEnd();
   } catch {
     return "";
   }
@@ -18,10 +17,6 @@ function git(args: string[]) {
 function currentBranch() {
   const value = git(["branch", "--show-current"]);
   return value || "";
-}
-
-function dedupe(items: string[]) {
-  return [...new Set(items.filter(Boolean))];
 }
 
 function toNumber(value: string | undefined) {
@@ -77,36 +72,58 @@ function getDiffStatsFromRange(range: string): DiffStats {
   }
 }
 
-export function readDiffSnapshot() {
+function parseRangeChangedFiles(range: string) {
+  return parseGitChangedFiles(git(["diff", "--name-only", range]), { mode: "name_only" });
+}
+
+function emptySnapshot(): DiffSnapshot {
+  return {
+    source_mode: "none",
+    range_ref: null,
+    changed_files: [],
+    stats: { files: 0, insertions: 0, deletions: 0 },
+  };
+}
+
+function buildRangeSnapshot(sourceMode: Exclude<DiffSnapshotSourceMode, "worktree" | "none">, rangeRef: string | null): DiffSnapshot {
+  if (!rangeRef) {
+    return emptySnapshot();
+  }
+
+  const changedFiles = parseRangeChangedFiles(rangeRef);
+  if (changedFiles.length === 0) {
+    return emptySnapshot();
+  }
+
+  return {
+    source_mode: sourceMode,
+    range_ref: rangeRef,
+    changed_files: changedFiles,
+    stats: getDiffStatsFromRange(rangeRef),
+  };
+}
+
+export function readDiffSnapshot(): DiffSnapshot {
   const status = git(["status", "--short"]);
   if (status) {
-    const changedFiles = dedupe(
-      status
-        .split("\n")
-        .map((line) => {
-          const match = line.match(/^.. (.+)$/);
-          if (!match) return null;
-          const value = match[1].trim();
-          return value.includes(" -> ") ? value.split(" -> ").at(-1)?.trim() ?? null : value;
-        })
-        .filter((value): value is string => Boolean(value))
-    );
+    const changedFiles = parseGitChangedFiles(status, { mode: "status" });
+    if (changedFiles.length === 0) {
+      return emptySnapshot();
+    }
     return {
-      changedFiles,
+      source_mode: "worktree",
+      range_ref: WORKTREE_STATUS_REF,
+      changed_files: changedFiles,
       stats: getDiffStatsFromFiles(changedFiles),
     };
   }
 
   const branch = currentBranch();
-  const range = branch && branch !== "main" ? `${git(["merge-base", "HEAD", "main"])}..HEAD` : "HEAD^..HEAD";
-  const changedFiles = dedupe(
-    git(["diff", "--name-only", range])
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean)
-  );
-  return {
-    changedFiles,
-    stats: getDiffStatsFromRange(range),
-  };
+  if (branch && branch !== MAIN_BRANCH) {
+    const mergeBase = git(["merge-base", "HEAD", MAIN_BRANCH]);
+    const range = mergeBase ? `${mergeBase}..HEAD` : null;
+    return buildRangeSnapshot("branch_vs_main", range);
+  }
+
+  return buildRangeSnapshot("recent_commit", "HEAD^..HEAD");
 }
