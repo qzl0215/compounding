@@ -12,6 +12,8 @@ export function AiEfficiencyCard({ dashboard, compact = false }: { dashboard: Ai
   const topSaver = dashboard.savings.top_profiles_by_saved[0] || null;
   const alert = dashboard.adoption.alerts[0] || null;
   const topTimeLoss = dashboard.context_waste.top_time_loss_patterns[0] || null;
+  const topLearningCandidate = dashboard.context_waste.learning_candidates[0] || null;
+  const topPromotionProposal = dashboard.context_waste.promotion_queue[0] || null;
 
   return (
     <Card className={cn(compact ? "p-5" : "p-6")}>
@@ -78,6 +80,10 @@ export function AiEfficiencyCard({ dashboard, compact = false }: { dashboard: Ai
             body={
               alert
                 ? `${alert.shortcut_id} adoption 只有 ${alert.adoption_pct}% ，当前机会 ${alert.opportunity_count} 次。`
+                : topPromotionProposal
+                  ? topPromotionProposal.planning_summary
+                  : topLearningCandidate
+                    ? `${topLearningCandidate.pattern_key} 已进入 learning queue。`
                 : topTimeLoss
                   ? `${topTimeLoss.signature} 是当前最大的时间浪费模式。`
                   : "当前没有明显 adoption 警报。"
@@ -85,6 +91,10 @@ export function AiEfficiencyCard({ dashboard, compact = false }: { dashboard: Ai
             note={
               alert
                 ? `按当前估算，约还有 ${formatEstimatedTokens(alert.missed_savings_est)} tokens 没省下来。`
+                : topPromotionProposal
+                  ? topPromotionProposal.why_now
+                  : topLearningCandidate
+                    ? topLearningCandidate.recommended_next_action
                 : topTimeLoss
                   ? `默认上下文模式 balanced；建议先用 ${topTimeLoss.which_summary_shortcut_to_use || "当前摘要链"} 缩短路径。`
                   : `raw trace 率 ${dashboard.health.raw_trace_rate_pct}%，fallback ${dashboard.health.fallback_count} 次。`

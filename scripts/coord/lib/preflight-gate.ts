@@ -1,5 +1,6 @@
 const { attachChangePacketAliases, buildChangePacket } = require("../../ai/lib/change-policy.ts");
 const { buildAndWriteContextRetroReport, summarizeContextRetroHints } = require("../../ai/lib/context-retro.ts");
+const { buildAndWriteLearningCandidatesReport } = require("../../ai/lib/learning-candidates.ts");
 const { ensureCompanion } = require("./task-meta.ts");
 const { applyTaskTransition } = require("./task-machine.ts");
 const { recordPreTaskResult } = require("./companion-lifecycle.ts");
@@ -49,6 +50,19 @@ function attachContextRetro(payload, contextRetro = null) {
     context_retro_path: contextRetro?.json_path || null,
     context_retro_hints: Array.isArray(contextRetro?.current_task?.alerts)
       ? summarizeContextRetroHints(contextRetro)
+      : [],
+  };
+}
+
+function attachLearningCandidates(payload, learningReport = null) {
+  return {
+    ...payload,
+    learning_candidates_path: learningReport?.json_path || null,
+    learning_hints: Array.isArray(learningReport?.current_task?.hints)
+      ? learningReport.current_task.hints.map((item) => `${item.label}：${item.recommended_next_action}`)
+      : [],
+    learning_promotion_queue: Array.isArray(learningReport?.promotion_queue)
+      ? learningReport.promotion_queue.map((item) => item.planning_summary)
       : [],
   };
 }
@@ -230,23 +244,27 @@ function runTaskPreflight(changePacket, taskId) {
     });
     const decisionCard = createDecisionCard(taskId, preflightCheck, runtimeCheck, scopeCheck, lockCheck);
     const contextRetro = buildAndWriteContextRetroReport(ROOT, { taskId });
-    const payload = attachContextRetro(attachRetroContext({
-      ok: false,
-      step: "pre_task_guard",
-      blockers,
-      preflight_check: preflightCheck,
-      search_check: searchCheck,
-      runtime_check: runtimeCheck,
-      scope_check: scopeCheck,
-      lock_check: {
-        ok: lockCheck.ok,
-        conflicts: lockCheck.conflicts,
-        suggested_execution_mode: lockCheck.suggested_execution_mode,
-      },
-      decision_card: decisionCard,
-      reason: "完整 task guard 检测到 runtime、scope、lock 或 git blocker，请先处理后重试。",
-      ...output,
-    }, retroContext), contextRetro);
+    const learningReport = buildAndWriteLearningCandidatesReport(ROOT, { taskId });
+    const payload = attachLearningCandidates(
+      attachContextRetro(attachRetroContext({
+        ok: false,
+        step: "pre_task_guard",
+        blockers,
+        preflight_check: preflightCheck,
+        search_check: searchCheck,
+        runtime_check: runtimeCheck,
+        scope_check: scopeCheck,
+        lock_check: {
+          ok: lockCheck.ok,
+          conflicts: lockCheck.conflicts,
+          suggested_execution_mode: lockCheck.suggested_execution_mode,
+        },
+        decision_card: decisionCard,
+        reason: "完整 task guard 检测到 runtime、scope、lock 或 git blocker，请先处理后重试。",
+        ...output,
+      }, retroContext), contextRetro),
+      learningReport,
+    );
     recordPreTaskResult(taskId, payload);
     return { exitCode: 1, payload };
   }
@@ -272,18 +290,22 @@ function runTaskPreflight(changePacket, taskId) {
     reason: "task guard 已通过，进入工程执行。",
   });
   const contextRetro = buildAndWriteContextRetroReport(ROOT, { taskId });
-  const payload = attachContextRetro(attachRetroContext({
-    ok: true,
-    preflight: preflight.preflight,
-    companion: compResult.companion,
-    preflight_check: preflightCheck,
-    search_check: searchCheck,
-    runtime_check: runtimeCheck,
-    scope_check: scopeCheck,
-    lock_check: { ok: true, conflicts: [], suggested_execution_mode: null },
-    reason: "完整 task guard 已通过。",
-    ...output,
-  }, retroContext), contextRetro);
+  const learningReport = buildAndWriteLearningCandidatesReport(ROOT, { taskId });
+  const payload = attachLearningCandidates(
+    attachContextRetro(attachRetroContext({
+      ok: true,
+      preflight: preflight.preflight,
+      companion: compResult.companion,
+      preflight_check: preflightCheck,
+      search_check: searchCheck,
+      runtime_check: runtimeCheck,
+      scope_check: scopeCheck,
+      lock_check: { ok: true, conflicts: [], suggested_execution_mode: null },
+      reason: "完整 task guard 已通过。",
+      ...output,
+    }, retroContext), contextRetro),
+    learningReport,
+  );
   recordPreTaskResult(taskId, payload);
   return { exitCode: 0, payload };
 }

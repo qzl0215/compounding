@@ -15,6 +15,7 @@ import type { ProjectStateSnapshot } from "./types";
 
 type AiEfficiencyDashboardOptions = Parameters<typeof buildAiEfficiencyDashboard>[1];
 type ContextRetroReport = NonNullable<AiEfficiencyDashboardOptions>["contextRetroReport"];
+type LearningCandidatesReport = NonNullable<AiEfficiencyDashboardOptions>["learningCandidatesReport"];
 
 export async function getProjectStateSnapshot(input?: { deliverySnapshot?: DeliverySnapshot }): Promise<ProjectStateSnapshot> {
   const workspaceRoot = getWorkspaceRoot();
@@ -154,10 +155,12 @@ function summarizeRuntimeAlert(
 
 function getAiEfficiencyDashboard(workspaceRoot: string, taskCostLedgers: DeliverySnapshot["projections"]["taskRows"][number]["cost"][]) {
   const contextRetroReport = readContextRetroReport(workspaceRoot);
+  const learningCandidatesReport = readLearningCandidatesReport(workspaceRoot);
   const eventsPath = path.join(workspaceRoot, "output", "ai", "command-gain", "events.jsonl");
   if (!fs.existsSync(eventsPath)) {
     return buildAiEfficiencyDashboard([], {
       contextRetroReport,
+      learningCandidatesReport,
       supportedProfiles: AI_EFFICIENCY_SUPPORTED_PROFILES,
       taskCostLedgers,
     });
@@ -180,6 +183,7 @@ function getAiEfficiencyDashboard(workspaceRoot: string, taskCostLedgers: Delive
   return buildAiEfficiencyDashboard(events, {
     supportedProfiles: AI_EFFICIENCY_SUPPORTED_PROFILES,
     contextRetroReport,
+    learningCandidatesReport,
     taskCostLedgers,
   });
 }
@@ -189,6 +193,16 @@ function readContextRetroReport(workspaceRoot: string): ContextRetroReport {
   if (!fs.existsSync(jsonPath)) return null;
   try {
     return JSON.parse(fs.readFileSync(jsonPath, "utf8")) as ContextRetroReport;
+  } catch {
+    return null;
+  }
+}
+
+function readLearningCandidatesReport(workspaceRoot: string): LearningCandidatesReport {
+  const jsonPath = path.join(workspaceRoot, "output", "ai", "learning-candidates", "latest.json");
+  if (!fs.existsSync(jsonPath)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(jsonPath, "utf8")) as LearningCandidatesReport;
   } catch {
     return null;
   }

@@ -17,6 +17,7 @@ const { stabilizeLocalProdRuntime } = require("./prod-runtime-stability.ts");
 const { applyTaskTransition } = require("../coord/lib/task-machine.ts");
 const { finishActiveStage, recordBlocker, startActiveStage } = require("../coord/lib/task-activity.ts");
 const { recordReleaseCleanupCancellation } = require("../coord/lib/companion-lifecycle.ts");
+const { refreshLearningCandidatesSnapshot } = require("../ai/lib/learning-candidates.ts");
 
 function parseArg(name) {
   const index = process.argv.indexOf(name);
@@ -69,6 +70,7 @@ try {
       message: `Rolled back to ${releaseId}.`,
       release: result.finalRelease,
       links: { production: productionBaseUrl() },
+      learning_candidates_path: refreshLearningCandidatesSnapshot(process.cwd(), { taskId: activityTaskId }).json_path || null,
       registry: result.registry,
     })
   );
@@ -106,6 +108,7 @@ try {
     JSON.stringify({
       ok: false,
       message: error instanceof Error ? error.message : "Rollback failed.",
+      learning_candidates_path: refreshLearningCandidatesSnapshot(process.cwd(), { taskId: activityTaskId }).json_path || null,
     })
   );
 }

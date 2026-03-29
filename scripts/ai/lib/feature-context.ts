@@ -6,8 +6,6 @@ const { VALIDATION_LAYERS } = require(path.join(process.cwd(), "apps", "studio",
 const { buildContextRetroReport } = require("./context-retro.ts");
 const { buildChangePacket } = require("./change-policy.ts");
 const { buildProjectJudgementContract } = require(path.join(process.cwd(), "shared", "project-judgement.ts"));
-const { parseTaskContract, parseTaskMachineFacts } = require(path.join(process.cwd(), "shared", "task-contract.ts"));
-const { deriveCompatTaskMachine } = require(path.join(process.cwd(), "shared", "task-state-machine.ts"));
 const { readCompanion } = require(path.join(process.cwd(), "scripts", "coord", "lib", "task-meta.ts"));
 
 const SURFACE_TO_MODULES = {
@@ -177,6 +175,15 @@ function resolveModuleDocPath(root, token) {
 function buildTaskOverlay(root, taskPath) {
   if (!taskPath) {
     return { overlay: null, moduleDocPaths: [] };
+  }
+  let parseTaskContract;
+  let parseTaskMachineFacts;
+  let deriveCompatTaskMachine;
+  try {
+    ({ parseTaskContract, parseTaskMachineFacts } = require(path.join(process.cwd(), "shared", "task-contract.ts")));
+    ({ deriveCompatTaskMachine } = require(path.join(process.cwd(), "shared", "task-state-machine.ts")));
+  } catch (error) {
+    throw new Error(`Task overlay unavailable: ${error instanceof Error ? error.message : String(error)}`);
   }
   const relTask = taskPath.replace(/^\/+/, "");
   const taskContent = readIfExists(root, relTask);
@@ -418,6 +425,35 @@ function buildDefaultFlow(packet, options) {
   };
 }
 
+function buildLearningHints(root, overlay) {
+  let report = null;
+  try {
+    const { buildLearningCandidatesReport } = require("./learning-candidates.ts");
+    report = buildLearningCandidatesReport(root, {
+      taskId: normalizeString(overlay?.shortId || overlay?.taskId) || null,
+    });
+  } catch {
+    return [];
+  }
+  if (overlay && Array.isArray(report.current_task?.hints) && report.current_task.hints.length > 0) {
+    return report.current_task.hints.slice(0, 2);
+  }
+  return (report.candidates || []).slice(0, 2).map((item) => ({
+    kind: item.kind,
+    pattern_key: item.pattern_key,
+    label: item.pattern_key,
+    reason:
+      item.kind === "execution_blocker"
+        ? `${item.task_count} 个 tasks 已重复遇到这个 blocker。`
+        : `${item.task_count} 个 tasks 已重复漏用这个 shortcut。`,
+    recommended_next_action: item.recommended_next_action,
+    recommended_summary_shortcut: item.recommended_summary_shortcut,
+    repeat_count: item.repeat_count,
+    lost_time_ms: item.lost_time_ms,
+    missed_savings_est: item.missed_savings_est,
+  }));
+}
+
 function buildFeatureContextPacket(root, options = {}) {
   const explicitDocPaths = resolveModuleDocPaths(root, options);
   const { overlay, moduleDocPaths: taskModuleDocPaths } = buildTaskOverlay(root, options.taskPath);
@@ -432,6 +468,7 @@ function buildFeatureContextPacket(root, options = {}) {
     overlay?.shortId || overlay?.taskId
       ? buildContextRetroReport(root, { taskId: normalizeString(overlay.shortId || overlay.taskId) }).current_task.alerts || []
       : [];
+  const learningHints = buildLearningHints(root, overlay);
   const packet = {
     target_surface: buildTargetSurface(options, moduleContracts),
     related_modules: moduleContracts.map((contract) => contract.moduleId),
@@ -444,6 +481,7 @@ function buildFeatureContextPacket(root, options = {}) {
     invariants: buildInvariants(moduleContracts),
     common_changes: buildCommonChanges(moduleContracts),
     waste_alerts: wasteAlerts.slice(0, 3),
+    learning_hints: learningHints,
     task_overlay: overlay,
     project_judgement: projectJudgement,
   };
@@ -569,6 +607,19 @@ function renderFeatureContextMarkdown(packet) {
   );
   lines.push("");
 
+  lines.push("## Learning Hints", "");
+  if (packet.learning_hints.length > 0) {
+    for (const item of packet.learning_hints) {
+      lines.push(`- ${item.label}`);
+      lines.push(`  - 原因：${item.reason}`);
+      lines.push(`  - 建议动作：${item.recommended_next_action}`);
+      lines.push(`  - 建议摘要命令：${item.recommended_summary_shortcut || "无"}`);
+    }
+  } else {
+    lines.push("- 当前没有命中 learning hint 阈值。");
+  }
+  lines.push("");
+
   lines.push("## Waste Alerts", "");
   if (packet.waste_alerts.length > 0) {
     for (const item of packet.waste_alerts) {
@@ -661,7 +712,13 @@ function estimateContextPacketSourceBytes(root, packet, options = {}) {
         "utf8",
       )
     : 0;
-  return fileBytes + taskBytes;
+  const learningBytes = Buffer.byteLength(
+    (packet.learning_hints || [])
+      .map((item) => [item.label, item.reason, item.recommended_next_action].filter(Boolean).join("\n"))
+      .join("\n"),
+    "utf8",
+  );
+  return fileBytes + taskBytes + learningBytes;
 }
 
 function buildExpandedContextExcerpts(root, packet, options = {}) {

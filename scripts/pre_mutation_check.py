@@ -10,9 +10,12 @@ ROOT = Path.cwd()
 OUTPUT = ROOT / "output" / "agent_session" / "latest_pre_mutation_check.json"
 IGNORED_STATUS_PREFIXES = (
     "agent-coordination/",
+    "output/",
     "output/agent_session/",
+    "output/ai/",
     "output/ai/context-retro/",
     "output/ai/retro-candidates/",
+    ".compounding-runtime/",
 )
 
 def run_git(args: list[str]) -> tuple[bool, str]:

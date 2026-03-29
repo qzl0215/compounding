@@ -2,6 +2,7 @@ const path = require("node:path");
 const { recordReleaseHandoff } = require("../coord/lib/companion-lifecycle.ts");
 const { applyTaskTransition } = require("../coord/lib/task-machine.ts");
 const { finishActiveStage, recordBlocker, startActiveStage, startWaitStage } = require("../coord/lib/task-activity.ts");
+const { refreshLearningCandidatesSnapshot } = require("../ai/lib/learning-candidates.ts");
 const {
   changeSummary,
   currentActiveRelease,
@@ -242,6 +243,10 @@ function main() {
     }
   }
 
+  const learningSnapshot = refreshLearningCandidatesSnapshot(process.cwd(), {
+    taskId: primaryTaskId || null,
+  });
+
   console.log(
     JSON.stringify({
       ok,
@@ -251,6 +256,7 @@ function main() {
         dev: previewBaseUrl(),
         production: productionBaseUrl(),
       },
+      learning_candidates_path: learningSnapshot.json_path || null,
       registry: require("./lib.ts").readRegistry(),
     })
   );

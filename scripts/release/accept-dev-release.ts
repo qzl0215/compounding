@@ -2,6 +2,7 @@ const childProcess = require("node:child_process");
 const { recordReleaseCleanupSchedule, recordReleaseHandoff } = require("../coord/lib/companion-lifecycle.ts");
 const { applyTaskTransition } = require("../coord/lib/task-machine.ts");
 const { finishWaitStageIfOpen, recordBlocker } = require("../coord/lib/task-activity.ts");
+const { refreshLearningCandidatesSnapshot } = require("../ai/lib/learning-candidates.ts");
 const {
   clearChannelSymlink,
   clearPendingDevRelease,
@@ -152,6 +153,7 @@ try {
         dev: previewBaseUrl(),
         production: productionBaseUrl(),
       },
+      learning_candidates_path: refreshLearningCandidatesSnapshot(process.cwd(), { taskId: activityTaskId }).json_path || null,
       registry: result.registry,
     })
   );
@@ -182,6 +184,7 @@ try {
         dev: previewBaseUrl(),
         production: productionBaseUrl(),
       },
+      learning_candidates_path: refreshLearningCandidatesSnapshot(process.cwd(), { taskId: activityTaskId }).json_path || null,
     })
   );
 }

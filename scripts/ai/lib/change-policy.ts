@@ -3,7 +3,7 @@ const { parseGitChangedFiles } = require("../../../shared/git-changed-files.ts")
 
 const GIT_STATUS_REF = "git status --short";
 const HEAD_PARENT_DIFF_REF = "HEAD^..HEAD";
-const IGNORED_PREFIXES = Object.freeze(["output/"]);
+const IGNORED_PREFIXES = Object.freeze(["output/", ".compounding-runtime/"]);
 
 // Observation mode contract:
 // - worktree: only trusts the current repo-tracked worktree state from `git status --short`.

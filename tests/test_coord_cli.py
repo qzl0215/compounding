@@ -872,6 +872,45 @@ console.log(JSON.stringify(buildChangePacket(process.cwd(), {{ mode: "worktree" 
         self.assertEqual(payload["change_evidence"]["observation_basis"]["selected_source"], "none")
         self.assertIsNone(payload["change_evidence"]["observation_basis"]["selected_ref"])
 
+    def test_build_change_packet_ignores_repo_local_runtime_root(self) -> None:
+        self.init_git_repo()
+        runtime_dir = self.target / ".compounding-runtime"
+        runtime_dir.mkdir(parents=True, exist_ok=True)
+        (runtime_dir / "state.json").write_text('{"ok": true}\n', encoding="utf8")
+
+        payload = self.run_node(
+            f"""
+const {{ buildChangePacket }} = require("{ROOT.as_posix()}/scripts/ai/lib/change-policy.ts");
+console.log(JSON.stringify(buildChangePacket(process.cwd(), {{ mode: "worktree" }}), null, 2));
+"""
+        )
+
+        self.assertEqual(payload["observation_mode"], "worktree")
+        self.assertEqual(payload["change_source"], "none")
+        self.assertEqual(payload["changed_files"], [])
+        self.assertEqual(payload["change_class"], "light")
+        self.assertEqual(payload["change_evidence"]["observation_basis"]["ignored_prefixes"], ["output/", ".compounding-runtime/"])
+
+    def test_pre_mutation_check_ignores_generated_output_and_runtime_roots(self) -> None:
+        self.init_git_repo()
+        (self.target / "output" / "ai" / "learning-candidates").mkdir(parents=True, exist_ok=True)
+        (self.target / "output" / "ai" / "learning-candidates" / "latest.json").write_text('{"ok": true}\n', encoding="utf8")
+        runtime_dir = self.target / ".compounding-runtime"
+        runtime_dir.mkdir(parents=True, exist_ok=True)
+        (runtime_dir / "state.json").write_text('{"ok": true}\n', encoding="utf8")
+
+        completed = subprocess.run(
+            ["python3", str(ROOT / "scripts" / "pre_mutation_check.py")],
+            cwd=self.target,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        payload = json.loads(completed.stdout)
+
+        self.assertTrue(payload["worktree_clean"])
+        self.assertEqual(payload["next_action"], "Mutation is allowed locally, but branch sync cannot be verified.")
+
     def test_build_change_packet_reports_recent_commit_basis_when_worktree_is_clean(self) -> None:
         scripts_dir = self.target / "scripts"
         scripts_dir.mkdir(parents=True, exist_ok=True)
@@ -1103,6 +1142,40 @@ fs.writeFileSync(
     ],
   }}, null, 2)
 );
+const gainDir = path.join(process.cwd(), "output", "ai", "command-gain");
+fs.mkdirSync(gainDir, {{ recursive: true }});
+fs.writeFileSync(
+  path.join(gainDir, "events.jsonl"),
+  [
+    {{
+      timestamp: "2026-03-21T00:00:00.000Z",
+      event_kind: "summary_run",
+      shortcut_id: "preflight_summary",
+      task_id: "task-999-sample",
+      stage: "preflight",
+      saved_tokens_est: 14000,
+      saved_ms_est: 2500,
+    }},
+    {{
+      timestamp: "2026-03-21T00:01:00.000Z",
+      event_kind: "shortcut_opportunity",
+      shortcut_id: "preflight_summary",
+      task_id: "task-999-sample",
+      stage: "preflight",
+      adopted: false,
+      original_cmd: "pnpm preflight -- --taskId=task-999-sample",
+    }},
+    {{
+      timestamp: "2026-03-21T00:02:00.000Z",
+      event_kind: "shortcut_opportunity",
+      shortcut_id: "preflight_summary",
+      task_id: "task-999-sample",
+      stage: "preflight",
+      adopted: false,
+      original_cmd: "pnpm preflight -- --taskId=task-999-sample",
+    }},
+  ].map((event) => JSON.stringify(event)).join("\\n") + "\\n"
+);
 console.log(JSON.stringify({{ ok: true }}));
 """
         )
@@ -1116,9 +1189,12 @@ console.log(JSON.stringify({{ ok: true }}));
         self.assertTrue(payload["ok"])
         self.assertTrue(payload["iteration_digest_path"].endswith("agent-coordination/tasks/task-999-sample.json"))
         self.assertTrue(payload["retro_candidates_path"].endswith("output/ai/retro-candidates/latest.json"))
+        self.assertTrue(payload["learning_candidates_path"].endswith("output/ai/learning-candidates/latest.json"))
         self.assertTrue(any("review_wait" in hint for hint in payload["retro_hints"]))
         self.assertTrue(any("工作区未清理" in hint for hint in payload["retro_hints"]))
         self.assertTrue(any("shortcut" in hint for hint in payload["retro_hints"]))
+        self.assertTrue(any("工作区未清理" in hint for hint in payload["learning_hints"]))
+        self.assertTrue(any("preflight_summary" in hint for hint in payload["learning_hints"]))
 
     def test_coord_task_start_uses_unified_preflight_entry(self) -> None:
         self.install_preflight_fixtures()
