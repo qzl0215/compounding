@@ -3,6 +3,7 @@ const path = require("node:path");
 const childProcess = require("node:child_process");
 const { listTaskRecords } = require("./lib/task-resolver.ts");
 const { ensureCompanion } = require("../coord/lib/task-meta.ts");
+const { syncTaskMaterialization } = require("../harness/lib.ts");
 const { emitResult, exitWithError, parseCliArgs, renderTaskTemplate } = require("./lib/cli-kernel.js");
 
 const cli = parseCliArgs(process.argv.slice(2));
@@ -74,6 +75,10 @@ const body = renderTaskTemplate(
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, body);
 ensureCompanion(taskId);
+syncTaskMaterialization(taskId, {
+  source: "ai:create-task",
+  branch_name: argv.branch || detectCurrentBranch(root) || `codex/${taskId}`,
+});
 emitResult(
   {
     ok: true,

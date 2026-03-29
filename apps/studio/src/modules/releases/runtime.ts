@@ -3,9 +3,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { getWorkspaceRoot } from "@/lib/workspace";
 import type { LocalRuntimeStatus } from "./types";
+import { resolveSharedRuntimeRoot } from "../../../../../shared/git-workspace";
 
 export function getReleaseRuntimeRoot() {
-  return process.env.AI_OS_RELEASE_ROOT || path.resolve(getWorkspaceRoot(), "..", ".compounding-runtime");
+  return resolveSharedRuntimeRoot(getWorkspaceRoot());
 }
 
 export function getChannelBaseUrl(channel: "dev" | "prod") {

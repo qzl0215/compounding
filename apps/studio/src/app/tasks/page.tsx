@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { getDeliverySnapshot } from "@/modules/delivery";
+import { HarnessBoard } from "@/modules/harness";
 import { getProjectStateSnapshot, ProjectJudgementStrip } from "@/modules/project-state";
 import { DeliveryTable } from "@/modules/tasks/components/delivery-table";
 import { buildSubtaskTableRows } from "@/modules/tasks/subtask-table";
@@ -69,6 +70,10 @@ export default async function TasksPage() {
 
       <section id="task-judgement">
         <ProjectJudgementStrip judgement={projectState.judgement} />
+      </section>
+
+      <section id="task-harness">
+        <HarnessBoard snapshot={snapshot.facts.harness} compact />
       </section>
 
       <section id="task-table">

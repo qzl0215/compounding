@@ -1,4 +1,5 @@
 import json
+import os
 import shutil
 import subprocess
 import tempfile
@@ -81,6 +82,7 @@ class CoordCliTestCase(unittest.TestCase):
             check=True,
             capture_output=True,
             text=True,
+            env=self._base_env(),
         )
         return json.loads(completed.stdout)
 
@@ -90,7 +92,13 @@ class CoordCliTestCase(unittest.TestCase):
             cwd=self.target,
             capture_output=True,
             text=True,
+            env=self._base_env(),
         )
+
+    def _base_env(self) -> dict[str, str]:
+        env = os.environ.copy()
+        env["AI_OS_RELEASE_ROOT"] = str(self.target / ".compounding-runtime")
+        return env
 
     def init_git_repo(self) -> None:
         subprocess.run(["git", "init"], cwd=self.target, check=True)

@@ -19,11 +19,18 @@
 
 ### 要做
 
-
+- 新增 `shared/harness/*`，定义 intent / contract / state / action / artifact / runtimeFact 与 live snapshot 的统一对象模型。
+- 新增 `scripts/harness/*`，提供事件流、快照同步、`harness:status`、`harness:events`、`harness:intent:create`、`harness:act` 四个正式入口。
+- 把 task、preflight、review、release、runtime 的既有写路径接到 harness 事件记录与快照同步上，同时保留旧 companion / registry 投影。
+- 新增 `apps/studio/src/modules/harness/*` 与 `/harness` 页面，并让首页、任务页、发布页共读同一份 harness snapshot。
+- 修正 worktree 共享 runtime root、当前任务优先选择、repo 名识别和测试隔离，让控制面在 worktree 与最小 fixture 下都能稳定工作。
 
 ### 不做
 
-
+- 不把 rollback 改成 harness-native path，仍保留现有 release 命令并只吸收其结果。
+- 不引入数据库、常驻服务或第二套远端状态源，phase-1 继续使用文件事件流与快照。
+- 不继续扩 Superpowers / overlay，也不重写全部历史 task 文档与 companion 结构。
+- 不把首页、任务页、发布页变成新的写入口；UI 在本轮只承担统一读模型。
 
 ### 约束
 
@@ -68,7 +75,10 @@
 - `apps/studio/src/modules/tasks/`
 - `apps/studio/src/modules/releases/`
 - `apps/studio/src/app/`
+- `apps/studio/src/components/shell/app-shell.tsx`
 - `package.json`
+- `scripts/ai/create-task.ts`
+- `shared/git-workspace.ts`
 - `tests/`
 
 ## 更新痕迹

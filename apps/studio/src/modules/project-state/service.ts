@@ -8,6 +8,7 @@ import {
   buildAiEfficiencyDashboard,
   normalizeAiEfficiencyEvent,
 } from "../../../../../shared/ai-efficiency";
+import { resolveGitCommonRoot } from "../../../../../shared/git-workspace";
 import { getGithubSurfaceReadiness } from "../../../../../shared/github-surface-runtime";
 import { buildProjectJudgementContract } from "../../../../../shared/project-judgement";
 import type { ProjectStateSnapshot } from "./types";
@@ -74,7 +75,7 @@ export async function getProjectStateSnapshot(input?: { deliverySnapshot?: Deliv
 
   return {
     identity: {
-      name: path.basename(workspaceRoot),
+      name: path.basename(resolveGitCommonRoot(workspaceRoot)),
       oneLiner: judgement.oneLiner,
     },
     headline: {

@@ -1,12 +1,13 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const { resolveSharedRuntimeRoot } = require("../../shared/git-workspace.ts");
 
 function workspaceRoot() {
   return process.cwd();
 }
 
 function runtimeRoot() {
-  return process.env.AI_OS_RELEASE_ROOT || path.resolve(workspaceRoot(), "..", ".compounding-runtime");
+  return resolveSharedRuntimeRoot(workspaceRoot());
 }
 
 function layoutPaths() {
