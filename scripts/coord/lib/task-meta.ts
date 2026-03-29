@@ -68,7 +68,9 @@ function parseTaskToCompanion(taskLike, content) {
   const branch = parsedMachine.branch;
   const currentMode = parsedMachine.currentMode;
   const modules = uniqueStrings(parsedMachine.relatedModules);
-  const plannedFiles = modules.filter((item) => item.includes("/") || /\.(md|ts|tsx|js|json|yaml|yml)$/.test(item));
+  const plannedFiles = modules.filter(
+    (item) => item.includes("/") || /\.(md|ts|tsx|js|json|yaml|yml)$/.test(item) || /^\.[A-Za-z0-9._-]+$/.test(item),
+  );
   if (!plannedFiles.includes(record.path)) {
     plannedFiles.unshift(record.path);
   }

@@ -2,7 +2,7 @@
 title: AI_OPERATING_MODEL
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-27
+last_reviewed_at: 2026-03-29
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -24,6 +24,7 @@ related_docs:
 
 - 需求不清、边界不清、成功标准不清时，先留在 plan。
 - AI 默认先做三步：扩选项 → 收决策 → 产出 task。
+- 若工具面已安装 Superpowers，只在需求未收口、存在多方案取舍或多步 `structural / release` 事项时触发 `brainstorming` / `writing-plans`；默认不为 `light` 改动生成第二套 spec / plan 资产。
 - 遇到 unfamiliar pattern / infra / runtime capability，先搜已有实现、主源与成熟解，再决定是否自建。
 - 涉及服务器访问、GitHub 接入方式或标准发布动作时，先读 `bootstrap/project_operator.yaml`；需要扫读版时读 `docs/OPERATOR_RUNBOOK.md`。
 - `Boil the Lake` 只适用于小而边界清楚的 task；大而跨阶段的事项留在 plan。
@@ -34,6 +35,31 @@ related_docs:
 - task 只承接可执行边界；companion 只保留机器执行上下文；release 只保留验收与运行事实。
 - 只把价值判断、体验取舍、结果验收和高风险不可逆动作抛给人；实现级细节默认不向人要确认。
 - AI 装配上下文时只看当前 `mode_id`，不再按“战略澄清 / 方案评审 / 工程执行 / 质量验收 / 发布复盘”人工场景猜测。
+
+## Superpowers 映射
+
+- 本仓把 Superpowers 当单向增强层，不接受它反向创建第二套主源或第二套状态流。
+
+| 场景 | 默认启用 | 条件启用 | 默认抑制 |
+| --- | --- | --- | --- |
+| `light` | `verification-before-completion`、`receiving-code-review`、`requesting-code-review` | 无 | `brainstorming`、`writing-plans`、`using-git-worktrees`、`test-driven-development` |
+| `structural` | `verification-before-completion`、`receiving-code-review`、`requesting-code-review` | 先 task 合同；需求或设计未收口时再启 `brainstorming`，多步执行才启 `writing-plans`，只有能拆成 2 个以上独立子块时才启 `subagent-driven-development` | 上游 spec 落盘、上游 plan 落盘、每个微步骤强制 commit、blanket TDD |
+| `release` | `verification-before-completion`、`receiving-code-review` | 可把 `requesting-code-review` 当辅助检查单 | 任何替代 `coord:review:run`、`release:*` 的技能流 |
+
+- 工件映射固定如下：
+  - 上游 spec → `memory/project/operating-blueprint.md` 收口或 task 边界收口
+  - 上游 implementation plan → 本仓 task 合同与 handoff
+  - 上游 review 流程 → `pnpm coord:review:run -- --taskId=t-xxx`
+  - 上游 completion verification → 本仓验证门禁
+- 明确禁止在本仓新增 `docs/superpowers/specs/*` 与 `docs/superpowers/plans/*` 作为长期主源。
+- `using-git-worktrees` 只在当前 worktree 不干净或确实需要并行隔离时启用；标准目录固定为项目内 `.worktrees/`，初始化与验证统一使用 `pnpm install`、`pnpm preflight` 与本仓验证命令，不用 `npm install` / `npm test` 假设。
+- `test-driven-development` 只对真正的功能/行为变更按需启用；文档、配置、任务合同、资产生成和工具映射调整继续沿用风险驱动最小测试集。
+- `execution`：只有 task 已 `ready` 且 `pnpm preflight -- --taskId=t-xxx` 通过后，才把 `subagent-driven-development` 作为增强层；若技能建议与本仓 task / branch / worktree / preflight / handoff / review / release 链冲突，以仓库协议优先。
+- `review / release`：`receiving-code-review`、`requesting-code-review`、`verification-before-completion` 只做检查单；状态迁移、评审结论和交付动作仍只认 `coord:review:run` 与 `release:*` 命令。
+- Codex 本机若已安装 `~/.codex/skills/compounding-operating-profile/SKILL.md`，先按该 overlay 把本仓主链翻译成 skill 触发策略；overlay 不能替代 `AGENTS.md` 与本文件。
+- 本机默认推理强度建议是 `high`；只有设计收口、复杂 review 或架构决策才显式升到 `xhigh`。
+- 新会话进入本仓时，默认先读仓库主链，再跑 `pnpm ai:doctor:superpowers`；若属于 `structural / release`，先 task，再跑 `pnpm preflight -- --taskId=t-xxx`。
+- 每次升级上游 Superpowers 后，都要重新跑 doctor，并记录 doctor 暴露的 upstream SHA，避免技能更新导致行为漂移而仓库无感知。
 
 ## Mode Context Assembly
 
@@ -62,6 +88,7 @@ related_docs:
 - 执行链默认脚本：`scripts/ai/build-context.ts`、`pnpm preflight -- --taskId=t-xxx`、`pnpm coord:task:handoff -- --taskId=t-xxx`
 - 评审链默认脚本：`pnpm coord:review:run -- --taskId=t-xxx`
 - 交付链默认脚本：`node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev`、`node --experimental-strip-types scripts/release/accept-dev-release.ts`、`node --experimental-strip-types scripts/release/reject-dev-release.ts`、`node --experimental-strip-types scripts/release/rollback-release.ts`
+- Superpowers 显式校验命令：`pnpm ai:doctor:superpowers`
 - override 状态入口：`pnpm coord:task:transition -- --taskId=t-xxx --event=<event> --reason="..."`
 - 运维接入主合同：`bootstrap/project_operator.yaml`；跨工具薄入口只负责把不同工具跳回这份合同与 `AGENTS.md`
 - 熵减候选默认脚本：`node --experimental-strip-types scripts/ai/cleanup-candidates.ts`，只在计划评审、release 复盘或当前没有更高优先级产品任务时运行。

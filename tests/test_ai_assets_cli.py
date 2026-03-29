@@ -1,4 +1,5 @@
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -15,6 +16,7 @@ class AiAssetsCliTests(unittest.TestCase):
         self.temp_dir = tempfile.TemporaryDirectory()
         self.target = Path(self.temp_dir.name)
         shutil.copy(ROOT / "AGENTS.md", self.target / "AGENTS.md")
+        shutil.copy(ROOT / ".gitignore", self.target / ".gitignore")
         shutil.copytree(ROOT / "docs", self.target / "docs")
         shutil.copytree(ROOT / "memory", self.target / "memory")
         shutil.copytree(ROOT / "code_index", self.target / "code_index")
@@ -259,6 +261,177 @@ class AiAssetsCliTests(unittest.TestCase):
 
         self.assertNotEqual(completed.returncode, 0)
         self.assertTrue(any("Agent shortcut mode must be suggest" in error for error in payload["errors"]))
+
+    def test_doctor_superpowers_reports_success_with_override_homes(self) -> None:
+        self.init_git_repo()
+        gitignore = self.target / ".gitignore"
+        gitignore.write_text(gitignore.read_text(encoding="utf8") + "\n.worktrees/\n", encoding="utf8")
+        codex_home = self.target / ".codex-home"
+        agents_home = self.target / ".agents-home"
+        skills_root = codex_home / "superpowers" / "skills"
+        skills_root.mkdir(parents=True, exist_ok=True)
+        git_dir = codex_home / "superpowers" / ".git"
+        (git_dir / "refs" / "heads").mkdir(parents=True, exist_ok=True)
+        (git_dir / "HEAD").write_text("ref: refs/heads/main\n", encoding="utf8")
+        (git_dir / "refs" / "heads" / "main").write_text("1234567890abcdef1234567890abcdef12345678\n", encoding="utf8")
+        for skill in [
+            "using-superpowers",
+            "brainstorming",
+            "writing-plans",
+            "subagent-driven-development",
+            "verification-before-completion",
+            "receiving-code-review",
+            "requesting-code-review",
+        ]:
+            (skills_root / skill).mkdir(parents=True, exist_ok=True)
+        (codex_home / "config.toml").write_text("[features]\nmulti_agent = true\n", encoding="utf8")
+        overlay_dir = codex_home / "skills" / "compounding-operating-profile"
+        overlay_dir.mkdir(parents=True, exist_ok=True)
+        overlay_dir.joinpath("SKILL.md").write_text(
+            "\n".join(
+                [
+                    "AGENTS.md",
+                    "docs/AI_OPERATING_MODEL.md",
+                    "docs/superpowers/specs/*",
+                    "docs/superpowers/plans/*",
+                    ".worktrees/",
+                    "pnpm ai:doctor:superpowers",
+                    "pnpm preflight -- --taskId=t-xxx",
+                    "verification-before-completion",
+                ]
+            )
+            + "\n",
+            encoding="utf8",
+        )
+        (agents_home / "skills").mkdir(parents=True, exist_ok=True)
+        os.symlink(skills_root, agents_home / "skills" / "superpowers")
+
+        env = os.environ.copy()
+        env["CODEX_HOME"] = str(codex_home)
+        env["AGENTS_HOME"] = str(agents_home)
+        completed = subprocess.run(
+            ["node", "--experimental-strip-types", str(self.target / "scripts" / "ai" / "doctor-superpowers.ts"), "--json"],
+            cwd=self.target,
+            capture_output=True,
+            text=True,
+            env=env,
+        )
+        payload = json.loads(completed.stdout)
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertTrue(payload["ok"])
+        self.assertTrue(payload["checks"]["clone_repo"]["ok"])
+        self.assertEqual(payload["upstream_sha"], "1234567890abcdef1234567890abcdef12345678")
+        self.assertTrue(payload["checks"]["skills_symlink"]["ok"])
+        self.assertTrue(payload["checks"]["multi_agent"]["ok"])
+        self.assertEqual(payload["checks"]["core_skills"]["missing"], [])
+        self.assertTrue(payload["checks"]["overlay_skill"]["ok"])
+        self.assertTrue(payload["checks"]["repo_mapping"]["ok"])
+        self.assertTrue(payload["checks"]["worktree_standard"]["ok"])
+
+    def test_doctor_superpowers_fails_when_required_skill_is_missing(self) -> None:
+        self.init_git_repo()
+        gitignore = self.target / ".gitignore"
+        gitignore.write_text(gitignore.read_text(encoding="utf8") + "\n.worktrees/\n", encoding="utf8")
+        codex_home = self.target / ".codex-home"
+        agents_home = self.target / ".agents-home"
+        skills_root = codex_home / "superpowers" / "skills"
+        skills_root.mkdir(parents=True, exist_ok=True)
+        git_dir = codex_home / "superpowers" / ".git"
+        (git_dir / "refs" / "heads").mkdir(parents=True, exist_ok=True)
+        (git_dir / "HEAD").write_text("ref: refs/heads/main\n", encoding="utf8")
+        (git_dir / "refs" / "heads" / "main").write_text("1234567890abcdef1234567890abcdef12345678\n", encoding="utf8")
+        for skill in [
+            "using-superpowers",
+            "brainstorming",
+            "writing-plans",
+            "verification-before-completion",
+            "receiving-code-review",
+            "requesting-code-review",
+        ]:
+            (skills_root / skill).mkdir(parents=True, exist_ok=True)
+        (codex_home / "config.toml").write_text("[features]\nmulti_agent = true\n", encoding="utf8")
+        overlay_dir = codex_home / "skills" / "compounding-operating-profile"
+        overlay_dir.mkdir(parents=True, exist_ok=True)
+        overlay_dir.joinpath("SKILL.md").write_text(
+            "\n".join(
+                [
+                    "AGENTS.md",
+                    "docs/AI_OPERATING_MODEL.md",
+                    "docs/superpowers/specs/*",
+                    "docs/superpowers/plans/*",
+                    ".worktrees/",
+                    "pnpm ai:doctor:superpowers",
+                    "pnpm preflight -- --taskId=t-xxx",
+                    "verification-before-completion",
+                ]
+            )
+            + "\n",
+            encoding="utf8",
+        )
+        (agents_home / "skills").mkdir(parents=True, exist_ok=True)
+        os.symlink(skills_root, agents_home / "skills" / "superpowers")
+
+        env = os.environ.copy()
+        env["CODEX_HOME"] = str(codex_home)
+        env["AGENTS_HOME"] = str(agents_home)
+        completed = subprocess.run(
+            ["node", "--experimental-strip-types", str(self.target / "scripts" / "ai" / "doctor-superpowers.ts"), "--json"],
+            cwd=self.target,
+            capture_output=True,
+            text=True,
+            env=env,
+        )
+        payload = json.loads(completed.stdout)
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertFalse(payload["ok"])
+        self.assertIn("subagent-driven-development", payload["checks"]["core_skills"]["missing"])
+        self.assertTrue(payload["checks"]["overlay_skill"]["ok"])
+        self.assertTrue(payload["checks"]["worktree_standard"]["ok"])
+
+    def test_doctor_superpowers_requires_overlay_and_worktree_standard(self) -> None:
+        self.init_git_repo()
+        gitignore = self.target / ".gitignore"
+        gitignore.write_text(gitignore.read_text(encoding="utf8").replace(".worktrees/\n", ""), encoding="utf8")
+        codex_home = self.target / ".codex-home"
+        agents_home = self.target / ".agents-home"
+        skills_root = codex_home / "superpowers" / "skills"
+        skills_root.mkdir(parents=True, exist_ok=True)
+        git_dir = codex_home / "superpowers" / ".git"
+        (git_dir / "refs" / "heads").mkdir(parents=True, exist_ok=True)
+        (git_dir / "HEAD").write_text("ref: refs/heads/main\n", encoding="utf8")
+        (git_dir / "refs" / "heads" / "main").write_text("1234567890abcdef1234567890abcdef12345678\n", encoding="utf8")
+        for skill in [
+            "using-superpowers",
+            "brainstorming",
+            "writing-plans",
+            "subagent-driven-development",
+            "verification-before-completion",
+            "receiving-code-review",
+            "requesting-code-review",
+        ]:
+            (skills_root / skill).mkdir(parents=True, exist_ok=True)
+        (codex_home / "config.toml").write_text("[features]\nmulti_agent = true\n", encoding="utf8")
+        (agents_home / "skills").mkdir(parents=True, exist_ok=True)
+        os.symlink(skills_root, agents_home / "skills" / "superpowers")
+
+        env = os.environ.copy()
+        env["CODEX_HOME"] = str(codex_home)
+        env["AGENTS_HOME"] = str(agents_home)
+        completed = subprocess.run(
+            ["node", "--experimental-strip-types", str(self.target / "scripts" / "ai" / "doctor-superpowers.ts"), "--json"],
+            cwd=self.target,
+            capture_output=True,
+            text=True,
+            env=env,
+        )
+        payload = json.loads(completed.stdout)
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertFalse(payload["ok"])
+        self.assertFalse(payload["checks"]["overlay_skill"]["ok"])
+        self.assertFalse(payload["checks"]["worktree_standard"]["ok"])
 
     def test_validate_judgement_contract_smoke(self) -> None:
         self.init_git_repo()

@@ -169,6 +169,35 @@ console.log(fs.readFileSync(file, "utf8"));
             ],
         )
 
+    def test_create_task_can_seed_dotfiles_into_companion_scope(self) -> None:
+        completed = self.run_script(
+            "scripts/ai/create-task.ts",
+            "task-128-dotfile-scope",
+            "让任务范围识别隐藏文件",
+            "避免 .gitignore 这类合法文件永远被 scope guard 误判为越界",
+            "--relatedModules=- `.gitignore`\n- `scripts/ai/`",
+        )
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        payload = self.run_node(
+            f"""
+const fs = require("node:fs");
+const path = require("node:path");
+const {{ getCompanionPath }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-meta.ts");
+const file = getCompanionPath("task-128-dotfile-scope");
+console.log(fs.readFileSync(file, "utf8"));
+"""
+        )
+
+        self.assertEqual(
+            payload["planned_files"],
+            [
+                "tasks/queue/task-128-dotfile-scope.md",
+                ".gitignore",
+                "scripts/ai/",
+            ],
+        )
+
     def test_task_transition_only_allows_override_events_and_requires_reason(self) -> None:
         blocked = self.run_script("scripts/coord/task.ts", "transition", "--taskId=t-999", "--event=block")
         self.assertNotEqual(blocked.returncode, 0)

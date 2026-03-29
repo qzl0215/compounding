@@ -11,7 +11,7 @@ related_docs:
   - memory/project/current-state.md
   - memory/project/operating-blueprint.md
   - docs/ARCHITECTURE.md
-last_reviewed_at: 2026-03-28
+last_reviewed_at: 2026-03-29
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 ## 执行原则
@@ -27,6 +27,8 @@ last_reviewed_at: 2026-03-28
 - task 文档的人类标题必须使用中文直给概述；`task-xxx` 与 `t-xxx` 只作机器引用，不得把英文 task id 当标题。
 - `structural / release` task 的原始阶段轨迹只保留在 `output/agent_session/task-activity/*` 24 小时；到期后只压缩进 companion 的 `artifacts.iteration_digest`，重复 blocker 只生成 `output/ai/retro-candidates/*` 候选，不自动升格到 `memory/experience/*`。
 - 生产发布只认 `main`；`dev` 只是 preview channel，不是长期 git 主分支；回滚通过 release 切换完成，不通过 `git reset` 改写线上状态。
+- 若工具面已安装 Superpowers，任务开始时优先调用相关技能；若技能建议与 `AGENTS.md`、`kernel/task-state-machine.yaml`、`pnpm preflight`、`docs/DEV_WORKFLOW.md` 或发布约束冲突，以仓库主源为准。
+- Superpowers 在本仓只作为增强层；不得把 `docs/superpowers/specs/*`、`docs/superpowers/plans/*` 当长期主源，确需隔离时统一使用项目内 `.worktrees/`，并沿用 `pnpm` 工具链。
 
 ## 默认读链
 

@@ -264,7 +264,7 @@ function runTaskPreflight(changePacket, taskId) {
   }
   applyTaskTransition(taskId, "preflight_passed", {
     source: "coord:preflight",
-    change_class: changePolicy.change_class,
+    change_class: changePacket.change_class,
   });
   startActiveStage(taskId, "execution", {
     source: "coord:task:start",
