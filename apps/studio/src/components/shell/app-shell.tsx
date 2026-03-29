@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { BookOpen, LayoutDashboard, ListTodo, Rocket } from "lucide-react";
+import { BookOpen, LayoutDashboard, ListTodo, Rocket, Workflow } from "lucide-react";
 import type { PropsWithChildren } from "react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/classnames";
 
 const navigation = [
   { href: "/", label: "总览", icon: LayoutDashboard },
+  { href: "/harness", label: "控制面", icon: Workflow },
   { href: "/tasks", label: "任务", icon: ListTodo },
   { href: "/knowledge-base", label: "证据", icon: BookOpen },
   { href: "/releases", label: "发布", icon: Rocket },

@@ -4,6 +4,12 @@
 
 const { updateCompanion } = require("./task-meta.ts");
 const { buildTaskCostSnapshot } = require("../../ai/lib/task-cost-core.ts");
+const {
+  recordHarnessHandoff,
+  recordHarnessPreflight,
+  recordHarnessRelease,
+  recordHarnessReview,
+} = require("../../harness/lib.ts");
 const { cancelTaskBranchCleanup, scheduleBranchCleanupForRelease } = require("./branch-cleanup.ts");
 
 function now() {
@@ -70,7 +76,7 @@ function recordSearchEvidence(taskId, payload = {}) {
 }
 
 function recordPreTaskResult(taskId, result) {
-  return updateCompanion(taskId, (companion) => {
+  const updated = updateCompanion(taskId, (companion) => {
     const decision = latestDecision(result.decision_card);
     companion.lifecycle.pre_task = {
       recorded_at: now(),
@@ -89,10 +95,14 @@ function recordPreTaskResult(taskId, result) {
     }
     return companion;
   });
+  if (updated.ok) {
+    recordHarnessPreflight(taskId, result);
+  }
+  return updated;
 }
 
 function recordHandoff(taskId, payload = {}) {
-  return updateCompanion(taskId, (companion) => {
+  const updated = updateCompanion(taskId, (companion) => {
     const note = {
       recorded_at: now(),
       source: payload.source || "coord:task:handoff",
@@ -106,10 +116,14 @@ function recordHandoff(taskId, payload = {}) {
       deliveryStatus: "in_progress",
     });
   });
+  if (updated.ok) {
+    recordHarnessHandoff(taskId, updated.companion.lifecycle?.handoff || payload);
+  }
+  return updated;
 }
 
 function recordReviewResult(taskId, review) {
-  return updateCompanion(taskId, (companion) => {
+  const updated = updateCompanion(taskId, (companion) => {
     const diffSummary = latestDiffSummary(review.diff_summary);
     const note = {
       recorded_at: now(),
@@ -129,10 +143,14 @@ function recordReviewResult(taskId, review) {
       deliveryStatus: review.ok ? "in_progress" : "blocked",
     });
   });
+  if (updated.ok) {
+    recordHarnessReview(taskId, review);
+  }
+  return updated;
 }
 
 function recordReleaseHandoff(taskId, payload = {}) {
-  return updateCompanion(taskId, (companion) => {
+  const updated = updateCompanion(taskId, (companion) => {
     const note = {
       recorded_at: now(),
       source: payload.source || "release:prepare",
@@ -155,6 +173,10 @@ function recordReleaseHandoff(taskId, payload = {}) {
       versionLabel: payload.release_id || null,
     });
   });
+  if (updated.ok) {
+    recordHarnessRelease(taskId, payload);
+  }
+  return updated;
 }
 
 function recordReleaseCleanupSchedule(taskId, payload = {}) {

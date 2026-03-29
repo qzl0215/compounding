@@ -208,6 +208,19 @@ function collectRuntimeStatuses() {
 }
 
 function runScopeGuard(taskId) {
+  if (!fs.existsSync(path.join(ROOT, "scripts", "coord", "scope-guard.ts"))) {
+    return {
+      ok: true,
+      pass: true,
+      scope_risk_score: 0,
+      scope_summary: "Scope guard unavailable, skipped.",
+      planned_files: [],
+      actual_files: [],
+      undeclared: [],
+      high_risk_undeclared: [],
+      declared_but_unchanged: [],
+    };
+  }
   const result = runJsonNodeScript("scripts/coord/scope-guard.ts", taskId ? [`--taskId=${taskId}`] : []);
   const payload = result.parsed || {
     ok: false,

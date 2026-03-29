@@ -1,3 +1,4 @@
+import type { HarnessLiveSnapshot } from "@/modules/harness";
 import type { ReleaseDashboard } from "@/modules/releases";
 import type { ReleaseTaskOption } from "@/modules/releases";
 import type { TaskCard, TaskDeliveryRow } from "@/modules/tasks";
@@ -56,6 +57,7 @@ export type DiffAwareArtifact = {
 };
 
 export type DeliveryFacts = {
+  harness: HarnessLiveSnapshot;
   taskCards: TaskCard[];
   releaseDashboard: ReleaseDashboard;
   diffAware: DiffAwareArtifact;

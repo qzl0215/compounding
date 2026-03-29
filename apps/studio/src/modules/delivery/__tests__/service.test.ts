@@ -7,6 +7,7 @@ describe("delivery snapshot", () => {
   it("builds a shared read model for tasks, releases and runtime state", async () => {
     const snapshot = await getDeliverySnapshot();
 
+    expect(snapshot.facts.harness.schema_version).toBe("1");
     expect(snapshot.facts.taskCards.length).toBeGreaterThan(0);
     expect(snapshot.projections.taskRows.length).toBeGreaterThan(0);
     expect(snapshot.projections.taskOptions.every((option) => snapshot.projections.taskRows.some((task) => task.id === option.id && task.status !== "done"))).toBe(true);
