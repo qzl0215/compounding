@@ -25,6 +25,7 @@ class FeatureContextCliTests(unittest.TestCase):
         self.assertIn("memory/project/roadmap.md", payload["must_read"])
         self.assertIn("project_judgement", payload)
         self.assertIn("default_flow", payload)
+        self.assertIn("learning_hints", payload)
         self.assertTrue(payload["default_flow"]["entry_command"].startswith("pnpm ai:feature-context"))
         self.assertTrue(any(command.startswith("pnpm ai:find:summary") for command in payload["default_flow"]["summary_first_commands"]))
         self.assertTrue(any(command.startswith("pnpm ai:read:summary") for command in payload["default_flow"]["summary_first_commands"]))
@@ -52,6 +53,7 @@ class FeatureContextCliTests(unittest.TestCase):
         self.assertLessEqual(len(payload["must_read"]), 5)
         self.assertLessEqual(len(payload["read_on_demand"]), 5)
         self.assertLessEqual(len(payload["waste_alerts"]), 3)
+        self.assertLessEqual(len(payload["learning_hints"]), 2)
 
     def test_build_context_balanced_and_expanded_modes(self) -> None:
         env = os.environ.copy()
@@ -68,6 +70,7 @@ class FeatureContextCliTests(unittest.TestCase):
         )
         default_output_path = ROOT / default_run.stdout.strip()
         default_markdown = default_output_path.read_text(encoding="utf8")
+        self.assertIn("## Learning Hints", default_markdown)
         self.assertIn("## Must Read Now", default_markdown)
         self.assertIn("## Read On Demand", default_markdown)
         self.assertNotIn("## Expanded Excerpts", default_markdown)

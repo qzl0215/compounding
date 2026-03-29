@@ -742,6 +742,40 @@ fs.writeFileSync(
     ],
   }}, null, 2)
 );
+const gainDir = path.join(process.cwd(), "output", "ai", "command-gain");
+fs.mkdirSync(gainDir, {{ recursive: true }});
+fs.writeFileSync(
+  path.join(gainDir, "events.jsonl"),
+  [
+    {{
+      timestamp: "2026-03-21T00:00:00.000Z",
+      event_kind: "summary_run",
+      shortcut_id: "preflight_summary",
+      task_id: "task-999-sample",
+      stage: "preflight",
+      saved_tokens_est: 14000,
+      saved_ms_est: 2500,
+    }},
+    {{
+      timestamp: "2026-03-21T00:01:00.000Z",
+      event_kind: "shortcut_opportunity",
+      shortcut_id: "preflight_summary",
+      task_id: "task-999-sample",
+      stage: "preflight",
+      adopted: false,
+      original_cmd: "pnpm preflight -- --taskId=task-999-sample",
+    }},
+    {{
+      timestamp: "2026-03-21T00:02:00.000Z",
+      event_kind: "shortcut_opportunity",
+      shortcut_id: "preflight_summary",
+      task_id: "task-999-sample",
+      stage: "preflight",
+      adopted: false,
+      original_cmd: "pnpm preflight -- --taskId=task-999-sample",
+    }},
+  ].map((event) => JSON.stringify(event)).join("\\n") + "\\n"
+);
 console.log(JSON.stringify({{ ok: true }}));
 """
         )
@@ -755,9 +789,12 @@ console.log(JSON.stringify({{ ok: true }}));
         self.assertTrue(payload["ok"])
         self.assertTrue(payload["iteration_digest_path"].endswith("agent-coordination/tasks/task-999-sample.json"))
         self.assertTrue(payload["retro_candidates_path"].endswith("output/ai/retro-candidates/latest.json"))
+        self.assertTrue(payload["learning_candidates_path"].endswith("output/ai/learning-candidates/latest.json"))
         self.assertTrue(any("review_wait" in hint for hint in payload["retro_hints"]))
         self.assertTrue(any("工作区未清理" in hint for hint in payload["retro_hints"]))
         self.assertTrue(any("shortcut" in hint for hint in payload["retro_hints"]))
+        self.assertTrue(any("工作区未清理" in hint for hint in payload["learning_hints"]))
+        self.assertTrue(any("preflight_summary" in hint for hint in payload["learning_hints"]))
 
     def test_coord_task_start_uses_unified_preflight_entry(self) -> None:
         self.install_preflight_fixtures()

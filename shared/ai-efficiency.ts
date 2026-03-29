@@ -1,5 +1,6 @@
 import { createRequire } from "node:module";
 import type { TaskCostLedger } from "./task-cost";
+import type { LearningCandidate, PromotionProposal } from "./learning-signals";
 
 const require = createRequire(import.meta.url);
 const { taskCostIntensityScore } = require("./task-cost.ts");
@@ -134,6 +135,8 @@ export type AiEfficiencyDashboard = {
       reason: string;
       evidence: string;
     }>;
+    learning_candidates: LearningCandidate[];
+    promotion_queue: PromotionProposal[];
   };
   context_density: {
     total_packets: number;
@@ -330,6 +333,10 @@ export function buildAiEfficiencyDashboard(
       top_missed_shortcuts?: AiEfficiencyDashboard["context_waste"]["top_missed_shortcuts"];
       promotion_candidates?: AiEfficiencyDashboard["context_waste"]["promotion_candidates"];
     } | null;
+    learningCandidatesReport?: {
+      candidates?: LearningCandidate[];
+      promotion_queue?: PromotionProposal[];
+    } | null;
   } = {},
 ): AiEfficiencyDashboard {
   const events = inputEvents.map(normalizeAiEfficiencyEvent);
@@ -514,6 +521,7 @@ export function buildAiEfficiencyDashboard(
   const contextOutput = contextEvents.reduce((sum, event) => sum + event.output_tokens_est, 0);
   const contextSaved = contextEvents.reduce((sum, event) => sum + event.saved_tokens_est, 0);
   const contextRetro = options.contextRetroReport || null;
+  const learningCandidates = options.learningCandidatesReport || null;
   const taskCostLedgers = [...(options.taskCostLedgers || [])].sort(
     (left, right) => taskCostIntensityScore(right) - taskCostIntensityScore(left) || left.task_id.localeCompare(right.task_id),
   );
@@ -566,6 +574,8 @@ export function buildAiEfficiencyDashboard(
       top_time_loss_patterns: Array.isArray(contextRetro?.top_time_loss_patterns) ? contextRetro.top_time_loss_patterns : [],
       top_missed_shortcuts: Array.isArray(contextRetro?.top_missed_shortcuts) ? contextRetro.top_missed_shortcuts : [],
       promotion_candidates: Array.isArray(contextRetro?.promotion_candidates) ? contextRetro.promotion_candidates : [],
+      learning_candidates: Array.isArray(learningCandidates?.candidates) ? learningCandidates.candidates : [],
+      promotion_queue: Array.isArray(learningCandidates?.promotion_queue) ? learningCandidates.promotion_queue : [],
     },
     context_density: {
       total_packets: contextEvents.length,

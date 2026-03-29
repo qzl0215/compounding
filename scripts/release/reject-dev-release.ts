@@ -1,6 +1,7 @@
 const childProcess = require("node:child_process");
 const path = require("node:path");
 const { finishWaitStageIfOpen, recordBlocker } = require("../coord/lib/task-activity.ts");
+const { refreshLearningCandidatesSnapshot } = require("../ai/lib/learning-candidates.ts");
 const {
   clearChannelSymlink,
   clearPendingDevRelease,
@@ -63,6 +64,7 @@ try {
         dev: previewBaseUrl(),
         production: productionBaseUrl(),
       },
+      learning_candidates_path: refreshLearningCandidatesSnapshot(process.cwd(), { taskId: activityTaskId }).json_path || null,
       registry: result.registry,
     })
   );
@@ -96,6 +98,7 @@ try {
         dev: previewBaseUrl(),
         production: productionBaseUrl(),
       },
+      learning_candidates_path: refreshLearningCandidatesSnapshot(process.cwd(), { taskId: activityTaskId }).json_path || null,
     })
   );
 }

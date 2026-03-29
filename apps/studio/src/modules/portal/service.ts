@@ -53,9 +53,11 @@ export async function getHomeStatusBoard(): Promise<HomeLogicMapSnapshot> {
       avgSavingsLabel: `${projectState.aiEfficiency.dashboard.overview.avg_savings_pct_est}%`,
       alert: projectState.aiEfficiency.dashboard.adoption.alerts[0]
         ? `${projectState.aiEfficiency.dashboard.adoption.alerts[0].shortcut_id} adoption ${projectState.aiEfficiency.dashboard.adoption.alerts[0].adoption_pct}%`
-        : null,
-      contextPattern: projectState.aiEfficiency.dashboard.context_waste.top_time_loss_patterns[0]
-        ? projectState.aiEfficiency.dashboard.context_waste.top_time_loss_patterns[0].signature
+        : projectState.aiEfficiency.dashboard.context_waste.promotion_queue[0]
+          ? projectState.aiEfficiency.dashboard.context_waste.promotion_queue[0].planning_summary
+          : null,
+      contextPattern: projectState.aiEfficiency.dashboard.context_waste.learning_candidates[0]
+        ? projectState.aiEfficiency.dashboard.context_waste.learning_candidates[0].pattern_key
         : null,
       contextMode: "balanced",
     },

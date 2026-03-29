@@ -37,6 +37,7 @@
     "ai:find:summary": "node --experimental-strip-types scripts/ai/find-summary.ts",
     "ai:read:summary": "node --experimental-strip-types scripts/ai/read-summary.ts",
     "ai:context-retro": "node --experimental-strip-types scripts/ai/context-retro.ts",
+    "ai:learning-candidates": "node --experimental-strip-types scripts/ai/learning-candidates.ts",
     "ai:command-gain": "node --experimental-strip-types scripts/ai/command-gain.ts",
     "ai:task-cost": "node --experimental-strip-types scripts/ai/task-cost.ts",
     "ai:create-task": "node --experimental-strip-types scripts/ai/create-task.ts",

@@ -11,6 +11,7 @@ export default async function AiEfficiencyPage() {
   const dashboard = projectState.aiEfficiency.dashboard;
   const topAlert = dashboard.adoption.alerts[0] || null;
   const topTimeLoss = dashboard.context_waste.top_time_loss_patterns[0] || null;
+  const topPromotionProposal = dashboard.context_waste.promotion_queue[0] || null;
 
   return (
     <div className="space-y-6">
@@ -119,12 +120,18 @@ export default async function AiEfficiencyPage() {
           eyebrow="Context"
           title="把时间浪费模式和上下文密度放进同一页"
           description="这一屏只回答两件事：最近时间浪费在哪里，以及当前默认上下文包是否继续保持高密度。"
-          note={topTimeLoss ? `${topTimeLoss.signature} 是最近最大的 time-loss pattern。` : "当前窗口内没有明显 time-loss pattern。"}
+          note={
+            topPromotionProposal
+              ? `${topPromotionProposal.planning_summary} 是当前最高优先级的 promotion queue。`
+              : topTimeLoss
+                ? `${topTimeLoss.signature} 是最近最大的 time-loss pattern。`
+                : "当前窗口内没有明显 time-loss pattern。"
+          }
           metrics={[
             { label: "context packets", value: `${dashboard.context_density.total_packets} 次`, tone: "accent" },
             { label: "balanced 占比", value: `${dashboard.context_density.balanced_pct}%`, tone: dashboard.context_density.balanced_pct >= 60 ? "success" : "warning" },
             { label: "上下文节省", value: `~${formatEstimatedTokens(dashboard.context_density.total_saved_tokens_est)}`, tone: "success" },
-            { label: "promotion 候选", value: `${dashboard.context_waste.promotion_candidates.length} 个`, tone: dashboard.context_waste.promotion_candidates.length ? "warning" : "accent" },
+            { label: "promotion queue", value: `${dashboard.context_waste.promotion_queue.length} 个`, tone: dashboard.context_waste.promotion_queue.length ? "warning" : "accent" },
           ]}
         />
         <div className="grid gap-4 xl:grid-cols-2">
@@ -151,6 +158,25 @@ export default async function AiEfficiencyPage() {
               body: `${item.reason} ${item.evidence}`,
             }))}
             emptyText="当前没有达到升格阈值的候选。"
+          />
+          <DetailList
+            title="Learning Candidates"
+            items={dashboard.context_waste.learning_candidates.map((item) => ({
+              label: item.pattern_key,
+              body:
+                `${item.task_count} 个 tasks，repeat ${item.repeat_count}，` +
+                `lost ${Math.round((item.lost_time_ms / 60000) * 10) / 10} 分钟，` +
+                `missed ~${formatEstimatedTokens(item.missed_savings_est)}。`,
+            }))}
+            emptyText="当前还没有 learning candidate。"
+          />
+          <DetailList
+            title="Promotion Queue"
+            items={dashboard.context_waste.promotion_queue.map((item) => ({
+              label: item.planning_summary,
+              body: `${item.why_now} 下一步目标：${item.suggested_target}。`,
+            }))}
+            emptyText="当前没有待推进的 promotion proposal。"
           />
           <DetailList
             title="Context-Heavy Tasks"

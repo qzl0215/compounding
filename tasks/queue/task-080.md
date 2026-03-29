@@ -4,7 +4,7 @@
 
 - 任务 ID：`task-080`
 - 短编号：`t-080`
-- 父计划：``
+- 父计划：`memory/project/operating-blueprint.md`
 - 任务摘要：
   收口学习信号晋升链
 - 为什么现在：
@@ -18,7 +18,11 @@
 
 ### 要做
 
-
+- 统一 `LearningSignal / LearningCandidate / PromotionProposal` contract，并提供稳定 `pattern_key` 归一化。
+- 新增 `pnpm ai:learning-candidates`，只读取既有 truth source，输出 `output/ai/learning-candidates/latest.json|md`。
+- 把 current-task learning hints 接回 `preflight`、`feature-context`、`build-context` 与 `ai-efficiency` 读模型。
+- 在 `release prepare / accept / reject / rollback` 边界刷新 learning candidate snapshot，并保持其为派生产物。
+- 补齐 CLI / preflight / feature-context / ai-efficiency 相关测试，验证 hint、candidate、promotion proposal 与 governance 约束。
 
 ### 不做
 
@@ -59,7 +63,24 @@ truth source 只读 companion iteration_digest、task activity/live summary 与 
 
 ## 关联模块
 
-
+- `scripts/ai/lib/learning-candidates.ts`
+- `scripts/ai/learning-candidates.ts`
+- `shared/learning-signals.ts`
+- `scripts/coord/lib/preflight-gate.ts`
+- `scripts/ai/lib/feature-context.ts`
+- `scripts/release/prepare-release.ts`
+- `scripts/release/accept-dev-release.ts`
+- `scripts/release/reject-dev-release.ts`
+- `scripts/release/rollback-release.ts`
+- `shared/ai-efficiency.ts`
+- `package.json`
+- `apps/studio/src/modules/project-state/service.ts`
+- `apps/studio/src/modules/project-state/components/ai-efficiency-card.tsx`
+- `apps/studio/src/app/ai-efficiency/page.tsx`
+- `apps/studio/src/modules/portal/service.ts`
+- `tests/test_ai_learning_candidates.py`
+- `tests/test_ai_feature_context.py`
+- `tests/test_coord_cli.py`
 
 ## 更新痕迹
 
