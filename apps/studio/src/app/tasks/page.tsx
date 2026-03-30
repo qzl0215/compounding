@@ -1,24 +1,23 @@
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
-import { getDeliverySnapshot } from "@/modules/delivery";
 import { HarnessBoard } from "@/modules/harness";
-import { getProjectStateSnapshot, ProjectJudgementStrip } from "@/modules/project-state";
+import { getOrchestrationSnapshot } from "@/modules/orchestration";
+import { ProjectJudgementStrip } from "@/modules/project-state";
 import { DeliveryTable } from "@/modules/tasks/components/delivery-table";
 import { buildSubtaskTableRows } from "@/modules/tasks/subtask-table";
 
 export const dynamic = "force-dynamic";
 
 export default async function TasksPage() {
-  const snapshot = await getDeliverySnapshot();
-  const projectState = await getProjectStateSnapshot({ deliverySnapshot: snapshot });
-  const releaseDashboard = snapshot.facts.releaseDashboard;
-  const rows = buildSubtaskTableRows(snapshot.projections.taskRows);
+  const snapshot = await getOrchestrationSnapshot();
+  const releaseDashboard = snapshot.delivery.facts.releaseDashboard;
+  const rows = buildSubtaskTableRows(snapshot.delivery.projections.taskRows);
   const activeCount = rows.filter((row) => row.deliveryStatus === "in_progress").length;
   const pendingAcceptanceCount = rows.filter((row) => row.deliveryStatus === "pending_acceptance").length;
   const blockedCount = rows.filter((row) => row.deliveryStatus === "blocked").length;
-  const cleanupScheduledCount = projectState.execution.cleanup.scheduled;
-  const cleanupFailedCount = projectState.execution.cleanup.failed;
-  const cleanupOverdueCount = projectState.execution.cleanup.overdue;
+  const cleanupScheduledCount = snapshot.projectState.execution.cleanup.scheduled;
+  const cleanupFailedCount = snapshot.projectState.execution.cleanup.failed;
+  const cleanupOverdueCount = snapshot.projectState.execution.cleanup.overdue;
 
   return (
     <div className="space-y-6">
@@ -26,8 +25,8 @@ export default async function TasksPage() {
         <PageHeader
           eyebrow="执行面板"
           title="子任务清单"
-          description={projectState.execution.summary}
-          note={projectState.focus.summary}
+          description={snapshot.projectState.execution.summary}
+          note={snapshot.projectState.focus.summary}
           metrics={[
             {
               label: "当前子任务",
@@ -41,7 +40,7 @@ export default async function TasksPage() {
             },
             {
               label: "待验收",
-              value: projectState.release.pendingAcceptance || `${pendingAcceptanceCount} 项`,
+              value: snapshot.projectState.release.pendingAcceptance || `${pendingAcceptanceCount} 项`,
               tone: pendingAcceptanceCount > 0 ? "warning" : "default",
             },
             {
@@ -69,11 +68,11 @@ export default async function TasksPage() {
       </section>
 
       <section id="task-judgement">
-        <ProjectJudgementStrip judgement={projectState.judgement} />
+        <ProjectJudgementStrip judgement={snapshot.projectState.judgement} />
       </section>
 
       <section id="task-harness">
-        <HarnessBoard snapshot={snapshot.facts.harness} compact />
+        <HarnessBoard snapshot={snapshot.harness} compact />
       </section>
 
       <section id="task-table">
@@ -84,10 +83,10 @@ export default async function TasksPage() {
               <p className="mt-3 text-sm leading-7 text-slate-600">只保留当前需要推进的事项；计划边界看运营蓝图，交付历史看发布页。</p>
             </div>
             <p className="max-w-2xl text-sm leading-6 text-slate-600">
-              {projectState.execution.cleanup.alert
-                ? projectState.execution.cleanup.alert
-                : projectState.release.pendingAcceptance
-                ? `${projectState.release.pendingAcceptance}，先做判断再继续推进。`
+              {snapshot.projectState.execution.cleanup.alert
+                ? snapshot.projectState.execution.cleanup.alert
+                : snapshot.projectState.release.pendingAcceptance
+                ? `${snapshot.projectState.release.pendingAcceptance}，先做判断再继续推进。`
                 : "这里默认不堆额外面板，只保留最必要的执行信息，避免把“做什么”又做回一张复杂工单。"}
             </p>
           </div>

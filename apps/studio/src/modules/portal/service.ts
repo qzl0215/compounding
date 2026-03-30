@@ -2,12 +2,13 @@ import { getProjectStateSnapshot } from "@/modules/project-state";
 import { buildHomeLogicMapSnapshot } from "./builders";
 import { HOME_ENTRY_LINKS } from "./constants";
 import { formatEstimatedTokens } from "../../../../../shared/token-format";
+import type { ProjectStateSnapshot } from "@/modules/project-state";
 import type { HomeLogicMapSnapshot, SemanticEntry, SemanticEntryGroup } from "./types";
 
 export { DEFAULT_DOC_PATH, HOME_ENTRY_LINKS } from "./constants";
 
-export async function getHomeStatusBoard(): Promise<HomeLogicMapSnapshot> {
-  const projectState = await getProjectStateSnapshot();
+export async function getHomeStatusBoard(input?: { projectState?: ProjectStateSnapshot }): Promise<HomeLogicMapSnapshot> {
+  const projectState = input?.projectState ?? (await getProjectStateSnapshot());
 
   return buildHomeLogicMapSnapshot({
     name: projectState.identity.name,

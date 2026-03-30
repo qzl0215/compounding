@@ -1,9 +1,9 @@
 import { headers } from "next/headers";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
-import { getDeliverySnapshot } from "@/modules/delivery";
 import { HarnessBoard } from "@/modules/harness";
-import { getProjectStateSnapshot, ProjectJudgementStrip } from "@/modules/project-state";
+import { getOrchestrationSnapshot } from "@/modules/orchestration";
+import { ProjectJudgementStrip } from "@/modules/project-state";
 import { DiffAwarePanel } from "@/modules/delivery/components/diff-aware-panel";
 import { getManagementAccessState, getRuntimeStatusExplanation } from "@/modules/releases";
 import type { LocalRuntimeStatus } from "@/modules/releases";
@@ -25,10 +25,9 @@ export default async function ReleasesPage() {
     );
   }
 
-  const snapshot = await getDeliverySnapshot();
-  const projectState = await getProjectStateSnapshot({ deliverySnapshot: snapshot });
-  const dashboard = snapshot.facts.releaseDashboard;
-  const taskOptions = snapshot.projections.taskOptions;
+  const snapshot = await getOrchestrationSnapshot();
+  const dashboard = snapshot.delivery.facts.releaseDashboard;
+  const taskOptions = snapshot.delivery.projections.taskOptions;
 
   return (
     <div className="space-y-6">
@@ -36,8 +35,8 @@ export default async function ReleasesPage() {
         <PageHeader
           eyebrow="发布判断"
           title="这页只回答一件事：现在该验收、继续发布，还是先修运行态"
-          description={projectState.release.conclusion}
-          note={projectState.release.nextAction}
+          description={snapshot.projectState.release.conclusion}
+          note={snapshot.projectState.release.nextAction}
           metrics={[
             {
               label: "生产激活版本",
@@ -64,11 +63,11 @@ export default async function ReleasesPage() {
       </section>
 
       <section id="release-judgement">
-        <ProjectJudgementStrip judgement={projectState.judgement} />
+        <ProjectJudgementStrip judgement={snapshot.projectState.judgement} />
       </section>
 
       <section id="release-harness">
-        <HarnessBoard snapshot={snapshot.facts.harness} compact />
+        <HarnessBoard snapshot={snapshot.harness} compact />
       </section>
 
       <section id="runtime-status">
@@ -102,7 +101,7 @@ export default async function ReleasesPage() {
             这里仍然保留改动范围驱动的验证线索，但它属于“已经决定进发布页后再看的细节”，不该抢首页判断。
           </p>
           <div className="mt-6">
-            <DiffAwarePanel artifact={snapshot.facts.diffAware} />
+            <DiffAwarePanel artifact={snapshot.delivery.facts.diffAware} />
           </div>
         </Card>
       </section>

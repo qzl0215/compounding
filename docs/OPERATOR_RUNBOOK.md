@@ -2,7 +2,7 @@
 title: OPERATOR_RUNBOOK
 update_mode: generated
 status: active
-last_reviewed_at: 2026-03-29
+last_reviewed_at: 2026-03-30
 source_of_truth: bootstrap/project_operator.yaml
 related_docs:
   - AGENTS.md

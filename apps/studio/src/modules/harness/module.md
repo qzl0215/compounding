@@ -2,7 +2,7 @@
 
 ## 模块目标
 
-负责把单一控制平面 live snapshot 接入 Studio，并输出人可读的 orchestration board。
+负责把单一控制平面 live snapshot 接入 Studio，并输出 orchestration board，供 orchestration service 统一消费。
 
 ## 入口与拥有面
 
@@ -11,6 +11,7 @@
 - Service：`apps/studio/src/modules/harness/service.ts`
 - 组件：`apps/studio/src/modules/harness/components/harness-board.tsx`
 - CLI：`scripts/harness/status.ts`
+- 上游统一读模型：`apps/studio/src/modules/orchestration/service.ts`
 
 ## 常改文件
 
@@ -25,7 +26,7 @@
 ## 不变量
 
 - harness 是单一控制平面的只读展示层，不在 Studio 内直接做状态迁移。
-- `/harness`、首页、任务页、发布页必须共用同一份 `HarnessLiveSnapshot`，不能再各自拼装多源真相。
+- `/harness`、首页、任务页、发布页必须共用同一份 orchestration snapshot，不能再各自拼装多源真相。
 - hygiene blocker、workflow state、runtime alignment 和 next action 必须同时出现，不能只展示结论不展示原因。
 
 ## 推荐校验

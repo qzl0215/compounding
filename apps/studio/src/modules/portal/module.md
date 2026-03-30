@@ -2,7 +2,7 @@
 
 ## 模块目标
 
-负责人类优先的首页逻辑态势图、默认阅读入口和证据入口分组。
+负责人类优先的首页逻辑态势图、默认阅读入口和证据入口分组，并作为 orchestration snapshot 的首页投影。
 
 ## 入口与拥有面
 
@@ -11,6 +11,7 @@
 - Service：`apps/studio/src/modules/portal/service.ts`
 - 组件：`apps/studio/src/modules/portal/components/home-logic-board.tsx`
 - Builder：`apps/studio/src/modules/portal/builders/home-logic-map.ts`
+- 上游统一读模型：`apps/studio/src/modules/orchestration/service.ts`
 
 ## 常改文件
 
@@ -26,7 +27,7 @@
 
 - 首页只展示项目逻辑态势与下钻入口，不回流 Kernel、artifact、workspace path 等工程对象。
 - 首页节点必须可点击，并只指向一个最相关的文档或页面。
-- 首页的阶段、焦点、待验收和运行提醒必须与任务页、发布页共享同一份项目状态摘要。
+- 首页的阶段、焦点、待验收和运行提醒必须与任务页、发布页共享同一份 orchestration snapshot。
 
 ## 推荐校验
 

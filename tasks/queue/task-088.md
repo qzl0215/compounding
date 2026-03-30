@@ -49,13 +49,13 @@
 
 ## 交付结果
 
-- 状态：
+- 状态：进行中
 - 体验验收结果：
-  
+  Home、Tasks、Releases、`/harness` 已切到同一份 orchestration snapshot；页面层不再各自拼装 harness / delivery / project-state 真相。
 - 交付结果：
-  
+  新增 `apps/studio/src/modules/orchestration/*` 作为唯一聚合读模型；`apps/studio/src/app/page.tsx`、`apps/studio/src/app/tasks/page.tsx`、`apps/studio/src/app/releases/page.tsx`、`apps/studio/src/app/harness/page.tsx` 与 `apps/studio/src/app/ai-efficiency/page.tsx` 已改为经由 orchestration service 读取。
 - 复盘：
-  
+  这轮最重要的收口不是再造一个页面，而是把“谁负责拼真相”收成一个 service；这样 harness 仍负责控制面，Studio 只消费投影，不会继续长出并行读链。
 
 ## 分支
 
@@ -86,4 +86,4 @@
 - 记忆：no change: 未更新
 - 索引：no change: 未更新
 - 路线图：no change: 未更新
-- 文档：no change: 未更新
+- 文档：updated: 新增 orchestration module，并同步更新 portal / project-state / delivery / releases / harness 的模块说明

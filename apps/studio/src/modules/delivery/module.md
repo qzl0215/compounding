@@ -2,7 +2,7 @@
 
 ## 模块目标
 
-负责把任务板、release 面板和当前 diff 汇总成一份可交付快照，供首页与交付页统一读取。
+负责把任务板、release 面板、当前 diff 与 harness 运行事实汇总成一份可交付快照，供 orchestration service 统一读取。
 
 ## 入口与拥有面
 
@@ -11,6 +11,7 @@
 - Service：`apps/studio/src/modules/delivery/service.ts`
 - Diff：`apps/studio/src/modules/delivery/diff-aware.ts`
 - 组件：`apps/studio/src/modules/delivery/components/diff-aware-panel.tsx`
+- 上游统一读模型：`apps/studio/src/modules/orchestration/service.ts`
 
 ## 常改文件
 
@@ -25,7 +26,7 @@
 ## 不变量
 
 - diff-aware 摘要只提供验证与风险线索，不升级为新的治理主源。
-- 交付快照必须复用 task 和 release 真相源，不本地发明第三套状态。
+- 交付快照必须复用 task、release 和 harness 真相源，不本地发明第三套状态。
 - 选测输出默认快、必要时重，不把 full validation 变成每次 feature 改动的默认负担。
 
 ## 推荐校验

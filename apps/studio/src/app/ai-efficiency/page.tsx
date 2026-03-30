@@ -1,13 +1,15 @@
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
-import { AiEfficiencyCard, getProjectStateSnapshot } from "@/modules/project-state";
+import { AiEfficiencyCard } from "@/modules/project-state";
+import { getOrchestrationSnapshot } from "@/modules/orchestration";
 import { formatEstimatedTokens } from "../../../../../shared/token-format";
 import { formatTaskCostCodeDelta, formatTaskCostDuration, summarizeTaskCostEffect } from "../../../../../shared/task-cost";
 
 export const dynamic = "force-dynamic";
 
 export default async function AiEfficiencyPage() {
-  const projectState = await getProjectStateSnapshot();
+  const orchestration = await getOrchestrationSnapshot();
+  const projectState = orchestration.projectState;
   const dashboard = projectState.aiEfficiency.dashboard;
   const topAlert = dashboard.adoption.alerts[0] || null;
   const topTimeLoss = dashboard.context_waste.top_time_loss_patterns[0] || null;

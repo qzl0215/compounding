@@ -2,7 +2,7 @@
 
 ## 模块目标
 
-负责本机/内网发布管理页、release registry 读取、本地生产运行态展示、发布/回滚动作调度，以及发布目录约定的统一入口。
+负责本机/内网发布管理页、release registry 读取、本地生产运行态展示、发布/回滚动作调度，以及作为 orchestration snapshot 的发布投影。
 
 ## 入口与拥有面
 
@@ -11,6 +11,7 @@
 - Service：`apps/studio/src/modules/releases/registry.ts`
 - 动作：`apps/studio/src/modules/releases/actions-service.ts`
 - CLI：`scripts/release/*`
+- 上游统一读模型：`apps/studio/src/modules/orchestration/service.ts`
 
 ## 常改文件
 
@@ -26,7 +27,7 @@
 
 - release 只承接验收与运行事实，不回写 task 正文，也不生成第二份计划状态。
 - `main` 是唯一生产主线；preview 和 rollback 只通过 release 切换完成。
-- 页面展示优先读取规范化后的 release snapshot，不直接消费旧 `delivery_*` 兼容字段。
+- 页面展示优先读取规范化后的 release snapshot 和 orchestration snapshot，不直接消费旧 `delivery_*` 兼容字段。
 
 ## 推荐校验
 
