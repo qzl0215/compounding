@@ -1,5 +1,4 @@
 import type { TaskDeliveryRow } from "@/modules/tasks";
-import { deriveDemandStageFromStateId } from "../../../../../shared/task-state-machine";
 import type { DemandStage } from "./types";
 
 export const DEMAND_STAGE_LABELS: Record<DemandStage, string> = {
@@ -48,5 +47,10 @@ export function groupTaskRowsByDemandStage(rows: TaskDeliveryRow[]) {
 }
 
 export function resolveTaskDemandStage(row: TaskDeliveryRow): DemandStage {
-  return deriveDemandStageFromStateId(row.machine.stateId);
+  const stateId = row.machine.stateId;
+  if (stateId === "planning") return "planning";
+  if (stateId === "ready") return "ready";
+  if (stateId === "acceptance_pending") return "acceptance";
+  if (stateId === "released" || stateId === "rolled_back" || stateId === "abandoned") return "released";
+  return "doing";
 }

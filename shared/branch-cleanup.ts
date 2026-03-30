@@ -184,7 +184,7 @@ export function normalizeBranchCleanupRecord(input: Partial<BranchCleanupRecord>
       ? input.attempts
           .map((attempt) => ({
             attempted_at: normalizeString(attempt?.attempted_at) || null,
-            scope: normalizeString(attempt?.scope) === "remote" ? "remote" : "local",
+            scope: (normalizeString(attempt?.scope) === "remote" ? "remote" : "local") as BranchCleanupSideScope,
             ok: Boolean(attempt?.ok),
             action: normalizeString(attempt?.action),
             error_code: normalizeString(attempt?.error_code) || null,
@@ -288,4 +288,3 @@ export function buildTaskBranchCleanupView(record: BranchCleanupRecord | null | 
     summary: summarizeBranchCleanup(normalized, now),
   };
 }
-

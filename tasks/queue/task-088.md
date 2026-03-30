@@ -87,3 +87,4 @@
 - 索引：no change: 未更新
 - 路线图：no change: 未更新
 - 文档：updated: 新增 orchestration module，并同步更新 portal / project-state / delivery / releases / harness 的模块说明
+- 文档：updated: 移除 `next/font/google` 依赖，改用本地字体栈以保证 release 构建可离线完成

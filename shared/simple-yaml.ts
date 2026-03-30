@@ -215,31 +215,33 @@ export function validateSimpleSchema(payload: unknown, schema: SimpleSchema, poi
   const expectedType = schema?.type;
 
   if (expectedType === "object") {
+    const objectSchema = schema as Extract<SimpleSchema, { type?: "object" }>;
     if (!payload || typeof payload !== "object" || Array.isArray(payload)) return [`${pointer}: expected object`];
     const record = payload as Record<string, unknown>;
-    for (const field of schema.required || []) {
+    for (const field of objectSchema.required || []) {
       if (!(field in record)) errors.push(`${pointer}.${field}: missing required field`);
     }
     for (const [key, value] of Object.entries(record)) {
-      if (schema.properties?.[key]) {
-        errors.push(...validateSimpleSchema(value, schema.properties[key] as SimpleSchema, `${pointer}.${key}`));
+      if (objectSchema.properties?.[key]) {
+        errors.push(...validateSimpleSchema(value, objectSchema.properties[key] as SimpleSchema, `${pointer}.${key}`));
       }
     }
-    if (Array.isArray(schema.enum) && !schema.enum.includes(payload)) {
-      errors.push(`${pointer}: expected one of ${schema.enum.join(", ")}`);
+    if (Array.isArray(objectSchema.enum) && !objectSchema.enum.includes(payload)) {
+      errors.push(`${pointer}: expected one of ${objectSchema.enum.join(", ")}`);
     }
     return errors;
   }
 
   if (expectedType === "array") {
+    const arraySchema = schema as Extract<SimpleSchema, { type?: "array" }>;
     if (!Array.isArray(payload)) return [`${pointer}: expected array`];
-    if (schema.items) {
+    if (arraySchema.items) {
       payload.forEach((item, index) => {
-        errors.push(...validateSimpleSchema(item, schema.items as SimpleSchema, `${pointer}[${index}]`));
+        errors.push(...validateSimpleSchema(item, arraySchema.items as SimpleSchema, `${pointer}[${index}]`));
       });
     }
-    if (Array.isArray(schema.enum) && !schema.enum.includes(payload)) {
-      errors.push(`${pointer}: expected one of ${schema.enum.join(", ")}`);
+    if (Array.isArray(arraySchema.enum) && !arraySchema.enum.includes(payload)) {
+      errors.push(`${pointer}: expected one of ${arraySchema.enum.join(", ")}`);
     }
     return errors;
   }

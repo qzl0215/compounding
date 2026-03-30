@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { loadSimpleYamlFile, validateSimpleSchema } from "./simple-yaml.ts";
+import { loadSimpleYamlFile, validateSimpleSchema, type SimpleSchema } from "./simple-yaml.ts";
 
 export type TaskModeId = "planning" | "execution" | "review" | "release";
 
@@ -203,7 +203,7 @@ export function loadTaskStateMachine(root = process.cwd()): TaskStateMachineSpec
   if (cached) return cached;
 
   const spec = loadSimpleYamlFile<TaskStateMachineSpec>(specPath(root));
-  const schema = loadSimpleYamlFile(schemaPath(root));
+  const schema = loadSimpleYamlFile<SimpleSchema>(schemaPath(root));
   const schemaErrors = validateSimpleSchema(spec, schema);
   if (schemaErrors.length > 0) {
     throw new Error(`Invalid task state machine schema:\n${schemaErrors.join("\n")}`);

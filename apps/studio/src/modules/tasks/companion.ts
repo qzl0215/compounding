@@ -1,11 +1,17 @@
 import fs from "node:fs";
 import path from "node:path";
-import { buildTaskBranchCleanupView, normalizeBranchCleanupRecord, type TaskBranchCleanupView } from "../../../../../shared/branch-cleanup";
+import {
+  buildTaskBranchCleanupView,
+  normalizeBranchCleanupRecord,
+  type BranchCleanupRecord,
+  type TaskBranchCleanupView,
+} from "../../../../../shared/branch-cleanup";
 import {
   getTaskModeLabel,
   getTaskStateLabel,
   normalizeTaskMachineState,
   type TaskMachineState,
+  type TaskTransitionEventId,
 } from "../../../../../shared/task-state-machine";
 
 type CompanionReleaseNote = {
@@ -43,7 +49,7 @@ type TaskCompanionShape = {
   locks?: CompanionLock[];
   lifecycle?: CompanionLifecycle;
   artifacts?: {
-    branch_cleanup?: unknown;
+    branch_cleanup?: Partial<BranchCleanupRecord> | null;
     decision_cards?: { path?: string | null }[];
     diff_summaries?: { path?: string | null }[];
     release_notes?: CompanionReleaseNote[];
@@ -61,7 +67,7 @@ export type TaskCompanionFacts = {
   blockedFromState: TaskMachineState["blocked_from_state"];
   resumeToState: TaskMachineState["resume_to_state"];
   blockedReason: string;
-  lastTransitionEvent: TaskMachineState["last_transition"] extends { event_id: infer T } ? T | null : string | null;
+  lastTransitionEvent: TaskTransitionEventId | null;
   branch: string;
   recentCommit: string;
   completionMode: string;
