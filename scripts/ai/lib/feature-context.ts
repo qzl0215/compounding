@@ -5,7 +5,7 @@ const { buildSummaryFirstWorkflow } = require(path.join(process.cwd(), "shared",
 const { VALIDATION_LAYERS } = require(path.join(process.cwd(), "apps", "studio", "src", "modules", "releases", "validation.ts"));
 const { buildContextRetroReport } = require("./context-retro.ts");
 const { buildChangePacket } = require("./change-policy.ts");
-const { buildProjectJudgementContract } = require(path.join(process.cwd(), "shared", "project-judgement.ts"));
+const { buildLiveProjectJudgementContract } = require(path.join(process.cwd(), "shared", "project-judgement-live.ts"));
 const { readCompanion } = require(path.join(process.cwd(), "scripts", "coord", "lib", "task-meta.ts"));
 
 const SURFACE_TO_MODULES = {
@@ -376,11 +376,7 @@ function buildInvariants(moduleContracts) {
 }
 
 function buildProjectJudgement(root) {
-  return buildProjectJudgementContract({
-    currentStateContent: readIfExists(root, "memory/project/current-state.md"),
-    roadmapContent: readIfExists(root, "memory/project/roadmap.md"),
-    blueprintContent: readIfExists(root, "memory/project/operating-blueprint.md"),
-  });
+  return buildLiveProjectJudgementContract(root);
 }
 
 function buildEntryCommand(options, overlay, targetSurface) {

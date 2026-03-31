@@ -1,23 +1,12 @@
 const path = require("node:path");
-const fs = require("node:fs");
-const { buildProjectJudgementContract } = require(path.join(process.cwd(), "shared", "project-judgement.ts"));
+const { buildLiveProjectJudgementContract } = require(path.join(process.cwd(), "shared", "project-judgement-live.ts"));
 const { buildFeatureContextPacket } = require("./lib/feature-context.ts");
-
-function readIfExists(relPath) {
-  const absolute = path.join(process.cwd(), relPath);
-  if (!fs.existsSync(absolute)) return "";
-  return fs.readFileSync(absolute, "utf8");
-}
 
 function validateJudgementContract() {
   const errors = [];
   const warnings = [];
   const checked_surfaces = ["home", "tasks", "releases"];
-  const expected = buildProjectJudgementContract({
-    currentStateContent: readIfExists("memory/project/current-state.md"),
-    roadmapContent: readIfExists("memory/project/roadmap.md"),
-    blueprintContent: readIfExists("memory/project/operating-blueprint.md"),
-  });
+  const expected = buildLiveProjectJudgementContract(process.cwd());
 
   if (!expected.overallSummary || !expected.nextAction || !expected.currentPhase || !expected.currentMilestone) {
     errors.push("Shared project judgement contract is missing headline or next-step fields.");

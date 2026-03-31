@@ -100,6 +100,8 @@ class FeatureContextChangeObservationTests(unittest.TestCase):
         for relative in (
             "shared",
             "bootstrap",
+            "kernel",
+            "schemas",
             "scripts/ai/lib",
             "scripts/coord/lib",
             "memory/project",
@@ -113,15 +115,22 @@ class FeatureContextChangeObservationTests(unittest.TestCase):
             "shared/git-changed-files.ts",
             "shared/module-feature-contract.ts",
             "shared/project-judgement.ts",
+            "shared/project-judgement-live.ts",
             "shared/ai-efficiency.ts",
+            "shared/release-registry.ts",
+            "shared/git-workspace.ts",
+            "shared/simple-yaml.ts",
             "shared/token-format.ts",
             "shared/task-cost.ts",
             "shared/task-contract.ts",
             "shared/task-identity.ts",
+            "shared/task-state-machine.ts",
             "scripts/ai/lib/feature-context.ts",
             "scripts/ai/lib/change-policy.ts",
             "apps/studio/src/modules/releases/validation.ts",
             "bootstrap/heading_aliases.json",
+            "kernel/task-state-machine.yaml",
+            "schemas/task-state-machine.schema.yaml",
         ):
             shutil.copy(ROOT / relative, self.target / relative)
 
@@ -233,7 +242,7 @@ class FeatureContextChangeObservationTests(unittest.TestCase):
     def git(self, *args: str) -> None:
         subprocess.run(["git", *args], cwd=self.target, check=True, capture_output=True, text=True)
 
-    def run_feature_context_packet(self) -> dict:
+    def run_feature_context_packet(self, env: dict[str, str] | None = None) -> dict:
         code = "\n".join(
             [
                 'const path = require("node:path");',
@@ -248,6 +257,7 @@ class FeatureContextChangeObservationTests(unittest.TestCase):
             capture_output=True,
             text=True,
             check=True,
+            env=env,
         )
         return json.loads(completed.stdout)
 
@@ -301,3 +311,178 @@ class FeatureContextChangeObservationTests(unittest.TestCase):
         self.assertEqual(self.required_commands(payload), [["pnpm lint"], ["pnpm build"]])
         self.assertEqual(self.recommended_labels(payload), ["运行时检查"])
         self.assertEqual(self.recommended_commands(payload), [["pnpm preview:check"]])
+
+    def test_live_pending_acceptance_changes_project_judgement(self) -> None:
+        self.write_file(
+            "tasks/queue/task-901-demo.md",
+            "\n".join(
+                [
+                    "# 等待验收的演示任务",
+                    "",
+                    "## 任务摘要",
+                    "",
+                    "- 任务 ID：`task-901-demo`",
+                    "- 短编号：`t-901`",
+                    "- 父计划：`memory/project/operating-blueprint.md`",
+                    "- 任务摘要：等待验收的演示任务",
+                    "- 为什么现在：验证 feature-context 会读取实时待验收事实",
+                    "- 承接边界：只验证 judgement live facts",
+                    "- 完成定义：project_judgement 会提示先验收",
+                    "",
+                    "## 执行合同",
+                    "",
+                    "### 要做",
+                    "",
+                    "- `apps/studio/src/modules/portal/index.ts`",
+                    "",
+                    "## 当前模式",
+                    "",
+                    "工程执行",
+                    "",
+                    "## 分支",
+                    "",
+                    "`codex/task-901-demo`",
+                    "",
+                ]
+            ),
+        )
+        self.write_file(
+            "agent-coordination/tasks/task-901-demo.json",
+            json.dumps(
+                {
+                    "schema_version": "4",
+                    "task_id": "t-901",
+                    "task_path": "tasks/queue/task-901-demo.md",
+                    "contract_hash": "demo",
+                    "current_mode": "工程执行",
+                    "branch_name": "codex/task-901-demo",
+                    "completion_mode": "close_full_contract",
+                    "planned_files": ["tasks/queue/task-901-demo.md"],
+                    "planned_modules": [],
+                    "locks": [],
+                    "machine": {
+                        "state_id": "executing",
+                        "mode_id": "execution",
+                        "delivery_track": "preview_release",
+                        "blocked_from_state": None,
+                        "resume_to_state": None,
+                        "blocked_reason": None,
+                        "last_transition": None,
+                    },
+                    "lifecycle": {"handoff": {"git_head": None}, "release_handoff": None},
+                    "artifacts": {"release_notes": [], "search_evidence": []},
+                },
+                ensure_ascii=False,
+            )
+            + "\n",
+        )
+
+        runtime_root = self.target / ".runtime"
+        shared_dir = runtime_root / "shared"
+        shared_dir.mkdir(parents=True, exist_ok=True)
+        self.write_file(
+            "scripts/local-runtime/status-prod.ts",
+            """
+            console.log(JSON.stringify({
+              ok: true,
+              status: "running",
+              running: true,
+              port: 3010,
+              pid: 101,
+              runtime_release_id: "20260331-prod",
+              current_release_id: "20260331-prod",
+              drift: false,
+              reason: "production 正常。",
+              log_path: "prod.log",
+              state_path: "prod.json"
+            }));
+            """,
+        )
+        self.write_file(
+            "scripts/local-runtime/status-preview.ts",
+            """
+            console.log(JSON.stringify({
+              ok: true,
+              status: "running",
+              running: true,
+              port: 3011,
+              pid: 202,
+              runtime_release_id: "20260331-dev-1",
+              current_release_id: "20260331-dev-1",
+              drift: false,
+              reason: "dev 正常。",
+              log_path: "dev.log",
+              state_path: "dev.json"
+            }));
+            """,
+        )
+        (shared_dir / "registry.json").write_text(
+            json.dumps(
+                {
+                    "active_release_id": "20260331-prod",
+                    "pending_dev_release_id": "20260331-dev-1",
+                    "updated_at": "2026-03-31T00:00:00.000Z",
+                    "releases": [
+                        {
+                            "release_id": "20260331-dev-1",
+                            "commit_sha": "abc1234",
+                            "tag": None,
+                            "source_ref": "HEAD",
+                            "primary_task_id": "task-901-demo",
+                            "linked_task_ids": [],
+                            "delivery_snapshot": None,
+                            "resolved_task_contract": None,
+                            "channel": "dev",
+                            "acceptance_status": "pending",
+                            "preview_url": None,
+                            "promoted_to_main_at": None,
+                            "promoted_from_dev_release_id": None,
+                            "created_at": "2026-03-31T00:00:00.000Z",
+                            "status": "preview",
+                            "build_result": "passed",
+                            "smoke_result": "passed",
+                            "cutover_at": None,
+                            "rollback_from": None,
+                            "release_path": "releases/20260331-dev-1",
+                            "change_summary": [],
+                            "notes": [],
+                        },
+                        {
+                            "release_id": "20260331-prod",
+                            "commit_sha": "def5678",
+                            "tag": None,
+                            "source_ref": "main",
+                            "primary_task_id": None,
+                            "linked_task_ids": [],
+                            "delivery_snapshot": None,
+                            "resolved_task_contract": None,
+                            "channel": "prod",
+                            "acceptance_status": "accepted",
+                            "preview_url": None,
+                            "promoted_to_main_at": "2026-03-30T00:00:00.000Z",
+                            "promoted_from_dev_release_id": None,
+                            "created_at": "2026-03-30T00:00:00.000Z",
+                            "status": "active",
+                            "build_result": "passed",
+                            "smoke_result": "passed",
+                            "cutover_at": "2026-03-30T00:30:00.000Z",
+                            "rollback_from": None,
+                            "release_path": "releases/20260331-prod",
+                            "change_summary": [],
+                            "notes": [],
+                        },
+                    ],
+                },
+                ensure_ascii=False,
+            )
+            + "\n",
+            encoding="utf8",
+        )
+
+        env = os.environ.copy()
+        env["AI_OS_RELEASE_ROOT"] = str(runtime_root)
+        payload = self.run_feature_context_packet(env=env)
+
+        self.assertEqual(payload["project_judgement"]["recommendedSurface"]["href"], "/releases")
+        self.assertIn("先验收", payload["project_judgement"]["nextAction"])
+        self.assertEqual(payload["project_judgement"]["activeStage"], "acceptance")
