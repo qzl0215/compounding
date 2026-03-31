@@ -63,10 +63,10 @@
 
 ## 交付结果
 
-- 状态：todo
-- 体验验收结果：待补
-- 交付结果：待补
-- 复盘：待补
+- 状态：done
+- 体验验收结果：通过，OpenSpec 的项目入口、稳定 spec、变更包、归档目录与一致性校验命令已落地。
+- 交付结果：`openspec/project.md`、`openspec/specs/`、`openspec/changes/`、`openspec/changes/archive/`、`scripts/ai/validate-openspec.ts`、`pnpm ai:validate-openspec`、`AGENTS.md` 与 `docs/AI_OPERATING_MODEL.md` 的 OpenSpec 边界说明已完成。
+- 复盘：OpenSpec 以规范层落地，没有接管 plan / task / release 主源；后续扩展应继续按 capability 增量推进。
 
 ## 分支
 
