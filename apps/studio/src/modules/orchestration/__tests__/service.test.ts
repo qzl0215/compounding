@@ -344,6 +344,12 @@ describe("orchestration service", () => {
     const snapshot = await getOrchestrationSnapshot();
 
     expect(snapshot.generatedAt).toMatch(/T/);
+    expect(snapshot.controlPlane.intent).toBe(deliverySnapshot.facts.harness.active_intent);
+    expect(snapshot.controlPlane.contract).toBe(deliverySnapshot.facts.harness.active_contract);
+    expect(snapshot.controlPlane.state).toBe(deliverySnapshot.facts.harness.state);
+    expect(snapshot.controlPlane.nextAction).toBe(deliverySnapshot.facts.harness.next_action);
+    expect(snapshot.controlPlane.currentExecutor).toBe(deliverySnapshot.facts.harness.current_executor);
+    expect(snapshot.controlPlane.compatibility).toBe(deliverySnapshot.facts.harness.compatibility);
     expect(snapshot.delivery).toBe(deliverySnapshot);
     expect(snapshot.projectState).toBe(projectState);
     expect(snapshot.home).toBe(home);
