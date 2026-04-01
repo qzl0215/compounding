@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 import { getWorkspaceRoot } from "@/lib/workspace";
-import { readDoc } from "@/modules/docs";
 import { getDeliverySnapshot, type DeliverySnapshot } from "@/modules/delivery";
 import {
   AI_EFFICIENCY_SUPPORTED_PROFILES,
@@ -10,7 +9,11 @@ import {
 } from "../../../../../shared/ai-efficiency";
 import { resolveGitCommonRoot } from "../../../../../shared/git-workspace";
 import { getGithubSurfaceReadiness } from "../../../../../shared/github-surface-runtime";
-import { buildProjectJudgementContract } from "../../../../../shared/project-judgement";
+import {
+  buildLiveProjectJudgementContract,
+  buildProjectJudgementReleaseFacts,
+  summarizeProjectJudgementCounts,
+} from "../../../../../shared/project-judgement-live";
 import type { ProjectStateSnapshot } from "./types";
 
 type AiEfficiencyDashboardOptions = Parameters<typeof buildAiEfficiencyDashboard>[1];
@@ -20,23 +23,15 @@ type LearningCandidatesReport = NonNullable<AiEfficiencyDashboardOptions>["learn
 export async function getProjectStateSnapshot(input?: { deliverySnapshot?: DeliverySnapshot }): Promise<ProjectStateSnapshot> {
   const workspaceRoot = getWorkspaceRoot();
   const deliverySnapshot = input?.deliverySnapshot ?? (await getDeliverySnapshot());
-  const [currentState, roadmap, blueprint] = await Promise.all([
-    readDoc("memory/project/current-state.md"),
-    readDoc("memory/project/roadmap.md"),
-    readDoc("memory/project/operating-blueprint.md"),
-  ]);
 
   const releaseDashboard = deliverySnapshot.facts.releaseDashboard;
   const taskRows = deliverySnapshot.projections.taskRows;
-  const counts = {
-    total: taskRows.length,
-    planning: taskRows.filter((row) => row.machine.stateId === "planning").length,
-    ready: taskRows.filter((row) => row.machine.stateId === "ready").length,
-    doing: taskRows.filter((row) => ["executing", "review_pending", "reviewing", "release_preparing"].includes(row.machine.stateId)).length,
-    blocked: taskRows.filter((row) => row.deliveryStatus === "blocked").length,
-    acceptance: taskRows.filter((row) => row.deliveryStatus === "pending_acceptance").length,
-    released: taskRows.filter((row) => row.deliveryStatus === "released" || row.deliveryStatus === "rolled_back").length,
-  };
+  const counts = summarizeProjectJudgementCounts(
+    taskRows.map((row) => ({
+      stateId: row.machine.stateId,
+      deliveryStatus: row.deliveryStatus,
+    })),
+  );
   const cleanup = {
     scheduled: taskRows.filter((row) => row.machine.branchCleanup?.overallState === "scheduled").length,
     failed: taskRows.filter((row) => row.machine.branchCleanup?.overallState === "failed").length,
@@ -47,30 +42,24 @@ export async function getProjectStateSnapshot(input?: { deliverySnapshot?: Deliv
     cleanup.failed > 0 || cleanup.overdue > 0 || cleanup.legacy > 0
       ? `分支治理：待回收 ${cleanup.scheduled} / 失败 ${cleanup.failed} / 逾期 ${cleanup.overdue} / 历史残留 ${cleanup.legacy}`
       : null;
-  const pendingAcceptance =
-    summarizePendingAcceptance(
-    releaseDashboard.pending_dev_release?.release_id ?? null,
-    taskRows.find((row) => row.deliveryStatus === "pending_acceptance")?.versionLabel ?? null
-  );
-  const runtimeAlert =
-    summarizeRuntimeAlert(
-    releaseDashboard.local_runtime.reason,
-    releaseDashboard.local_runtime.status,
-    releaseDashboard.local_preview.reason,
-    releaseDashboard.local_preview.status,
-    Boolean(releaseDashboard.pending_dev_release)
-  );
-  const judgement = buildProjectJudgementContract({
-    currentStateContent: currentState.content,
-    roadmapContent: roadmap.content,
-    blueprintContent: blueprint.content,
-    counts,
-    release: {
-      pendingAcceptance,
-      runtimeAlert,
-      activeReleaseId: releaseDashboard.local_runtime.runtime_release_id || releaseDashboard.active_release_id,
-      runtimeRunning: releaseDashboard.local_runtime.status === "running",
+  const releaseFacts = buildProjectJudgementReleaseFacts({
+    pendingReleaseId: releaseDashboard.pending_dev_release?.release_id ?? null,
+    acceptanceVersionLabel: taskRows.find((row) => row.deliveryStatus === "pending_acceptance")?.versionLabel ?? null,
+    prodRuntime: {
+      reason: releaseDashboard.local_runtime.reason,
+      status: releaseDashboard.local_runtime.status,
+      runtimeReleaseId: releaseDashboard.local_runtime.runtime_release_id,
     },
+    devRuntime: {
+      reason: releaseDashboard.local_preview.reason,
+      status: releaseDashboard.local_preview.status,
+      runtimeReleaseId: releaseDashboard.local_preview.runtime_release_id,
+    },
+    activeReleaseId: releaseDashboard.active_release_id,
+  });
+  const judgement = buildLiveProjectJudgementContract(workspaceRoot, {
+    counts,
+    release: releaseFacts,
   });
   const githubSurface = getGithubSurfaceReadiness(workspaceRoot);
 
@@ -133,24 +122,6 @@ function isLegacyCleanupBacklog(row: DeliverySnapshot["projections"]["taskRows"]
       row.machine.branch &&
       !row.machine.branch.startsWith("main"),
   );
-}
-
-function summarizePendingAcceptance(pendingReleaseId: string | null, acceptanceVersionLabel: string | null) {
-  if (pendingReleaseId) return `待验收版本 ${pendingReleaseId}`;
-  if (acceptanceVersionLabel) return `${acceptanceVersionLabel} 待验收`;
-  return null;
-}
-
-function summarizeRuntimeAlert(
-  prodReason: string,
-  prodStatus: string,
-  devReason: string,
-  devStatus: string,
-  hasPendingAcceptance: boolean,
-) {
-  if (prodStatus !== "running") return `production 异常：${prodReason}`;
-  if (hasPendingAcceptance && devStatus !== "running") return `dev 预览异常：${devReason}`;
-  return null;
 }
 
 function getAiEfficiencyDashboard(workspaceRoot: string, taskCostLedgers: DeliverySnapshot["projections"]["taskRows"][number]["cost"][]) {
