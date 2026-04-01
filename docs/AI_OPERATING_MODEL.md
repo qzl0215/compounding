@@ -2,7 +2,7 @@
 title: AI_OPERATING_MODEL
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-29
+last_reviewed_at: 2026-03-31
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -27,6 +27,7 @@ related_docs:
 - 若工具面已安装 Superpowers，只在需求未收口、存在多方案取舍或多步 `structural / release` 事项时触发 `brainstorming` / `writing-plans`；默认不为 `light` 改动生成第二套 spec / plan 资产。
 - 遇到 unfamiliar pattern / infra / runtime capability，先搜已有实现、主源与成熟解，再决定是否自建。
 - 涉及服务器访问、GitHub 接入方式或标准发布动作时，先读 `bootstrap/project_operator.yaml`；需要扫读版时读 `docs/OPERATOR_RUNBOOK.md`。
+- 需要能力级规范、变更包或归档记录时，先读 `openspec/project.md`，再按需读对应的 `openspec/specs/*` 与 `openspec/changes/*`；OpenSpec 只负责规范与变更的结构化表达，不接管 task 状态机、release 流或 project memory。
 - `Boil the Lake` 只适用于小而边界清楚的 task；大而跨阶段的事项留在 plan。
 - 当需要找低风险熵减机会时，优先运行 `pnpm ai:cleanup-candidates` 读取瞬时候选，而不是先扩新 backlog 或新状态源。
 - 当已绑定 `structural / release` task 时，先看 `pnpm preflight -- --taskId=t-xxx` 输出里的 `retro_hints`；默认先继承上一轮的耗时/阻塞结论，再决定是否继续试新路径。
@@ -50,7 +51,7 @@ related_docs:
   - 上游 spec → `memory/project/operating-blueprint.md` 收口或 task 边界收口
   - 上游 implementation plan → 本仓 task 合同与 handoff
   - 上游 review 流程 → `pnpm coord:review:run -- --taskId=t-xxx`
-  - 上游 completion verification → 本仓验证门禁
+- 上游 completion verification → 本仓验证门禁
 - 明确禁止在本仓新增 `docs/superpowers/specs/*` 与 `docs/superpowers/plans/*` 作为长期主源。
 - `using-git-worktrees` 只在当前 worktree 不干净或确实需要并行隔离时启用；标准目录固定为项目内 `.worktrees/`，初始化与验证统一使用 `pnpm install`、`pnpm preflight` 与本仓验证命令，不用 `npm install` / `npm test` 假设。
 - `test-driven-development` 只对真正的功能/行为变更按需启用；文档、配置、任务合同、资产生成和工具映射调整继续沿用风险驱动最小测试集。
@@ -60,6 +61,7 @@ related_docs:
 - 本机默认推理强度建议是 `high`；只有设计收口、复杂 review 或架构决策才显式升到 `xhigh`。
 - 新会话进入本仓时，默认先读仓库主链，再跑 `pnpm ai:doctor:superpowers`；若属于 `structural / release`，先 task，再跑 `pnpm preflight -- --taskId=t-xxx`。
 - 每次升级上游 Superpowers 后，都要重新跑 doctor，并记录 doctor 暴露的 upstream SHA，避免技能更新导致行为漂移而仓库无感知。
+- 需要 OpenSpec 一致性检查时，运行 `pnpm ai:validate-openspec`；它只验证 OpenSpec 目录、变更包与 task 合同映射是否一致，不替代 `pnpm preflight`、`pnpm validate:static` 或发布门禁。
 
 ## Mode Context Assembly
 

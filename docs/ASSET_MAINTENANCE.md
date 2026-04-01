@@ -2,7 +2,7 @@
 title: ASSET_MAINTENANCE
 update_mode: generated
 status: active
-last_reviewed_at: 2026-03-30
+last_reviewed_at: 2026-03-31
 source_of_truth: scripts/ai/generate-asset-maintenance.ts
 related_docs:
   - docs/PROJECT_RULES.md

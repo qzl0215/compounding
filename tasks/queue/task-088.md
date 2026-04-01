@@ -49,13 +49,13 @@
 
 ## 交付结果
 
-- 状态：进行中
+- 状态：完成
 - 体验验收结果：
-  Home、Tasks、Releases、`/harness` 已切到同一份 orchestration snapshot；页面层不再各自拼装 harness / delivery / project-state 真相。
+  Home、Tasks、Releases、`/harness` 已切到同一份 orchestration snapshot；页面层不再各自拼装 harness / delivery / project-state 真相。orchestration snapshot 里新增 `controlPlane` 显式摘要后，单一控制平面的 canonical 读面也变得可见、可测。
 - 交付结果：
-  新增 `apps/studio/src/modules/orchestration/*` 作为唯一聚合读模型；`apps/studio/src/app/page.tsx`、`apps/studio/src/app/tasks/page.tsx`、`apps/studio/src/app/releases/page.tsx`、`apps/studio/src/app/harness/page.tsx` 与 `apps/studio/src/app/ai-efficiency/page.tsx` 已改为经由 orchestration service 读取。
+  新增 `apps/studio/src/modules/orchestration/*` 作为唯一聚合读模型；`apps/studio/src/app/page.tsx`、`apps/studio/src/app/tasks/page.tsx`、`apps/studio/src/app/releases/page.tsx`、`apps/studio/src/app/harness/page.tsx` 与 `apps/studio/src/app/ai-efficiency/page.tsx` 已改为经由 orchestration service 读取。`OrchestrationSnapshot` 现在还显式暴露 `controlPlane` 视图，便于后续把控制面 summary 继续收口成唯一入口。
 - 复盘：
-  这轮最重要的收口不是再造一个页面，而是把“谁负责拼真相”收成一个 service；这样 harness 仍负责控制面，Studio 只消费投影，不会继续长出并行读链。
+  这轮最重要的收口不是再造一个页面，而是把“谁负责拼真相”收成一个 service；这样 harness 仍负责控制面，Studio 只消费投影，不会继续长出并行读链。显式 `controlPlane` 只是把已存在的 canonical 读面再压实一层，避免“看起来统一、实际上还要猜字段来源”的问题。
 
 ## 分支
 
