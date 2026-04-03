@@ -50,7 +50,7 @@
 
 ## 交付结果
 
-- 状态：已实现；repo review 已通过全部 reviewer，但因 `package.json` 属于高风险文件，merge decision 为 `escalate_to_human`。
+- 状态：done
 - 体验验收结果：`pnpm validate:static`、`pnpm harness:parity:verify`、`python3 -m unittest tests.test_harness_cli tests.test_harness_parity_cli` 与 Studio harness/orchestration service 测试均通过；`pnpm validate:build` 仍失败，但失败点已在干净 `main` 复现，属于 bootstrap operator asset 的既有基线问题，不是本次 P0 diff 新引入的回归。
 - 交付结果：
   - 新增 phase-1 harness parity manifest、check/diff/verify CLI 与 Python checker fixture。
