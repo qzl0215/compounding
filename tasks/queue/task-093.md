@@ -48,13 +48,21 @@
 
 ## 交付结果
 
-- 状态：
+- 状态：done
 - 体验验收结果：
-  
+  - `python3 -m unittest tests.test_bootstrap_scaffold_cli.BootstrapKernelShellTests.test_tooling_pack_includes_simple_yaml_dependency`
+  - `python3 -m unittest tests.test_bootstrap_scaffold_cli.BootstrapKernelShellTests.test_yaml_loader_keeps_quoted_list_items_with_colon_as_strings`
+  - `python3 -m unittest tests.test_bootstrap_scaffold_cli.BootstrapKernelShellTests.test_bootstrap_creates_minimal_shell_and_audit_passes`
+  - `python3 -m unittest tests.test_ai_assets_cli.AiAssetsCliTests.test_validate_operator_contract_allows_blank_task_commands_without_ai_exec_pack`
+  - `python3 -m unittest tests.test_bootstrap_scaffold_cli tests.test_ai_assets_cli`
+  - `pnpm ai:validate-operator-contract`
+  - `pnpm validate:build` 不再卡在最小 bootstrap shell 的 operator asset 基线；当前继续前进后暴露的是未触碰文件 `shared/project-judgement-live.ts` 的既有类型错误。
 - 交付结果：
-  
+  - `tooling_pack` 现在会把 `shared/simple-yaml.ts` 一起导出，最小 shell 不再在生成 operator assets 时因缺依赖直接崩溃。
+  - cold_start / governance operator contract 现在会补齐 `task_orchestration` 和 `task_transition` 的最小合同；没有 `ai_exec_pack` 时允许保留空执行命令，不再被 validator 误判。
+  - Python bootstrap YAML 解析器不再把列表项里的冒号字符串误判成 mapping，现有 `bootstrap/project_operator.yaml` 与模板里的相关项也已补齐安全 quoting。
 - 复盘：
-  
+  bootstrap 最小壳复制的是仓库自带的 `bootstrap/project_operator.yaml`，不是空白模板；因此一旦开始规范化 `task_orchestration`，就会把简化 YAML 解析器对“列表项内冒号”的误判一起放大。修复不能只补 pack 清单，还要同时补齐 schema 默认值和 YAML list 解析边界。
 
 ## 分支
 
@@ -75,3 +83,4 @@
 - 索引：no change: 未更新
 - 路线图：no change: 未更新
 - 文档：no change: 未更新
+- 文档：updated: task 合同已记录 bootstrap 基线修复结果与剩余非本任务构建错误

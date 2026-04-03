@@ -1,13 +1,25 @@
 import json
 import unittest
 
-from scripts.compounding_bootstrap.packs import export_packs
+from scripts.compounding_bootstrap.packs import export_packs, load_kernel_manifest, selected_pack_paths
 from scripts.compounding_bootstrap.doctor import doctor
 from scripts.compounding_bootstrap.engine import attach, audit, bootstrap, load_yaml, migrate_legacy_config, scaffold, validate_config_file
 from tests.bootstrap_support import ROOT, BootstrapWorkspaceTestCase
 
 
 class BootstrapKernelShellTests(BootstrapWorkspaceTestCase):
+    def test_yaml_loader_keeps_quoted_list_items_with_colon_as_strings(self) -> None:
+        payload = load_yaml(ROOT / "bootstrap" / "project_operator.yaml")
+
+        self.assertEqual(payload["task_orchestration"]["compatibility_aliases"], ["pnpm coord:check:pre-task -- --taskId=t-xxx"])
+        self.assertIsInstance(payload["task_orchestration"]["notes"][-1], str)
+
+    def test_tooling_pack_includes_simple_yaml_dependency(self) -> None:
+        manifest = load_kernel_manifest()
+        tooling_paths = selected_pack_paths(manifest, ["tooling_pack"], "copy_paths")
+
+        self.assertIn("shared/simple-yaml.ts", tooling_paths)
+
     def test_bootstrap_creates_minimal_shell_and_audit_passes(self) -> None:
         bootstrap(self.brief_path, self.target)
         result = audit(self.brief_path, self.target)
@@ -35,6 +47,7 @@ class BootstrapKernelShellTests(BootstrapWorkspaceTestCase):
         self.assertTrue((self.target / "scripts" / "init_project_compounding.py").exists())
         self.assertTrue((self.target / "scripts" / "ai" / "generate-operator-assets.ts").exists())
         self.assertTrue((self.target / "scripts" / "ai" / "validate-operator-contract.ts").exists())
+        self.assertTrue((self.target / "shared" / "simple-yaml.ts").exists())
         self.assertTrue((self.target / "bootstrap" / "project_operator.yaml").exists())
         self.assertTrue((self.target / "output" / "bootstrap" / "bootstrap_report.yaml").exists())
         architecture = (self.target / "docs" / "ARCHITECTURE.md").read_text(encoding="utf8")
