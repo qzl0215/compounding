@@ -46,6 +46,7 @@ task_orchestration:
     - 任务 canonical state 只写 companion.machine；task 正文与 release registry 只做派生展示或兼容读取。
     - block / resume / replan / abandon 只能通过 override_transition 触发，且必须带 reason。
     - 新 task 默认 create_task -> planning，delivery_track 默认 undetermined。
+    - phase-1 harness parity ledger 的校验入口是 `pnpm harness:parity:check`；需要执行场景验证时可用 `pnpm harness:parity:verify`。
 server_surfaces:
   - surface_id: local-preview
     purpose: preview
