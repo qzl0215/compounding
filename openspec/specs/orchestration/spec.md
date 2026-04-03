@@ -28,3 +28,4 @@ This capability defines the shared Studio read model.
 
 - The same orchestration snapshot can power all main Studio pages.
 - Page-specific summaries remain derivable from the same snapshot.
+- Critical orchestration scenarios remain mapped in the harness parity ledger so page readers do not drift independently.

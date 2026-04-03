@@ -29,3 +29,4 @@ This capability defines the single control plane runtime snapshot.
 - The CLI and Studio can read the same harness snapshot.
 - The next action is unique and explainable.
 - Hygiene blockers and runtime drift remain visible instead of being folded into a generic blocked state.
+- A phase-1 parity ledger maps critical harness scenarios to spec/doc refs and verification commands.

@@ -29,9 +29,11 @@
 - 所有 Studio 主要页面必须共读同一份 orchestration snapshot。
 - orchestration snapshot 里的 `controlPlane` 是 canonical summary，只是对 harness 事实的显式投影，不是第四套真相源。
 - orchestration 的返回值里，harness、delivery、project-state 和 home 仍然保留各自领域边界，不互相改写。
+- orchestration 的关键共享读链必须继续挂在 harness 一致性账本上，避免页面消费者各自漂移。
 
 ## 推荐校验
 
+- `pnpm harness:parity:check -- --scenario=orchestration_shared_snapshot`
 - `pnpm --filter studio test -- apps/studio/src/modules/orchestration/__tests__/service.test.ts`
 - `pnpm --filter studio build`
 

@@ -28,12 +28,15 @@
 - harness 是单一控制平面的只读展示层，不在 Studio 内直接做状态迁移。
 - `/harness`、首页、任务页、发布页必须共用同一份 orchestration snapshot，不能再各自拼装多源真相。
 - hygiene blocker、workflow state、runtime alignment 和 next action 必须同时出现，不能只展示结论不展示原因。
+- phase-1 一致性账本只负责把关键控制面场景映射到 spec/doc 与验证命令，不生成新的运行态真相。
 
 ## 推荐校验
 
 - `pnpm harness:status`
+- `pnpm harness:parity:check`
+- `pnpm harness:parity:verify`
 - `pnpm --filter studio test -- src/modules/harness/__tests__/service.test.ts`
-- `python3 -m unittest tests.test_harness_cli`
+- `python3 -m unittest tests.test_harness_cli tests.test_harness_parity_cli`
 
 ## 常见改动
 

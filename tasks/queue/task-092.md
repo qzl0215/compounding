@@ -50,13 +50,13 @@
 
 ## 交付结果
 
-- 状态：
-- 体验验收结果：
-  
+- 状态：已实现；repo review 已通过全部 reviewer，但因 `package.json` 属于高风险文件，merge decision 为 `escalate_to_human`。
+- 体验验收结果：`pnpm validate:static`、`pnpm harness:parity:verify`、`python3 -m unittest tests.test_harness_cli tests.test_harness_parity_cli` 与 Studio harness/orchestration service 测试均通过；`pnpm validate:build` 仍失败，但失败点已在干净 `main` 复现，属于 bootstrap operator asset 的既有基线问题，不是本次 P0 diff 新引入的回归。
 - 交付结果：
-  
-- 复盘：
-  
+  - 新增 phase-1 harness parity manifest、check/diff/verify CLI 与 Python checker fixture。
+  - harness / orchestration spec 与 Studio 模块文档已绑定关键场景和校验入口。
+  - operator contract 与 generated runbook 已补入 parity ledger 入口；资产维护矩阵也已同步到当前生成器输出。
+- 复盘：generated 资产不能手改；`docs/OPERATOR_RUNBOOK.md` 与 `docs/ASSET_MAINTENANCE.md` 这类文件必须分别回写 source contract / generator 再重新生成，否则会在 static gate 或 review 中被误判为漂移。
 
 ## 分支
 
@@ -64,10 +64,14 @@
 
 ## 关联模块
 
+- `bootstrap/project_operator.yaml`
+- `package.json`
 - `scripts/harness/`
 - `shared/harness/`
 - `apps/studio/src/modules/harness/`
 - `apps/studio/src/modules/orchestration/`
+- `docs/OPERATOR_RUNBOOK.md`
+- `docs/ASSET_MAINTENANCE.md`
 - `openspec/specs/harness/spec.md`
 - `openspec/specs/orchestration/spec.md`
 - `tests/`
@@ -77,4 +81,4 @@
 - 记忆：no change: 未更新
 - 索引：no change: 未更新
 - 路线图：no change: 未更新
-- 文档：no change: 未更新
+- 文档：updated: harness / orchestration spec、模块文档、operator contract / runbook 与资产维护矩阵已补入一致性账本入口或同步生成物
