@@ -40,7 +40,7 @@ task_orchestration:
     review: ""
     override_transition: ""
   compatibility_aliases:
-    - pnpm coord:check:pre-task -- --taskId=t-xxx
+    - "pnpm coord:check:pre-task -- --taskId=t-xxx"
   notes:
     - canonical state 只写 companion.machine。
 server_surfaces:

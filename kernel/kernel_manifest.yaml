@@ -99,6 +99,7 @@ packs:
       - scripts/ai/generate-operator-assets.ts
       - scripts/ai/validate-operator-contract.ts
       - scripts/ai/lib/operator-contract.ts
+      - shared/simple-yaml.ts
     generated_paths:
       - docs/OPERATOR_RUNBOOK.md
       - CLAUDE.md

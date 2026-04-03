@@ -777,7 +777,14 @@ function validateOperatorContract(root = process.cwd()) {
   } else if (!fs.existsSync(path.join(root, normalizeString(taskOrchestration.state_machine_path)))) {
     errors.push(`Task state machine file is missing: ${normalizeString(taskOrchestration.state_machine_path)}`);
   }
+  const taskCommandsRequired = hasAiExecPack(contract);
   for (const [label, command] of Object.entries(taskOrchestration.primary_commands || {})) {
+    if (!normalizeString(command)) {
+      if (taskCommandsRequired) {
+        errors.push(`Task orchestration command is missing or invalid: task_orchestration.primary_commands.${label}`);
+      }
+      continue;
+    }
     if (!commandExists(command, root, packageScripts)) {
       errors.push(`Task orchestration command is missing or invalid: task_orchestration.primary_commands.${label}`);
     }

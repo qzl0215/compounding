@@ -248,7 +248,8 @@ def default_toolchain_commands(target: Path, adapter_id: str, has_ai_exec_pack: 
         "bootstrap_proposal": "python3 scripts/init_project_compounding.py proposal --target .",
         "preflight": "node --experimental-strip-types scripts/coord/preflight.ts" if has_ai_exec_pack else "python3 scripts/init_project_compounding.py doctor --target .",
         "task_preflight": "node --experimental-strip-types scripts/coord/preflight.ts --taskId=t-xxx" if has_ai_exec_pack else "python3 scripts/init_project_compounding.py audit --target .",
-        "create_task": "node --experimental-strip-types scripts/ai/create-task.ts task-xxx \"中文直给概述\" \"为什么现在\"" if has_ai_exec_pack else "",
+        "create_task": "node --experimental-strip-types scripts/coord/task.ts create --taskId=t-xxx --summary=\"中文直给概述\" --why=\"为什么现在\"" if has_ai_exec_pack else "",
+        "task_transition": "node --experimental-strip-types scripts/coord/task.ts transition --taskId=t-xxx --event=block --reason=\"说明原因\"" if has_ai_exec_pack else "",
         "review": "node --experimental-strip-types scripts/coord/review.ts --taskId=t-xxx" if has_ai_exec_pack else "",
     }
 
@@ -256,6 +257,67 @@ def default_toolchain_commands(target: Path, adapter_id: str, has_ai_exec_pack: 
 def normalize_toolchain_commands(payload: Any, fallback: dict[str, str]) -> dict[str, str]:
     current = payload if isinstance(payload, dict) else {}
     return {key: normalize_string(current.get(key), value) for key, value in fallback.items()}
+
+
+def default_task_orchestration(has_ai_exec_pack: bool) -> dict[str, Any]:
+    primary_commands = {
+        "create": "node --experimental-strip-types scripts/coord/task.ts create --taskId=t-xxx --summary=\"中文直给概述\" --why=\"为什么现在\""
+        if has_ai_exec_pack
+        else "",
+        "start": "node --experimental-strip-types scripts/coord/task.ts start --taskId=t-xxx" if has_ai_exec_pack else "",
+        "handoff": "node --experimental-strip-types scripts/coord/task.ts handoff --taskId=t-xxx" if has_ai_exec_pack else "",
+        "review": "node --experimental-strip-types scripts/coord/review.ts --taskId=t-xxx" if has_ai_exec_pack else "",
+        "override_transition": "node --experimental-strip-types scripts/coord/task.ts transition --taskId=t-xxx --event=block --reason=\"说明原因\""
+        if has_ai_exec_pack
+        else "",
+    }
+    notes = [
+        "canonical state 只写 companion.machine。",
+    ]
+    if has_ai_exec_pack:
+        notes.extend(
+            [
+                "任务执行链默认走 scripts/coord/task.ts 与 scripts/coord/review.ts。",
+                "block / resume / replan / abandon 只能通过 override_transition 触发，且必须带 reason。",
+            ]
+        )
+    else:
+        notes.append("当前 contract 未包含 ai_exec_pack；执行命令会在升级到 ai_upgrade 后补齐。")
+    return {
+        "state_machine_path": "kernel/task-state-machine.yaml",
+        "companion_schema_version": "4",
+        "canonical_fields": [
+            "machine.state_id",
+            "machine.mode_id",
+            "machine.delivery_track",
+            "machine.blocked_from_state",
+            "machine.resume_to_state",
+            "machine.blocked_reason",
+            "machine.last_transition",
+        ],
+        "primary_commands": primary_commands,
+        "compatibility_aliases": ["pnpm coord:check:pre-task -- --taskId=t-xxx"] if has_ai_exec_pack else [],
+        "notes": notes,
+    }
+
+
+def normalize_task_orchestration(payload: Any, fallback: dict[str, Any]) -> dict[str, Any]:
+    current = payload if isinstance(payload, dict) else {}
+    primary = current.get("primary_commands") if isinstance(current.get("primary_commands"), dict) else {}
+    return {
+        "state_machine_path": normalize_string(current.get("state_machine_path"), fallback["state_machine_path"]),
+        "companion_schema_version": normalize_string(current.get("companion_schema_version"), fallback["companion_schema_version"]),
+        "canonical_fields": [
+            normalize_string(item) for item in current.get("canonical_fields", fallback["canonical_fields"]) if normalize_string(item)
+        ],
+        "primary_commands": {
+            key: normalize_string(primary.get(key), value) for key, value in fallback["primary_commands"].items()
+        },
+        "compatibility_aliases": [
+            normalize_string(item) for item in current.get("compatibility_aliases", fallback["compatibility_aliases"]) if normalize_string(item)
+        ],
+        "notes": normalize_notes(current.get("notes"), fallback["notes"]),
+    }
 
 
 def sync_operator_assets(target: Path) -> bool:
@@ -410,6 +472,10 @@ def normalize_operator_payload(payload: dict[str, Any], target: Path) -> tuple[d
             "required_packs": required_packs,
         },
         "toolchain_commands": toolchain_commands,
+        "task_orchestration": normalize_task_orchestration(
+            payload.get("task_orchestration"),
+            default_task_orchestration(has_ai_exec_pack),
+        ),
         "server_surfaces": normalized_surfaces,
         "github_surface": normalize_github_surface(payload.get("github_surface"), default_github_surface(target)),
         "standard_flows": standard_flows,

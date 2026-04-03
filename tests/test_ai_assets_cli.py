@@ -262,6 +262,34 @@ class AiAssetsCliTests(unittest.TestCase):
         self.assertNotEqual(completed.returncode, 0)
         self.assertTrue(any("Agent shortcut mode must be suggest" in error for error in payload["errors"]))
 
+    def test_validate_operator_contract_allows_blank_task_commands_without_ai_exec_pack(self) -> None:
+        target = self.target / "bootstrap" / "project_operator.yaml"
+        content = target.read_text(encoding="utf8")
+        replacements = {
+            "    - ai_exec_pack\n": "",
+            "  create: pnpm coord:task:create -- --taskId=t-xxx --summary=\\\"中文直给概述\\\" --why=\\\"为什么现在\\\"\n": "  create: \"\"\n",
+            "  task_transition: pnpm coord:task:transition -- --taskId=t-xxx --event=block --reason=\\\"说明原因\\\"\n": "  task_transition: \"\"\n",
+            "  review: pnpm coord:review:run -- --taskId=t-xxx\n": "  review: \"\"\n",
+            "    create: pnpm coord:task:create -- --taskId=t-xxx --summary=\\\"中文直给概述\\\" --why=\\\"为什么现在\\\"\n": "    create: \"\"\n",
+            "    start: pnpm coord:task:start -- --taskId=t-xxx\n": "    start: \"\"\n",
+            "    handoff: pnpm coord:task:handoff -- --taskId=t-xxx\n": "    handoff: \"\"\n",
+            "    review: pnpm coord:review:run -- --taskId=t-xxx\n": "    review: \"\"\n",
+            "    override_transition: pnpm coord:task:transition -- --taskId=t-xxx --event=<event> --reason=\\\"说明原因\\\"\n": "    override_transition: \"\"\n",
+        }
+        for old, new in replacements.items():
+            content = content.replace(old, new)
+        target.write_text(content, encoding="utf8")
+        shutil.copy(ROOT / "scripts" / "init_project_compounding.py", self.target / "scripts" / "init_project_compounding.py")
+
+        generated = self.run_script("scripts/ai/generate-operator-assets.ts")
+        self.assertEqual(generated.returncode, 0, msg=generated.stdout or generated.stderr)
+
+        completed = self.run_script("scripts/ai/validate-operator-contract.ts")
+        payload = json.loads(completed.stdout)
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        self.assertTrue(payload["ok"])
+
     def test_doctor_superpowers_reports_success_with_override_homes(self) -> None:
         self.init_git_repo()
         gitignore = self.target / ".gitignore"
