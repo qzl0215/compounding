@@ -101,7 +101,7 @@ last_reviewed_at: 2026-04-05
 | `A4` | `Task` 只能承接已收口范围，不能替代 `Goal / Current / Plan` | `Task` | `tasks/queue/*.md` | task 模板已要求边界/完成定义/不做/约束，`t-094` 正在补 task 的一等 `linked_gap` 字段与创建/校验链 | `partial` | `GOV-GAP-01` | task 摘要、临时复盘、patch prose |
 | `A5` | 流程状态必须由状态契约主源定义，不能散落在 task prose 中 | `State Contract` | `kernel/task-state-machine.yaml` | `AGENTS.md` 规定状态只认 state machine 与 companion，但 task 正文仍保留 `状态` / `当前模式` 派生展示 | `partial` | `GOV-GAP-02` | task 正文状态块、附录状态说明 |
 | `A6` | `Gap` 必须来自同维度断言比较，不能从 task 或 patch 倒推 | `Gap` | 本附录矩阵 + `memory/project/governance-gaps.md` | 断言矩阵已生成 `GOV-GAP-*`，active gap 详情由治理 backlog 主源接管 | `partial` | `GOV-GAP-03` | task、retro candidate、patch 记录 |
-| `A7` | 行为变化后必须回写 `Current` 或其受控事实入口，patch note 不能替代 truth | `Current` | `memory/project/current-state.md` + 事实入口 | `AGENTS.md` 与 `ASSET_MAINTENANCE.md` 已要求主干回写，但尚无矩阵化入口把变化类型稳定映射到 `Current` 或受控事实入口 | `partial` | `GOV-GAP-04` | changelog、task 交付结果、临时说明 |
+| `A7` | 行为变化后必须回写 `Current` 或其受控事实入口，patch note 不能替代 truth | `Current` | `memory/project/current-state.md` + 事实入口 | `task` 合同已固定 `writeback_targets`；`validate-task-git` 已对 `Current / Code Index / Tests` 做文件级兑现校验；治理回写协议已明确 truth 归口矩阵 | `met` | `none` | changelog、task 交付结果、临时说明 |
 | `A8` | `Code Index` 只能做实现导航，不能写成并列系统说明书 | `Code Index` | `code_index/*` | `code_index/module-index.md` 与 `docs/ASSET_MAINTENANCE.md` 都明确索引只做导航与压缩，不承载决策/状态 | `met` | `none` | architecture 解释、current truth |
 | `A9` | 测试与验证必须保护现实规则，不能只证明“脚本跑了” | `Reality Guard` | `pnpm preflight`、`validate:*`、`docs/TEST_MATRIX.md` | 仓内已有门禁分层与测试矩阵，但治理规则尚未按 assertion 显式映射到守护用例 | `partial` | `GOV-GAP-05` | 文档声明、人工口头约定 |
 | `A10` | 附录与规范层只能补充，不能回流为默认第一跳主源 | `Appendix Boundary` | `AGENTS.md` 默认读链 | `AGENTS.md` 明确 `PROJECT_RULES`、`AI_OPERATING_MODEL`、`ASSET_MAINTENANCE` 按需补读；OpenSpec 只作规范层 | `met` | `none` | 附录、OpenSpec、superpowers 文档 |
@@ -110,7 +110,7 @@ last_reviewed_at: 2026-04-05
 
 - active 治理 gap 以 `memory/project/governance-gaps.md` 为唯一长期记录。
 - 本矩阵只负责生成与对照，不再承载 active gap 详情。
-- 当前已生成的治理 gap 为 `GOV-GAP-01` 到 `GOV-GAP-05`。
+- 当前 active 治理 gap 为 `GOV-GAP-01`、`GOV-GAP-02`、`GOV-GAP-03`、`GOV-GAP-05`；`GOV-GAP-04` 已由 `t-095` 在治理控制面闭合。
 
 ### 生成规则
 
@@ -119,6 +119,40 @@ last_reviewed_at: 2026-04-05
 - `unmet`：必须生成 gap，并先回到 plan 收口。
 - gap 只记录差距定义、影响、应然，不写施工步骤。
 - 后续 task 必须引用 `gap_id` 或其收口后的 backlog 记录，不能绕过矩阵直接从理想规约开工。
+
+## 治理回写闭环 v1
+
+这层协议只覆盖治理控制面，不新增状态机状态，也不新增独立的 consolidation 文档族。`Consolidation` 在本轮先作为固定收尾协议存在：治理 task 只有在声明的 truth sink 被真实命中后，才算完成闭环。
+
+### 最小协议
+
+- 治理类 task 必须同时声明 `linked_gap`、`from_assertion`、`writeback_targets`。
+- `writeback_targets` 本轮只允许 `Current`、`Code Index`、`Tests`。
+- `Controlled Facts` 仍是保留词，不作为真实归口启用。
+- 一个治理 task 可以声明多个 truth sink，但每个 sink 都必须兑现。
+- task 正文、handoff、patch note、retro 不能替代 truth 回写。
+- `task done` 不等于“代码改完”，而等于“声明的 sink 已兑现，truth 已收回主源”。
+
+### 变化类型到 truth 归口
+
+| 变化类型 | truth 归口 | v1 校验要求 | 不得替代它的材料 |
+| --- | --- | --- | --- |
+| 规则 / 行为变化 | `memory/project/current-state.md` | `validate-task-git` 必须命中 `memory/project/current-state.md`，且 task 更新痕迹[记忆] 指向该文件 | task 交付结果、patch note、临时说明 |
+| 导航 / 定位入口变化 | `code_index/*` | `validate-task-git` 必须命中 `code_index/*`，且 task 更新痕迹[索引] 不得继续写 `no change` | 架构说明、task prose |
+| 守护规则变化 | `tests/*`、`apps/**/__tests__/*`、`scripts/ai/validate-*.ts` | `validate-task-git` 必须命中测试或验证守护入口 | 口头约定、未执行的校验说明 |
+
+### 现有 gate 如何执行闭环
+
+- `task` 合同声明 `writeback_targets`，并把治理 backlog 与已知 truth sink 纳入 companion `planned_files`。
+- `validate-task-git` 负责做文件级兑现校验，不做更重的语义推断。
+- `coord:review:run` 继续是正式收口入口，但评审时应把“truth sink 是否兑现”视为通过前提，而不是附加备注。
+
+### task 正文最小表达
+
+- `交付结果` 需要显式说明已回写到哪些 truth sink。
+- `更新痕迹` 必须与声明的 `writeback_targets` 一致。
+- 如果 target 是 `Current` 或 `Code Index`，对应 trace 不能继续写 `no change`。
+- `Tests` 的兑现证据来自测试 / 校验入口本身，不强行塞进四格 trace。
 
 ## 计划产出任务
 

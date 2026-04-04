@@ -71,13 +71,14 @@ related_docs:
 - current_symptom: 主干文档已要求同步回写，但还没有一层显式规则告诉改动后应回写 `Current` 还是其他受控事实入口。
 - impact: 改动完成后容易留下“行为已变、真相未回写”的漂移。
 - should_be: 行为变化必须按类型回写 `Current` 或受控事实入口，临时交付记录不能替代 truth。
-- status: `open`
+- status: `closed`
 - evidence:
   - `AGENTS.md`
   - `memory/project/current-state.md`
   - `docs/ASSET_MAINTENANCE.md`
-- linked_tasks: []
-- notes: 后续需要补“变化类型 -> truth 归口”的固定规则，但不在本轮展开。
+- linked_tasks:
+  - `task-095`
+- notes: `t-095` 已在治理控制面补上 `writeback_targets` 归口矩阵、`validate-task-git` 文件级兑现校验与主源回写规则；业务模块推广与 assertion -> guard 映射仍留给后续轮次。
 
 ## GOV-GAP-05 治理断言尚未映射到验证与测试守护
 

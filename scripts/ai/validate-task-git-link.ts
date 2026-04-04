@@ -19,7 +19,14 @@ const {
 const { readCompanion } = require("../coord/lib/task-meta.ts");
 
 const root = process.cwd();
-const ALLOWED_WRITEBACK_TARGETS = new Set(["Current", "Controlled Facts", "Code Index", "Tests"]);
+const CURRENT_STATE_PATH = "memory/project/current-state.md";
+const ALLOWED_WRITEBACK_TARGETS = new Set(["Current", "Code Index", "Tests"]);
+const GOVERNANCE_TRUTH_SINK_PREFIXES = Object.freeze([
+  CURRENT_STATE_PATH,
+  "code_index/",
+  "tests/",
+  "scripts/ai/validate-",
+]);
 
 function git(args) {
   try {
@@ -76,6 +83,8 @@ function parseTask(pathname) {
     linkedGap: parsed.linkedGap,
     fromAssertion: parsed.fromAssertion,
     writebackTargets: parsed.writebackTargets,
+    deliveryResult: parsed.deliveryResult,
+    updateTrace: parsedMachine.updateTrace,
     status: deriveTaskStatusFromStateId(machine.state_id),
     stateId: machine.state_id,
     modeId: machine.mode_id,
@@ -160,7 +169,7 @@ function allowsPlannedBranch(task, snapshot) {
   return task.status === "todo" && snapshot.branch && !snapshot.hasLocalBranch && !snapshot.effectiveCommit;
 }
 
-function validateTask(task, errors) {
+function validateTask(task, changedFiles, errors) {
   if (!task.status) {
     errors.push(`${task.path}: 缺少状态。`);
     return;
@@ -208,10 +217,10 @@ function validateTask(task, errors) {
     errors.push(`${task.path}: 分支提交已并入 main，但任务状态仍不是 done。`);
   }
 
-  validateGovernanceBinding(task, errors);
+  validateGovernanceBinding(task, changedFiles, errors);
 }
 
-function validateGovernanceBinding(task, errors) {
+function validateGovernanceBinding(task, changedFiles, errors) {
   const governanceRecords = readGovernanceGapRecords(root);
   const reverseLinkedRecord = governanceRecords.find((record) => record.linkedTasks.includes(task.id));
   const hasGovernanceFields = Boolean(task.linkedGap || task.fromAssertion || task.writebackTargets.length);
@@ -231,7 +240,7 @@ function validateGovernanceBinding(task, errors) {
     return;
   }
 
-  if (String(record.status || "").trim().toLowerCase() === "closed") {
+  if (String(record.status || "").trim().toLowerCase() === "closed" && !record.linkedTasks.includes(task.id)) {
     errors.push(`${task.path}: linked_gap 已关闭，不能继续绑定新 task：${task.linkedGap}`);
   }
   if (record.fromAssertion && record.fromAssertion !== task.fromAssertion) {
@@ -245,6 +254,78 @@ function validateGovernanceBinding(task, errors) {
   if (invalidTargets.length > 0) {
     errors.push(`${task.path}: writeback_targets 包含不允许的目标：${invalidTargets.join(", ")}`);
   }
+
+  validateWritebackTargets(task, changedFiles, errors);
+}
+
+function validateWritebackTargets(task, changedFiles, errors) {
+  for (const target of task.writebackTargets) {
+    if (target === "Current") {
+      if (!changedFiles.includes(CURRENT_STATE_PATH)) {
+        errors.push(`${task.path}: writeback_targets 声明了 Current，但没有命中 ${CURRENT_STATE_PATH}。`);
+      }
+      if (!traceReferences(task.updateTrace?.memory, CURRENT_STATE_PATH)) {
+        errors.push(`${task.path}: writeback_targets 声明了 Current，但更新痕迹[记忆] 没有回写 ${CURRENT_STATE_PATH}。`);
+      }
+      continue;
+    }
+
+    if (target === "Code Index") {
+      if (!changedFiles.some((file) => file.startsWith("code_index/"))) {
+        errors.push(`${task.path}: writeback_targets 声明了 Code Index，但没有命中 code_index/*。`);
+      }
+      if (!traceMentionsIndex(task.updateTrace?.index)) {
+        errors.push(`${task.path}: writeback_targets 声明了 Code Index，但更新痕迹[索引] 仍显示未更新。`);
+      }
+      continue;
+    }
+
+    if (target === "Tests") {
+      if (!changedFiles.some((file) => isTestEvidenceFile(file))) {
+        errors.push(`${task.path}: writeback_targets 声明了 Tests，但没有命中测试或验证守护入口。`);
+      }
+    }
+  }
+
+  if (task.status === "done" && task.writebackTargets.length > 0 && !deliveryResultMentionsTargets(task.deliveryResult, task.writebackTargets)) {
+    errors.push(`${task.path}: governance task 已完成，但交付结果没有说明已回写的 truth sink。`);
+  }
+}
+
+function traceReferences(value, expectedPath) {
+  const normalized = cleanValue(value);
+  if (!normalized || normalized.startsWith("no change")) {
+    return false;
+  }
+  return normalized.includes(expectedPath);
+}
+
+function traceMentionsIndex(value) {
+  const normalized = cleanValue(value);
+  if (!normalized || normalized.startsWith("no change")) {
+    return false;
+  }
+  return normalized.includes("code_index/");
+}
+
+function isTestEvidenceFile(file) {
+  return (
+    /^tests\//.test(file) ||
+    /\/__tests__\//.test(file) ||
+    /^scripts\/ai\/validate-[^/]+\.ts$/.test(file)
+  );
+}
+
+function deliveryResultMentionsTargets(deliveryResult, targets) {
+  const normalized = cleanValue(deliveryResult).toLowerCase();
+  if (!normalized || normalized === "未交付") {
+    return false;
+  }
+  return targets.every((target) => normalized.includes(target.toLowerCase()));
+}
+
+function isGovernanceTruthSinkChange(file) {
+  return GOVERNANCE_TRUTH_SINK_PREFIXES.some((prefix) => file === prefix || file.startsWith(prefix));
 }
 
 function main() {
@@ -253,13 +334,21 @@ function main() {
   const activeBranch = currentBranch();
   const changedTaskPaths = changePacket.changed_files.filter((file) => /^tasks\/queue\/.+\.md$/.test(file));
   const allTasks = listTaskPaths().map((taskPath) => parseTask(taskPath));
-  const branchMatchedTasks =
-    changePacket.policy.strict_task_binding && activeBranch.startsWith("codex/")
-      ? allTasks.filter((task) => cleanValue(task.branch) === activeBranch)
+  const branchMatchedTasks = activeBranch.startsWith("codex/")
+    ? allTasks.filter((task) => cleanValue(task.branch) === activeBranch)
+    : [];
+  const governanceSinkTouched = changePacket.changed_files.some((file) => isGovernanceTruthSinkChange(file));
+  const governanceTasks =
+    governanceSinkTouched || changePacket.policy.strict_task_binding
+      ? branchMatchedTasks.filter((task) => Boolean(task.linkedGap || task.fromAssertion || task.writebackTargets.length))
       : [];
   const relevantTasks = Array.from(
     new Map(
-      [...allTasks.filter((task) => changedTaskPaths.includes(task.path)), ...branchMatchedTasks].map((task) => [task.path, task])
+      [
+        ...allTasks.filter((task) => changedTaskPaths.includes(task.path)),
+        ...branchMatchedTasks,
+        ...governanceTasks,
+      ].map((task) => [task.path, task])
     ).values()
   );
 
@@ -268,7 +357,7 @@ function main() {
   );
 
   const snapshots = relevantTasks.map((task) => {
-    validateTask(task, errors);
+    validateTask(task, changePacket.changed_files, errors);
     const snapshot = getTaskGitSnapshot(task);
     return {
       id: task.id,

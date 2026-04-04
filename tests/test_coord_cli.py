@@ -292,6 +292,243 @@ console.log(fs.readFileSync(file, "utf8"));
         self.assertNotEqual(completed.returncode, 0)
         self.assertIn("writeback_targets", completed.stdout)
 
+    def test_create_task_rejects_reserved_controlled_facts_writeback_target(self) -> None:
+        self.write_governance_gaps(
+            """# 治理 Gap Backlog
+
+## GOV-GAP-04 truth 回写要求存在，但缺少固定归口规则
+
+- gap_id: `GOV-GAP-04`
+- title: truth 回写要求存在，但缺少固定归口规则
+- from_assertion: `A7`
+- status: `open`
+- linked_tasks: []
+"""
+        )
+
+        completed = self.run_script(
+            "scripts/ai/create-task.ts",
+            "task-132-controlled-facts",
+            "拦截保留中的受控事实回写",
+            "这轮不应把 Controlled Facts 提前启用成真实归口",
+            "--linkedGap=GOV-GAP-04",
+            "--fromAssertion=A7",
+            "--writebackTargets=Controlled Facts",
+        )
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("保留但未启用", completed.stderr)
+
+    def test_create_task_seeds_governance_writeback_sinks_into_companion_scope(self) -> None:
+        self.write_governance_gaps(
+            """# 治理 Gap Backlog
+
+## GOV-GAP-04 truth 回写要求存在，但缺少固定归口规则
+
+- gap_id: `GOV-GAP-04`
+- title: truth 回写要求存在，但缺少固定归口规则
+- from_assertion: `A7`
+- status: `open`
+- linked_tasks: []
+"""
+        )
+
+        completed = self.run_script(
+            "scripts/ai/create-task.ts",
+            "task-133-writeback-scope",
+            "让治理回写目标进入任务范围",
+            "避免治理任务声明了 truth sink，却在 scope guard 中被当成越界写入",
+            "--linkedGap=GOV-GAP-04",
+            "--fromAssertion=A7",
+            "--writebackTargets=Current,Code Index,Tests",
+        )
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        payload = self.run_node(
+            f"""
+const fs = require("node:fs");
+const {{ getCompanionPath }} = require("{ROOT.as_posix()}/scripts/coord/lib/task-meta.ts");
+const file = getCompanionPath("task-133-writeback-scope");
+console.log(fs.readFileSync(file, "utf8"));
+"""
+        )
+
+        self.assertEqual(
+            payload["planned_files"],
+            [
+                "tasks/queue/task-133-writeback-scope.md",
+                "memory/project/governance-gaps.md",
+                "memory/project/current-state.md",
+                "code_index/",
+                "tests/",
+            ],
+        )
+
+    def test_validate_task_git_link_rejects_missing_current_writeback_sink(self) -> None:
+        self.write_governance_gaps(
+            """# 治理 Gap Backlog
+
+## GOV-GAP-04 truth 回写要求存在，但缺少固定归口规则
+
+- gap_id: `GOV-GAP-04`
+- title: truth 回写要求存在，但缺少固定归口规则
+- from_assertion: `A7`
+- status: `open`
+- linked_tasks:
+  - `task-999-sample`
+"""
+        )
+        task_path = self.target / "tasks" / "queue" / "task-999-sample.md"
+        task_path.write_text(
+            render_task_template(
+                {
+                    "governance_binding_block": """## 治理绑定
+
+- 主治理差距：`GOV-GAP-04`
+- 来源断言：`A7`
+- 回写目标:
+  - `Current`
+""",
+                }
+            ),
+            encoding="utf8",
+        )
+        self.init_git_repo()
+        subprocess.run(["git", "checkout", "-b", "codex/task-999-sample"], cwd=self.target, check=True)
+        (self.target / "README.md").write_text("no current sink\n", encoding="utf8")
+
+        completed = self.run_script("scripts/ai/validate-task-git-link.ts")
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("Current", completed.stdout)
+        self.assertIn("current-state", completed.stdout)
+
+    def test_validate_task_git_link_rejects_multi_target_when_tests_sink_missing(self) -> None:
+        self.write_governance_gaps(
+            """# 治理 Gap Backlog
+
+## GOV-GAP-04 truth 回写要求存在，但缺少固定归口规则
+
+- gap_id: `GOV-GAP-04`
+- title: truth 回写要求存在，但缺少固定归口规则
+- from_assertion: `A7`
+- status: `open`
+- linked_tasks:
+  - `task-999-sample`
+"""
+        )
+        task_path = self.target / "tasks" / "queue" / "task-999-sample.md"
+        task_path.write_text(
+            render_task_template(
+                {
+                    "governance_binding_block": """## 治理绑定
+
+- 主治理差距：`GOV-GAP-04`
+- 来源断言：`A7`
+- 回写目标:
+  - `Current`
+  - `Tests`
+""",
+                    "update_trace_memory": "memory/project/current-state.md",
+                    "delivery_result": "已回写 Current，但还没补 Tests。",
+                }
+            ),
+            encoding="utf8",
+        )
+        self.init_git_repo()
+        subprocess.run(["git", "checkout", "-b", "codex/task-999-sample"], cwd=self.target, check=True)
+        (self.target / "memory" / "project" / "current-state.md").write_text("# 当前状态\n- 已回写\n", encoding="utf8")
+
+        completed = self.run_script("scripts/ai/validate-task-git-link.ts")
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("Tests", completed.stdout)
+
+    def test_validate_task_git_link_accepts_writeback_targets_when_all_sinks_exist(self) -> None:
+        self.write_governance_gaps(
+            """# 治理 Gap Backlog
+
+## GOV-GAP-04 truth 回写要求存在，但缺少固定归口规则
+
+- gap_id: `GOV-GAP-04`
+- title: truth 回写要求存在，但缺少固定归口规则
+- from_assertion: `A7`
+- status: `open`
+- linked_tasks:
+  - `task-999-sample`
+"""
+        )
+        task_path = self.target / "tasks" / "queue" / "task-999-sample.md"
+        task_path.write_text(
+            render_task_template(
+                {
+                    "governance_binding_block": """## 治理绑定
+
+- 主治理差距：`GOV-GAP-04`
+- 来源断言：`A7`
+- 回写目标:
+  - `Current`
+  - `Code Index`
+  - `Tests`
+""",
+                    "update_trace_memory": "memory/project/current-state.md",
+                    "update_trace_index": "code_index/module-index.md",
+                    "delivery_result": "已回写 Current、Code Index，并补上 Tests 守护。",
+                }
+            ),
+            encoding="utf8",
+        )
+        self.init_git_repo()
+        subprocess.run(["git", "checkout", "-b", "codex/task-999-sample"], cwd=self.target, check=True)
+        (self.target / "memory" / "project" / "current-state.md").write_text("# 当前状态\n- 已回写\n", encoding="utf8")
+        (self.target / "code_index" / "module-index.md").write_text("# 模块索引\n- 已回写\n", encoding="utf8")
+        (self.target / "tests" / "test_writeback.py").write_text("def test_writeback_guard():\n    assert True\n", encoding="utf8")
+
+        completed = self.run_script("scripts/ai/validate-task-git-link.ts")
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+
+    def test_validate_task_git_link_allows_existing_task_to_close_bound_gap(self) -> None:
+        self.write_governance_gaps(
+            """# 治理 Gap Backlog
+
+## GOV-GAP-04 truth 回写要求存在，但缺少固定归口规则
+
+- gap_id: `GOV-GAP-04`
+- title: truth 回写要求存在，但缺少固定归口规则
+- from_assertion: `A7`
+- status: `closed`
+- linked_tasks:
+  - `task-999-sample`
+"""
+        )
+        task_path = self.target / "tasks" / "queue" / "task-999-sample.md"
+        task_path.write_text(
+            render_task_template(
+                {
+                    "governance_binding_block": """## 治理绑定
+
+- 主治理差距：`GOV-GAP-04`
+- 来源断言：`A7`
+- 回写目标:
+  - `Current`
+  - `Tests`
+""",
+                    "update_trace_memory": "memory/project/current-state.md",
+                    "delivery_result": "已回写 Current，并补上 Tests 守护。",
+                }
+            ),
+            encoding="utf8",
+        )
+        self.init_git_repo()
+        subprocess.run(["git", "checkout", "-b", "codex/task-999-sample"], cwd=self.target, check=True)
+        (self.target / "memory" / "project" / "current-state.md").write_text("# 当前状态\n- 已回写\n", encoding="utf8")
+        (self.target / "tests" / "test_writeback.py").write_text("def test_writeback_guard():\n    assert True\n", encoding="utf8")
+
+        completed = self.run_script("scripts/ai/validate-task-git-link.ts")
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+
     def test_task_transition_only_allows_override_events_and_requires_reason(self) -> None:
         blocked = self.run_script("scripts/coord/task.ts", "transition", "--taskId=t-999", "--event=block")
         self.assertNotEqual(blocked.returncode, 0)

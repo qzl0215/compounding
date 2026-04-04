@@ -11,7 +11,8 @@ const {
   GOVERNANCE_GAPS_PATH,
 } = require(path.join(process.cwd(), "shared", "governance-gap-contract.ts"));
 
-const ALLOWED_WRITEBACK_TARGETS = Object.freeze(["Current", "Controlled Facts", "Code Index", "Tests"]);
+const ALLOWED_WRITEBACK_TARGETS = Object.freeze(["Current", "Code Index", "Tests"]);
+const RESERVED_WRITEBACK_TARGETS = Object.freeze(["Controlled Facts"]);
 const WRITEBACK_TARGET_ALIASES = Object.freeze({
   current: "Current",
   当前真相: "Current",
@@ -64,7 +65,7 @@ if (existingTaskRecords.some((record) => record.shortId === shortId)) {
   exitWithError(`Short task id already exists: ${shortId}`, cli);
 }
 
-const body = renderTaskTemplate(
+  const body = renderTaskTemplate(
   {
     task_id: taskId,
     short_id: shortId,
@@ -88,7 +89,7 @@ const body = renderTaskTemplate(
     delivery_result: argv.deliveryResult || argv.delivery_result,
     retro: argv.retro,
     branch: argv.branch || detectCurrentBranch(root) || `codex/${taskId}`,
-    related_modules: argv.relatedModules || argv.related_modules || "",
+    related_modules: buildRelatedModules(argv, governanceBinding),
     update_trace_memory: argv.updateTraceMemory || argv.update_trace_memory || "no change: 未更新",
     update_trace_index: argv.updateTraceIndex || argv.update_trace_index || "no change: 未更新",
     update_trace_roadmap: argv.updateTraceRoadmap || argv.update_trace_roadmap || "no change: 未更新",
@@ -198,6 +199,13 @@ function normalizeWritebackTargets(raw, cli) {
         [`允许值：${ALLOWED_WRITEBACK_TARGETS.join(", ")}`]
       );
     }
+    if (RESERVED_WRITEBACK_TARGETS.includes(canonical)) {
+      exitWithError(
+        `writeback_targets 包含当前保留但未启用的目标：${value}`,
+        cli,
+        ["本轮只允许：Current, Code Index, Tests"]
+      );
+    }
     if (!normalized.includes(canonical)) {
       normalized.push(canonical);
     }
@@ -226,6 +234,39 @@ function renderGovernanceBindingBlock(binding) {
     "- 回写目标：",
     ...binding.writebackTargets.map((target) => `  - \`${target}\``),
   ].join("\n");
+}
+
+function buildRelatedModules(argv, governanceBinding) {
+  const existing = String(argv.relatedModules || argv.related_modules || "").trim();
+  if (!governanceBinding) {
+    return existing;
+  }
+
+  const bullets = [
+    "- `memory/project/governance-gaps.md`",
+    ...governanceBinding.writebackTargets.flatMap((target) => {
+      if (target === "Current") {
+        return ["- `memory/project/current-state.md`"];
+      }
+      if (target === "Code Index") {
+        return ["- `code_index/`"];
+      }
+      if (target === "Tests") {
+        return ["- `tests/`"];
+      }
+      return [];
+    }),
+  ];
+
+  const lines = existing ? existing.split(/\r?\n/).map((line) => line.trimEnd()) : [];
+  for (const bullet of bullets) {
+    const normalized = bullet.replace(/[`-]/g, "").trim();
+    if (!lines.some((line) => line.includes(normalized))) {
+      lines.push(bullet);
+    }
+  }
+
+  return lines.filter(Boolean).join("\n");
 }
 
 function detectCurrentBranch(root) {

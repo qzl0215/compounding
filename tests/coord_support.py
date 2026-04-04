@@ -60,6 +60,8 @@ class CoordCliTestCase(unittest.TestCase):
         (self.target / "bootstrap").mkdir(parents=True, exist_ok=True)
         (self.target / "kernel").mkdir(parents=True, exist_ok=True)
         (self.target / "memory" / "project").mkdir(parents=True, exist_ok=True)
+        (self.target / "code_index").mkdir(parents=True, exist_ok=True)
+        (self.target / "tests").mkdir(parents=True, exist_ok=True)
         (self.target / "schemas").mkdir(parents=True, exist_ok=True)
         shutil.copy(ROOT / "shared" / "task-identity.ts", self.target / "shared" / "task-identity.ts")
         shutil.copy(ROOT / "shared" / "task-contract.ts", self.target / "shared" / "task-contract.ts")
@@ -74,6 +76,8 @@ class CoordCliTestCase(unittest.TestCase):
         shutil.copy(ROOT / "schemas" / "task-state-machine.schema.yaml", self.target / "schemas" / "task-state-machine.schema.yaml")
         shutil.copy(TASK_TEMPLATE_PATH, self.target / "tasks" / "templates" / "task-template.md")
         (self.target / "tasks" / "queue" / "task-999-sample.md").write_text(SAMPLE_TASK_MARKDOWN, encoding="utf8")
+        (self.target / "memory" / "project" / "current-state.md").write_text("# 当前状态\n", encoding="utf8")
+        (self.target / "code_index" / "module-index.md").write_text("# 模块索引\n", encoding="utf8")
 
     def tearDown(self) -> None:
         self.temp_dir.cleanup()
