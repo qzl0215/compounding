@@ -103,14 +103,14 @@ last_reviewed_at: 2026-04-05
 | `A6` | `Gap` 必须来自同维度断言比较，不能从 task 或 patch 倒推 | `Gap` | 本附录矩阵 + `memory/project/governance-gaps.md` | 断言矩阵已生成 `GOV-GAP-*`，active gap 详情由治理 backlog 主源接管 | `partial` | `GOV-GAP-03` | task、retro candidate、patch 记录 |
 | `A7` | 行为变化后必须回写 `Current` 或其受控事实入口，patch note 不能替代 truth | `Current` | `memory/project/current-state.md` + 事实入口 | `task` 合同已固定 `writeback_targets`；`validate-task-git` 已对 `Current / Code Index / Tests` 做文件级兑现校验；治理回写协议已明确 truth 归口矩阵 | `met` | `none` | changelog、task 交付结果、临时说明 |
 | `A8` | `Code Index` 只能做实现导航，不能写成并列系统说明书 | `Code Index` | `code_index/*` | `code_index/module-index.md` 与 `docs/ASSET_MAINTENANCE.md` 都明确索引只做导航与压缩，不承载决策/状态 | `met` | `none` | architecture 解释、current truth |
-| `A9` | 测试与验证必须保护现实规则，不能只证明“脚本跑了” | `Reality Guard` | `pnpm preflight`、`validate:*`、`docs/TEST_MATRIX.md` | 仓内已有门禁分层与测试矩阵，但治理规则尚未按 assertion 显式映射到守护用例 | `partial` | `GOV-GAP-05` | 文档声明、人工口头约定 |
+| `A9` | 测试与验证必须保护现实规则，不能只证明“脚本跑了” | `Reality Guard` | `pnpm preflight`、`validate:*`、`docs/TEST_MATRIX.md` | 本蓝图已新增治理守护矩阵 v1，`ai:validate-governance-guards` 会检查 `A4 / A6 / A7 / A9` 的 guard 注册表与 `validate:static` 接入漂移 | `met` | `none` | 文档声明、人工口头约定 |
 | `A10` | 附录与规范层只能补充，不能回流为默认第一跳主源 | `Appendix Boundary` | `AGENTS.md` 默认读链 | `AGENTS.md` 明确 `PROJECT_RULES`、`AI_OPERATING_MODEL`、`ASSET_MAINTENANCE` 按需补读；OpenSpec 只作规范层 | `met` | `none` | 附录、OpenSpec、superpowers 文档 |
 
 ### Active Gap 入口
 
 - active 治理 gap 以 `memory/project/governance-gaps.md` 为唯一长期记录。
 - 本矩阵只负责生成与对照，不再承载 active gap 详情。
-- 当前 active 治理 gap 为 `GOV-GAP-01`、`GOV-GAP-02`、`GOV-GAP-03`、`GOV-GAP-05`；`GOV-GAP-04` 已由 `t-095` 在治理控制面闭合。
+- 当前 active 治理 gap 为 `GOV-GAP-01`、`GOV-GAP-02`、`GOV-GAP-03`；`GOV-GAP-04` 已由 `t-095` 在治理控制面闭合，`GOV-GAP-05` 已由 `t-096` 用治理守护矩阵 v1 与探针闭合。
 
 ### 生成规则
 
@@ -153,6 +153,23 @@ last_reviewed_at: 2026-04-05
 - `更新痕迹` 必须与声明的 `writeback_targets` 一致。
 - 如果 target 是 `Current` 或 `Code Index`，对应 trace 不能继续写 `no change`。
 - `Tests` 的兑现证据来自测试 / 校验入口本身，不强行塞进四格 trace。
+
+## 治理守护矩阵 v1
+
+这组守护矩阵只覆盖治理控制面里可机读、可被现有 gate 承接的断言。它的职责不是重新定义治理对象，而是明确“哪条治理断言由谁守、guard 是否存在、是否已接入静态门禁链”。
+
+| assertion_id | assertion | primary_guard | probe_rule | failure_signal | coverage_status |
+| --- | --- | --- | --- | --- | --- |
+| `A4` | `Task` 只能承接已收口范围，不能替代 `Goal / Current / Plan` | `pnpm ai:validate-task-git` | script exists + validate:static includes it | task 未合法绑定 gap / from_assertion / writeback_targets | `active` |
+| `A6` | `Gap` 必须来自同维度断言比较，不能从 task 或 patch 倒推 | `pnpm ai:validate-task-git` | script exists + validate:static includes it | gap 来源不合法、gap 主源不一致、从 task 或 patch 倒推 | `active` |
+| `A7` | 行为变化后必须回写 `Current` 或其受控事实入口，patch note 不能替代 truth | `pnpm ai:validate-task-git` | script exists + validate:static includes it | 声明的 truth sink 未兑现 | `active` |
+| `A9` | 测试与验证必须保护现实规则，不能只证明“脚本跑了” | `pnpm ai:validate-governance-guards` | script exists + validate:static includes it | 守护矩阵缺项、guard 入口漂移、static gate 未接入 | `active` |
+
+### v1 边界
+
+- `A5` 不进入本轮守护矩阵；它继续留在 `GOV-GAP-02`，按状态真相收口轮次处理。
+- `docs/TEST_MATRIX.md` 只保留测试分层与引用说明，不承载 assertion registry 本体。
+- `ai:validate-governance-guards` 只验证注册表完整性、guard 入口存在性和静态门禁接入，不推导 guard 的语义充分性。
 
 ## 计划产出任务
 

@@ -88,12 +88,13 @@ related_docs:
 - current_symptom: 测试矩阵和门禁存在，但没有覆盖“哪条治理断言由哪类验证保护”。
 - impact: 治理规则容易退化成只靠人工记忆的约定。
 - should_be: 每条活跃治理断言都应至少映射到一种门禁、测试或校验入口。
-- status: `open`
+- status: `closed`
 - evidence:
   - `docs/TEST_MATRIX.md`
   - `memory/project/current-state.md`
   - `package.json`
-- linked_tasks: []
-- notes: 这更适合作为 backlog 中的下一轮治理动作，而不是本轮顺手补测试。
+- linked_tasks:
+  - `task-096`
+- notes: `t-096` 已在 `memory/project/operating-blueprint.md` 内补上治理守护矩阵 v1，并新增 `ai:validate-governance-guards` 探针；v1 范围只覆盖 `A4 / A6 / A7 / A9`，`A5` 仍留在 `GOV-GAP-02` 的状态真相收口轮次。
 
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

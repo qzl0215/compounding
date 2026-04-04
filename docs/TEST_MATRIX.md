@@ -33,5 +33,6 @@ related_docs:
 
 - `pnpm test` 是仓级最小回归包，由 `apps/studio` Vitest 和 `tests/` Python 契约测试组成。
 - `pnpm validate:static`、`pnpm validate:build`、`pnpm preview:check`、`pnpm prod:check` 是不同门禁层，不要混进测试矩阵里重复描述。
+- 治理断言与 guard 的 canonical 映射以 `memory/project/operating-blueprint.md` 的“治理守护矩阵 v1”为准；本文件只负责测试分层，不承载 assertion registry。
 - 新增用例优先写到能直接看到失败的层；如果更轻的一层已经能覆盖，就不要再升层。
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->
