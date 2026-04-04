@@ -212,7 +212,7 @@ class AiAssetsCliTests(unittest.TestCase):
         self.assertIn("pnpm ai:command-gain --json", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
         self.assertIn("pnpm ai:find:summary", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
         self.assertIn("pnpm ai:read:summary", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
-        self.assertIn("/ai-efficiency", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
+        self.assertNotIn("/ai-efficiency", (self.target / "CLAUDE.md").read_text(encoding="utf8"))
         self.assertIn("三模式入口", (self.target / "docs" / "OPERATOR_RUNBOOK.md").read_text(encoding="utf8"))
         self.assertIn("Task Orchestration", (self.target / "docs" / "OPERATOR_RUNBOOK.md").read_text(encoding="utf8"))
         self.assertIn("GitHub 接入准备", (self.target / "docs" / "OPERATOR_RUNBOOK.md").read_text(encoding="utf8"))

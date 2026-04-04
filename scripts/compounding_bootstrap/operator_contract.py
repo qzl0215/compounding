@@ -440,6 +440,10 @@ def normalize_operator_payload(payload: dict[str, Any], target: Path) -> tuple[d
         payload.get("toolchain_commands"),
         default_toolchain_commands(target, adapter_id, has_ai_exec_pack),
     )
+    task_orchestration = normalize_task_orchestration(
+        payload.get("task_orchestration"),
+        default_task_orchestration(has_ai_exec_pack),
+    )
 
     normalized_shortcuts = []
     shortcut_values = payload.get("agent_shortcuts") if isinstance(payload.get("agent_shortcuts"), list) else template.get("agent_shortcuts", [])

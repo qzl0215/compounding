@@ -7,7 +7,7 @@ from typing import Any
 
 
 def render_module_index(scan: dict[str, Any]) -> str:
-    studio_modules = scan.get("studio_modules") or ["portal", "docs", "git-health"]
+    studio_modules = scan.get("studio_modules") or ["portal", "docs"]
     bootstrap_modules = scan.get("bootstrap_modules") or [
         "defaults",
         "config_resolution",

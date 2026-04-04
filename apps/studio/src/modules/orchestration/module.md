@@ -2,7 +2,7 @@
 
 ## 模块目标
 
-负责把 harness、delivery、project-state 与首页逻辑图聚合成唯一的 Studio 读模型，供 Home、Tasks、Releases 与 `/harness` 共享读取，并显式暴露一层 canonical control plane summary。
+负责把 harness、delivery、project-state 与首页逻辑图聚合成唯一的 Studio 读模型，供 Home、Tasks、Releases 与 `/harness` 共享读取。
 
 ## 入口与拥有面
 
@@ -27,7 +27,6 @@
 
 - orchestration 只做聚合，不新增第四套真相源。
 - 所有 Studio 主要页面必须共读同一份 orchestration snapshot。
-- orchestration snapshot 里的 `controlPlane` 是 canonical summary，只是对 harness 事实的显式投影，不是第四套真相源。
 - orchestration 的返回值里，harness、delivery、project-state 和 home 仍然保留各自领域边界，不互相改写。
 - orchestration 的关键共享读链必须继续挂在 harness 一致性账本上，避免页面消费者各自漂移。
 

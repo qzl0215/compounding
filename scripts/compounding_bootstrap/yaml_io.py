@@ -46,6 +46,30 @@ def split_inline_items(text: str) -> list[str]:
     return items
 
 
+def has_inline_mapping_separator(text: str) -> bool:
+    quote: str | None = None
+    depth = 0
+    for index, char in enumerate(text):
+        if quote:
+            if char == quote:
+                quote = None
+            continue
+        if char in {'"', "'"}:
+            quote = char
+            continue
+        if char in "[{":
+            depth += 1
+            continue
+        if char in "]}":
+            depth = max(0, depth - 1)
+            continue
+        if char == ":" and depth == 0:
+            next_char = text[index + 1] if index + 1 < len(text) else ""
+            if next_char in {"", " "}:
+                return True
+    return False
+
+
 def parse_scalar(value: str) -> Any:
     text = value.strip()
     if text == "":
@@ -146,7 +170,15 @@ def parse_list(lines: list[YamlLine], index: int, indent: int) -> tuple[list[Any
             else:
                 result.append(None)
             continue
-        key, _, inline_value = remainder.partition(":")
+        if (remainder.startswith('"') and remainder.endswith('"')) or (
+            remainder.startswith("'") and remainder.endswith("'")
+        ):
+            result.append(parse_scalar(remainder))
+            continue
+        if has_inline_mapping_separator(remainder):
+            key, _, inline_value = remainder.partition(":")
+        else:
+            key, _, inline_value = "", "", ""
         if _ and key and all(char.isalnum() or char in "._-" for char in key):
             item: dict[str, Any] = {}
             inline_value = inline_value.lstrip()

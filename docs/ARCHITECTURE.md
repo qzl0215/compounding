@@ -2,7 +2,7 @@
 title: ARCHITECTURE
 update_mode: promote_only
 status: active
-last_reviewed_at: 2026-03-29
+last_reviewed_at: 2026-04-03
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -38,7 +38,7 @@ related_docs:
 - `apps/studio/src/app/**`
 - `apps/studio/src/components/**`
 - `apps/studio/src/lib/**`
-- `apps/studio/src/modules/**`（delivery / docs / git-health / portal / project-state / releases / tasks）
+- `apps/studio/src/modules/**`（delivery / docs / portal / project-state / releases / tasks）
 - `scripts/ai/**`
 - `scripts/coord/**`
 - `scripts/local-runtime/**`
@@ -111,7 +111,6 @@ related_docs:
 
 - `apps/studio/src/modules/delivery`
 - `apps/studio/src/modules/docs`
-- `apps/studio/src/modules/git-health`
 - `apps/studio/src/modules/portal`
 - `apps/studio/src/modules/releases`
 - `apps/studio/src/modules/tasks`

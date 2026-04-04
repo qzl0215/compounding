@@ -2,7 +2,7 @@
 title: OPERATOR_RUNBOOK
 update_mode: generated
 status: active
-last_reviewed_at: 2026-04-03
+last_reviewed_at: 2026-04-04
 source_of_truth: bootstrap/project_operator.yaml
 related_docs:
   - AGENTS.md
@@ -103,7 +103,7 @@ related_docs:
 - 带 task 的 feature 上下文：`pnpm ai:feature-context -- --taskPath=tasks/queue/task-xxx.md`
 - 默认摘要链：`pnpm ai:preflight:summary` / `pnpm ai:diff:summary` / `pnpm ai:tree:summary` / `pnpm ai:find:summary -- --query=keyword` / `pnpm ai:read:summary -- --path=memory/project/current-state.md`
 - 原始回退链：`pnpm preflight` / `git diff` / `rg --files --hidden` / `rg -n --hidden keyword` / `sed -n '1,200p' memory/project/current-state.md`
-- 看当前令牌效率：`pnpm ai:command-gain --json` 或打开 `/ai-efficiency`
+- 看当前令牌效率：`pnpm ai:command-gain --json`
 - 默认先看 feature packet 里的 `Project Judgement` 和 `Default Loop`，再动手改代码。
 
 ## 服务器访问面

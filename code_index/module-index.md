@@ -16,7 +16,8 @@ related_docs:
 
 - `apps/studio/src/modules/delivery`
 - `apps/studio/src/modules/docs`
-- `apps/studio/src/modules/git-health`
+- `apps/studio/src/modules/harness`
+- `apps/studio/src/modules/orchestration`
 - `apps/studio/src/modules/portal`
 - `apps/studio/src/modules/project-state`
 - `apps/studio/src/modules/releases`
@@ -30,8 +31,11 @@ related_docs:
 - `scripts/compounding_bootstrap/catalog.py`
 - `scripts/compounding_bootstrap/config_resolution.py`
 - `scripts/compounding_bootstrap/defaults.py`
+- `scripts/compounding_bootstrap/doctor.py`
 - `scripts/compounding_bootstrap/engine.py`
 - `scripts/compounding_bootstrap/managed_blocks.py`
+- `scripts/compounding_bootstrap/operator_contract.py`
+- `scripts/compounding_bootstrap/packs.py`
 - `scripts/compounding_bootstrap/proposal.py`
 - `scripts/compounding_bootstrap/proposal_engine.py`
 - `scripts/compounding_bootstrap/proposal_generation.py`
