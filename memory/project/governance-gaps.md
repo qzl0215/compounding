@@ -1,0 +1,98 @@
+---
+title: GOVERNANCE_GAPS
+update_mode: manual
+status: active
+last_reviewed_at: 2026-04-05
+source_of_truth: memory/project/governance-gaps.md
+related_docs:
+  - AGENTS.md
+  - memory/project/operating-blueprint.md
+  - memory/project/roadmap.md
+  - memory/project/current-state.md
+---
+<!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
+# 治理 Gap Backlog
+
+这份 backlog 只承接治理控制面的 gap，不覆盖业务模块 gap。它是治理 gap 的唯一长期记录，不进入默认第一跳。
+
+## GOV-GAP-01 task 仍未显式绑定治理 gap
+
+- gap_id: `GOV-GAP-01`
+- title: `task` 仍未显式绑定治理 gap
+- from_assertion: `A4`
+- current_symptom: task 合同已收口边界，但没有统一 `linked_gap` 字段，施工来源仍依赖 plan/task 文字理解。
+- impact: task 容易直接承接“感觉上的问题”，而不是承接显式差距。
+- should_be: task 必须引用矩阵产出的 gap 记录或其后续主 backlog 记录。
+- status: `open`
+- evidence:
+  - `memory/project/operating-blueprint.md`
+  - `tasks/queue/*.md`
+  - `scripts/ai/lib/task-template.js`
+- linked_tasks:
+  - `task-094`
+- notes: `t-094` 正在接通 task 合同字段、创建入口、校验链和 backlog 反向引用。
+
+## GOV-GAP-02 状态主源已存在，但 task prose 仍保留派生状态位
+
+- gap_id: `GOV-GAP-02`
+- title: 状态主源已存在，但 `task prose` 仍保留派生状态位
+- from_assertion: `A5`
+- current_symptom: `kernel/task-state-machine.yaml` 已是状态契约主源，task 文档仍保留 `状态` / `当前模式` 兼容区块。
+- impact: 人和 AI 容易把 prose 状态当成真实状态源，重新长出兼容壳。
+- should_be: 状态只由状态契约和 companion 驱动，task 正文只保留必要派生展示或进一步收薄。
+- status: `open`
+- evidence:
+  - `AGENTS.md`
+  - `kernel/task-state-machine.yaml`
+  - `tasks/queue/*.md`
+- linked_tasks: []
+- notes: 这是状态真相收口问题，不在本轮连带处理。
+
+## GOV-GAP-03 assertion 到 gap 的稳定生成层刚建立，仍待固化
+
+- gap_id: `GOV-GAP-03`
+- title: assertion 到 gap 的稳定生成层仍待固化
+- from_assertion: `A6`
+- current_symptom: 断言矩阵已经能生成治理 gap，但生成规则与长期 backlog 的关系还是首版，尚未接到后续 task 合法来源链。
+- impact: 如果 backlog 关系不固定，gap 仍可能重新退回 plan prose、task prose 或候选报告。
+- should_be: gap 必须稳定由断言矩阵生成，并以 backlog 主记录作为唯一长期对象层。
+- status: `open`
+- evidence:
+  - `memory/project/operating-blueprint.md`
+  - `memory/project/governance-gaps.md`
+- linked_tasks: []
+- notes: 本轮先把 `Gap` 从矩阵候选升级为长期 backlog 对象，下一轮再接 task 绑定。
+
+## GOV-GAP-04 truth 回写要求存在，但缺少固定归口规则
+
+- gap_id: `GOV-GAP-04`
+- title: truth 回写要求存在，但缺少固定归口规则
+- from_assertion: `A7`
+- current_symptom: 主干文档已要求同步回写，但还没有一层显式规则告诉改动后应回写 `Current` 还是其他受控事实入口。
+- impact: 改动完成后容易留下“行为已变、真相未回写”的漂移。
+- should_be: 行为变化必须按类型回写 `Current` 或受控事实入口，临时交付记录不能替代 truth。
+- status: `open`
+- evidence:
+  - `AGENTS.md`
+  - `memory/project/current-state.md`
+  - `docs/ASSET_MAINTENANCE.md`
+- linked_tasks: []
+- notes: 后续需要补“变化类型 -> truth 归口”的固定规则，但不在本轮展开。
+
+## GOV-GAP-05 治理断言尚未映射到验证与测试守护
+
+- gap_id: `GOV-GAP-05`
+- title: 治理断言尚未映射到验证与测试守护
+- from_assertion: `A9`
+- current_symptom: 测试矩阵和门禁存在，但没有覆盖“哪条治理断言由哪类验证保护”。
+- impact: 治理规则容易退化成只靠人工记忆的约定。
+- should_be: 每条活跃治理断言都应至少映射到一种门禁、测试或校验入口。
+- status: `open`
+- evidence:
+  - `docs/TEST_MATRIX.md`
+  - `memory/project/current-state.md`
+  - `package.json`
+- linked_tasks: []
+- notes: 这更适合作为 backlog 中的下一轮治理动作，而不是本轮顺手补测试。
+
+<!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

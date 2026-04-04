@@ -15,6 +15,8 @@
   {{done_when}}
 - 交付轨道：`{{delivery_track}}`
 
+{{governance_binding_block}}
+
 ## 执行合同
 
 ### 要做

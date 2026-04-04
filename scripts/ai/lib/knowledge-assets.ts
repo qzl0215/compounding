@@ -92,6 +92,7 @@ function getKnowledgeAssets(root) {
         "docs/PROJECT_RULES.md",
         "docs/AI_OPERATING_MODEL.md",
         "docs/ASSET_MAINTENANCE.md",
+        "memory/project/governance-gaps.md",
         "memory/project/tech-debt.md",
       ],
       freshness_policy: {

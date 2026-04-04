@@ -5,6 +5,28 @@ const { listTaskRecords } = require("./lib/task-resolver.ts");
 const { ensureCompanion } = require("../coord/lib/task-meta.ts");
 const { syncTaskMaterialization } = require("../harness/lib.ts");
 const { emitResult, exitWithError, parseCliArgs, renderTaskTemplate } = require("./lib/cli-kernel.js");
+const {
+  appendLinkedTaskToGovernanceGap,
+  findGovernanceGapRecord,
+  GOVERNANCE_GAPS_PATH,
+} = require(path.join(process.cwd(), "shared", "governance-gap-contract.ts"));
+
+const ALLOWED_WRITEBACK_TARGETS = Object.freeze(["Current", "Controlled Facts", "Code Index", "Tests"]);
+const WRITEBACK_TARGET_ALIASES = Object.freeze({
+  current: "Current",
+  当前真相: "Current",
+  currentstate: "Current",
+  controlledfacts: "Controlled Facts",
+  controlledfact: "Controlled Facts",
+  受控事实: "Controlled Facts",
+  受控事实入口: "Controlled Facts",
+  codeindex: "Code Index",
+  代码索引: "Code Index",
+  索引: "Code Index",
+  test: "Tests",
+  tests: "Tests",
+  测试: "Tests",
+});
 
 const cli = parseCliArgs(process.argv.slice(2));
 const [taskId, summary, whyNow] = cli.positionals.slice(0, 3);
@@ -18,6 +40,7 @@ if (!taskId || !summary || !whyNow) {
       "Optional flags: --parentPlan=... --boundary=... --doneWhen=... --inScope=... --outOfScope=... --constraints=...",
       "                --deliveryTrack=... --risk=... --testReason=... --testScope=... --testSkip=... --testRoi=... --status=...",
       "                --acceptanceResult=... --deliveryResult=... --retro=... --branch=...",
+      "                --linkedGap=... --fromAssertion=... --writebackTargets=Current,Tests ...",
       "                --relatedModules='- `path/file`\\n- `dir/`' --updateTraceMemory=... --updateTraceIndex=...",
       "                --updateTraceRoadmap=... --updateTraceDocs=...",
     ].join("\n")
@@ -29,6 +52,7 @@ const outputPath = path.join(root, "tasks", "queue", `${taskId}.md`);
 const shortIdMatch = taskId.match(/^task-(\d+)/);
 const shortId = shortIdMatch ? `t-${shortIdMatch[1]}` : `t-${taskId}`;
 const resolvedSummary = (argv.summary || summary || "").trim();
+const governanceBinding = resolveGovernanceBinding(argv, root, cli);
 
 assertChineseSummary(resolvedSummary, cli);
 
@@ -50,6 +74,7 @@ const body = renderTaskTemplate(
     boundary: argv.boundary,
     done_when: argv.doneWhen || argv.done_when,
     delivery_track: argv.deliveryTrack || argv.delivery_track || "undetermined",
+    governance_binding_block: renderGovernanceBindingBlock(governanceBinding),
     in_scope: argv.inScope || argv.in_scope,
     out_of_scope: argv.outOfScope || argv.out_of_scope,
     constraints: argv.constraints,
@@ -74,6 +99,9 @@ const body = renderTaskTemplate(
 
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, body);
+if (governanceBinding) {
+  appendLinkedTaskToGovernanceGap(governanceBinding.linkedGap, taskId, root);
+}
 ensureCompanion(taskId);
 syncTaskMaterialization(taskId, {
   source: "ai:create-task",
@@ -104,6 +132,100 @@ function assertChineseSummary(value, cli) {
       cli
     );
   }
+}
+
+function resolveGovernanceBinding(argv, root, cli) {
+  const linkedGap = normalizeSingleValue(argv.linkedGap || argv.linked_gap);
+  const fromAssertion = normalizeSingleValue(argv.fromAssertion || argv.from_assertion);
+  const writebackTargets = normalizeWritebackTargets(argv.writebackTargets || argv.writeback_targets, cli);
+  const hasGovernanceInput = Boolean(linkedGap || fromAssertion || writebackTargets.length);
+
+  if (!hasGovernanceInput) {
+    return null;
+  }
+
+  if (!linkedGap || !fromAssertion || writebackTargets.length === 0) {
+    exitWithError(
+      "治理类 task 必须同时声明 linked_gap、from_assertion 和 writeback_targets。",
+      cli,
+      [
+        `linked_gap: ${linkedGap || "(missing)"}`,
+        `from_assertion: ${fromAssertion || "(missing)"}`,
+        `writeback_targets: ${writebackTargets.length ? writebackTargets.join(", ") : "(missing)"}`,
+      ]
+    );
+  }
+
+  const record = findGovernanceGapRecord(linkedGap, root);
+  if (!record) {
+    exitWithError(`linked_gap 不存在：${linkedGap}`, cli, [`治理 gap 主源：${GOVERNANCE_GAPS_PATH}`]);
+  }
+  if (String(record.status || "").trim().toLowerCase() === "closed") {
+    exitWithError(`linked_gap 已关闭，不能新开 task：${linkedGap}`, cli, [`治理 gap 主源：${GOVERNANCE_GAPS_PATH}`]);
+  }
+  if (record.fromAssertion && record.fromAssertion !== fromAssertion) {
+    exitWithError(
+      `from_assertion 与治理 gap 主源不一致：${fromAssertion}`,
+      cli,
+      [`${linkedGap} expects ${record.fromAssertion}`]
+    );
+  }
+
+  return {
+    linkedGap,
+    fromAssertion,
+    writebackTargets,
+  };
+}
+
+function normalizeSingleValue(value) {
+  return String(value || "").replace(/`/g, "").trim();
+}
+
+function normalizeWritebackTargets(raw, cli) {
+  const values = String(raw || "")
+    .split(/\r?\n|,|、/)
+    .map((entry) => entry.replace(/^-\s*/, "").replace(/`/g, "").trim())
+    .filter(Boolean);
+
+  const normalized = [];
+  for (const value of values) {
+    const canonical = normalizeWritebackTarget(value);
+    if (!canonical) {
+      exitWithError(
+        `writeback_targets 包含不允许的目标：${value}`,
+        cli,
+        [`允许值：${ALLOWED_WRITEBACK_TARGETS.join(", ")}`]
+      );
+    }
+    if (!normalized.includes(canonical)) {
+      normalized.push(canonical);
+    }
+  }
+  return normalized;
+}
+
+function normalizeWritebackTarget(value) {
+  const trimmed = String(value || "").trim();
+  if (!trimmed) {
+    return "";
+  }
+  const collapsed = trimmed.replace(/[\s_-]+/g, "").toLowerCase();
+  return WRITEBACK_TARGET_ALIASES[collapsed] || "";
+}
+
+function renderGovernanceBindingBlock(binding) {
+  if (!binding) {
+    return "";
+  }
+  return [
+    "## 治理绑定",
+    "",
+    `- 主治理差距：\`${binding.linkedGap}\``,
+    `- 来源断言：\`${binding.fromAssertion}\``,
+    "- 回写目标：",
+    ...binding.writebackTargets.map((target) => `  - \`${target}\``),
+  ].join("\n");
 }
 
 function detectCurrentBranch(root) {

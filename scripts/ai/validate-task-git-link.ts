@@ -11,9 +11,15 @@ const {
 } = require(path.join(process.cwd(), "shared", "task-state-machine.ts"));
 const { normalizeBranchCleanupRecord } = require(path.join(process.cwd(), "shared", "branch-cleanup.ts"));
 const { collectTaskIdentityErrors, taskIdFromPath } = require(path.join(process.cwd(), "shared", "task-identity.ts"));
+const {
+  findGovernanceGapRecord,
+  readGovernanceGapRecords,
+  GOVERNANCE_GAPS_PATH,
+} = require(path.join(process.cwd(), "shared", "governance-gap-contract.ts"));
 const { readCompanion } = require("../coord/lib/task-meta.ts");
 
 const root = process.cwd();
+const ALLOWED_WRITEBACK_TARGETS = new Set(["Current", "Controlled Facts", "Code Index", "Tests"]);
 
 function git(args) {
   try {
@@ -67,6 +73,9 @@ function parseTask(pathname) {
     rawShortId: parsed.shortId,
     path: pathname,
     title: parsed.title,
+    linkedGap: parsed.linkedGap,
+    fromAssertion: parsed.fromAssertion,
+    writebackTargets: parsed.writebackTargets,
     status: deriveTaskStatusFromStateId(machine.state_id),
     stateId: machine.state_id,
     modeId: machine.mode_id,
@@ -197,6 +206,44 @@ function validateTask(task, errors) {
 
   if (task.status !== "done" && snapshot.mergedToMain) {
     errors.push(`${task.path}: 分支提交已并入 main，但任务状态仍不是 done。`);
+  }
+
+  validateGovernanceBinding(task, errors);
+}
+
+function validateGovernanceBinding(task, errors) {
+  const governanceRecords = readGovernanceGapRecords(root);
+  const reverseLinkedRecord = governanceRecords.find((record) => record.linkedTasks.includes(task.id));
+  const hasGovernanceFields = Boolean(task.linkedGap || task.fromAssertion || task.writebackTargets.length);
+
+  if (!reverseLinkedRecord && !hasGovernanceFields) {
+    return;
+  }
+
+  if (!task.linkedGap || !task.fromAssertion || task.writebackTargets.length === 0) {
+    errors.push(`${task.path}: 治理绑定不完整，必须同时声明 linked_gap、from_assertion 和 writeback_targets。`);
+    return;
+  }
+
+  const record = findGovernanceGapRecord(task.linkedGap, root);
+  if (!record) {
+    errors.push(`${task.path}: linked_gap 不存在于 ${GOVERNANCE_GAPS_PATH}：${task.linkedGap}`);
+    return;
+  }
+
+  if (String(record.status || "").trim().toLowerCase() === "closed") {
+    errors.push(`${task.path}: linked_gap 已关闭，不能继续绑定新 task：${task.linkedGap}`);
+  }
+  if (record.fromAssertion && record.fromAssertion !== task.fromAssertion) {
+    errors.push(`${task.path}: from_assertion 与治理 gap 主源不一致，应为 ${record.fromAssertion}。`);
+  }
+  if (!record.linkedTasks.includes(task.id)) {
+    errors.push(`${task.path}: 治理 gap 主源未回写 linked_tasks：${task.id}`);
+  }
+
+  const invalidTargets = task.writebackTargets.filter((target) => !ALLOWED_WRITEBACK_TARGETS.has(target));
+  if (invalidTargets.length > 0) {
+    errors.push(`${task.path}: writeback_targets 包含不允许的目标：${invalidTargets.join(", ")}`);
   }
 }
 

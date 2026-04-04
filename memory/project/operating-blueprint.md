@@ -8,7 +8,7 @@ related_docs:
   - memory/project/roadmap.md
   - memory/project/current-state.md
   - docs/DEV_WORKFLOW.md
-last_reviewed_at: 2026-03-29
+last_reviewed_at: 2026-04-05
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 运营蓝图
@@ -74,6 +74,51 @@ last_reviewed_at: 2026-03-29
 - 首页只保留项目态势判断与逻辑结构图，不展开工程内部对象工作台
 - 不新增独立想法池文件、数据库、第二套工单系统或新的发布状态源
 - `docs/PROJECT_RULES.md`、`docs/AI_OPERATING_MODEL.md`、`docs/ASSET_MAINTENANCE.md` 只作为专项附录，不回到默认第一跳
+
+## 治理断言矩阵 v1
+
+这组矩阵只覆盖治理控制面，不覆盖业务模块真相。它的职责不是派生 task，而是把治理规约投射到本仓主源，稳定生成可治理的 gap。
+
+### 主源映射表
+
+| 治理对象 | 仓库当前主源 | 当前职责 | 是否仓库级唯一入口 | 允许的受控投影 | 不得替代它的对象 |
+| --- | --- | --- | --- | --- | --- |
+| `Goal` | `memory/project/roadmap.md` | 定义阶段、里程碑、成功标准、优先级与方向 | 是 | 首页/任务页/发布页读取的项目摘要；附录中的目标说明 | `Current`、`Plan`、`Task` |
+| `Current` | `memory/project/current-state.md` | 记录当前运行事实、阻塞、冻结项与检查点 | 是 | release/runtime 摘要；页面共享项目状态摘要 | `Goal`、`Plan`、`Task` |
+| `Plan` | `memory/project/operating-blueprint.md` | 收口问题定义、取舍、计划边界与派生 task 来源 | 是 | task 的父计划引用；planning 阶段输入 | `Goal`、`Current`、`Task` |
+| `Task` | `tasks/queue/*.md` | 承接一次有限施工的执行合同、范围与验收 | 否 | companion、handoff、delivery snapshot | `Goal`、`Current`、`Plan` |
+| `State Contract` | `kernel/task-state-machine.yaml` | 定义 task 模式、状态、迁移与交付轨 | 是 | task 正文里的派生状态展示；工具兼容字段 | `Task prose`、附录说明 |
+| `Code Index` | `code_index/*` | 提供代码导航、模块压缩与查找入口 | 是 | feature-context、AI 读链、模块导览 | `ARCHITECTURE`、`Current`、任务说明 |
+| `Reality Guard` | `pnpm preflight`、`validate:*`、关键测试 | 守护当前规则仍成立，提供门禁与回归证据 | 是 | summary harness、页面校验摘要 | 文档声明、patch note |
+
+### 断言矩阵表
+
+| assertion_id | 断言 | 归属对象层 | 应回答它的主源 | 当前证据 | 当前状态 | 生成的 gap_id | 禁止替代项 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `A1` | `Goal` 必须有且仅有一个仓库级主入口 | `Goal` | `memory/project/roadmap.md` | `AGENTS.md` 明确 `roadmap` 只保留阶段/里程碑/优先级；默认读链把它放在 `current-state`、`operating-blueprint` 之前 | `met` | `none` | task、附录、task prose |
+| `A2` | `Current` 必须有且仅有一个仓库级主入口 | `Current` | `memory/project/current-state.md` | `AGENTS.md` 明确 `current-state` 只保留运营快照；默认读链将其作为运行事实主源 | `met` | `none` | roadmap、task、release note |
+| `A3` | `Plan` 必须有且仅有一个 plan 主源，不能与 task 混层 | `Plan` | `memory/project/operating-blueprint.md` | `AGENTS.md` 明确只允许一层 plan；`operating-blueprint` 自身声明唯一主源 | `met` | `none` | task、roadmap、附录 |
+| `A4` | `Task` 只能承接已收口范围，不能替代 `Goal / Current / Plan` | `Task` | `tasks/queue/*.md` | task 模板已要求边界/完成定义/不做/约束，`t-094` 正在补 task 的一等 `linked_gap` 字段与创建/校验链 | `partial` | `GOV-GAP-01` | task 摘要、临时复盘、patch prose |
+| `A5` | 流程状态必须由状态契约主源定义，不能散落在 task prose 中 | `State Contract` | `kernel/task-state-machine.yaml` | `AGENTS.md` 规定状态只认 state machine 与 companion，但 task 正文仍保留 `状态` / `当前模式` 派生展示 | `partial` | `GOV-GAP-02` | task 正文状态块、附录状态说明 |
+| `A6` | `Gap` 必须来自同维度断言比较，不能从 task 或 patch 倒推 | `Gap` | 本附录矩阵 + `memory/project/governance-gaps.md` | 断言矩阵已生成 `GOV-GAP-*`，active gap 详情由治理 backlog 主源接管 | `partial` | `GOV-GAP-03` | task、retro candidate、patch 记录 |
+| `A7` | 行为变化后必须回写 `Current` 或其受控事实入口，patch note 不能替代 truth | `Current` | `memory/project/current-state.md` + 事实入口 | `AGENTS.md` 与 `ASSET_MAINTENANCE.md` 已要求主干回写，但尚无矩阵化入口把变化类型稳定映射到 `Current` 或受控事实入口 | `partial` | `GOV-GAP-04` | changelog、task 交付结果、临时说明 |
+| `A8` | `Code Index` 只能做实现导航，不能写成并列系统说明书 | `Code Index` | `code_index/*` | `code_index/module-index.md` 与 `docs/ASSET_MAINTENANCE.md` 都明确索引只做导航与压缩，不承载决策/状态 | `met` | `none` | architecture 解释、current truth |
+| `A9` | 测试与验证必须保护现实规则，不能只证明“脚本跑了” | `Reality Guard` | `pnpm preflight`、`validate:*`、`docs/TEST_MATRIX.md` | 仓内已有门禁分层与测试矩阵，但治理规则尚未按 assertion 显式映射到守护用例 | `partial` | `GOV-GAP-05` | 文档声明、人工口头约定 |
+| `A10` | 附录与规范层只能补充，不能回流为默认第一跳主源 | `Appendix Boundary` | `AGENTS.md` 默认读链 | `AGENTS.md` 明确 `PROJECT_RULES`、`AI_OPERATING_MODEL`、`ASSET_MAINTENANCE` 按需补读；OpenSpec 只作规范层 | `met` | `none` | 附录、OpenSpec、superpowers 文档 |
+
+### Active Gap 入口
+
+- active 治理 gap 以 `memory/project/governance-gaps.md` 为唯一长期记录。
+- 本矩阵只负责生成与对照，不再承载 active gap 详情。
+- 当前已生成的治理 gap 为 `GOV-GAP-01` 到 `GOV-GAP-05`。
+
+### 生成规则
+
+- `met`：不生成 gap。
+- `partial`：生成可治理 gap，但不直接派生 task。
+- `unmet`：必须生成 gap，并先回到 plan 收口。
+- gap 只记录差距定义、影响、应然，不写施工步骤。
+- 后续 task 必须引用 `gap_id` 或其收口后的 backlog 记录，不能绕过矩阵直接从理想规约开工。
 
 ## 计划产出任务
 

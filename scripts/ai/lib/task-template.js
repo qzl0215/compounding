@@ -11,6 +11,7 @@ const path = require("node:path");
  * @property {string} [boundary]
  * @property {string} [done_when]
  * @property {string} [delivery_track]
+ * @property {string} [governance_binding_block]
  * @property {string} [in_scope]
  * @property {string} [out_of_scope]
  * @property {string} [constraints]
@@ -40,6 +41,7 @@ const DEFAULT_TASK_TEMPLATE_VALUES = Object.freeze({
   boundary: "待补充：写明这个 task 从 plan 承接的那一段清晰边界；若价值判断、范围外或 taste decision 仍未收口，请先回到 plan。",
   done_when: "待补充：写明体验级交付结果，而不是实现动作；若仍是实现动作，说明决策未收口。",
   delivery_track: "undetermined",
+  governance_binding_block: "",
   in_scope: "- 待补充：列出这次明确要做的事项。",
   out_of_scope: "- 待补充：列出这次明确不做的事项。",
   constraints: "- 待补充：列出必须遵守的边界、依赖和冻结项；仍需人判断的只允许是价值判断、体验取舍或最终验收。",

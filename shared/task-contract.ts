@@ -22,6 +22,9 @@ export type ParsedTaskContract = {
   whyNow: string;
   boundary: string;
   doneWhen: string;
+  linkedGap: string;
+  fromAssertion: string;
+  writebackTargets: string[];
   inScope: string;
   outOfScope: string;
   constraints: string;
@@ -52,6 +55,9 @@ type TaskContractFingerprintSource = Pick<
   | "whyNow"
   | "boundary"
   | "doneWhen"
+  | "linkedGap"
+  | "fromAssertion"
+  | "writebackTargets"
   | "inScope"
   | "outOfScope"
   | "constraints"
@@ -67,10 +73,12 @@ export function parseTaskContract(path: string, content: string): ParsedTaskCont
   const id = taskIdFromPath(path);
   const rawTitle = extractFirstHeading(content) ?? "";
   const summarySection = extractLevelSection(content, ["任务摘要"], 2) ?? "";
+  const governanceSection = extractLevelSection(content, ["治理绑定"], 2) ?? "";
   const executionSection = extractLevelSection(content, ["执行合同"], 2) ?? "";
   const resultSection = extractLevelSection(content, ["交付结果"], 2) ?? "";
 
   const summaryLabels = parseLabeledBlock(summarySection);
+  const governanceLabels = parseLabeledBlock(governanceSection);
   const resultLabels = parseLabeledBlock(resultSection);
 
   const shortId =
@@ -95,6 +103,15 @@ export function parseTaskContract(path: string, content: string): ParsedTaskCont
     pickLabel(summaryLabels, ["完成定义"]) ||
     paragraph(extractLegacyField(content, ["完成定义", "验收标准", "Acceptance Criteria"])) ||
     "待补充：说明体验级交付结果。";
+  const linkedGap =
+    normalizeOptionalLabel(pickLabel(governanceLabels, ["主治理差距", "关联差距", "linked_gap"])) ||
+    normalizeOptionalLabel(inline(extractLegacyField(content, ["主治理差距", "关联差距", "linked_gap"])));
+  const fromAssertion =
+    normalizeOptionalLabel(pickLabel(governanceLabels, ["来源断言", "from_assertion"])) ||
+    normalizeOptionalLabel(inline(extractLegacyField(content, ["来源断言", "from_assertion"])));
+  const writebackTargets = parseValueList(
+    pickRawLabel(governanceLabels, ["回写目标", "writeback_targets"]) || extractLegacyField(content, ["回写目标", "writeback_targets"])
+  );
 
   const inScope =
     sectionText(extractLevelSection(executionSection, ["要做"], 3) ?? "") ||
@@ -142,6 +159,9 @@ export function parseTaskContract(path: string, content: string): ParsedTaskCont
     whyNow,
     boundary,
     doneWhen,
+    linkedGap,
+    fromAssertion,
+    writebackTargets,
     inScope,
     outOfScope,
     constraints,
@@ -179,6 +199,9 @@ export function taskContractFingerprint(contract: TaskContractFingerprintSource)
         whyNow: contract.whyNow,
         boundary: contract.boundary,
         doneWhen: contract.doneWhen,
+        linkedGap: contract.linkedGap,
+        fromAssertion: contract.fromAssertion,
+        writebackTargets: contract.writebackTargets,
         inScope: contract.inScope,
         outOfScope: contract.outOfScope,
         constraints: contract.constraints,
@@ -323,6 +346,16 @@ function pickLabel(values: Map<string, string>, labels: string[]) {
   return "";
 }
 
+function pickRawLabel(values: Map<string, string>, labels: string[]) {
+  for (const label of labels) {
+    const value = values.get(normalizeHeading(label));
+    if (value) {
+      return value;
+    }
+  }
+  return "";
+}
+
 function parseRelatedModules(content: string) {
   const raw = extractLegacyField(content, ["关联模块"]);
   const inlineMatches = Array.from(raw.matchAll(/`([^`]+)`/g)).map((match) => match[1].trim());
@@ -351,6 +384,29 @@ function parseUpdateTrace(content: string): TaskUpdateTrace {
     roadmap: extractTraceValue(raw, "路线图"),
     docs: extractTraceValue(raw, "文档"),
   };
+}
+
+function parseValueList(raw: string) {
+  const normalized = blockText(raw).replace(/\r/g, "").trim();
+  if (!normalized || normalized === "[]" || normalized === "未绑定") {
+    return [];
+  }
+  return Array.from(
+    new Set(
+      normalized
+        .split(/\n|,|、/)
+        .map((line) => line.replace(/^-\s*/, "").replace(/`/g, "").trim())
+        .filter(Boolean)
+    )
+  );
+}
+
+function normalizeOptionalLabel(value: string) {
+  const normalized = blockText(value).replace(/`/g, "").trim();
+  if (!normalized || normalized === "未绑定" || normalized.toLowerCase() === "none") {
+    return "";
+  }
+  return normalized;
 }
 
 function extractTraceValue(raw: string, label: string) {

@@ -21,6 +21,7 @@ def render_task_template(values: dict[str, str], template_path: Path = TASK_TEMP
         "boundary": "只验证 task companion、review 与 release handoff 的闭环，不扩到页面投影。",
         "done_when": "companion 生命周期记录完整，且 release context 能优先读取 companion handoff。",
         "delivery_track": "undetermined",
+        "governance_binding_block": "",
         "in_scope": "- 验证 companion 初始化与生命周期回写。\n- 验证 release handoff 读取逻辑。",
         "out_of_scope": "- 不测试 UI 页面。\n- 不测试真实 release 切换。",
         "constraints": "- 保持 task 文档为执行合同，机器事实下沉到 companion。",
@@ -58,9 +59,11 @@ class CoordCliTestCase(unittest.TestCase):
         (self.target / "shared").mkdir(parents=True, exist_ok=True)
         (self.target / "bootstrap").mkdir(parents=True, exist_ok=True)
         (self.target / "kernel").mkdir(parents=True, exist_ok=True)
+        (self.target / "memory" / "project").mkdir(parents=True, exist_ok=True)
         (self.target / "schemas").mkdir(parents=True, exist_ok=True)
         shutil.copy(ROOT / "shared" / "task-identity.ts", self.target / "shared" / "task-identity.ts")
         shutil.copy(ROOT / "shared" / "task-contract.ts", self.target / "shared" / "task-contract.ts")
+        shutil.copy(ROOT / "shared" / "governance-gap-contract.ts", self.target / "shared" / "governance-gap-contract.ts")
         shutil.copy(ROOT / "shared" / "simple-yaml.ts", self.target / "shared" / "simple-yaml.ts")
         shutil.copy(ROOT / "shared" / "task-state-machine.ts", self.target / "shared" / "task-state-machine.ts")
         shutil.copy(ROOT / "shared" / "branch-cleanup.ts", self.target / "shared" / "branch-cleanup.ts")
@@ -164,3 +167,24 @@ class CoordCliTestCase(unittest.TestCase):
         )
         for filename in ("status-prod.ts", "status-preview.ts"):
             (runtime_dir / filename).write_text(f"console.log('{runtime_payload}');\n", encoding="utf8")
+
+    def write_governance_gaps(self, content: str | None = None) -> None:
+        backlog = content or """# 治理 Gap Backlog
+
+## GOV-GAP-01 task 仍未显式绑定治理 gap
+
+- gap_id: `GOV-GAP-01`
+- title: `task` 仍未显式绑定治理 gap
+- from_assertion: `A4`
+- status: `open`
+- linked_tasks: []
+
+## GOV-GAP-99 已关闭治理 gap
+
+- gap_id: `GOV-GAP-99`
+- title: 已关闭治理 gap
+- from_assertion: `A9`
+- status: `closed`
+- linked_tasks: []
+"""
+        (self.target / "memory" / "project" / "governance-gaps.md").write_text(backlog, encoding="utf8")

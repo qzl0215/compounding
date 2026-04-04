@@ -60,6 +60,9 @@ export type TaskContract = {
   whyNow: string;
   boundary: string;
   doneWhen: string;
+  linkedGap: string;
+  fromAssertion: string;
+  writebackTargets: string[];
   inScope: string;
   outOfScope: string;
   constraints: string;

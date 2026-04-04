@@ -2,7 +2,7 @@
 title: ASSET_MAINTENANCE
 update_mode: generated
 status: active
-last_reviewed_at: 2026-04-03
+last_reviewed_at: 2026-04-04
 source_of_truth: scripts/ai/generate-asset-maintenance.ts
 related_docs:
   - docs/PROJECT_RULES.md
@@ -45,7 +45,7 @@ related_docs:
 - 方式：`manual`
 - 真相源：`frontmatter.source_of_truth (per document)`
 - 入口：`人工 review + task 回写`
-- 文件：`docs/PROJECT_RULES.md`、`docs/AI_OPERATING_MODEL.md`、`docs/ASSET_MAINTENANCE.md`、`memory/project/tech-debt.md`
+- 文件：`docs/PROJECT_RULES.md`、`docs/AI_OPERATING_MODEL.md`、`docs/ASSET_MAINTENANCE.md`、`memory/project/governance-gaps.md`、`memory/project/tech-debt.md`
 - 新鲜度：21 天窗口；超窗默认警告
 - 边界：专项附录只在对应场景补读，不回到默认第一跳。；附录负责专项规则、AI 行为原则和资产维护，不与主干争主入口。；若附录与主干冲突，先更新主干，再调整附录。
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

@@ -2,7 +2,7 @@ import json
 import shutil
 import subprocess
 import unittest
-from tests.coord_support import ROOT, CoordCliTestCase, SAMPLE_TASK_MARKDOWN
+from tests.coord_support import ROOT, CoordCliTestCase, SAMPLE_TASK_MARKDOWN, render_task_template
 
 
 class CoordCliTests(CoordCliTestCase):
@@ -197,6 +197,100 @@ console.log(fs.readFileSync(file, "utf8"));
                 "scripts/ai/",
             ],
         )
+
+    def test_create_task_can_bind_governance_gap(self) -> None:
+        self.write_governance_gaps()
+
+        completed = self.run_script(
+            "scripts/ai/create-task.ts",
+            "task-129-gap-binding",
+            "让治理任务显式绑定差距",
+            "需要让治理类 task 从 gap backlog 合法承接，而不是继续靠文字理解",
+            "--parentPlan=memory/project/operating-blueprint.md",
+            "--linkedGap=GOV-GAP-01",
+            "--fromAssertion=A4",
+            "--writebackTargets=Current,Tests",
+        )
+
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
+        created = (self.target / "tasks" / "queue" / "task-129-gap-binding.md").read_text(encoding="utf8")
+        self.assertIn("## 治理绑定", created)
+        self.assertIn("- 主治理差距：`GOV-GAP-01`", created)
+        self.assertIn("- 来源断言：`A4`", created)
+        self.assertIn("- `Current`", created)
+        self.assertIn("- `Tests`", created)
+
+        backlog = (self.target / "memory" / "project" / "governance-gaps.md").read_text(encoding="utf8")
+        self.assertIn("- linked_tasks:\n  - `task-129-gap-binding`", backlog)
+
+    def test_create_task_rejects_unknown_governance_gap(self) -> None:
+        self.write_governance_gaps()
+
+        completed = self.run_script(
+            "scripts/ai/create-task.ts",
+            "task-130-missing-gap",
+            "拦截未知治理差距绑定",
+            "需要避免 task 指向不存在的治理 gap",
+            "--linkedGap=GOV-GAP-404",
+            "--fromAssertion=A4",
+            "--writebackTargets=Current",
+        )
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("linked_gap 不存在", completed.stderr)
+
+    def test_create_task_rejects_closed_governance_gap(self) -> None:
+        self.write_governance_gaps()
+
+        completed = self.run_script(
+            "scripts/ai/create-task.ts",
+            "task-131-closed-gap",
+            "拦截已关闭治理差距绑定",
+            "需要避免新 task 继续承接已关闭的治理 gap",
+            "--linkedGap=GOV-GAP-99",
+            "--fromAssertion=A9",
+            "--writebackTargets=Current",
+        )
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("已关闭", completed.stderr)
+
+    def test_validate_task_git_link_rejects_governance_task_without_writeback_targets(self) -> None:
+        self.write_governance_gaps(
+            """# 治理 Gap Backlog
+
+## GOV-GAP-01 task 仍未显式绑定治理 gap
+
+- gap_id: `GOV-GAP-01`
+- title: `task` 仍未显式绑定治理 gap
+- from_assertion: `A4`
+- status: `open`
+- linked_tasks:
+  - `task-999-sample`
+"""
+        )
+        task_path = self.target / "tasks" / "queue" / "task-999-sample.md"
+        task_path.write_text(
+            render_task_template(
+                {
+                    "governance_binding_block": """## 治理绑定
+
+- 主治理差距：`GOV-GAP-01`
+- 来源断言：`A4`
+- 回写目标：
+""",
+                }
+            ),
+            encoding="utf8",
+        )
+        self.init_git_repo()
+        subprocess.run(["git", "checkout", "-b", "codex/task-999-sample"], cwd=self.target, check=True)
+        (self.target / "README.md").write_text("governance validation\n", encoding="utf8")
+
+        completed = self.run_script("scripts/ai/validate-task-git-link.ts")
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("writeback_targets", completed.stdout)
 
     def test_task_transition_only_allows_override_events_and_requires_reason(self) -> None:
         blocked = self.run_script("scripts/coord/task.ts", "transition", "--taskId=t-999", "--event=block")
