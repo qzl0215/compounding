@@ -543,7 +543,7 @@ function renderAiFeatureEntry(contract) {
     "- 带 task 的 feature 上下文：`pnpm ai:feature-context -- --taskPath=tasks/queue/task-xxx.md`",
     `- 默认摘要链：${renderCommandChain(DEFAULT_SUMMARY_WORKFLOW.summary_first_commands)}`,
     `- 原始回退链：${renderCommandChain(DEFAULT_SUMMARY_WORKFLOW.raw_fallback_commands)}`,
-    "- 看当前令牌效率：`pnpm ai:command-gain --json` 或打开 `/ai-efficiency`",
+    "- 看当前令牌效率：`pnpm ai:command-gain --json`",
     "- 默认先看 feature packet 里的 `Project Judgement` 和 `Default Loop`，再动手改代码。",
     "",
   ];
@@ -563,7 +563,7 @@ function renderClaudeEntry(contract) {
       ? [
           "- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`",
           `- 默认摘要链：${renderCommandChain(DEFAULT_SUMMARY_WORKFLOW.summary_first_commands)}`,
-          "- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`",
+          "- 当前令牌效率：`pnpm ai:command-gain --json`",
         ]
       : []),
     "",
@@ -588,7 +588,7 @@ function renderOpenCodeEntry(contract) {
       ? [
           "- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`",
           `- 默认摘要链：${renderCommandChain(DEFAULT_SUMMARY_WORKFLOW.summary_first_commands)}`,
-          "- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`",
+          "- 当前令牌效率：`pnpm ai:command-gain --json`",
         ]
       : []),
     "",
@@ -615,7 +615,7 @@ function renderCursorEntry(contract) {
       ? [
           "- 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`",
           `- 默认摘要链：${renderCommandChain(DEFAULT_SUMMARY_WORKFLOW.summary_first_commands)}`,
-          "- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`",
+          "- 当前令牌效率：`pnpm ai:command-gain --json`",
         ]
       : []),
     "",

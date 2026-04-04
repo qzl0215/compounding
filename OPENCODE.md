@@ -8,7 +8,7 @@
 - 原始 preflight gate：`pnpm preflight`
 - 默认 AI feature 入口：`pnpm ai:feature-context -- --surface=home`
 - 默认摘要链：`pnpm ai:preflight:summary` / `pnpm ai:diff:summary` / `pnpm ai:tree:summary` / `pnpm ai:find:summary -- --query=keyword` / `pnpm ai:read:summary -- --path=memory/project/current-state.md`
-- 当前令牌效率：`pnpm ai:command-gain --json` / `/ai-efficiency`
+- 当前令牌效率：`pnpm ai:command-gain --json`
 
 ## 优先摘要命令
 

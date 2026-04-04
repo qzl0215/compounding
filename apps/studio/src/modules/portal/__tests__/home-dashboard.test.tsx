@@ -108,6 +108,7 @@ describe("home logic board", () => {
       "href",
       "/knowledge-base?path=memory/project/current-state.md",
     );
+    expect(screen.getByRole("link", { name: /控制面/ })).toHaveAttribute("href", "/harness");
     expect(screen.getByRole("link", { name: /证据库/ })).toHaveAttribute("href", "/knowledge-base");
   });
 

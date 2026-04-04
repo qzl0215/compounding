@@ -2,7 +2,7 @@ export type HomeEntryLink = {
   href: string;
   label: string;
   description: string;
-  scope: "agents" | "roadmap" | "memory" | "tasks" | "release" | "ai";
+  scope: "agents" | "roadmap" | "memory" | "tasks" | "release";
 };
 
 export type SemanticEntry = {

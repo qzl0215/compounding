@@ -10,6 +10,7 @@ import {
   deriveTaskDeliveryStatusFromStateId,
   deriveTaskStatusFromStateId,
   normalizeTaskMachineState,
+  type TaskMachineState,
 } from "./task-state-machine.ts";
 
 export type ProjectJudgementCountFacts = {
@@ -65,6 +66,19 @@ type JudgementTaskSnapshot = {
   deliveryStatus: ReturnType<typeof deriveTaskDeliveryStatusFromStateId>;
   versionLabel: string | null;
   stateId: string;
+};
+
+type JudgementCompanion = {
+  contract_hash?: string | null;
+  machine?: Partial<TaskMachineState> | null;
+  branch_name?: string | null;
+  lifecycle?: {
+    handoff?: { git_head?: string | null };
+    release_handoff?: { git_head?: string | null; release_id?: string | null };
+  };
+  artifacts?: {
+    release_notes?: { release_id?: string | null }[];
+  };
 };
 
 const EMPTY_COUNTS: ProjectJudgementCountFacts = {
@@ -243,11 +257,13 @@ function readJudgementTasks(root: string, releases: JudgementReleaseRecord[]): J
     .readdirSync(taskDir)
     .filter((name) => name.endsWith(".md"))
     .sort()
-    .map((name) => buildJudgementTaskSnapshot(root, path.posix.join("tasks/queue", name), releases))
-    .filter((task): task is JudgementTaskSnapshot => Boolean(task));
+    .flatMap((name) => {
+      const task = buildJudgementTaskSnapshot(root, path.posix.join("tasks/queue", name), releases);
+      return task ? [task] : [];
+    });
 }
 
-function buildJudgementTaskSnapshot(root: string, taskPath: string, releases: JudgementReleaseRecord[]) {
+function buildJudgementTaskSnapshot(root: string, taskPath: string, releases: JudgementReleaseRecord[]): JudgementTaskSnapshot | null {
   const content = readText(root, taskPath);
   if (!content) {
     return null;
@@ -255,6 +271,7 @@ function buildJudgementTaskSnapshot(root: string, taskPath: string, releases: Ju
   const parsed = parseTaskContract(taskPath, content);
   const parsedMachine = parseTaskMachineFacts(content);
   const companion = readCompanion(root, parsed.id);
+  const lifecycle = companion?.lifecycle;
   const fallbackMachine =
     !normalizeString(companion?.contract_hash) &&
     deriveCompatTaskMachine(
@@ -282,8 +299,8 @@ function buildJudgementTaskSnapshot(root: string, taskPath: string, releases: Ju
   const branch = normalizeString(parsedMachine.branch) || normalizeString(companion?.branch_name);
   const recentCommit =
     normalizeString(parsedMachine.recentCommit) ||
-    normalizeString(companion?.lifecycle?.handoff?.git_head) ||
-    normalizeString(companion?.lifecycle?.release_handoff?.git_head);
+    normalizeString(lifecycle?.handoff?.git_head) ||
+    normalizeString(lifecycle?.release_handoff?.git_head);
   const canonical = deriveTaskDeliveryStatusFromStateId(machine.state_id);
   const deliveryStatus = resolveDeliveryStatus(taskStatus, canonical, parsed.id, pendingDev, activeProd, latestProd, root, branch, recentCommit);
   return {
@@ -294,25 +311,21 @@ function buildJudgementTaskSnapshot(root: string, taskPath: string, releases: Ju
   };
 }
 
-function readCompanion(root: string, taskId: string) {
+function readCompanion(root: string, taskId: string): JudgementCompanion | null {
   const companionPath = path.join(root, "agent-coordination", "tasks", `${taskId}.json`);
   if (!fs.existsSync(companionPath)) {
     return null;
   }
   try {
-    return JSON.parse(fs.readFileSync(companionPath, "utf8")) as Record<string, unknown>;
+    return JSON.parse(fs.readFileSync(companionPath, "utf8")) as JudgementCompanion;
   } catch {
     return null;
   }
 }
 
-function readCompanionReleaseIds(companion: Record<string, unknown> | null) {
-  const notes = Array.isArray((companion?.artifacts as { release_notes?: { release_id?: string | null }[] } | undefined)?.release_notes)
-    ? ((companion?.artifacts as { release_notes?: { release_id?: string | null }[] }).release_notes || [])
-    : [];
-  const lifecycleReleaseId = normalizeString(
-    (companion?.lifecycle as { release_handoff?: { release_id?: string | null } } | undefined)?.release_handoff?.release_id,
-  );
+function readCompanionReleaseIds(companion: JudgementCompanion | null) {
+  const notes = Array.isArray(companion?.artifacts?.release_notes) ? companion.artifacts?.release_notes || [] : [];
+  const lifecycleReleaseId = normalizeString(companion?.lifecycle?.release_handoff?.release_id);
   return uniqueStrings([
     lifecycleReleaseId,
     ...notes.map((note) => normalizeString(note?.release_id)),

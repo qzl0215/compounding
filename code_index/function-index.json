@@ -74,14 +74,6 @@
   {
     "module": "apps/studio/src/modules/delivery",
     "file": "apps/studio/src/modules/delivery/diff-aware-source.ts",
-    "symbol": "dedupe",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/delivery",
-    "file": "apps/studio/src/modules/delivery/diff-aware-source.ts",
     "symbol": "toNumber",
     "kind": "function",
     "language": "TypeScript",
@@ -107,6 +99,30 @@
     "module": "apps/studio/src/modules/delivery",
     "file": "apps/studio/src/modules/delivery/diff-aware-source.ts",
     "symbol": "getDiffStatsFromRange",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-source.ts",
+    "symbol": "parseRangeChangedFiles",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-source.ts",
+    "symbol": "emptySnapshot",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware-source.ts",
+    "symbol": "buildRangeSnapshot",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -211,6 +227,14 @@
     "module": "apps/studio/src/modules/delivery",
     "file": "apps/studio/src/modules/delivery/diff-aware.ts",
     "symbol": "buildDiffAwareArtifactFromFiles",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/delivery",
+    "file": "apps/studio/src/modules/delivery/diff-aware.ts",
+    "symbol": "buildDiffAwareArtifactFromSnapshot",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -744,49 +768,17 @@
     "exported": true
   },
   {
-    "module": "apps/studio/src/modules/git-health",
-    "file": "apps/studio/src/modules/git-health/service.ts",
-    "symbol": "runGit",
+    "module": "apps/studio/src/modules/harness",
+    "file": "apps/studio/src/modules/harness/service.ts",
+    "symbol": "getHarnessLiveSnapshot",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
   },
   {
-    "module": "apps/studio/src/modules/git-health",
-    "file": "apps/studio/src/modules/git-health/service.ts",
-    "symbol": "getGitHistory",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/git-health",
-    "file": "apps/studio/src/modules/git-health/service.ts",
-    "symbol": "getGitStatus",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/git-health",
-    "file": "apps/studio/src/modules/git-health/service.ts",
-    "symbol": "getGitHead",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/git-health",
-    "file": "apps/studio/src/modules/git-health/service.ts",
-    "symbol": "getGitBaselineSuggestion",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/git-health",
-    "file": "apps/studio/src/modules/git-health/service.ts",
-    "symbol": "getLatestPreMutationCheck",
+    "module": "apps/studio/src/modules/orchestration",
+    "file": "apps/studio/src/modules/orchestration/service.ts",
+    "symbol": "getOrchestrationSnapshot",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -1026,7 +1018,7 @@
   {
     "module": "apps/studio/src/modules/project-state",
     "file": "apps/studio/src/modules/project-state/service.ts",
-    "symbol": "resolveProjectStateStage",
+    "symbol": "isLegacyCleanupBacklog",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -1034,7 +1026,7 @@
   {
     "module": "apps/studio/src/modules/project-state",
     "file": "apps/studio/src/modules/project-state/service.ts",
-    "symbol": "summarizePlan",
+    "symbol": "getAiEfficiencyDashboard",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -1042,7 +1034,7 @@
   {
     "module": "apps/studio/src/modules/project-state",
     "file": "apps/studio/src/modules/project-state/service.ts",
-    "symbol": "summarizeExecution",
+    "symbol": "readContextRetroReport",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -1050,103 +1042,7 @@
   {
     "module": "apps/studio/src/modules/project-state",
     "file": "apps/studio/src/modules/project-state/service.ts",
-    "symbol": "summarizeFocus",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/project-state",
-    "file": "apps/studio/src/modules/project-state/service.ts",
-    "symbol": "summarizePendingAcceptance",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/project-state",
-    "file": "apps/studio/src/modules/project-state/service.ts",
-    "symbol": "summarizeRuntimeAlert",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/project-state",
-    "file": "apps/studio/src/modules/project-state/service.ts",
-    "symbol": "summarizeHealth",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/project-state",
-    "file": "apps/studio/src/modules/project-state/service.ts",
-    "symbol": "summarizeReleaseConclusion",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/project-state",
-    "file": "apps/studio/src/modules/project-state/service.ts",
-    "symbol": "summarizeReleaseNextAction",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/project-state",
-    "file": "apps/studio/src/modules/project-state/service.ts",
-    "symbol": "summarizeOneLiner",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/project-state",
-    "file": "apps/studio/src/modules/project-state/service.ts",
-    "symbol": "summarizeHeadline",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/project-state",
-    "file": "apps/studio/src/modules/project-state/service.ts",
-    "symbol": "summarizeSuccessCriteria",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/project-state",
-    "file": "apps/studio/src/modules/project-state/service.ts",
-    "symbol": "normalizeSuccessCriterion",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/project-state",
-    "file": "apps/studio/src/modules/project-state/service.ts",
-    "symbol": "summarizeBlockers",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/project-state",
-    "file": "apps/studio/src/modules/project-state/service.ts",
-    "symbol": "normalizeBlocker",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/project-state",
-    "file": "apps/studio/src/modules/project-state/service.ts",
-    "symbol": "simplifyHumanSentence",
+    "symbol": "readLearningCandidatesReport",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -1578,6 +1474,14 @@
   {
     "module": "apps/studio/src/modules/tasks",
     "file": "apps/studio/src/modules/tasks/git.ts",
+    "symbol": "isManagedCleanupState",
+    "kind": "function",
+    "language": "TypeScript",
+    "exported": true
+  },
+  {
+    "module": "apps/studio/src/modules/tasks",
+    "file": "apps/studio/src/modules/tasks/git.ts",
     "symbol": "resolveTaskGitInfo",
     "kind": "function",
     "language": "TypeScript",
@@ -1643,22 +1547,6 @@
     "module": "apps/studio/src/modules/tasks",
     "file": "apps/studio/src/modules/tasks/service.ts",
     "symbol": "uniqueStrings",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/tasks",
-    "file": "apps/studio/src/modules/tasks/service.ts",
-    "symbol": "defaultModeForStatus",
-    "kind": "function",
-    "language": "TypeScript",
-    "exported": true
-  },
-  {
-    "module": "apps/studio/src/modules/tasks",
-    "file": "apps/studio/src/modules/tasks/service.ts",
-    "symbol": "normalizeExecutionMode",
     "kind": "function",
     "language": "TypeScript",
     "exported": true
@@ -1922,6 +1810,14 @@
   {
     "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "source_project_identity",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
     "symbol": "load_package_json",
     "kind": "function",
     "language": "Python",
@@ -2034,6 +1930,38 @@
   {
     "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "infer_kernel_profile",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "should_refresh_bootstrap_mode",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "should_refresh_kernel_profile",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
+    "symbol": "infer_package_manager",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/config_resolution.py",
     "symbol": "should_refresh_owned_paths",
     "kind": "function",
     "language": "Python",
@@ -2129,6 +2057,62 @@
   },
   {
     "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/doctor.py",
+    "symbol": "has_project_signals",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/doctor.py",
+    "symbol": "infer_recommended_entry",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/doctor.py",
+    "symbol": "load_brief_snapshot",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/doctor.py",
+    "symbol": "evaluate_required_packs",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/doctor.py",
+    "symbol": "evaluate_capability_groups",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/doctor.py",
+    "symbol": "build_mode_guides",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/doctor.py",
+    "symbol": "doctor",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/engine.py",
     "symbol": "main",
     "kind": "function",
@@ -2217,6 +2201,310 @@
   },
   {
     "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "load_package_json",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "has_script",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "git_output",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "parse_github_remote",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "default_server_surfaces",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "default_github_surface",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "default_standard_flows",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "normalize_string",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "normalize_notes",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "infer_project_profile",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "infer_project_bootstrap_mode",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "infer_required_packs",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "default_toolchain_commands",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "normalize_toolchain_commands",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "sync_operator_assets",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "normalize_server_surface",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "normalize_github_surface",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "normalize_operator_payload",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "validate_operator_contract_payload",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/operator_contract.py",
+    "symbol": "ensure_operator_contract",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/packs.py",
+    "symbol": "load_kernel_manifest",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/packs.py",
+    "symbol": "has_project_signals",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/packs.py",
+    "symbol": "infer_adapter_id",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/packs.py",
+    "symbol": "infer_bootstrap_mode",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/packs.py",
+    "symbol": "list_packs",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/packs.py",
+    "symbol": "list_mode_packs",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/packs.py",
+    "symbol": "get_pack",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/packs.py",
+    "symbol": "get_mode_pack",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/packs.py",
+    "symbol": "mode_default_profile",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/packs.py",
+    "symbol": "mode_required_packs",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/packs.py",
+    "symbol": "mode_smoke_commands",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/packs.py",
+    "symbol": "mode_compatible_adapters",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/packs.py",
+    "symbol": "adapter_supports_mode",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/packs.py",
+    "symbol": "resolve_supported_mode",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/packs.py",
+    "symbol": "selected_pack_paths",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/packs.py",
+    "symbol": "expand_patterns",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/packs.py",
+    "symbol": "sha256_file",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/packs.py",
+    "symbol": "export_packs",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/proposal.py",
     "symbol": "path_matches",
     "kind": "function",
@@ -2275,6 +2563,14 @@
     "module": "scripts/compounding_bootstrap",
     "file": "scripts/compounding_bootstrap/proposal.py",
     "symbol": "missing_shell_protocol_assets",
+    "kind": "function",
+    "language": "Python",
+    "exported": true
+  },
+  {
+    "module": "scripts/compounding_bootstrap",
+    "file": "scripts/compounding_bootstrap/proposal.py",
+    "symbol": "selected_managed_entries",
     "kind": "function",
     "language": "Python",
     "exported": true

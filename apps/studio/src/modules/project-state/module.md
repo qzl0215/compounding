@@ -18,7 +18,6 @@
 
 - `apps/studio/src/modules/project-state/service.ts`
 - `apps/studio/src/modules/project-state/types.ts`
-- `apps/studio/src/modules/project-state/index.ts`
 - `apps/studio/src/modules/portal/service.ts`
 - `apps/studio/src/app/tasks/page.tsx`
 - `apps/studio/src/app/releases/page.tsx`

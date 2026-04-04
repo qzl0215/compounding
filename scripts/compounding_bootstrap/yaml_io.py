@@ -146,6 +146,11 @@ def parse_list(lines: list[YamlLine], index: int, indent: int) -> tuple[list[Any
             else:
                 result.append(None)
             continue
+        if (remainder.startswith('"') and remainder.endswith('"')) or (
+            remainder.startswith("'") and remainder.endswith("'")
+        ):
+            result.append(parse_scalar(remainder))
+            continue
         if ":" in remainder:
             key, _, inline_value = remainder.partition(":")
             item: dict[str, Any] = {}

@@ -5,12 +5,10 @@ This capability defines the shared Studio read model.
 ## Purpose
 
 - Aggregate harness, delivery, project-state, and home into one orchestration snapshot.
-- Expose a canonical `controlPlane` summary without inventing a fourth truth source.
 
 ## Invariants
 
 - Home, Tasks, Releases, and `/harness` read the same snapshot.
-- `controlPlane` is a projection of harness facts, not independent state.
 - Orchestration only aggregates; it does not mutate task, release, or runtime state.
 
 ## Inputs
@@ -22,7 +20,7 @@ This capability defines the shared Studio read model.
 
 ## Output
 
-- `OrchestrationSnapshot` with `controlPlane`, `harness`, `delivery`, `projectState`, and `home`.
+- `OrchestrationSnapshot` with `harness`, `delivery`, `projectState`, and `home`.
 
 ## Acceptance
 
