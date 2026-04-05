@@ -66,7 +66,6 @@ function parseTaskToCompanion(taskLike, content) {
   const parsed = parseTaskContract(record.path, content);
   const parsedMachine = parseTaskMachineFacts(content);
   const branch = parsedMachine.branch;
-  const currentMode = parsedMachine.currentMode;
   const modules = uniqueStrings(parsedMachine.relatedModules);
   const plannedFiles = modules.filter(
     (item) => item.includes("/") || /\.(md|ts|tsx|js|json|yaml|yml)$/.test(item) || /^\.[A-Za-z0-9._-]+$/.test(item),
@@ -81,7 +80,6 @@ function parseTaskToCompanion(taskLike, content) {
       })
     : deriveCompatTaskMachine({
         task_status: parsed.status,
-        current_mode: currentMode,
         delivery_track: parsedMachine.deliveryTrack,
       });
 
@@ -90,7 +88,6 @@ function parseTaskToCompanion(taskLike, content) {
     task_id: record.shortId,
     task_path: record.path,
     contract_hash: taskContractFingerprint(parsed),
-    current_mode: currentMode || undefined,
     branch_name: branch || `codex/${record.id}`,
     completion_mode: "close_full_contract",
     planned_files: plannedFiles,
@@ -100,9 +97,6 @@ function parseTaskToCompanion(taskLike, content) {
     lifecycle: createEmptyLifecycle(),
     artifacts: createEmptyArtifacts(),
   });
-  if (!currentMode) {
-    companion.current_mode = "";
-  }
   return companion;
 }
 
@@ -158,7 +152,6 @@ function reconcileBranchCleanupForTaskStatus(companion, taskStatus) {
 function mergeCompanion(existing, parsed) {
   const current = normalizeCompanion(existing);
   const next = normalizeCompanion(parsed);
-  const explicitCurrentMode = typeof parsed?.current_mode === "string" ? parsed.current_mode.trim() : "";
   const preferNextMachine =
     next.schema_version === "4" &&
     (current.schema_version !== "4" || !current.machine?.last_transition);
@@ -168,7 +161,6 @@ function mergeCompanion(existing, parsed) {
     task_id: next.task_id || current.task_id,
     task_path: next.task_path || current.task_path,
     contract_hash: next.contract_hash || current.contract_hash,
-    current_mode: explicitCurrentMode || (preferNextMachine ? next.current_mode : current.current_mode || next.current_mode),
     branch_name: next.branch_name || current.branch_name,
     completion_mode: next.completion_mode || current.completion_mode,
     planned_files: uniqueStrings([...(current.planned_files || []), ...(next.planned_files || [])]),

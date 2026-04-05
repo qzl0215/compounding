@@ -277,7 +277,6 @@ function buildJudgementTaskSnapshot(root: string, taskPath: string, releases: Ju
     deriveCompatTaskMachine(
       {
         task_status: parsed.status,
-        current_mode: parsedMachine.currentMode,
         delivery_track: parsedMachine.deliveryTrack,
       },
       root,

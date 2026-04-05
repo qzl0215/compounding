@@ -198,7 +198,6 @@ function buildTaskOverlay(root, taskPath) {
     companion?.machine ||
     deriveCompatTaskMachine({
       task_status: taskContract.status,
-      current_mode: taskMachineFacts.currentMode,
       delivery_track: taskMachineFacts.deliveryTrack,
     });
   const moduleDocPaths = unique(

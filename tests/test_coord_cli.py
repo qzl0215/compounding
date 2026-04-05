@@ -1010,7 +1010,7 @@ console.log(JSON.stringify({{
         self.assertTrue(first["second_hash"])
         self.assertNotEqual(first["first_hash"], first["second_hash"])
 
-    def test_update_companion_current_mode_survives_ensure_companion_refresh(self) -> None:
+    def test_ensure_companion_drops_legacy_current_mode_field(self) -> None:
         script_root = ROOT.as_posix()
         payload = self.run_node(
             f"""
@@ -1025,7 +1025,7 @@ console.log(JSON.stringify(readCompanion("t-999"), null, 2));
 """
         )
 
-        self.assertEqual(payload["current_mode"], "工程执行")
+        self.assertNotIn("current_mode", payload)
 
     def test_validate_change_trace_rejects_structural_change_without_task_update(self) -> None:
         scripts_dir = self.target / "scripts"

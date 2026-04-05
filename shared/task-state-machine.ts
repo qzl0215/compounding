@@ -100,7 +100,6 @@ type TransitionOptions = {
 
 type CompatMachineOptions = {
   task_status?: string | null;
-  current_mode?: string | null;
   delivery_track?: string | null;
   pending_acceptance?: boolean;
   released?: boolean;
@@ -329,7 +328,6 @@ export function createInitialTaskMachine(options: TransitionOptions = {}): TaskM
 }
 
 export function deriveCompatTaskMachine(input: CompatMachineOptions = {}, root = process.cwd()): TaskMachineState {
-  const legacyMode = normalizeTaskModeId(input.current_mode);
   const blocked = Boolean(input.blocked || String(input.task_status || "").trim().toLowerCase() === "blocked");
   const pendingAcceptance = Boolean(input.pending_acceptance);
   const rolledBack = Boolean(input.rolled_back);
@@ -375,10 +373,10 @@ export function deriveCompatTaskMachine(input: CompatMachineOptions = {}, root =
   }
 
   if (blocked) {
-    const blockedFrom = legacyMode === "planning" ? "ready" : "executing";
+    const blockedFrom = "executing";
     return {
       state_id: "blocked",
-      mode_id: legacyMode || "execution",
+      mode_id: "execution",
       delivery_track: track,
       blocked_from_state: blockedFrom,
       resume_to_state: defaultResumeStateFor(blockedFrom),
@@ -415,18 +413,6 @@ export function deriveCompatTaskMachine(input: CompatMachineOptions = {}, root =
     return {
       state_id: "executing",
       mode_id: "execution",
-      delivery_track: track,
-      blocked_from_state: null,
-      resume_to_state: null,
-      blocked_reason: null,
-      last_transition: null,
-    };
-  }
-
-  if (legacyMode === "planning") {
-    return {
-      state_id: "planning",
-      mode_id: "planning",
       delivery_track: track,
       blocked_from_state: null,
       resume_to_state: null,

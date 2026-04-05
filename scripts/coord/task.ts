@@ -8,6 +8,7 @@ const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 const { ensureCompanion } = require("./lib/task-meta.ts");
 const { applyTaskTransition } = require("./lib/task-machine.ts");
+const { getTaskModeLabel } = require("../../shared/task-state-machine.ts");
 const { recordCreated, recordHandoff, recordSearchEvidence } = require("./lib/companion-lifecycle.ts");
 const { finishActiveStageIfOpen, recordNote, startWaitStage } = require("./lib/task-activity.ts");
 
@@ -240,7 +241,7 @@ function transition(args) {
         task_id: taskId,
         event: eventId,
         machine: result.companion.machine,
-        current_mode: result.companion.current_mode,
+        mode_label: getTaskModeLabel(result.companion.machine.mode_id, process.cwd()),
       })
     );
   } catch (error) {

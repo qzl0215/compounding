@@ -7,7 +7,6 @@ const {
   deriveCompatTaskMachine,
   deriveTaskStatusFromStateId,
   getTaskModeLabel,
-  normalizeTaskModeId,
 } = require(path.join(process.cwd(), "shared", "task-state-machine.ts"));
 const { normalizeBranchCleanupRecord } = require(path.join(process.cwd(), "shared", "branch-cleanup.ts"));
 const { collectTaskIdentityErrors, taskIdFromPath } = require(path.join(process.cwd(), "shared", "task-identity.ts"));
@@ -71,7 +70,6 @@ function parseTask(pathname) {
     companion?.machine ||
     deriveCompatTaskMachine({
       task_status: parsed.status,
-      current_mode: parsedMachine.currentMode,
       delivery_track: parsedMachine.deliveryTrack,
     });
   return {
@@ -88,7 +86,7 @@ function parseTask(pathname) {
     status: deriveTaskStatusFromStateId(machine.state_id),
     stateId: machine.state_id,
     modeId: machine.mode_id,
-    currentMode: cleanValue(companion?.current_mode || parsedMachine.currentMode || getTaskModeLabel(machine.mode_id)),
+    modeLabel: getTaskModeLabel(machine.mode_id),
     branch: cleanValue(companion?.branch_name || parsedMachine.branch || ""),
     recentCommit: cleanValue(companion?.lifecycle?.handoff?.git_head || parsedMachine.recentCommit || ""),
     branchCleanup: normalizeBranchCleanupRecord(companion?.artifacts?.branch_cleanup),
@@ -175,10 +173,8 @@ function validateTask(task, changedFiles, errors) {
     return;
   }
 
-  if (!task.currentMode) {
-    errors.push(`${task.path}: 缺少当前模式机器事实。`);
-  } else if (!normalizeTaskModeId(task.currentMode)) {
-    errors.push(`${task.path}: 当前模式不在允许列表内。`);
+  if (!task.modeId || !task.modeLabel) {
+    errors.push(`${task.path}: 缺少 canonical mode 机器事实。`);
   }
 
   const snapshot = getTaskGitSnapshot(task);
@@ -366,7 +362,7 @@ function main() {
       status: task.status,
       state_id: task.stateId,
       mode_id: task.modeId,
-      current_mode: task.currentMode,
+      mode_label: task.modeLabel,
       branch: snapshot.branch,
       merged_to_main: snapshot.mergedToMain,
       has_local_branch: snapshot.hasLocalBranch,

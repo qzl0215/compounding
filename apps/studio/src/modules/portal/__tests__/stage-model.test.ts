@@ -11,6 +11,7 @@ function buildRow(
     stateId: "ready" as const,
     stateLabel: "待执行",
     modeId: "planning" as const,
+    modeLabel: "规划",
     deliveryTrack: "undetermined" as const,
     blockedFromState: null,
     resumeToState: null,
@@ -62,7 +63,6 @@ function buildRow(
     acceptanceResult: "待验收",
     deliveryResult: "示例交付结果",
     retro: "示例复盘",
-    currentMode: "工程执行",
     machine,
     deliveryStatus: "not_started",
     versionLabel: "未生成",
@@ -75,11 +75,11 @@ function buildRow(
 
 describe("resolveTaskDemandStage", () => {
   it("treats planning state as planning stage", () => {
-    expect(resolveTaskDemandStage(buildRow({ currentMode: "战略澄清", status: "todo", machine: { stateId: "planning" } }))).toBe("planning");
+    expect(resolveTaskDemandStage(buildRow({ status: "todo", machine: { stateId: "planning", modeId: "planning", modeLabel: "规划" } }))).toBe("planning");
   });
 
   it("treats ready state as ready stage", () => {
-    expect(resolveTaskDemandStage(buildRow({ currentMode: "工程执行", status: "todo", machine: { stateId: "ready" } }))).toBe("ready");
+    expect(resolveTaskDemandStage(buildRow({ status: "todo", machine: { stateId: "ready", modeId: "execution", modeLabel: "执行" } }))).toBe("ready");
   });
 
   it("treats executing and blocked states as doing", () => {

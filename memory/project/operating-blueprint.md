@@ -8,7 +8,7 @@ related_docs:
   - memory/project/roadmap.md
   - memory/project/current-state.md
   - docs/DEV_WORKFLOW.md
-last_reviewed_at: 2026-04-05
+last_reviewed_at: 2026-04-06
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 运营蓝图
@@ -99,7 +99,7 @@ last_reviewed_at: 2026-04-05
 | `A2` | `Current` 必须有且仅有一个仓库级主入口 | `Current` | `memory/project/current-state.md` | `AGENTS.md` 明确 `current-state` 只保留运营快照；默认读链将其作为运行事实主源 | `met` | `none` | roadmap、task、release note |
 | `A3` | `Plan` 必须有且仅有一个 plan 主源，不能与 task 混层 | `Plan` | `memory/project/operating-blueprint.md` | `AGENTS.md` 明确只允许一层 plan；`operating-blueprint` 自身声明唯一主源 | `met` | `none` | task、roadmap、附录 |
 | `A4` | `Task` 只能承接已收口范围，不能替代 `Goal / Current / Plan` | `Task` | `tasks/queue/*.md` | task 模板已要求边界/完成定义/不做/约束，`t-094` 正在补 task 的一等 `linked_gap` 字段与创建/校验链 | `partial` | `GOV-GAP-01` | task 摘要、临时复盘、patch prose |
-| `A5` | 流程状态必须由状态契约主源定义，不能散落在 task prose 中 | `State Contract` | `kernel/task-state-machine.yaml` | `AGENTS.md` 规定状态只认 state machine 与 companion，但 task 正文仍保留 `状态` / `当前模式` 派生展示 | `partial` | `GOV-GAP-02` | task 正文状态块、附录状态说明 |
+| `A5` | 流程状态必须由状态契约主源定义，不能散落在 task prose 中 | `State Contract` | `kernel/task-state-machine.yaml` | `AGENTS.md` 与 `DEV_WORKFLOW` 已明确状态只认 state machine 与 companion `machine.*`；`t-097` 已把 `current_mode` 从 companion/CLI/Studio/validator 退役，并把 task 正文 `状态` 收成纯展示 | `met` | `none` | task 正文状态块、附录状态说明 |
 | `A6` | `Gap` 必须来自同维度断言比较，不能从 task 或 patch 倒推 | `Gap` | 本附录矩阵 + `memory/project/governance-gaps.md` | 断言矩阵已生成 `GOV-GAP-*`，active gap 详情由治理 backlog 主源接管 | `partial` | `GOV-GAP-03` | task、retro candidate、patch 记录 |
 | `A7` | 行为变化后必须回写 `Current` 或其受控事实入口，patch note 不能替代 truth | `Current` | `memory/project/current-state.md` + 事实入口 | `task` 合同已固定 `writeback_targets`；`validate-task-git` 已对 `Current / Code Index / Tests` 做文件级兑现校验；治理回写协议已明确 truth 归口矩阵 | `met` | `none` | changelog、task 交付结果、临时说明 |
 | `A8` | `Code Index` 只能做实现导航，不能写成并列系统说明书 | `Code Index` | `code_index/*` | `code_index/module-index.md` 与 `docs/ASSET_MAINTENANCE.md` 都明确索引只做导航与压缩，不承载决策/状态 | `met` | `none` | architecture 解释、current truth |
@@ -110,7 +110,7 @@ last_reviewed_at: 2026-04-05
 
 - active 治理 gap 以 `memory/project/governance-gaps.md` 为唯一长期记录。
 - 本矩阵只负责生成与对照，不再承载 active gap 详情。
-- 当前 active 治理 gap 为 `GOV-GAP-01`、`GOV-GAP-02`、`GOV-GAP-03`；`GOV-GAP-04` 已由 `t-095` 在治理控制面闭合，`GOV-GAP-05` 已由 `t-096` 用治理守护矩阵 v1 与探针闭合。
+- 当前 active 治理 gap 为 `GOV-GAP-01`、`GOV-GAP-03`；`GOV-GAP-02` 已由 `t-097` 在状态真相收口轮次闭合，`GOV-GAP-04` 已由 `t-095` 在治理控制面闭合，`GOV-GAP-05` 已由 `t-096` 用治理守护矩阵 v1 与探针闭合。
 
 ### 生成规则
 
@@ -167,7 +167,7 @@ last_reviewed_at: 2026-04-05
 
 ### v1 边界
 
-- `A5` 不进入本轮守护矩阵；它继续留在 `GOV-GAP-02`，按状态真相收口轮次处理。
+- `A5` 不进入治理守护矩阵；它通过状态真相收口轮次处理，而不是通过额外 guard 叠层处理。
 - `docs/TEST_MATRIX.md` 只保留测试分层与引用说明，不承载 assertion registry 本体。
 - `ai:validate-governance-guards` 只验证注册表完整性、guard 入口存在性和静态门禁接入，不推导 guard 的语义充分性。
 

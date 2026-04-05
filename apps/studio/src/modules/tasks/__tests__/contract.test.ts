@@ -19,7 +19,6 @@ describe("task contract boundary", () => {
     expect(contract).not.toHaveProperty("primaryRelease");
     expect(contract).not.toHaveProperty("linkedReleases");
 
-    expect(machine.currentMode).toBeTruthy();
     expect(machine.deliveryTrack).toBeTruthy();
     expect(machine.branch).toBeTruthy();
     expect(Array.isArray(machine.relatedModules)).toBe(true);

@@ -12,6 +12,7 @@ function buildRow(
     stateId: "ready" as const,
     stateLabel: "待执行",
     modeId: "planning" as const,
+    modeLabel: "规划",
     deliveryTrack: "undetermined" as const,
     blockedFromState: null,
     resumeToState: null,
@@ -66,7 +67,6 @@ function buildRow(
     acceptanceResult: "待验收",
     deliveryResult: "未交付",
     retro: "未复盘",
-    currentMode: "工程执行",
     machine,
     deliveryStatus: "not_started",
     versionLabel: "未生成",
@@ -81,8 +81,8 @@ function buildRow(
 describe("buildSubtaskTableRows", () => {
   it("keeps only non-released rows and sorts by active stage priority", () => {
     const rows = buildSubtaskTableRows([
-      buildRow({ id: "task-047-planning", shortId: "t-047", currentMode: "战略澄清", status: "todo", machine: { stateId: "planning" } }),
-      buildRow({ id: "task-048-ready", shortId: "t-048", currentMode: "工程执行", status: "todo", machine: { stateId: "ready" } }),
+      buildRow({ id: "task-047-planning", shortId: "t-047", status: "todo", machine: { stateId: "planning", modeId: "planning", modeLabel: "规划" } }),
+      buildRow({ id: "task-048-ready", shortId: "t-048", status: "todo", machine: { stateId: "ready", modeId: "execution", modeLabel: "执行" } }),
       buildRow({ id: "task-049-doing", shortId: "t-049", status: "doing", machine: { stateId: "executing" } }),
       buildRow({ id: "task-050-acceptance", shortId: "t-050", deliveryStatus: "pending_acceptance", status: "done", machine: { stateId: "acceptance_pending" } }),
       buildRow({ id: "task-051-released", shortId: "t-051", deliveryStatus: "released", status: "done", machine: { stateId: "released" } }),

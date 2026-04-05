@@ -26,12 +26,12 @@ describe("tasks service", () => {
     expect(current?.machine.recentCommit).toBe("bd37dec");
     expect(current?.machine.git.state).toBeDefined();
     expect(planned?.status).toBe("done");
-    expect(planned?.currentMode).toBe("发布");
+    expect(planned?.machine.modeLabel).toBe("发布");
     expect(planned?.deliveryResult.length).toBeGreaterThan(0);
     expect(planned?.machine.branch).toBe("codex/task-009-ai-work-modes-productization");
     expect(planned?.machine.git.state).toBe("merged");
     expect(active?.status).toBe("doing");
-    expect(active?.currentMode).toBe("执行");
+    expect(active?.machine.modeLabel).toBe("执行");
     expect(Array.isArray(first?.machine.companionReleaseIds)).toBe(true);
   }, SERVICE_TIMEOUT_MS);
 
@@ -154,12 +154,12 @@ describe("tasks service", () => {
       acceptanceResult: "待验收",
       deliveryResult: "减少歧义与重复规则",
       retro: "未复盘",
-      currentMode: "工程执行",
       machine: {
         contractHash: "hash-038",
         stateId: "executing",
         stateLabel: "执行中",
         modeId: "execution",
+        modeLabel: "执行",
         deliveryTrack: "direct_merge",
         blockedFromState: null,
         resumeToState: null,
@@ -330,12 +330,12 @@ describe("tasks service", () => {
           acceptanceResult: "待验收",
           deliveryResult: "任务面板可看到已回收状态。",
           retro: "未复盘",
-          currentMode: "质量验收",
           machine: {
             contractHash: "hash-099",
             stateId: "released",
             stateLabel: "已发布",
             modeId: "release",
+            modeLabel: "发布",
             deliveryTrack: "direct_merge",
             blockedFromState: null,
             resumeToState: null,

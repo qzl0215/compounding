@@ -152,7 +152,6 @@ function listTaskSnapshots() {
         !companion?.contract_hash &&
         deriveCompatTaskMachine({
           task_status: contract.status,
-          current_mode: machineFacts.currentMode,
           delivery_track: machineFacts.deliveryTrack,
         });
       const machine = fallbackMachine || companion?.machine || deriveCompatTaskMachine({});
@@ -165,7 +164,6 @@ function listTaskSnapshots() {
       return {
         ...contract,
         branch_name: machineFacts.branch || companion?.branch_name || `codex/${record.id}`,
-        current_mode: companion?.current_mode || getTaskModeLabel(machine.mode_id, workspaceRoot()),
         machine,
         planned_files: companion?.planned_files || [],
         planned_modules: companion?.planned_modules || [],

@@ -44,7 +44,7 @@
 
 ## 交付结果
 
-- 状态：{{status}}
+- 状态（派生展示）：{{status}}
 - 体验验收结果：
   {{acceptance_result}}
 - 交付结果：

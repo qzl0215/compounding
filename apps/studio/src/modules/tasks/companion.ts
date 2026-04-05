@@ -40,7 +40,6 @@ type TaskCompanionShape = {
   task_id?: string | null;
   task_path?: string | null;
   contract_hash?: string | null;
-  current_mode?: string | null;
   branch_name?: string | null;
   completion_mode?: string | null;
   planned_files?: string[];
@@ -58,11 +57,11 @@ type TaskCompanionShape = {
 };
 
 export type TaskCompanionFacts = {
-  currentMode: string;
   contractHash: string;
   stateId: TaskMachineState["state_id"];
   stateLabel: string;
   modeId: TaskMachineState["mode_id"];
+  modeLabel: string;
   deliveryTrack: TaskMachineState["delivery_track"];
   blockedFromState: TaskMachineState["blocked_from_state"];
   resumeToState: TaskMachineState["resume_to_state"];
@@ -85,11 +84,11 @@ export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
   const companionPath = path.join(process.cwd(), "agent-coordination", "tasks", `${taskId}.json`);
   if (!fs.existsSync(companionPath)) {
     return {
-      currentMode: "",
       contractHash: "",
       stateId: "planning",
       stateLabel: getTaskStateLabel("planning"),
       modeId: "planning",
+      modeLabel: getTaskModeLabel("planning"),
       deliveryTrack: "undetermined",
       blockedFromState: null,
       resumeToState: null,
@@ -123,11 +122,11 @@ export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
     );
     const machine = normalizeTaskMachineState(companion.machine);
     return {
-      currentMode: String(companion.current_mode || "").trim() || getTaskModeLabel(machine.mode_id),
       contractHash: String(companion.contract_hash || "").trim(),
       stateId: machine.state_id,
       stateLabel: getTaskStateLabel(machine.state_id),
       modeId: machine.mode_id,
+      modeLabel: getTaskModeLabel(machine.mode_id),
       deliveryTrack: machine.delivery_track,
       blockedFromState: machine.blocked_from_state,
       resumeToState: machine.resume_to_state,
@@ -150,11 +149,11 @@ export function readTaskCompanionFacts(taskId: string): TaskCompanionFacts {
     };
   } catch {
     return {
-      currentMode: "",
       contractHash: "",
       stateId: "planning",
       stateLabel: getTaskStateLabel("planning"),
       modeId: "planning",
+      modeLabel: getTaskModeLabel("planning"),
       deliveryTrack: "undetermined",
       blockedFromState: null,
       resumeToState: null,

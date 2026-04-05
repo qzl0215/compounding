@@ -32,7 +32,6 @@ export function parseTaskCard(path: string, content: string): TaskContract {
 export function parseTaskMachineFields(_path: string, content: string) {
   const parsed = parseTaskMachineFacts(content);
   return {
-    currentMode: parsed.currentMode,
     deliveryTrack: parsed.deliveryTrack,
     branch: parsed.branch,
     recentCommit: parsed.recentCommit,

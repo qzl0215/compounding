@@ -38,7 +38,6 @@ export async function listTaskCards(): Promise<TaskCard[]> {
       const fallbackMachine = !companion.contractHash
         ? deriveCompatTaskMachine({
             task_status: parsed.status,
-            current_mode: parsedMachine.currentMode,
             delivery_track: parsedMachine.deliveryTrack,
           })
         : null;
@@ -53,17 +52,16 @@ export async function listTaskCards(): Promise<TaskCard[]> {
       };
       const branch = parsedMachine.branch || companion.branch;
       const recentCommit = parsedMachine.recentCommit || companion.recentCommit;
-      const currentMode = companion.currentMode || getTaskModeLabel(machineState.mode_id);
       const derivedStatus = deriveTaskStatusFromStateId(machineState.state_id);
       return {
         ...parsed,
         status: derivedStatus as TaskStatus,
-        currentMode,
         machine: {
           contractHash: companion.contractHash,
           stateId: machineState.state_id,
           stateLabel: fallbackMachine ? getTaskStateLabel(machineState.state_id) : companion.stateLabel,
           modeId: machineState.mode_id,
+          modeLabel: fallbackMachine ? getTaskModeLabel(machineState.mode_id) : companion.modeLabel,
           deliveryTrack: machineState.delivery_track,
           blockedFromState: machineState.blocked_from_state,
           resumeToState: machineState.resume_to_state,

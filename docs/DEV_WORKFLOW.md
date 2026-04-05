@@ -2,7 +2,7 @@
 title: DEV_WORKFLOW
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-27
+last_reviewed_at: 2026-04-05
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -24,7 +24,7 @@ related_docs:
 
 - 任务唯一状态机主源是 `kernel/task-state-machine.yaml`。
 - 当前状态只写 companion `machine.state_id / mode_id / delivery_track / blocked_* / last_transition`。
-- task 正文 `状态` 只作派生展示；顶层 `current_mode` 只保留兼容读。
+- task 正文 `状态` 只作派生展示；顶层 `current_mode` 已退役，不再进入兼容读取。
 - 历史 task 不批量迁移；缺少 canonical machine 时按兼容规则派生。
 
 ## 状态与事件

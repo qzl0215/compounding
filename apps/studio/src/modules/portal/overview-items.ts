@@ -36,7 +36,7 @@ export function buildTaskItem(row: TaskDeliveryRow): DemandStageItem {
     id: row.id,
     taskId: row.id,
     title: `${row.shortId || row.id} ${row.title}`.trim(),
-    source: row.machine.stateLabel || row.currentMode || "task",
+    source: row.machine.stateLabel || row.machine.modeLabel || "task",
     stage,
     summary: summarizeTaskRow(row, stage),
     nextConversationAction: DEMAND_STAGE_ACTIONS[stage],

@@ -354,7 +354,6 @@ class FeatureContextChangeObservationTests(unittest.TestCase):
                     "task_id": "t-901",
                     "task_path": "tasks/queue/task-901-demo.md",
                     "contract_hash": "demo",
-                    "current_mode": "工程执行",
                     "branch_name": "codex/task-901-demo",
                     "completion_mode": "close_full_contract",
                     "planned_files": ["tasks/queue/task-901-demo.md"],

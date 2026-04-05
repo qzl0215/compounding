@@ -61,7 +61,7 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
               {DEMAND_STAGE_LABELS[stage]}
             </span>
             <p className="text-xs text-slate-500">{row.machine.stateLabel}</p>
-            {row.currentMode ? <p className="text-xs text-slate-400">{row.currentMode}</p> : null}
+            {row.machine.modeLabel ? <p className="text-xs text-slate-400">{row.machine.modeLabel}</p> : null}
           </div>
         </Cell>
         <Cell className="min-w-[260px] text-slate-700">
@@ -155,7 +155,7 @@ export function DeliveryTableRow({ row, isExpanded, pending, onToggle, onAccept,
               <DetailBlock title="机器事实">
                 <p>任务路径：{row.path}</p>
                 <p>Canonical 状态：{row.machine.stateLabel}</p>
-                <p>Mode：{row.currentMode || "未标注"}</p>
+                <p>Mode：{row.machine.modeLabel || "未标注"}</p>
                 <p>交付轨道：{TASK_TRACK_LABELS[row.machine.deliveryTrack] || row.machine.deliveryTrack}</p>
                 {row.machine.blockedReason ? <p>阻塞原因：{row.machine.blockedReason}</p> : null}
                 <p>完成策略：{row.machine.completionMode === "close_full_contract" ? "做透当前合同" : row.machine.completionMode || "未标注"}</p>

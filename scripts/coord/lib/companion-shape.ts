@@ -2,7 +2,6 @@ const { normalizeBranchCleanupRecord } = require("../../../shared/branch-cleanup
 const {
   deriveCompatTaskMachine,
   deriveTaskStatusFromStateId,
-  getTaskModeLabel,
   normalizeTaskMachineState,
 } = require("../../../shared/task-state-machine.ts");
 
@@ -103,7 +102,6 @@ function normalizeCompanion(companion = {}) {
     companion.machine ||
       deriveCompatTaskMachine({
         task_status: cleanString(companion.status || companion.contract?.status || "", "todo"),
-        current_mode: cleanString(companion.current_mode),
         delivery_track: cleanString(companion.delivery_track || companion.machine?.delivery_track || ""),
         pending_acceptance:
           lifecycle.release_handoff?.channel === "dev" &&
@@ -120,7 +118,6 @@ function normalizeCompanion(companion = {}) {
     task_id: cleanString(companion.short_id || companion.task_id),
     task_path: cleanString(companion.task_path),
     contract_hash: cleanString(companion.contract_hash),
-    current_mode: cleanString(companion.current_mode, getTaskModeLabel(machine.mode_id)),
     branch_name: cleanString(companion.branch_name || companion.contract?.branch_name, ""),
     completion_mode: cleanString(companion.completion_mode, "close_full_contract"),
     planned_files: uniqueStrings(companion.planned_files || companion.contract?.planned_files || []),

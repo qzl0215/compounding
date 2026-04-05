@@ -28,6 +28,7 @@ export type TaskMachineFacts = {
   stateId: TaskStateId;
   stateLabel: string;
   modeId: TaskModeId;
+  modeLabel: string;
   deliveryTrack: TaskDeliveryTrack;
   blockedFromState: TaskStateId | null;
   resumeToState: TaskStateId | null;
@@ -74,7 +75,6 @@ export type TaskContract = {
 };
 
 export type TaskCard = TaskContract & {
-  currentMode: string;
   machine: TaskMachineFacts;
 };
 

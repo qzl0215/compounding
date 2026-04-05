@@ -2,7 +2,7 @@
 title: CURRENT_STATE
 update_mode: manual
 status: active
-last_reviewed_at: 2026-04-05
+last_reviewed_at: 2026-04-06
 source_of_truth: memory/project/current-state.md
 related_docs:
   - AGENTS.md
@@ -29,6 +29,7 @@ related_docs:
 - `t-069` 已完成：服务器访问面、GitHub 接入方式和标准发布流已经统一进 `bootstrap/project_operator.yaml`；`docs/OPERATOR_RUNBOOK.md` 与 Claude/Cursor/OpenCode 薄入口可脚本生成并在静态门禁中校验，不再各自复制一套接入说明。
 - `t-095` 已完成治理控制面的回写闭环 v1：治理类 task 现在必须声明 `writeback_targets`，且 `validate-task-git` 会对 `Current / Code Index / Tests` 做文件级兑现校验；`Controlled Facts` 仍保留但未启用，task 正文、patch note 与 retro 不能替代 truth 回写。
 - `t-096` 已完成治理守护优先 v1：`memory/project/operating-blueprint.md` 已收口治理守护矩阵，`pnpm ai:validate-governance-guards` 会校验 `A4 / A6 / A7 / A9` 的 guard 注册表、脚本入口和 `validate:static` 接入漂移，治理面现在可以回答 `assertion -> guard`。
+- `t-097` 已完成 `A5 / GOV-GAP-02` 收口：active/未来 task 的状态读写链只认 `kernel/task-state-machine.yaml` 与 companion `machine.*`；`current_mode` 已退出 companion/CLI/Studio/validator，task prose `状态` 只保留人类展示。
 - 当前需要先把仓内文件族明确成 core / bootstrap / config / 治理主源 四层清单，并继续把 `code_index/*`、`output/*`、coordination 产物和 runtime 事实收进主源 / 派生物两层心智；这会直接影响跨页面唯一 snapshot 与 release 单一状态机的收口。
 - 当前主线回到“派生产物语义收口”：继续把 `code_index/*`、`output/*`、coordination 产物和 runtime 事实压成一致的“主源 / 派生物”心智，减少导航缓存、执行产物和展示投影各自长解释层。
 - 本地 production 当前稳定运行在 `3010`；active release 以 `pnpm prod:status` 输出为准，当前 active release 已切到 `t-066` 上线版本。
@@ -40,7 +41,7 @@ related_docs:
 ## 当前阻塞
 
 - 当前没有发布阻塞。
-- 主要结构风险转到派生产物语义、feature context 第二轮和状态真相收口：如果 `code_index`、`output`、coordination 产物和 runtime 事实继续各叫一套名字，执行链、展示层和 bootstrap 链会持续重复翻译；如果 `A5` 继续停留在 task prose 派生状态位，状态真相仍会回流成兼容壳。
+- 主要结构风险转到派生产物语义、feature context 第二轮和历史 task 最小兼容：如果 `code_index`、`output`、coordination 产物和 runtime 事实继续各叫一套名字，执行链、展示层和 bootstrap 链会持续重复翻译；如果历史 task 的兼容派生继续散落在多处消费端，状态真相仍可能回流成新的兜底壳。
 
 ## 当前推荐校验顺序
 
