@@ -81,6 +81,7 @@
 - `scripts/coord/scan.ts`
 - `scripts/pre_mutation_check.py`
 - `shared/derived-asset-contract.ts`
+- `shared/task-contract.ts`
 - `kernel/derived-asset-contract.yaml`
 - `schemas/derived-asset-contract.schema.yaml`
 - `tests/coord_support.py`

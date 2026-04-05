@@ -9,7 +9,9 @@ class CoordCliTests(CoordCliTestCase):
     def mark_sample_task_done(self) -> None:
         task_path = self.target / "tasks" / "queue" / "task-999-sample.md"
         task_path.write_text(
-            SAMPLE_TASK_MARKDOWN.replace("- 状态：doing", "- 状态：done"),
+            SAMPLE_TASK_MARKDOWN.replace("- 状态（派生展示）：doing", "- 状态（派生展示）：done").replace(
+                "- 状态：doing", "- 状态（派生展示）：done"
+            ),
             encoding="utf8",
         )
 

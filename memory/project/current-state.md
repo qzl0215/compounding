@@ -2,7 +2,7 @@
 title: CURRENT_STATE
 update_mode: manual
 status: active
-last_reviewed_at: 2026-04-05
+last_reviewed_at: 2026-04-06
 source_of_truth: memory/project/current-state.md
 related_docs:
   - AGENTS.md
@@ -31,6 +31,7 @@ related_docs:
 - `t-096` 已完成治理守护优先 v1：`memory/project/operating-blueprint.md` 已收口治理守护矩阵，`pnpm ai:validate-governance-guards` 会校验 `A4 / A6 / A7 / A9` 的 guard 注册表、脚本入口和 `validate:static` 接入漂移，治理面现在可以回答 `assertion -> guard`。
 - `t-097` 已完成 `A5 / GOV-GAP-02` 收口：active/未来 task 的状态读写链只认 `kernel/task-state-machine.yaml` 与 companion `machine.*`；`current_mode` 已退出 companion/CLI/Studio/validator，task prose `状态` 只保留人类展示。
 - `t-098` 正在收口派生产物语义主合同：`kernel/derived-asset-contract.yaml` 作为唯一机器合同，统一 `code_index / output / agent-coordination / .compounding-runtime` 的 truth role、可写性与回灌边界。
+- `t-098` 的兼容修正已经补上：task 正文里的 `状态（派生展示）` 仍可被 task parser 识别，避免 branch backfill / branch cleanup 因模板文案变化误判 task 为 `todo`。
 - 当前需要先把仓内文件族明确成 core / bootstrap / config / 治理主源 四层清单，并继续把 `code_index/*`、`output/*`、`agent-coordination/*` 和 `.compounding-runtime/*` 收进主源 / 派生物两层心智；这会直接影响跨页面唯一 snapshot 与 release 单一状态机的收口。
 - 当前主线回到“派生产物语义收口”：继续把 `kernel/derived-asset-contract.yaml` 固化成唯一机器合同，让 `code_index/*`、`output/*`、`agent-coordination/*` 和 `.compounding-runtime/*` 压成一致的“主源 / 派生物”心智，减少导航缓存、执行产物和展示投影各自长解释层。
 - 本地 production 当前稳定运行在 `3010`；active release 以 `pnpm prod:status` 输出为准，当前 active release 已切到 `t-066` 上线版本。

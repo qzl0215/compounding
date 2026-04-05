@@ -133,7 +133,10 @@ export function parseTaskContract(path: string, content: string): ParsedTaskCont
     sectionText(extractLegacyField(content, ["测试策略"])) ||
     "";
 
-  const status = pickLabel(resultLabels, ["状态"]) || inline(extractLegacyField(content, ["状态"])) || "todo";
+  const status =
+    pickLabel(resultLabels, ["状态", "状态（派生展示）"]) ||
+    inline(extractLegacyField(content, ["状态", "状态（派生展示）"])) ||
+    "todo";
   const acceptanceResult =
     pickLabel(resultLabels, ["体验验收结果"]) ||
     paragraph(extractLegacyField(content, ["体验验收结果"])) ||
