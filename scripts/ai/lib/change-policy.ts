@@ -1,9 +1,10 @@
 const childProcess = require("node:child_process");
 const { parseGitChangedFiles } = require("../../../shared/git-changed-files.ts");
+const { getDerivedAssetObservationIgnoredPrefixes } = require("../../../shared/derived-asset-contract.ts");
 
 const GIT_STATUS_REF = "git status --short";
 const HEAD_PARENT_DIFF_REF = "HEAD^..HEAD";
-const IGNORED_PREFIXES = Object.freeze(["output/", ".compounding-runtime/"]);
+const IGNORED_PREFIXES = Object.freeze(getDerivedAssetObservationIgnoredPrefixes(process.cwd()));
 
 // Observation mode contract:
 // - worktree: only trusts the current repo-tracked worktree state from `git status --short`.

@@ -21,6 +21,7 @@ last_reviewed_at: 2026-04-05
 - 只允许一层 plan；`memory/project/operating-blueprint.md` 是唯一 plan 主源，`memory/project/roadmap.md` 只保留战略摘要与里程碑，`memory/project/current-state.md` 只保留运营快照。
 - Plan 负责想清楚，task 负责执行合同，companion 负责机器执行上下文，release 负责验收与运行事实。
 - 任务当前状态只认 `kernel/task-state-machine.yaml` 与 companion 的 `machine.*`；task 正文里的 `状态` 只作派生展示；`current_mode` 已退役，不再作为兼容读取入口。
+- `code_index / output / agent-coordination / .compounding-runtime` 的语义只认 `kernel/derived-asset-contract.yaml`；它们都不是主真相源，脚本与 validator 只能按合同判断派生、临时和 runtime 归属。
 - 需求不清、范围不清或发布标准不清时，先回到 `memory/project/operating-blueprint.md` 收口，不得直接创建执行 task。
 - 任何 `structural / release` 改动都必须绑定任务，并在进入 `main` 前完成 review。
 - task 短编号必须全局唯一，并显式写入任务文档；不允许再靠文件名或序号隐式推导。
@@ -40,6 +41,7 @@ last_reviewed_at: 2026-04-05
 - 需要执行顺序、门禁和发布 runbook 时，读 `docs/DEV_WORKFLOW.md`。
 - 需要服务器访问、GitHub 接入方式或标准发布动作时，读 `bootstrap/project_operator.yaml`；需要人类扫读版时读 `docs/OPERATOR_RUNBOOK.md`。
 - 需要仓库拓扑、依赖方向和运行时边界时，读 `docs/ARCHITECTURE.md`。
+- 需要判断派生产物语义时，读 `kernel/derived-asset-contract.yaml`。
 - 需要 OpenSpec 规范层、变更包或归档记录时，读 `openspec/project.md`，再按需读对应的 `openspec/specs/*` 与 `openspec/changes/*`。
 - 已进入 task 时再读 `tasks/queue/*.md`；需要代码导航时再读 `code_index/*`。
 - `docs/PROJECT_RULES.md`、`docs/AI_OPERATING_MODEL.md`、`docs/ASSET_MAINTENANCE.md` 是按需补读的专项附录，不作为默认第一跳。

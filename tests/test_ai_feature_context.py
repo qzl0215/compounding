@@ -125,11 +125,14 @@ class FeatureContextChangeObservationTests(unittest.TestCase):
             "shared/task-contract.ts",
             "shared/task-identity.ts",
             "shared/task-state-machine.ts",
+            "shared/derived-asset-contract.ts",
             "scripts/ai/lib/feature-context.ts",
             "scripts/ai/lib/change-policy.ts",
             "apps/studio/src/modules/releases/validation.ts",
             "bootstrap/heading_aliases.json",
+            "kernel/derived-asset-contract.yaml",
             "kernel/task-state-machine.yaml",
+            "schemas/derived-asset-contract.schema.yaml",
             "schemas/task-state-machine.schema.yaml",
         ):
             shutil.copy(ROOT / relative, self.target / relative)

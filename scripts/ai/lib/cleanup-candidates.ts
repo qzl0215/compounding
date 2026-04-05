@@ -1,5 +1,8 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const { getDerivedAssetObservationIgnoredPrefixes } = require(path.join(process.cwd(), "shared", "derived-asset-contract.ts"));
+
+const DERIVED_OBSERVATION_PREFIXES = getDerivedAssetObservationIgnoredPrefixes(process.cwd());
 
 function normalizePath(value) {
   return String(value || "")
@@ -49,7 +52,7 @@ function isRuntimeSensitive(paths, text = "") {
       normalized.startsWith("scripts/local-runtime/") ||
       normalized.startsWith("scripts/release/") ||
       normalized.startsWith("deploy/") ||
-      normalized.includes(".compounding-runtime")
+      DERIVED_OBSERVATION_PREFIXES.some((prefix) => normalized.startsWith(prefix))
     );
   });
   return pathSensitive || /(runtime|release|rollback|systemd|reverse proxy|prod\b|preview\b|remote)/.test(lower);

@@ -11,6 +11,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const ROOT = process.cwd();
+const { getDerivedAssetObservationIgnoredDirs } = require(path.join(ROOT, "shared", "derived-asset-contract.ts"));
 const OUTPUT_DIR = path.join(ROOT, "output", "pipeline", "state", "code-volume");
 const OUTPUT_JSON = path.join(OUTPUT_DIR, "latest.json");
 const OUTPUT_MD = path.join(OUTPUT_DIR, "latest.md");
@@ -19,11 +20,9 @@ const IGNORE_DIRS = new Set([
   ".git",
   "node_modules",
   ".next",
-  ".compounding-runtime",
-  "output",
-  "agent-coordination",
   "__pycache__",
   ".pytest_cache",
+  ...getDerivedAssetObservationIgnoredDirs(ROOT),
 ]);
 const IGNORE_FILES = new Set([".DS_Store"]);
 const CODE_EXTS = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".py", ".sh"]);

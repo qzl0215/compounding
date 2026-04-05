@@ -8,7 +8,7 @@ related_docs:
   - memory/project/roadmap.md
   - memory/project/current-state.md
   - docs/DEV_WORKFLOW.md
-last_reviewed_at: 2026-04-06
+last_reviewed_at: 2026-04-05
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 运营蓝图
@@ -24,7 +24,7 @@ last_reviewed_at: 2026-04-06
 ### P0
 
 - 固化 core / bootstrap / config 分类清单，避免职责边界继续漂移。
-- 统一 `code_index / output / coordination / runtime` 的“主源 / 派生物”语义。
+- 统一 `kernel/derived-asset-contract.yaml` 驱动的 `code_index / output / coordination / runtime`“主源 / 派生物”语义。
 - 压跨页面唯一 snapshot，让首页、任务页、发布页和 feature-context 只读同一份项目状态摘要。
 - 收紧 release 单一状态机，减少 task / release / runtime 兼容壳。
 
@@ -36,13 +36,13 @@ last_reviewed_at: 2026-04-06
 
 ### P2
 
-- 维持 generated / runtime 边界清晰，`.compounding-runtime / output / .next / node_modules` 只作派生物。
+- 维持 generated / runtime 边界清晰，`.compounding-runtime / output / agent-coordination / .next / node_modules` 只作派生物。
 - 外化脚手架优先补文件级清单和复用验证，不再加新框架。
 
 ## 待思考
 
 - 首页逻辑图还需要多大粒度的节点和摘要，才能真正帮助人快速判断项目态势，而不是换一层新的说明书
-- `code_index/*`、`output/*`、coordination 产物和 runtime 事实应怎样进一步收成统一的“主源 / 派生物”语义，而不是继续保留 4 套名字
+- `code_index/*`、`output/*`、`agent-coordination/*` 和 `.compounding-runtime/*` 应怎样进一步收成统一的“主源 / 派生物”语义，而不是继续保留 4 套名字
 - `fix-first` 的 gate registry 后续是否还值得进一步数据化，还是保持当前轻量脚本更划算
 - task 模板渲染与经验模板渲染是否还需要再统一一层，还是只共享 task 合同底座已经足够
 
@@ -105,12 +105,13 @@ last_reviewed_at: 2026-04-06
 | `A8` | `Code Index` 只能做实现导航，不能写成并列系统说明书 | `Code Index` | `code_index/*` | `code_index/module-index.md` 与 `docs/ASSET_MAINTENANCE.md` 都明确索引只做导航与压缩，不承载决策/状态 | `met` | `none` | architecture 解释、current truth |
 | `A9` | 测试与验证必须保护现实规则，不能只证明“脚本跑了” | `Reality Guard` | `pnpm preflight`、`validate:*`、`docs/TEST_MATRIX.md` | 本蓝图已新增治理守护矩阵 v1，`ai:validate-governance-guards` 会检查 `A4 / A6 / A7 / A9` 的 guard 注册表与 `validate:static` 接入漂移 | `met` | `none` | 文档声明、人工口头约定 |
 | `A10` | 附录与规范层只能补充，不能回流为默认第一跳主源 | `Appendix Boundary` | `AGENTS.md` 默认读链 | `AGENTS.md` 明确 `PROJECT_RULES`、`AI_OPERATING_MODEL`、`ASSET_MAINTENANCE` 按需补读；OpenSpec 只作规范层 | `met` | `none` | 附录、OpenSpec、superpowers 文档 |
+| `A11` | 派生产物语义必须由单一机器合同定义，不能分散在脚本和文档里 | `Derived Asset Contract` | `kernel/derived-asset-contract.yaml` + shared resolver | `code_index`、`output`、`agent-coordination` 和 `.compounding-runtime` 仍各自保留解释层；`t-098` 正在把单一合同、共享解析器和消费端接入收口 | `partial` | `GOV-GAP-06` | script-local rules、ad-hoc ignore lists、重复说明文档 |
 
 ### Active Gap 入口
 
 - active 治理 gap 以 `memory/project/governance-gaps.md` 为唯一长期记录。
 - 本矩阵只负责生成与对照，不再承载 active gap 详情。
-- 当前 active 治理 gap 为 `GOV-GAP-01`、`GOV-GAP-03`；`GOV-GAP-02` 已由 `t-097` 在状态真相收口轮次闭合，`GOV-GAP-04` 已由 `t-095` 在治理控制面闭合，`GOV-GAP-05` 已由 `t-096` 用治理守护矩阵 v1 与探针闭合。
+- 当前 active 治理 gap 为 `GOV-GAP-01`、`GOV-GAP-03`、`GOV-GAP-06`；`GOV-GAP-02` 已由 `t-097` 在状态真相收口轮次闭合，`GOV-GAP-04` 已由 `t-095` 在治理控制面闭合，`GOV-GAP-05` 已由 `t-096` 用治理守护矩阵 v1 与探针闭合，`GOV-GAP-06` 正由 `t-098` 收口派生产物语义主合同。
 
 ### 生成规则
 

@@ -97,4 +97,24 @@ related_docs:
   - `task-096`
 - notes: `t-096` 已在 `memory/project/operating-blueprint.md` 内补上治理守护矩阵 v1，并新增 `ai:validate-governance-guards` 探针；v1 范围只覆盖 `A4 / A6 / A7 / A9`，`A5` 仍留在 `GOV-GAP-02` 的状态真相收口轮次。
 
+## GOV-GAP-06 派生产物语义仍分散在多处脚本和文档
+
+- gap_id: `GOV-GAP-06`
+- title: `派生产物语义仍分散在多处脚本和文档`
+- from_assertion: `A11`
+- current_symptom: `code_index`、`output`、`agent-coordination` 和 `.compounding-runtime` 的 truth role、可写性与回灌边界仍分散在脚本和文档里，尚没有单一机器合同。
+- impact: 过滤、校验和回写规则会在不同入口重复实现，增加误判主源和重复解释层的风险。
+- should_be: 所有派生产物家族由 `kernel/derived-asset-contract.yaml` 统一定义 truth role、allowed readers、writeback boundary 与 ignore-as-truth。
+- status: `open`
+- evidence:
+  - `memory/project/operating-blueprint.md`
+  - `scripts/ai/lib/change-policy.ts`
+  - `scripts/coord/scan.ts`
+  - `scripts/ai/generate-code-volume.ts`
+  - `shared/derived-asset-contract.ts`
+- linked_tasks:
+  - `task-098`
+  - `t-098`
+- notes: `t-098` 正在把单一机器合同、共享解析器和消费端接入收口到同一套语义。
+
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

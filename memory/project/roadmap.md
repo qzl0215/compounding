@@ -2,7 +2,7 @@
 title: ROADMAP
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-29
+last_reviewed_at: 2026-04-05
 source_of_truth: memory/project/roadmap.md
 related_docs:
   - AGENTS.md
@@ -33,11 +33,11 @@ AI feature 开发提效闭环
 
 ## 当前优先级
 
-优先继续收短派生产物入口和跨页面读链：`pnpm preflight` 单入口、task 级 retro digest、以及 `bootstrap/project_operator.yaml` 的运维接入合同都已落地，下一步先把 core / bootstrap / config 分类口径写死，再统一 `code_index/*`、`output/*`、coordination 产物和 runtime 事实的语义，让团队只维护“主源 / 派生物”两层心智；随后继续压跨页面唯一 snapshot 和 release 单一状态机。
+优先继续收短派生产物入口和跨页面读链：`pnpm preflight` 单入口、task 级 retro digest、以及 `bootstrap/project_operator.yaml` 的运维接入合同都已落地，下一步先把 core / bootstrap / config 分类口径写死，再用 `kernel/derived-asset-contract.yaml` 统一 `code_index/*`、`output/*`、coordination 产物和 runtime 事实的语义，让团队只维护“主源 / 派生物”两层心智；随后继续压跨页面唯一 snapshot 和 release 单一状态机。
 
 ## 下一阶段方向
 
-- 继续统一派生产物语义，减少 `code_index`、`output`、coordination 与 runtime 各自命名的重复心智
+- 继续统一派生产物语义，减少 `code_index`、`output`、coordination 与 runtime 各自命名的重复心智，并让 `kernel/derived-asset-contract.yaml` 成为唯一机器合同
 - 继续固化 core / bootstrap / config 分类边界，避免 bootstrap / config / runbook 再各写一套职责说明
 - 继续压跨页面唯一 snapshot，避免首页 / 任务页 / 发布页重新长出本地翻译
 - 继续把 AI 加 feature 的默认上下文收成更短、更稳定的入口

@@ -52,6 +52,22 @@ function getKnowledgeAssets(root) {
       ],
     },
     {
+      id: "kernel-contracts",
+      title: "Kernel 机器合同",
+      maintenance_mode: "manual",
+      source_of_truth: "kernel/task-state-machine.yaml",
+      generation_or_validation: "pnpm validate:static",
+      files: [
+        "kernel/task-state-machine.yaml",
+        "kernel/derived-asset-contract.yaml",
+      ],
+      boundaries: [
+        "kernel 下的 YAML 定义仓库级机器合同；修改后必须同步 validator、默认读链和相关 docs。",
+        "任务状态机约束 task / companion 的状态流，派生产物合同约束 code_index / output / coordination / runtime 的语义。",
+        "这些合同不承载业务决策，只定义仓库级机器边界与读写口径。",
+      ],
+    },
+    {
       id: "governance-spine-docs",
       title: "高频主干文档",
       maintenance_mode: "manual",

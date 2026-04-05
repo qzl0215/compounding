@@ -1220,7 +1220,10 @@ console.log(JSON.stringify(buildChangePacket(process.cwd(), {{ mode: "worktree" 
         self.assertEqual(payload["change_source"], "none")
         self.assertEqual(payload["changed_files"], [])
         self.assertEqual(payload["change_class"], "light")
-        self.assertEqual(payload["change_evidence"]["observation_basis"]["ignored_prefixes"], ["output/", ".compounding-runtime/"])
+        self.assertEqual(
+            payload["change_evidence"]["observation_basis"]["ignored_prefixes"],
+            ["output/", "agent-coordination/", ".compounding-runtime/"],
+        )
 
     def test_pre_mutation_check_ignores_generated_output_and_runtime_roots(self) -> None:
         self.init_git_repo()

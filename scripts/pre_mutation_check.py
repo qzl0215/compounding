@@ -9,12 +9,8 @@ from pathlib import Path
 ROOT = Path.cwd()
 OUTPUT = ROOT / "output" / "agent_session" / "latest_pre_mutation_check.json"
 IGNORED_STATUS_PREFIXES = (
-    "agent-coordination/",
     "output/",
-    "output/agent_session/",
-    "output/ai/",
-    "output/ai/context-retro/",
-    "output/ai/retro-candidates/",
+    "agent-coordination/",
     ".compounding-runtime/",
 )
 

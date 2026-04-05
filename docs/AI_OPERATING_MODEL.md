@@ -2,7 +2,7 @@
 title: AI_OPERATING_MODEL
 update_mode: manual
 status: active
-last_reviewed_at: 2026-03-31
+last_reviewed_at: 2026-04-05
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -18,6 +18,7 @@ related_docs:
 
 - 先按 `AGENTS.md` 的默认读链进入对应主源。
 - 再读 `kernel/task-state-machine.yaml` 判断当前 `mode_id / state_id` 契约。
+- 需要判断派生产物语义时，再读 `kernel/derived-asset-contract.yaml`。
 - 最后按 mode 补当前 task、相关 `module.md`、`code_index/*`；若已进入 `structural / release` task，则跑 `pnpm preflight -- --taskId=t-xxx`。
 
 ## 行为原则
@@ -103,6 +104,7 @@ related_docs:
 - `code_index/dependency-map.md` 给依赖方向。
 - `code_index/function-index.json` 给粗粒度函数索引。
 - `output/agent_session/task-activity/*` 是 24 小时 TTL 的临时轨迹，不是主源；长期只保留 companion 里的 `iteration_digest` 和 `output/ai/retro-candidates/*` 候选。
+- `agent-coordination/*` 与 `.compounding-runtime/*` 只保留 runtime 事实，不反向充当主源。
 - 新经验先进入 `memory/experience/*`，稳定后再升格到 `docs/*` 或 `AGENTS.md`。
 - 当前项目状态、roadmap 和 operating blueprint 在 `memory/project/*`。
 

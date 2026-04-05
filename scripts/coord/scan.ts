@@ -14,12 +14,13 @@ const {
   inferModule,
 } = require("./lib/manifest.ts");
 const { applyHeuristicRule, computeRiskLevel } = require("./lib/risk.ts");
+const { getDerivedAssetObservationIgnoredPrefixes } = require("../../shared/derived-asset-contract.ts");
 
 const ROOT = process.cwd();
 const REPORT_ONLY = process.argv.includes("--report-only");
 
-const IGNORE_DIRS = new Set([".git", "node_modules", "__pycache__", ".next", ".compounding-runtime"]);
-const IGNORE_PREFIXES = ["output/"];
+const IGNORE_DIRS = new Set([".git", "node_modules", "__pycache__", ".next", ...getDerivedAssetObservationIgnoredPrefixes(ROOT).map((prefix) => prefix.replace(/\/$/, ""))]);
+const IGNORE_PREFIXES = getDerivedAssetObservationIgnoredPrefixes(ROOT);
 
 function walk(dir: string): string[] {
   const entries = fs.readdirSync(dir, { withFileTypes: true });

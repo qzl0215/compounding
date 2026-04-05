@@ -31,6 +31,14 @@ related_docs:
 - 文件：`code_index/module-index.md`、`code_index/dependency-map.md`、`code_index/function-index.json`
 - 边界：code_index 只做导航与压缩，不承载决策、经验或当前状态。；模块边界、导出入口或函数索引变化后，应重新生成索引。；人工补充说明写回 ARCHITECTURE、module.md 或 task，不直接手改生成索引。
 
+### Kernel 机器合同
+
+- 方式：`manual`
+- 真相源：`kernel/task-state-machine.yaml`
+- 入口：`pnpm validate:static`
+- 文件：`kernel/task-state-machine.yaml`、`kernel/derived-asset-contract.yaml`
+- 边界：kernel 下的 YAML 定义仓库级机器合同；修改后必须同步 validator、默认读链和相关 docs。；任务状态机约束 task / companion 的状态流，派生产物合同约束 code_index / output / coordination / runtime 的语义。；这些合同不承载业务决策，只定义仓库级机器边界与读写口径。
+
 ### 高频主干文档
 
 - 方式：`manual`

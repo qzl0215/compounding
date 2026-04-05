@@ -2,7 +2,7 @@
 title: ARCHITECTURE
 update_mode: promote_only
 status: active
-last_reviewed_at: 2026-04-03
+last_reviewed_at: 2026-04-05
 source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
@@ -14,6 +14,7 @@ related_docs:
 
 ## 仓库结构
 
+- `kernel/`: 仓库级机器合同与状态契约
 - `apps/studio/`: 只读门户与读模型投影层
 - `scripts/ai/`: 上下文构建、索引生成、任务创建、验证门禁
 - `scripts/coord/`: companion、pre-task、review / handoff 护栏
@@ -28,10 +29,10 @@ related_docs:
 以下清单按当前 truth split 固定分层，只列仓库级文件族，不把 `.next`、`node_modules`、`output` 之类派生物当主源。
 
 - core：`apps/studio/src/app/*`、`apps/studio/src/components/*`、`apps/studio/src/lib/*`、`apps/studio/src/modules/*`、`scripts/ai/*`、`scripts/coord/*`、`scripts/local-runtime/*`、`scripts/release/*`、`shared/*`
-- bootstrap：`scripts/compounding_bootstrap/*`、`scripts/init_project_compounding.py`、`kernel/kernel_manifest.yaml`、`bootstrap/*`、`schemas/*`、`templates/*`
+- bootstrap：`scripts/compounding_bootstrap/*`、`scripts/init_project_compounding.py`、`kernel/kernel_manifest.yaml`、`kernel/task-state-machine.yaml`、`kernel/derived-asset-contract.yaml`、`bootstrap/*`、`schemas/*`、`templates/*`
 - config：`package.json`、`pnpm-workspace.yaml`、`apps/studio/*.config.*`、`.github/*`、`.cursor/rules/*`、`CLAUDE.md`、`OPENCODE.md`、`docs/OPERATOR_RUNBOOK.md`
 - governance / knowledge：`AGENTS.md`、`docs/*`、`memory/*`、`tasks/*`、`code_index/*`
-- derived / runtime：`output/*`、`.compounding-runtime/*`、`.next/*`、`node_modules/*`
+- derived / runtime：`output/*`、`agent-coordination/*`、`.compounding-runtime/*`、`.next/*`、`node_modules/*`
 
 ### Core
 
@@ -138,9 +139,9 @@ related_docs:
 
 - `apps/studio/src/app/*` 只通过 `apps/studio/src/modules/*` 读取文件与投影事实。
 - `apps/studio/src/modules/*` 只依赖必要的邻近模块 public API 和共享解析层，不跨层读任意文件系统状态。
-- `scripts/ai/*` 与 `scripts/coord/*` 可以读取 `docs / memory / tasks / code_index`，但不把运行期临时事实回写成新的真相源。
+- `scripts/ai/*` 与 `scripts/coord/*` 可以读取 `docs / memory / tasks / code_index / kernel`，但不把运行期临时事实回写成新的真相源。
 - `scripts/compounding_bootstrap/*` 只依赖 bootstrap 内部模块和 canonical assets，不继续堆单一巨型入口。
-- `code_index/*`、`docs/ASSET_MAINTENANCE.md`、代码量快照等生成物都是下游缓存，不反向充当主真相源。
+- `code_index/*`、`docs/ASSET_MAINTENANCE.md`、`kernel/derived-asset-contract.yaml`、代码量快照等生成物都是下游缓存，不反向充当主真相源。
 
 ## 测试拓扑
 
