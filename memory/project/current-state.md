@@ -2,7 +2,7 @@
 title: CURRENT_STATE
 update_mode: manual
 status: active
-last_reviewed_at: 2026-04-06
+last_reviewed_at: 2026-04-07
 source_of_truth: memory/project/current-state.md
 related_docs:
   - AGENTS.md
@@ -30,6 +30,7 @@ related_docs:
 - `t-096` 已完成治理守护优先 v1：`memory/project/goals.md` 已收口治理守护矩阵，`pnpm ai:validate-governance-guards` 会校验 `A4 / A6 / A7 / A9` 的 guard 注册表、脚本入口和 `validate:static` 接入漂移，治理面现在可以回答 `assertion -> guard`。
 - `t-097` 已完成 `A5 / GOV-GAP-02` 收口：active/未来 task 的状态读写链只认 `kernel/task-state-machine.yaml` 与 companion `machine.*`；`current_mode` 已退出 companion/CLI/Studio/validator，task prose `状态` 只保留人类展示。
 - `t-098` 已完成：派生产物语义已统一为 `kernel/derived-asset-contract.yaml` 单一合同，`code_index / output / coordination / runtime` 四大家族的 truth role、可写性与回灌边界已明确；`pnpm ai:validate-derived-asset-contract` 与 `pnpm ai:validate-assets` 静态门禁已通过。
+- `t-099` 已完成 release 单一状态机：`kernel/release-state-machine.yaml` 与 `shared/release-state-machine.ts` 成为唯一 release 状态真相；`shared/release-registry.ts` 只做投影/修复；`scripts/release/*`、Studio、harness 与 project judgement 统一读 `state_id` / `state_label`。
 - 本地 production 当前稳定运行在 `3010`；active release 以 `pnpm prod:status` 输出为准，当前 active release 已切到 `t-066` 上线版本。
 - `t-064` 已完成：首页已改成面向人的项目逻辑态势图，主视觉是可点击的逻辑结构图，只保留目标、里程碑、节奏、风险和下钻入口。
 - `t-058` 已完成：`scripts/ai` 的共享 CLI 外壳已经落地，`template-feedback`、`fix-first` 与 `create-task` 已收回同一套参数解析、标准输出、错误出口和 task 模板渲染。
