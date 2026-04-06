@@ -201,14 +201,13 @@ console.log(fs.readFileSync(file, "utf8"));
         )
 
     def test_create_task_can_bind_governance_gap(self) -> None:
-        self.write_governance_gaps()
-
+        # Note: governance-gaps.md 已删除，不再验证 gap 记录更新
         completed = self.run_script(
             "scripts/ai/create-task.ts",
             "task-129-gap-binding",
             "让治理任务显式绑定差距",
-            "需要让治理类 task 从 gap backlog 合法承接，而不是继续靠文字理解",
-            "--parentPlan=memory/project/operating-blueprint.md",
+            "需要让治理类 task 显式声明 gap 和 writeback_targets",
+            "--parentPlan=memory/project/goals.md",
             "--linkedGap=GOV-GAP-01",
             "--fromAssertion=A4",
             "--writebackTargets=Current,Tests",
@@ -222,40 +221,34 @@ console.log(fs.readFileSync(file, "utf8"));
         self.assertIn("- `Current`", created)
         self.assertIn("- `Tests`", created)
 
-        backlog = (self.target / "memory" / "project" / "governance-gaps.md").read_text(encoding="utf8")
-        self.assertIn("- linked_tasks:\n  - `task-129-gap-binding`", backlog)
-
-    def test_create_task_rejects_unknown_governance_gap(self) -> None:
-        self.write_governance_gaps()
-
+    def test_create_task_rejects_invalid_governance_gap_format(self) -> None:
+        # governance-gaps.md 已删除，只做格式校验
         completed = self.run_script(
             "scripts/ai/create-task.ts",
             "task-130-missing-gap",
-            "拦截未知治理差距绑定",
-            "需要避免 task 指向不存在的治理 gap",
-            "--linkedGap=GOV-GAP-404",
+            "拦截无效治理差距格式",
+            "需要验证 gap 格式正确",
+            "--linkedGap=invalid-gap",
             "--fromAssertion=A4",
             "--writebackTargets=Current",
         )
 
         self.assertNotEqual(completed.returncode, 0)
-        self.assertIn("linked_gap 不存在", completed.stderr)
+        self.assertIn("格式无效", completed.stderr)
 
-    def test_create_task_rejects_closed_governance_gap(self) -> None:
-        self.write_governance_gaps()
-
+    def test_create_task_accepts_valid_governance_gap_format(self) -> None:
+        # governance-gaps.md 已删除，不再做 gap 存在性检查，只做格式校验
         completed = self.run_script(
             "scripts/ai/create-task.ts",
-            "task-131-closed-gap",
-            "拦截已关闭治理差距绑定",
-            "需要避免新 task 继续承接已关闭的治理 gap",
-            "--linkedGap=GOV-GAP-99",
-            "--fromAssertion=A9",
+            "task-131-gap-format",
+            "接受有效治理差距格式",
+            "GOV-GAP-XXX 格式应该被接受",
+            "--linkedGap=GOV-GAP-01",
+            "--fromAssertion=A4",
             "--writebackTargets=Current",
         )
 
-        self.assertNotEqual(completed.returncode, 0)
-        self.assertIn("已关闭", completed.stderr)
+        self.assertEqual(completed.returncode, 0, msg=completed.stdout or completed.stderr)
 
     def test_validate_task_git_link_rejects_governance_task_without_writeback_targets(self) -> None:
         self.write_governance_gaps(

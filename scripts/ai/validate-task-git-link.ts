@@ -231,9 +231,6 @@ function validateGovernanceBinding(task, changedFiles, errors) {
   if (!/^GOV-GAP-[A-Z0-9-]+$/i.test(task.linkedGap)) {
     errors.push(`${task.path}: linked_gap 格式无效：${task.linkedGap}（期望格式：GOV-GAP-XXX）`);
   }
-  if (!record.linkedTasks.includes(task.id)) {
-    errors.push(`${task.path}: 治理 gap 主源未回写 linked_tasks：${task.id}`);
-  }
 
   const invalidTargets = task.writebackTargets.filter((target) => !ALLOWED_WRITEBACK_TARGETS.has(target));
   if (invalidTargets.length > 0) {
