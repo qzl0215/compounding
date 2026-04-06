@@ -2,7 +2,7 @@
 title: GOVERNANCE_GAPS
 update_mode: manual
 status: active
-last_reviewed_at: 2026-04-05
+last_reviewed_at: 2026-04-07
 source_of_truth: memory/project/governance-gaps.md
 related_docs:
   - AGENTS.md
@@ -116,5 +116,26 @@ related_docs:
   - `task-098`
   - `t-098`
 - notes: `t-098` 正在把单一机器合同、共享解析器和消费端接入收口到同一套语义。
+
+## GOV-GAP-07 release 状态语义分散导致写链和读链分叉
+
+- gap_id: `GOV-GAP-07`
+- title: `release 状态语义分散导致写链和读链分叉`
+- from_assertion: `A12`
+- current_symptom: 当前 release 语义由 `status`、`acceptance_status`、`active_release_id`、`pending_dev_release_id` 和 runtime 观测拼接，写链和读链已经开始分叉。
+- impact: release registry、Studio 和 harness 对 release 当前状态的判断不一致，导致状态展示和实际操作出现偏差。
+- should_be: `kernel/release-state-machine.yaml` + `shared/release-state-machine.ts` 成为唯一 release 状态真相；`shared/release-registry.ts` 只做投影/修复；`scripts/release/*`、Studio、harness 与 project judgement 统一读 `state_id` / `state_label`。
+- status: `open`
+- evidence:
+  - `scripts/release/prepare-release.ts`
+  - `scripts/release/accept-dev-release.ts`
+  - `scripts/release/reject-dev-release.ts`
+  - `shared/release-registry.ts`
+  - `apps/studio/src/modules/releases/registry.ts`
+- linked_tasks:
+  - `task-099`
+  - `t-099`
+  - `task-099-release-single-state-machine-convergence`
+- notes: `t-099` 已完成 release 单一状态机与 registry 投影收口。
 
 <!-- END MANAGED BLOCK: CANONICAL_CONTENT -->

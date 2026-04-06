@@ -2,11 +2,10 @@
 title: CURRENT_STATE
 update_mode: manual
 status: active
-last_reviewed_at: 2026-04-06
+last_reviewed_at: 2026-04-07
 source_of_truth: memory/project/current-state.md
 related_docs:
   - AGENTS.md
-  - memory/project/roadmap.md
   - memory/project/operating-blueprint.md
   - docs/DEV_WORKFLOW.md
 ---
@@ -23,22 +22,13 @@ related_docs:
 
 ## 当前焦点
 
-- `t-066` 已完成并进入 production：高频模块已补成可机读 feature 合同，`scripts/ai/feature-context.ts` 与 `build-context.ts` 已能直接提供 feature 包，首页 / 任务页 / 发布页也已开始读取共享项目状态摘要。
-- `t-067` 已完成并落到 `main`：task 标题已经统一成中文直给概述，`create-task` 会拦截英文标题摘要，历史 `任务 task-xxx` 机器壳标题也会自动回退到中文摘要。
-- `t-068` 已完成：`structural / release` task 现在会自动记录 preflight / handoff / review / release / rollback 的阶段 activity；24 小时后 raw trace 会 compact 进 companion `iteration_digest`，`pnpm preflight -- --taskId=t-xxx` 会直接带出 retro hints，重复 blocker 可用 `pnpm ai:retro-candidates` 聚合成候选。
-- `t-069` 已完成：服务器访问面、GitHub 接入方式和标准发布流已经统一进 `bootstrap/project_operator.yaml`；`docs/OPERATOR_RUNBOOK.md` 与 Claude/Cursor/OpenCode 薄入口可脚本生成并在静态门禁中校验，不再各自复制一套接入说明。
-- `t-095` 已完成治理控制面的回写闭环 v1：治理类 task 现在必须声明 `writeback_targets`，且 `validate-task-git` 会对 `Current / Code Index / Tests` 做文件级兑现校验；`Controlled Facts` 仍保留但未启用，task 正文、patch note 与 retro 不能替代 truth 回写。
-- `t-096` 已完成治理守护优先 v1：`memory/project/operating-blueprint.md` 已收口治理守护矩阵，`pnpm ai:validate-governance-guards` 会校验 `A4 / A6 / A7 / A9` 的 guard 注册表、脚本入口和 `validate:static` 接入漂移，治理面现在可以回答 `assertion -> guard`。
-- `t-097` 已完成 `A5 / GOV-GAP-02` 收口：active/未来 task 的状态读写链只认 `kernel/task-state-machine.yaml` 与 companion `machine.*`；`current_mode` 已退出 companion/CLI/Studio/validator，task prose `状态` 只保留人类展示。
-- `t-098` 正在收口派生产物语义主合同：`kernel/derived-asset-contract.yaml` 作为唯一机器合同，统一 `code_index / output / agent-coordination / .compounding-runtime` 的 truth role、可写性与回灌边界。
-- `t-098` 的兼容修正已经补上：task 正文里的 `状态（派生展示）` 仍可被 task parser 识别，避免 branch backfill / branch cleanup 因模板文案变化误判 task 为 `todo`。
-- 当前需要先把仓内文件族明确成 core / bootstrap / config / 治理主源 四层清单，并继续把 `code_index/*`、`output/*`、`agent-coordination/*` 和 `.compounding-runtime/*` 收进主源 / 派生物两层心智；这会直接影响跨页面唯一 snapshot 与 release 单一状态机的收口。
-- 当前主线回到“派生产物语义收口”：继续把 `kernel/derived-asset-contract.yaml` 固化成唯一机器合同，让 `code_index/*`、`output/*`、`agent-coordination/*` 和 `.compounding-runtime/*` 压成一致的“主源 / 派生物”心智，减少导航缓存、执行产物和展示投影各自长解释层。
-- 本地 production 当前稳定运行在 `3010`；active release 以 `pnpm prod:status` 输出为准，当前 active release 已切到 `t-066` 上线版本。
-- `t-064` 已完成：首页已改成面向人的项目逻辑态势图，主视觉是可点击的逻辑结构图，只保留目标、里程碑、节奏、风险和下钻入口。
+- `t-099` 已完成 release 单一状态机：`kernel/release-state-machine.yaml` 与 `shared/release-state-machine.ts` 成为唯一 release 状态真相；`shared/release-registry.ts` 只做投影/修复；`scripts/release/*`、Studio、harness 与 project judgement 统一读 `state_id` / `state_label`。
+- `t-098` 已完成：派生产物语义已统一为 `kernel/derived-asset-contract.yaml` 单一合同，`code_index / output / coordination / runtime` 四大家族的 truth role、可写性与回灌边界已明确；`pnpm ai:validate-derived-asset-contract` 与 `pnpm ai:validate-assets` 静态门禁已通过。
+- `t-100` 已完成：目标层已统一为 `memory/project/goals.md` 单一主源，`roadmap.md`、`operating-blueprint.md`、`governance-gaps.md` 已删除。
+- 本地 production 当前稳定运行在 `3010`；active release 以 `pnpm prod:status` 输出为准。
+- `t-063` 已完成：`pnpm preflight` 已成为唯一对外推荐门禁，带 `taskId` 时会稳定进入完整 task guard。
 - `t-058` 已完成：`scripts/ai` 的共享 CLI 外壳已经落地，`template-feedback`、`fix-first` 与 `create-task` 已收回同一套参数解析、标准输出、错误出口和 task 模板渲染。
 - `t-059` 已完成：release registry、Studio 读模型和主源文档已经统一到真实待验收语义；已晋升到 prod 的旧 dev 不再继续显示为 `pending`。
-- `t-063` 已完成：`pnpm preflight` 已成为唯一对外推荐门禁，带 `taskId` 时会稳定进入完整 task guard。
 
 ## 当前阻塞
 
