@@ -1,0 +1,728 @@
+{
+  "schema_version": "4",
+  "task_id": "t-098",
+  "task_path": "tasks/queue/task-098.md",
+  "contract_hash": "1122ec95c840c4d5d21019b8ca749037ce64903c1aa6de5b828631a0718666e8",
+  "branch_name": "codex/task-098-derived-asset-contract",
+  "completion_mode": "close_full_contract",
+  "planned_files": [
+    "tasks/queue/task-098.md",
+    "memory/project/current-state.md",
+    "code_index/",
+    "tests/",
+    "kernel/derived-asset-contract.yaml,schemas/derived-asset-contract.schema.yaml,shared/derived-asset-contract.ts,scripts/ai/validate-derived-asset-contract.ts,scripts/ai/lib/change-policy.ts,scripts/coord/scan.ts,scripts/ai/generate-code-volume.ts,scripts/ai/lib/cleanup-candidates.ts,scripts/ai/lib/knowledge-assets.ts,scripts/pre_mutation_check.py",
+    "AGENTS.md",
+    "docs/AI_OPERATING_MODEL.md",
+    "docs/ARCHITECTURE.md",
+    "docs/ASSET_MAINTENANCE.md",
+    "package.json",
+    "scripts/ai/generate-code-volume.ts",
+    "scripts/ai/lib/change-policy.ts",
+    "scripts/ai/lib/cleanup-candidates.ts",
+    "scripts/ai/lib/knowledge-assets.ts",
+    "scripts/ai/validate-derived-asset-contract.ts",
+    "scripts/coord/scan.ts",
+    "scripts/pre_mutation_check.py",
+    "shared/derived-asset-contract.ts",
+    "shared/task-contract.ts",
+    "kernel/derived-asset-contract.yaml",
+    "schemas/derived-asset-contract.schema.yaml",
+    "tests/coord_support.py",
+    "tests/test_ai_feature_context.py",
+    "tests/test_coord_cli.py",
+    "tests/test_derived_asset_contract.py"
+  ],
+  "planned_modules": [],
+  "locks": [],
+  "lifecycle": {
+    "created": null,
+    "pre_task": {
+      "recorded_at": "2026-04-05T08:05:34.397Z",
+      "ok": true,
+      "preflight_check": {
+        "ok": true,
+        "payload": {
+          "branch": "codex/task-098-derived-asset-contract",
+          "head_sha": "55ed83b1031cc87e3052ab16601431bac78b6437",
+          "has_remote": true,
+          "has_upstream": false,
+          "worktree_clean": true,
+          "sync_status": "no_upstream",
+          "next_action": "Mutation is allowed locally, but branch sync cannot be verified.",
+          "generated_at": "2026-04-05T08:05:23.913401+00:00"
+        },
+        "blockers": [],
+        "notes": [
+          {
+            "step": "preflight",
+            "issue": "分支未配置 upstream，本地允许继续",
+            "details": {
+              "branch": "codex/task-098-derived-asset-contract",
+              "head_sha": "55ed83b1031cc87e3052ab16601431bac78b6437",
+              "has_remote": true,
+              "has_upstream": false,
+              "worktree_clean": true,
+              "sync_status": "no_upstream",
+              "next_action": "Mutation is allowed locally, but branch sync cannot be verified.",
+              "generated_at": "2026-04-05T08:05:23.913401+00:00"
+            }
+          }
+        ]
+      },
+      "search_check": {
+        "required": false,
+        "recorded": false,
+        "completion_mode": "close_full_contract",
+        "sources": [],
+        "conclusion": "",
+        "note": "当前无需 search evidence。"
+      },
+      "runtime_check": {
+        "ok": true,
+        "statuses": [
+          {
+            "profile": "prod",
+            "label": "本地生产",
+            "ok": true,
+            "status": "running",
+            "running": true,
+            "port": 3010,
+            "pid": 6550,
+            "runtime_release_id": "20260330131035-1d3a1bd-prod",
+            "current_release_id": "20260330131035-1d3a1bd-prod",
+            "drift": false,
+            "reason": "本地生产正在运行，监听 127.0.0.1:3010。",
+            "log_path": "/Users/apple/Documents/GitHub/.compounding-runtime/shared/local-prod.log",
+            "state_path": "/Users/apple/Documents/GitHub/.compounding-runtime/shared/local-prod.json"
+          },
+          {
+            "profile": "dev",
+            "label": "dev 预览",
+            "ok": true,
+            "status": "stopped",
+            "running": false,
+            "port": 3011,
+            "pid": null,
+            "runtime_release_id": null,
+            "current_release_id": null,
+            "drift": false,
+            "reason": "dev 预览未启动。",
+            "log_path": "/Users/apple/Documents/GitHub/.compounding-runtime/shared/local-dev.log",
+            "state_path": "/Users/apple/Documents/GitHub/.compounding-runtime/shared/local-dev.json"
+          }
+        ],
+        "blockers": [],
+        "notes": [
+          {
+            "profile": "dev",
+            "label": "dev 预览",
+            "ok": true,
+            "status": "stopped",
+            "running": false,
+            "port": 3011,
+            "pid": null,
+            "runtime_release_id": null,
+            "current_release_id": null,
+            "drift": false,
+            "reason": "dev 预览未启动。",
+            "log_path": "/Users/apple/Documents/GitHub/.compounding-runtime/shared/local-dev.log",
+            "state_path": "/Users/apple/Documents/GitHub/.compounding-runtime/shared/local-dev.json"
+          }
+        ]
+      },
+      "scope_check": {
+        "ok": true,
+        "pass": true,
+        "scope_risk_score": 0,
+        "scope_summary": "No repo-tracked changes to validate.",
+        "planned_files": [
+          "tasks/queue/task-098.md",
+          "memory/project/current-state.md",
+          "code_index/",
+          "tests/",
+          "kernel/derived-asset-contract.yaml,schemas/derived-asset-contract.schema.yaml,shared/derived-asset-contract.ts,scripts/ai/validate-derived-asset-contract.ts,scripts/ai/lib/change-policy.ts,scripts/coord/scan.ts,scripts/ai/generate-code-volume.ts,scripts/ai/lib/cleanup-candidates.ts,scripts/ai/lib/knowledge-assets.ts,scripts/pre_mutation_check.py",
+          "AGENTS.md",
+          "docs/AI_OPERATING_MODEL.md",
+          "docs/ARCHITECTURE.md",
+          "docs/ASSET_MAINTENANCE.md",
+          "package.json",
+          "scripts/ai/generate-code-volume.ts",
+          "scripts/ai/lib/change-policy.ts",
+          "scripts/ai/lib/cleanup-candidates.ts",
+          "scripts/ai/lib/knowledge-assets.ts",
+          "scripts/ai/validate-derived-asset-contract.ts",
+          "scripts/coord/scan.ts",
+          "scripts/pre_mutation_check.py",
+          "shared/derived-asset-contract.ts",
+          "kernel/derived-asset-contract.yaml",
+          "schemas/derived-asset-contract.schema.yaml",
+          "tests/coord_support.py",
+          "tests/test_ai_feature_context.py",
+          "tests/test_coord_cli.py",
+          "tests/test_derived_asset_contract.py"
+        ],
+        "actual_files": [],
+        "undeclared": [],
+        "declared_but_unchanged": [
+          "tasks/queue/task-098.md",
+          "memory/project/current-state.md",
+          "code_index/",
+          "tests/",
+          "kernel/derived-asset-contract.yaml,schemas/derived-asset-contract.schema.yaml,shared/derived-asset-contract.ts,scripts/ai/validate-derived-asset-contract.ts,scripts/ai/lib/change-policy.ts,scripts/coord/scan.ts,scripts/ai/generate-code-volume.ts,scripts/ai/lib/cleanup-candidates.ts,scripts/ai/lib/knowledge-assets.ts,scripts/pre_mutation_check.py",
+          "AGENTS.md",
+          "docs/AI_OPERATING_MODEL.md",
+          "docs/ARCHITECTURE.md",
+          "docs/ASSET_MAINTENANCE.md",
+          "package.json",
+          "scripts/ai/generate-code-volume.ts",
+          "scripts/ai/lib/change-policy.ts",
+          "scripts/ai/lib/cleanup-candidates.ts",
+          "scripts/ai/lib/knowledge-assets.ts",
+          "scripts/ai/validate-derived-asset-contract.ts",
+          "scripts/coord/scan.ts",
+          "scripts/pre_mutation_check.py",
+          "shared/derived-asset-contract.ts",
+          "kernel/derived-asset-contract.yaml",
+          "schemas/derived-asset-contract.schema.yaml",
+          "tests/coord_support.py",
+          "tests/test_ai_feature_context.py",
+          "tests/test_coord_cli.py",
+          "tests/test_derived_asset_contract.py"
+        ],
+        "change_packet": {
+          "observation_mode": "worktree",
+          "change_source": "none",
+          "changed_files": [],
+          "change_class": "light",
+          "policy": {
+            "requires_task": false,
+            "requires_pre_task": false,
+            "requires_release_handoff": false,
+            "strict_task_binding": false
+          },
+          "change_reason": "worktree mode 只看当前 `git status`；当前没有 repo-tracked 改动，因此按 light 处理。",
+          "change_evidence": {
+            "observation_basis": {
+              "sources_checked": [
+                "git_status"
+              ],
+              "selected_source": "none",
+              "selected_ref": null,
+              "ignored_prefixes": [
+                "output/",
+                "agent-coordination/",
+                ".compounding-runtime/"
+              ]
+            },
+            "classification_rule": "no_observed_changes",
+            "matched_files": [],
+            "release_files": [],
+            "light_files": [],
+            "other_files": []
+          }
+        },
+        "observation_mode": "worktree",
+        "change_source": "none",
+        "changed_files": [],
+        "change_class": "light",
+        "change_reason": "worktree mode 只看当前 `git status`；当前没有 repo-tracked 改动，因此按 light 处理。",
+        "change_evidence": {
+          "observation_basis": {
+            "sources_checked": [
+              "git_status"
+            ],
+            "selected_source": "none",
+            "selected_ref": null,
+            "ignored_prefixes": [
+              "output/",
+              "agent-coordination/",
+              ".compounding-runtime/"
+            ]
+          },
+          "classification_rule": "no_observed_changes",
+          "matched_files": [],
+          "release_files": [],
+          "light_files": [],
+          "other_files": []
+        },
+        "policy": {
+          "requires_task": false,
+          "requires_pre_task": false,
+          "requires_release_handoff": false,
+          "strict_task_binding": false
+        }
+      },
+      "lock_check": {
+        "ok": true,
+        "conflicts": [],
+        "suggested_execution_mode": null
+      },
+      "blockers": [],
+      "decision_card": null
+    },
+    "handoff": {
+      "recorded_at": "2026-04-05T10:21:27.536Z",
+      "source": "coord:task:handoff",
+      "summary": "t-098 已进入交接。",
+      "git_head": "4136f61a2c0bc563e39f2f0680ebe453be5d5009",
+      "branch_name": "codex/task-098-derived-asset-contract"
+    },
+    "review": {
+      "recorded_at": "2026-04-05T10:22:52.194Z",
+      "ok": true,
+      "merge_decision": "auto_merge",
+      "merge_confidence_score": 0.9,
+      "merge_decision_explanation": "All reviewers passed.",
+      "reviewers": [
+        {
+          "name": "scope_reviewer",
+          "pass": true,
+          "scope_risk_score": 0,
+          "scope_summary": "No repo-tracked changes to validate.",
+          "raw": {
+            "ok": true,
+            "pass": true,
+            "scope_risk_score": 0,
+            "scope_summary": "No repo-tracked changes to validate.",
+            "planned_files": [
+              "tasks/queue/task-098.md",
+              "memory/project/current-state.md",
+              "code_index/",
+              "tests/",
+              "kernel/derived-asset-contract.yaml,schemas/derived-asset-contract.schema.yaml,shared/derived-asset-contract.ts,scripts/ai/validate-derived-asset-contract.ts,scripts/ai/lib/change-policy.ts,scripts/coord/scan.ts,scripts/ai/generate-code-volume.ts,scripts/ai/lib/cleanup-candidates.ts,scripts/ai/lib/knowledge-assets.ts,scripts/pre_mutation_check.py",
+              "AGENTS.md",
+              "docs/AI_OPERATING_MODEL.md",
+              "docs/ARCHITECTURE.md",
+              "docs/ASSET_MAINTENANCE.md",
+              "package.json",
+              "scripts/ai/generate-code-volume.ts",
+              "scripts/ai/lib/change-policy.ts",
+              "scripts/ai/lib/cleanup-candidates.ts",
+              "scripts/ai/lib/knowledge-assets.ts",
+              "scripts/ai/validate-derived-asset-contract.ts",
+              "scripts/coord/scan.ts",
+              "scripts/pre_mutation_check.py",
+              "shared/derived-asset-contract.ts",
+              "shared/task-contract.ts",
+              "kernel/derived-asset-contract.yaml",
+              "schemas/derived-asset-contract.schema.yaml",
+              "tests/coord_support.py",
+              "tests/test_ai_feature_context.py",
+              "tests/test_coord_cli.py",
+              "tests/test_derived_asset_contract.py"
+            ],
+            "actual_files": [],
+            "undeclared": [],
+            "declared_but_unchanged": [
+              "tasks/queue/task-098.md",
+              "memory/project/current-state.md",
+              "code_index/",
+              "tests/",
+              "kernel/derived-asset-contract.yaml,schemas/derived-asset-contract.schema.yaml,shared/derived-asset-contract.ts,scripts/ai/validate-derived-asset-contract.ts,scripts/ai/lib/change-policy.ts,scripts/coord/scan.ts,scripts/ai/generate-code-volume.ts,scripts/ai/lib/cleanup-candidates.ts,scripts/ai/lib/knowledge-assets.ts,scripts/pre_mutation_check.py",
+              "AGENTS.md",
+              "docs/AI_OPERATING_MODEL.md",
+              "docs/ARCHITECTURE.md",
+              "docs/ASSET_MAINTENANCE.md",
+              "package.json",
+              "scripts/ai/generate-code-volume.ts",
+              "scripts/ai/lib/change-policy.ts",
+              "scripts/ai/lib/cleanup-candidates.ts",
+              "scripts/ai/lib/knowledge-assets.ts",
+              "scripts/ai/validate-derived-asset-contract.ts",
+              "scripts/coord/scan.ts",
+              "scripts/pre_mutation_check.py",
+              "shared/derived-asset-contract.ts",
+              "shared/task-contract.ts",
+              "kernel/derived-asset-contract.yaml",
+              "schemas/derived-asset-contract.schema.yaml",
+              "tests/coord_support.py",
+              "tests/test_ai_feature_context.py",
+              "tests/test_coord_cli.py",
+              "tests/test_derived_asset_contract.py"
+            ],
+            "change_packet": {
+              "observation_mode": "worktree",
+              "change_source": "none",
+              "changed_files": [],
+              "change_class": "light",
+              "policy": {
+                "requires_task": false,
+                "requires_pre_task": false,
+                "requires_release_handoff": false,
+                "strict_task_binding": false
+              },
+              "change_reason": "worktree mode 只看当前 `git status`；当前没有 repo-tracked 改动，因此按 light 处理。",
+              "change_evidence": {
+                "observation_basis": {
+                  "sources_checked": [
+                    "git_status"
+                  ],
+                  "selected_source": "none",
+                  "selected_ref": null,
+                  "ignored_prefixes": [
+                    "output/",
+                    "agent-coordination/",
+                    ".compounding-runtime/"
+                  ]
+                },
+                "classification_rule": "no_observed_changes",
+                "matched_files": [],
+                "release_files": [],
+                "light_files": [],
+                "other_files": []
+              }
+            },
+            "observation_mode": "worktree",
+            "change_source": "none",
+            "changed_files": [],
+            "change_class": "light",
+            "change_reason": "worktree mode 只看当前 `git status`；当前没有 repo-tracked 改动，因此按 light 处理。",
+            "change_evidence": {
+              "observation_basis": {
+                "sources_checked": [
+                  "git_status"
+                ],
+                "selected_source": "none",
+                "selected_ref": null,
+                "ignored_prefixes": [
+                  "output/",
+                  "agent-coordination/",
+                  ".compounding-runtime/"
+                ]
+              },
+              "classification_rule": "no_observed_changes",
+              "matched_files": [],
+              "release_files": [],
+              "light_files": [],
+              "other_files": []
+            },
+            "policy": {
+              "requires_task": false,
+              "requires_pre_task": false,
+              "requires_release_handoff": false,
+              "strict_task_binding": false
+            }
+          }
+        },
+        {
+          "name": "lock_reviewer",
+          "pass": true,
+          "lock_violation_detail": null
+        },
+        {
+          "name": "contract_reviewer",
+          "pass": true,
+          "summary": "No changed files.",
+          "raw": {
+            "name": "contract_reviewer",
+            "pass": true,
+            "summary": "No changed files.",
+            "raw": {}
+          }
+        },
+        {
+          "name": "architecture_reviewer",
+          "pass": true,
+          "requires_human_review": false,
+          "arch_risk_score": 0,
+          "summary": "Architecture check passed.",
+          "suggestions": null,
+          "raw": {
+            "name": "architecture_reviewer",
+            "pass": true,
+            "requires_human_review": false,
+            "arch_risk_score": 0,
+            "summary": "Architecture check passed.",
+            "suggestions": null,
+            "raw": {
+              "changed_file_count": 0,
+              "module_count": 0,
+              "high_risk_count": 0,
+              "scope_risk_score": 0
+            }
+          }
+        },
+        {
+          "name": "test_reviewer",
+          "pass": true,
+          "test_status": "passed",
+          "stderr": "(node:53997) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/apple/Documents/GitHub/Compounding/shared/simple-yaml.ts is not specified and it doesn't parse as CommonJS.\nReparsing as ES module because module syntax was detected. This incurs a performance overhead.\nTo eliminate this warning, add \"type\": \"module\" to /Users/apple/Documents/GitHub/Compounding/package.json.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:54058) [MODULE_TYPELESS_PACKAG"
+        }
+      ],
+      "diff_summary_path": "/Users/apple/Documents/GitHub/Compounding/agent-coordination/reports/diff-summary-main-HEAD.json"
+    },
+    "release_handoff": null
+  },
+  "machine": {
+    "state_id": "released",
+    "mode_id": "release",
+    "delivery_track": "direct_merge",
+    "blocked_from_state": null,
+    "resume_to_state": null,
+    "blocked_reason": null,
+    "last_transition": {
+      "event_id": "review_passed",
+      "from_state_id": "reviewing",
+      "to_state_id": "released",
+      "recorded_at": "2026-04-05T10:22:48.688Z",
+      "reason": null,
+      "source": "coord:review:run"
+    }
+  },
+  "artifacts": {
+    "branch_cleanup": null,
+    "change_cost_snapshot": {
+      "time": {
+        "active_ms": 8170652,
+        "wait_ms": 60632,
+        "total_ms": 8231284,
+        "dominant_stage": "execution",
+        "repeated_blockers": 0,
+        "latest_blockers": [
+          "Task t-098 is still in executing; run coord:task:handoff before review."
+        ]
+      },
+      "tokens": {
+        "summary_runs": 0,
+        "context_packets": 0,
+        "summary_input_est": 0,
+        "summary_output_est": 0,
+        "summary_saved_est": 0,
+        "context_input_est": 0,
+        "context_output_est": 0,
+        "context_saved_est": 0
+      },
+      "code": {
+        "source": "live",
+        "files": 26,
+        "insertions": 20448,
+        "deletions": 618
+      },
+      "effect": {
+        "last_gate_failures": [],
+        "release_state": "in_progress",
+        "build_result": null,
+        "smoke_result": null,
+        "acceptance_status": null,
+        "blockers": [
+          "Task t-098 is still in executing; run coord:task:handoff before review."
+        ],
+        "status_summary": "当前仍受 Task t-098 is still in executing; run coord:task:handoff before review. 阻塞。"
+      }
+    },
+    "decision_cards": [
+      {
+        "decision_id": "dec-mnlh6c41-igyh",
+        "path": "/Users/apple/Documents/GitHub/Compounding/agent-coordination/decisions/dec-mnlh6c41-igyh.json",
+        "type": "pre_task_guard",
+        "generated_at": "2026-04-05T08:04:02.641Z"
+      }
+    ],
+    "diff_summaries": [
+      {
+        "path": "/Users/apple/Documents/GitHub/Compounding/agent-coordination/reports/diff-summary-main-HEAD.json",
+        "ref_a": "main",
+        "ref_b": "HEAD",
+        "generated_at": "2026-04-05T10:22:48.143Z"
+      }
+    ],
+    "handoff_notes": [
+      {
+        "recorded_at": "2026-04-05T10:21:27.536Z",
+        "source": "coord:task:handoff",
+        "summary": "t-098 已进入交接。",
+        "git_head": "4136f61a2c0bc563e39f2f0680ebe453be5d5009",
+        "branch_name": "codex/task-098-derived-asset-contract"
+      }
+    ],
+    "iteration_digest": null,
+    "review_notes": [
+      {
+        "recorded_at": "2026-04-05T10:22:52.194Z",
+        "ok": true,
+        "merge_decision": "auto_merge",
+        "merge_confidence_score": 0.9,
+        "merge_decision_explanation": "All reviewers passed.",
+        "reviewers": [
+          {
+            "name": "scope_reviewer",
+            "pass": true,
+            "scope_risk_score": 0,
+            "scope_summary": "No repo-tracked changes to validate.",
+            "raw": {
+              "ok": true,
+              "pass": true,
+              "scope_risk_score": 0,
+              "scope_summary": "No repo-tracked changes to validate.",
+              "planned_files": [
+                "tasks/queue/task-098.md",
+                "memory/project/current-state.md",
+                "code_index/",
+                "tests/",
+                "kernel/derived-asset-contract.yaml,schemas/derived-asset-contract.schema.yaml,shared/derived-asset-contract.ts,scripts/ai/validate-derived-asset-contract.ts,scripts/ai/lib/change-policy.ts,scripts/coord/scan.ts,scripts/ai/generate-code-volume.ts,scripts/ai/lib/cleanup-candidates.ts,scripts/ai/lib/knowledge-assets.ts,scripts/pre_mutation_check.py",
+                "AGENTS.md",
+                "docs/AI_OPERATING_MODEL.md",
+                "docs/ARCHITECTURE.md",
+                "docs/ASSET_MAINTENANCE.md",
+                "package.json",
+                "scripts/ai/generate-code-volume.ts",
+                "scripts/ai/lib/change-policy.ts",
+                "scripts/ai/lib/cleanup-candidates.ts",
+                "scripts/ai/lib/knowledge-assets.ts",
+                "scripts/ai/validate-derived-asset-contract.ts",
+                "scripts/coord/scan.ts",
+                "scripts/pre_mutation_check.py",
+                "shared/derived-asset-contract.ts",
+                "shared/task-contract.ts",
+                "kernel/derived-asset-contract.yaml",
+                "schemas/derived-asset-contract.schema.yaml",
+                "tests/coord_support.py",
+                "tests/test_ai_feature_context.py",
+                "tests/test_coord_cli.py",
+                "tests/test_derived_asset_contract.py"
+              ],
+              "actual_files": [],
+              "undeclared": [],
+              "declared_but_unchanged": [
+                "tasks/queue/task-098.md",
+                "memory/project/current-state.md",
+                "code_index/",
+                "tests/",
+                "kernel/derived-asset-contract.yaml,schemas/derived-asset-contract.schema.yaml,shared/derived-asset-contract.ts,scripts/ai/validate-derived-asset-contract.ts,scripts/ai/lib/change-policy.ts,scripts/coord/scan.ts,scripts/ai/generate-code-volume.ts,scripts/ai/lib/cleanup-candidates.ts,scripts/ai/lib/knowledge-assets.ts,scripts/pre_mutation_check.py",
+                "AGENTS.md",
+                "docs/AI_OPERATING_MODEL.md",
+                "docs/ARCHITECTURE.md",
+                "docs/ASSET_MAINTENANCE.md",
+                "package.json",
+                "scripts/ai/generate-code-volume.ts",
+                "scripts/ai/lib/change-policy.ts",
+                "scripts/ai/lib/cleanup-candidates.ts",
+                "scripts/ai/lib/knowledge-assets.ts",
+                "scripts/ai/validate-derived-asset-contract.ts",
+                "scripts/coord/scan.ts",
+                "scripts/pre_mutation_check.py",
+                "shared/derived-asset-contract.ts",
+                "shared/task-contract.ts",
+                "kernel/derived-asset-contract.yaml",
+                "schemas/derived-asset-contract.schema.yaml",
+                "tests/coord_support.py",
+                "tests/test_ai_feature_context.py",
+                "tests/test_coord_cli.py",
+                "tests/test_derived_asset_contract.py"
+              ],
+              "change_packet": {
+                "observation_mode": "worktree",
+                "change_source": "none",
+                "changed_files": [],
+                "change_class": "light",
+                "policy": {
+                  "requires_task": false,
+                  "requires_pre_task": false,
+                  "requires_release_handoff": false,
+                  "strict_task_binding": false
+                },
+                "change_reason": "worktree mode 只看当前 `git status`；当前没有 repo-tracked 改动，因此按 light 处理。",
+                "change_evidence": {
+                  "observation_basis": {
+                    "sources_checked": [
+                      "git_status"
+                    ],
+                    "selected_source": "none",
+                    "selected_ref": null,
+                    "ignored_prefixes": [
+                      "output/",
+                      "agent-coordination/",
+                      ".compounding-runtime/"
+                    ]
+                  },
+                  "classification_rule": "no_observed_changes",
+                  "matched_files": [],
+                  "release_files": [],
+                  "light_files": [],
+                  "other_files": []
+                }
+              },
+              "observation_mode": "worktree",
+              "change_source": "none",
+              "changed_files": [],
+              "change_class": "light",
+              "change_reason": "worktree mode 只看当前 `git status`；当前没有 repo-tracked 改动，因此按 light 处理。",
+              "change_evidence": {
+                "observation_basis": {
+                  "sources_checked": [
+                    "git_status"
+                  ],
+                  "selected_source": "none",
+                  "selected_ref": null,
+                  "ignored_prefixes": [
+                    "output/",
+                    "agent-coordination/",
+                    ".compounding-runtime/"
+                  ]
+                },
+                "classification_rule": "no_observed_changes",
+                "matched_files": [],
+                "release_files": [],
+                "light_files": [],
+                "other_files": []
+              },
+              "policy": {
+                "requires_task": false,
+                "requires_pre_task": false,
+                "requires_release_handoff": false,
+                "strict_task_binding": false
+              }
+            }
+          },
+          {
+            "name": "lock_reviewer",
+            "pass": true,
+            "lock_violation_detail": null
+          },
+          {
+            "name": "contract_reviewer",
+            "pass": true,
+            "summary": "No changed files.",
+            "raw": {
+              "name": "contract_reviewer",
+              "pass": true,
+              "summary": "No changed files.",
+              "raw": {}
+            }
+          },
+          {
+            "name": "architecture_reviewer",
+            "pass": true,
+            "requires_human_review": false,
+            "arch_risk_score": 0,
+            "summary": "Architecture check passed.",
+            "suggestions": null,
+            "raw": {
+              "name": "architecture_reviewer",
+              "pass": true,
+              "requires_human_review": false,
+              "arch_risk_score": 0,
+              "summary": "Architecture check passed.",
+              "suggestions": null,
+              "raw": {
+                "changed_file_count": 0,
+                "module_count": 0,
+                "high_risk_count": 0,
+                "scope_risk_score": 0
+              }
+            }
+          },
+          {
+            "name": "test_reviewer",
+            "pass": true,
+            "test_status": "passed",
+            "stderr": "(node:53997) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/apple/Documents/GitHub/Compounding/shared/simple-yaml.ts is not specified and it doesn't parse as CommonJS.\nReparsing as ES module because module syntax was detected. This incurs a performance overhead.\nTo eliminate this warning, add \"type\": \"module\" to /Users/apple/Documents/GitHub/Compounding/package.json.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:54058) [MODULE_TYPELESS_PACKAG"
+          }
+        ],
+        "diff_summary_path": "/Users/apple/Documents/GitHub/Compounding/agent-coordination/reports/diff-summary-main-HEAD.json"
+      }
+    ],
+    "release_notes": [],
+    "search_evidence": []
+  }
+}
