@@ -1,69 +1,61 @@
----
-title: 简化目标层：统一 Goal 单一主源
-task_id: task-100
-type: structural
-status: done
-created_by: qzl0215
-created_at: 2026-04-06
-done_when: goals.md 填入真实内容并同步 ASSET_MAINTENANCE
-delivery_result: 统一 Goal 单一主源，删除 roadmap/blueprint/governance-gaps，goals.md 现包含 True North、Hard Constraints、This Phase Success、Not Goal 和演进脉络
-linked_gap: null
-from_assertion: null
-writeback_targets: []
----
+# 简化目标层：统一 Goal 单一主源
+
+## 短编号
+
+t-100
+
+## 父计划
+
+`memory/project/goals.md`
 
 ## 任务摘要
 
 简化目标层，将 `roadmap.md`、`operating-blueprint.md`、`governance-gaps.md` 统一为 `goals.md` 单一主源。
 
-## 背景
+## 为什么现在
 
-根据 harness-engineering-vision，闭环简化为：
+目标层原本散落在 roadmap/operating-blueprint/governance-gaps 三处，内容重叠且无统一主入口；Goal = Goal - Current 的闭环已清晰，gap 不再需要独立步骤。
 
-```
-Goal → Current → Plan → Task → Review → Release → Memory → 循环
-```
+## 承接边界
 
-**Gap 不再是独立步骤** — Gap = Goal - Current，差是客观存在的，不需要专门识别。
+历史任务，仅保留原始决策与复盘，不再扩展。
 
-## 改动范围
+## 要做
 
-### 1. 新建 Goals 单一主源
+- 新建 `memory/project/goals.md` 作为 Goal 单一主源
+- 删除 roadmap.md、operating-blueprint.md、governance-gaps.md
+- 更新所有引用上述文件的代码和配置
+- 同步 ASSET_MAINTENANCE.md
 
-- `memory/project/goals.md` 已创建
+## 不做
 
-### 2. 删除的文档
+- 不改动 goals.md 的实际内容（内容填充是后续工作）
+- 不改动 governance guard 的断言矩阵结构
+- 不改动 task 系统的其他部分
 
-- `memory/project/roadmap.md`
-- `memory/project/operating-blueprint.md`
-- `memory/project/governance-gaps.md`
+## 完成定义
 
-### 3. 核心代码更新
+- `memory/project/goals.md` 存在且内容完整
+- `roadmap.md`, `operating-blueprint.md`, `governance-gaps.md` 已删除
+- `pnpm preflight` 通过
+- `pnpm validate:static` 通过
+- `pnpm build` 通过
 
-- `shared/project-judgement.ts` - 移除 roadmap/blueprint 读取依赖
-- `shared/project-judgement-live.ts` - 移除 roadmap/blueprint 读取
+## 关键风险
 
-### 4. Bootstrap 更新
+低；只做文件替换，不涉及运行时逻辑。
 
-- `scripts/compounding_bootstrap/bootstrap.py` - 移除 roadmap/blueprint 生成
-- `scripts/compounding_bootstrap/defaults.py` - 更新 MINIMAL_MEMORY_DOCS
-- `scripts/compounding_bootstrap/catalog.py` - 更新 MEMORY_DOCS
-- `scripts/compounding_bootstrap/config_resolution.py` - 更新路径常量
-- `scripts/compounding_bootstrap/attach.py` - 更新协议检测
-- `scripts/compounding_bootstrap/audit.py` - 更新必需协议列表
+## 测试策略
 
-### 5. 模板更新
+治理 gap 相关测试需要更新以反映文件删除。验证 test_ai_assets_cli.py、test_coord_cli.py 中 governance gaps 相关用例。
 
-- `bootstrap/project_brief.yaml`
-- `bootstrap/templates/document_manifest.json`
-- `bootstrap/templates/foreman_bootstrap.md.tmpl`
-- `templates/project_brief.template.yaml`
-- `kernel/kernel_manifest.yaml`
+## 状态
 
-### 6. AGENTS.md 更新
+done
 
-- 默认读链中移除 roadmap.md / operating-blueprint.md
-- 增加 goals.md 引用
+## 交付结果
+
+统一 Goal 单一主源，删除 roadmap/blueprint/governance-gaps，goals.md 现包含 True North、Hard Constraints、This Phase Success、Not Goal 和演进脉络。
 
 ## 关联模块
 
@@ -89,10 +81,12 @@ Goal → Current → Plan → Task → Review → Release → Memory → 循环
 - `shared/project-judgement-live.ts`
 - `templates/project_brief.template.yaml`
 
-## 完成定义
+## 背景
 
-- `memory/project/goals.md` 存在且内容完整
-- `roadmap.md`, `operating-blueprint.md`, `governance-gaps.md` 已删除
-- `pnpm preflight` 通过
-- `pnpm validate:static` 通过
-- `pnpm build` 通过
+根据 harness-engineering-vision，闭环简化为：
+
+```
+Goal → Current → Plan → Task → Review → Release → Memory → 循环
+```
+
+**Gap 不再是独立步骤** — Gap = Goal - Current，差是客观存在的，不需要专门识别。
