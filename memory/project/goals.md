@@ -48,3 +48,20 @@ last_reviewed_at: 2026-04-06
 - `t-069` 收成 operator assets 与 bootstrap 统一
 - `t-095/096/097` 收成治理控制面与守护矩阵
 - 当前主线：`派生产物语义收口` → `release 单一状态机` → `bootstrap 可复用验证`
+
+## 治理守护矩阵 v1
+
+这组守护矩阵只覆盖治理控制面里可机读、可被现有 gate 承接的断言，它的职责不是重新定义治理对象，而是明确"哪条治理断言由谁守、guard 是否存在、是否已接入静态门禁链"。
+
+| assertion_id | assertion | primary_guard | probe_rule | failure_signal | coverage_status |
+|---|---|---|---|---|---|
+| `A4` | `Task` 只能承接已收口范围，不能替代 `Goal / Current / Plan` | `pnpm ai:validate-task-git` | script exists + validate:static includes it | task 未合法绑定 gap / from_assertion / writeback_targets | `active` |
+| `A6` | `Gap` 必须来自同维度断言比较，不能从 task 或 patch 倒推 | `pnpm ai:validate-task-git` | script exists + validate:static includes it | gap 来源不合法、gap 主源不一致、从 task 或 patch 倒推 | `active` |
+| `A7` | 行为变化后必须回写 `Current` 或其受控事实入口，patch note 不能替代 truth | `pnpm ai:validate-task-git` | script exists + validate:static includes it | 声明的 truth sink 未兑现 | `active` |
+| `A9` | 测试与验证必须保护现实规则，不能只证明"脚本跑了" | `pnpm ai:validate-governance-guards` | script exists + validate:static includes it | 守护矩阵缺项、guard 入口漂移、static gate 未接入 | `active` |
+
+### v1 边界
+
+- `A5` 不进入治理守护矩阵；它通过状态真相收口轮次处理，而不是通过额外 guard 叠层处理。
+- `docs/TEST_MATRIX.md` 只保留测试分层与引用说明，不承载 assertion registry 本体。
+- `ai:validate-governance-guards` 只验证注册表完整性、guard 入口存在性和静态门禁接入，不推导 guard 的语义充分性。
