@@ -7,6 +7,7 @@
     "build": "pnpm --filter studio build",
     "lint": "pnpm --filter studio lint",
     "test": "pnpm --filter studio test && python3 -m unittest discover -s tests -p 'test_*.py'",
+    "test:selective": "pnpm --filter studio test && python3 scripts/run-selective-tests.py",
     "bootstrap:attach": "python3 scripts/init_project_compounding.py attach --config bootstrap/project_brief.yaml --target .",
     "bootstrap:audit": "python3 scripts/init_project_compounding.py audit --config bootstrap/project_brief.yaml --target .",
     "bootstrap:doctor": "python3 scripts/init_project_compounding.py doctor --config bootstrap/project_brief.yaml --target .",
