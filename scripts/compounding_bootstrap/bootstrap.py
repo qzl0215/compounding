@@ -258,10 +258,6 @@ def render_goals(project_name: str) -> str:
 ## 当前里程碑
 
 - 初始化阶段
-
-## 需求总览
-
-- 收敛项目自己的 Goal / Current / Plan / Task / Release / Memory 协议
 """
 
 
