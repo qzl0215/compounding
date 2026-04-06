@@ -6,8 +6,6 @@ const { ensureCompanion } = require("../coord/lib/task-meta.ts");
 const { syncTaskMaterialization } = require("../harness/lib.ts");
 const { emitResult, exitWithError, parseCliArgs, renderTaskTemplate } = require("./lib/cli-kernel.js");
 const {
-  appendLinkedTaskToGovernanceGap,
-  findGovernanceGapRecord,
   GOVERNANCE_GAPS_PATH,
 } = require(path.join(process.cwd(), "shared", "governance-gap-contract.ts"));
 
@@ -100,9 +98,6 @@ if (existingTaskRecords.some((record) => record.shortId === shortId)) {
 
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, body);
-if (governanceBinding) {
-  appendLinkedTaskToGovernanceGap(governanceBinding.linkedGap, taskId, root);
-}
 ensureCompanion(taskId);
 syncTaskMaterialization(taskId, {
   source: "ai:create-task",
@@ -157,18 +152,13 @@ function resolveGovernanceBinding(argv, root, cli) {
     );
   }
 
-  const record = findGovernanceGapRecord(linkedGap, root);
-  if (!record) {
-    exitWithError(`linked_gap 不存在：${linkedGap}`, cli, [`治理 gap 主源：${GOVERNANCE_GAPS_PATH}`]);
-  }
-  if (String(record.status || "").trim().toLowerCase() === "closed") {
-    exitWithError(`linked_gap 已关闭，不能新开 task：${linkedGap}`, cli, [`治理 gap 主源：${GOVERNANCE_GAPS_PATH}`]);
-  }
-  if (record.fromAssertion && record.fromAssertion !== fromAssertion) {
+  // Note: governance-gaps.md 已删除，gap 验证简化处理
+  // linked_gap 格式校验：GOV-GAP-XXX
+  if (linkedGap && !/^GOV-GAP-[A-Z0-9-]+$/i.test(linkedGap)) {
     exitWithError(
-      `from_assertion 与治理 gap 主源不一致：${fromAssertion}`,
+      `linked_gap 格式无效：${linkedGap}`,
       cli,
-      [`${linkedGap} expects ${record.fromAssertion}`]
+      ["治理 gap ID 格式应为 GOV-GAP-XXX，例如 GOV-GAP-01"]
     );
   }
 

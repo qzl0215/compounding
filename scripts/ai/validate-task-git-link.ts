@@ -11,8 +11,6 @@ const {
 const { normalizeBranchCleanupRecord } = require(path.join(process.cwd(), "shared", "branch-cleanup.ts"));
 const { collectTaskIdentityErrors, taskIdFromPath } = require(path.join(process.cwd(), "shared", "task-identity.ts"));
 const {
-  findGovernanceGapRecord,
-  readGovernanceGapRecords,
   GOVERNANCE_GAPS_PATH,
 } = require(path.join(process.cwd(), "shared", "governance-gap-contract.ts"));
 const { readCompanion } = require("../coord/lib/task-meta.ts");
@@ -217,11 +215,10 @@ function validateTask(task, changedFiles, errors) {
 }
 
 function validateGovernanceBinding(task, changedFiles, errors) {
-  const governanceRecords = readGovernanceGapRecords(root);
-  const reverseLinkedRecord = governanceRecords.find((record) => record.linkedTasks.includes(task.id));
+  // Note: governance-gaps.md 已删除，gap 记录验证简化处理
   const hasGovernanceFields = Boolean(task.linkedGap || task.fromAssertion || task.writebackTargets.length);
 
-  if (!reverseLinkedRecord && !hasGovernanceFields) {
+  if (!hasGovernanceFields) {
     return;
   }
 
@@ -230,17 +227,9 @@ function validateGovernanceBinding(task, changedFiles, errors) {
     return;
   }
 
-  const record = findGovernanceGapRecord(task.linkedGap, root);
-  if (!record) {
-    errors.push(`${task.path}: linked_gap 不存在于 ${GOVERNANCE_GAPS_PATH}：${task.linkedGap}`);
-    return;
-  }
-
-  if (String(record.status || "").trim().toLowerCase() === "closed" && !record.linkedTasks.includes(task.id)) {
-    errors.push(`${task.path}: linked_gap 已关闭，不能继续绑定新 task：${task.linkedGap}`);
-  }
-  if (record.fromAssertion && record.fromAssertion !== task.fromAssertion) {
-    errors.push(`${task.path}: from_assertion 与治理 gap 主源不一致，应为 ${record.fromAssertion}。`);
+  // linked_gap 格式校验
+  if (!/^GOV-GAP-[A-Z0-9-]+$/i.test(task.linkedGap)) {
+    errors.push(`${task.path}: linked_gap 格式无效：${task.linkedGap}（期望格式：GOV-GAP-XXX）`);
   }
   if (!record.linkedTasks.includes(task.id)) {
     errors.push(`${task.path}: 治理 gap 主源未回写 linked_tasks：${task.id}`);

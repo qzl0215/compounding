@@ -4,8 +4,7 @@ modes:
     label: 规划
     inputs:
       - task 合同草案
-      - memory/project/roadmap.md
-      - memory/project/operating-blueprint.md
+      - memory/project/goals.md
       - memory/project/current-state.md
       - 必要模块上下文
     outputs:
