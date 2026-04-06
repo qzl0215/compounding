@@ -20,9 +20,8 @@ PROMPT_DOCS = [
 MEMORY_DOCS = [
     "memory/architecture/system-overview.md",
     "memory/project/current-state.md",
-    "memory/project/operating-blueprint.md",
+    "memory/project/goals.md",
     "memory/project/tech-debt.md",
-    "memory/project/roadmap.md",
     "memory/experience/README.md",
     "memory/experience/exp-001-thin-agents-entry.md",
     "memory/experience/exp-002-memory-before-promotion.md",

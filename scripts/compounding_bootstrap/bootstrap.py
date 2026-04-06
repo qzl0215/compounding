@@ -101,9 +101,8 @@ def minimal_shell_assets(project_name: str) -> dict[str, str]:
         "docs/PROJECT_RULES.md": render_project_rules(),
         "docs/AI_OPERATING_MODEL.md": render_ai_operating_model(),
         "docs/ASSET_MAINTENANCE.md": render_asset_maintenance(),
-        "memory/project/roadmap.md": render_roadmap(project_name),
+        "memory/project/goals.md": render_goals(project_name),
         "memory/project/current-state.md": render_current_state(),
-        "memory/project/operating-blueprint.md": render_operating_blueprint(),
         "memory/project/tech-debt.md": render_tech_debt(),
         "tasks/queue/.gitkeep": "",
         "output/proposals/.gitkeep": "",
@@ -124,9 +123,8 @@ def render_agents(project_name: str) -> str:
 ## 默认读链
 
 - 先读 `AGENTS.md`
-- 再读 `memory/project/roadmap.md`
+- 再读 `memory/project/goals.md`
 - 再读 `memory/project/current-state.md`
-- 再读 `memory/project/operating-blueprint.md`
 - 需要工作模式时读 `docs/WORK_MODES.md`
 - 需要执行顺序时读 `docs/DEV_WORKFLOW.md`
 - 需要结构边界时读 `docs/ARCHITECTURE.md`
@@ -136,7 +134,7 @@ def render_agents(project_name: str) -> str:
 
 - 名称：`{project_name}`
 - 本仓默认采用 `single-kernel + project-shell`
-- 需求未收口时回到 `memory/project/operating-blueprint.md`
+- 需求未收口时回到 `memory/project/goals.md`
 - 执行事项进入 `tasks/queue/*`
 """
 
@@ -241,17 +239,29 @@ def render_asset_maintenance() -> str:
 """
 
 
-def render_roadmap(project_name: str) -> str:
-    return f"""# 路线图
+def render_goals(project_name: str) -> str:
+    return f"""# 目标
 
 ## 当前阶段
 
 - `{project_name}` 已进入最小 project shell
 
-## 近期目标
+## 当前优先级
 
 - 跑通 attach / audit / proposal / bootstrap
-- 收敛项目自己的 plan / task / release / memory 协议
+
+## 里程碑成功标准
+
+- [ ] 完成 bootstrap 骨架
+- [ ] 验证 preflight 通过
+
+## 当前里程碑
+
+- 初始化阶段
+
+## 需求总览
+
+- 收敛项目自己的 Goal / Current / Plan / Task / Release / Memory 协议
 """
 
 
@@ -262,17 +272,6 @@ def render_current_state() -> str:
 
 - 当前处于最小 project shell
 - 还未进入复杂升级或经验升格流程
-"""
-
-
-def render_operating_blueprint() -> str:
-    return """# 运营蓝图
-
-## 需求总览
-
-- 把模糊事项留在 plan
-- 把可执行事项写成 task
-- 把交付事实留给 release
 """
 
 

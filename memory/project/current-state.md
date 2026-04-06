@@ -6,8 +6,7 @@ last_reviewed_at: 2026-04-06
 source_of_truth: memory/project/current-state.md
 related_docs:
   - AGENTS.md
-  - memory/project/roadmap.md
-  - memory/project/operating-blueprint.md
+  - memory/project/goals.md
   - docs/DEV_WORKFLOW.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
@@ -28,7 +27,7 @@ related_docs:
 - `t-068` 已完成：`structural / release` task 现在会自动记录 preflight / handoff / review / release / rollback 的阶段 activity；24 小时后 raw trace 会 compact 进 companion `iteration_digest`，`pnpm preflight -- --taskId=t-xxx` 会直接带出 retro hints，重复 blocker 可用 `pnpm ai:retro-candidates` 聚合成候选。
 - `t-069` 已完成：服务器访问面、GitHub 接入方式和标准发布流已经统一进 `bootstrap/project_operator.yaml`；`docs/OPERATOR_RUNBOOK.md` 与 Claude/Cursor/OpenCode 薄入口可脚本生成并在静态门禁中校验，不再各自复制一套接入说明。
 - `t-095` 已完成治理控制面的回写闭环 v1：治理类 task 现在必须声明 `writeback_targets`，且 `validate-task-git` 会对 `Current / Code Index / Tests` 做文件级兑现校验；`Controlled Facts` 仍保留但未启用，task 正文、patch note 与 retro 不能替代 truth 回写。
-- `t-096` 已完成治理守护优先 v1：`memory/project/operating-blueprint.md` 已收口治理守护矩阵，`pnpm ai:validate-governance-guards` 会校验 `A4 / A6 / A7 / A9` 的 guard 注册表、脚本入口和 `validate:static` 接入漂移，治理面现在可以回答 `assertion -> guard`。
+- `t-096` 已完成治理守护优先 v1：`memory/project/goals.md` 已收口治理守护矩阵，`pnpm ai:validate-governance-guards` 会校验 `A4 / A6 / A7 / A9` 的 guard 注册表、脚本入口和 `validate:static` 接入漂移，治理面现在可以回答 `assertion -> guard`。
 - `t-097` 已完成 `A5 / GOV-GAP-02` 收口：active/未来 task 的状态读写链只认 `kernel/task-state-machine.yaml` 与 companion `machine.*`；`current_mode` 已退出 companion/CLI/Studio/validator，task prose `状态` 只保留人类展示。
 - `t-098` 正在收口派生产物语义主合同：`kernel/derived-asset-contract.yaml` 作为唯一机器合同，统一 `code_index / output / agent-coordination / .compounding-runtime` 的 truth role、可写性与回灌边界。
 - `t-098` 的兼容修正已经补上：task 正文里的 `状态（派生展示）` 仍可被 task parser 识别，避免 branch backfill / branch cleanup 因模板文案变化误判 task 为 `todo`。

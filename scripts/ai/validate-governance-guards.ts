@@ -1,7 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const {
-  OPERATING_BLUEPRINT_PATH,
+  GOVERNANCE_BLUEPRINT_PATH,
   readGovernanceGuardMatrix,
 } = require("./lib/governance-guard-contract.ts");
 
@@ -111,7 +111,7 @@ function main() {
     errors,
     warnings,
     details: {
-      source_of_truth: OPERATING_BLUEPRINT_PATH,
+      source_of_truth: GOVERNANCE_BLUEPRINT_PATH,
       checked_assertions: records.map((record) => record.assertionId),
       missing_assertions: missingAssertions,
       duplicate_assertions: duplicateAssertions,

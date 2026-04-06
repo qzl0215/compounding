@@ -54,7 +54,7 @@ GENERIC_DEPLOY_TARGETS = {
 
 GENERIC_CRITICAL_PATHS = {
     "AGENTS.md",
-    "memory/project/operating-blueprint.md",
+    "memory/project/goals.md",
     "scripts/compounding_bootstrap/*",
 }
 
@@ -230,9 +230,8 @@ def infer_critical_paths(target: Path) -> list[str]:
         "README.md",
         "docs/PROJECT_RULES.md",
         "docs/ARCHITECTURE.md",
-        "memory/project/roadmap.md",
+        "memory/project/goals.md",
         "memory/project/current-state.md",
-        "memory/project/operating-blueprint.md",
         "scripts/compounding_bootstrap/*",
     ]
     if (target / "src" / "app").exists():

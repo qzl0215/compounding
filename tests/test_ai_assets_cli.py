@@ -94,7 +94,7 @@ class AiAssetsCliTests(unittest.TestCase):
         self.assertTrue(any("changed manual doc must update last_reviewed_at" in error for error in payload["errors"]))
 
     def test_validate_knowledge_assets_rejects_broken_related_docs(self) -> None:
-        target = self.target / "memory" / "project" / "roadmap.md"
+        target = self.target / "memory" / "project" / "goals.md"
         content = target.read_text(encoding="utf8")
         target.write_text(
             content.replace("  - docs/WORK_MODES.md", "  - docs/WORK_MODES.md\n  - docs/MISSING_REFERENCE.md"),

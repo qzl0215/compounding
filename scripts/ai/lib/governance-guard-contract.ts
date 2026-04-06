@@ -2,11 +2,11 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { extractSection } = require("./markdown-sections.ts");
 
-const OPERATING_BLUEPRINT_PATH = "memory/project/operating-blueprint.md";
+const GOVERNANCE_BLUEPRINT_PATH = "memory/project/goals.md";
 const GOVERNANCE_GUARD_SECTION = "治理守护矩阵 v1";
 
 function governanceGuardSourcePath(root = process.cwd()) {
-  return path.join(root, OPERATING_BLUEPRINT_PATH);
+  return path.join(root, GOVERNANCE_BLUEPRINT_PATH);
 }
 
 function readGovernanceGuardMatrix(root = process.cwd()) {
@@ -80,7 +80,7 @@ function normalizeValue(value) {
 
 module.exports = {
   GOVERNANCE_GUARD_SECTION,
-  OPERATING_BLUEPRINT_PATH,
+  GOVERNANCE_BLUEPRINT_PATH,
   governanceGuardSourcePath,
   parseGovernanceGuardMatrix,
   readGovernanceGuardMatrix,

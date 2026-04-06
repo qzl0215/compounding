@@ -7,7 +7,7 @@ source_of_truth: memory/project/tech-debt.md
 related_docs:
   - docs/PROJECT_RULES.md
   - memory/project/current-state.md
-  - memory/project/roadmap.md
+  - memory/project/goals.md
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
 # 技术债

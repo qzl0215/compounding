@@ -116,9 +116,8 @@ MINIMAL_PROTOCOL_DOCS = [
 ]
 
 MINIMAL_MEMORY_DOCS = [
-    "memory/project/roadmap.md",
+    "memory/project/goals.md",
     "memory/project/current-state.md",
-    "memory/project/operating-blueprint.md",
     "memory/project/tech-debt.md",
 ]
 

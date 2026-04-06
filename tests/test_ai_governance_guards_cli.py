@@ -44,7 +44,7 @@ class AiGovernanceGuardsCliTests(unittest.TestCase):
         )
 
     def write_governance_matrix(self, rows: list[tuple[str, str, str, str, str, str]]) -> None:
-        blueprint = self.target / "memory" / "project" / "operating-blueprint.md"
+        blueprint = self.target / "memory" / "project" / "goals.md"
         content = blueprint.read_text(encoding="utf8")
         matrix = governance_matrix(rows)
         if "## 治理守护矩阵 v1" in content:

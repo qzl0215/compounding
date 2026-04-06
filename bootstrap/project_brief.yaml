@@ -17,9 +17,8 @@ runtime_boundary:
     - README.md
     - docs/PROJECT_RULES.md
     - docs/ARCHITECTURE.md
-    - memory/project/roadmap.md
+    - memory/project/goals.md
     - memory/project/current-state.md
-    - memory/project/operating-blueprint.md
     - scripts/compounding_bootstrap/*
     - deploy/**
 local_overrides:

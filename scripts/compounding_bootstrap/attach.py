@@ -48,7 +48,7 @@ def load_kernel_manifest() -> dict[str, Any]:
 
 
 def detect_protocol_entries(target: Path) -> list[str]:
-    entries = [AGENTS_PATH, *MINIMAL_PROTOCOL_DOCS, "memory/project/operating-blueprint.md"]
+    entries = [AGENTS_PATH, *MINIMAL_PROTOCOL_DOCS, "memory/project/goals.md"]
     return [path for path in entries if (target / path).exists()]
 
 
@@ -96,8 +96,8 @@ def create_report(target: Path, brief: dict[str, Any], manifest: dict[str, Any],
     warnings = []
     if AGENTS_PATH not in protocol_entries:
         warnings.append("AGENTS.md is missing; attach completed but protocol entry is incomplete.")
-    if "memory/project/operating-blueprint.md" not in protocol_entries:
-        warnings.append("memory/project/operating-blueprint.md is missing; planning entry is incomplete.")
+    if "memory/project/goals.md" not in protocol_entries:
+        warnings.append("memory/project/goals.md is missing; planning entry is incomplete.")
 
     report = {
         "project": {

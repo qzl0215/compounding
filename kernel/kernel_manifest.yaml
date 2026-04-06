@@ -8,9 +8,8 @@ capability_groups:
       - docs/DEV_WORKFLOW.md
       - docs/ARCHITECTURE.md
       - kernel/task-state-machine.yaml
-      - memory/project/roadmap.md
+      - memory/project/goals.md
       - memory/project/current-state.md
-      - memory/project/operating-blueprint.md
   - capability_id: operator_layer
     label: 运维接入层
     required_paths:
@@ -72,9 +71,8 @@ packs:
       - scripts/init_project_compounding.py
       - scripts/compounding_bootstrap/*
     generated_paths:
-      - memory/project/roadmap.md
+      - memory/project/goals.md
       - memory/project/current-state.md
-      - memory/project/operating-blueprint.md
       - memory/project/tech-debt.md
       - output/bootstrap/bootstrap_report.yaml
     compatible_adapters: [generic_repo, node_service, web_app, python_service]

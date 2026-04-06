@@ -91,9 +91,8 @@ def audit(config_path: Path, target: Path) -> AuditResult:
             result.errors.append("output/bootstrap/bootstrap_report.yaml: actions.needs_proposal must be an array")
 
     required_protocol = [
-        "memory/project/roadmap.md",
+        "memory/project/goals.md",
         "memory/project/current-state.md",
-        "memory/project/operating-blueprint.md",
     ]
     for path in required_protocol:
         if not (target / path).exists():

@@ -78,9 +78,8 @@ function getKnowledgeAssets(root) {
         "docs/WORK_MODES.md",
         "docs/DEV_WORKFLOW.md",
         "docs/ARCHITECTURE.md",
-        "memory/project/roadmap.md",
+        "memory/project/goals.md",
         "memory/project/current-state.md",
-        "memory/project/operating-blueprint.md",
       ],
       freshness_policy: {
         window_days: 14,

@@ -6,8 +6,7 @@ source_of_truth: AGENTS.md
 related_docs:
   - AGENTS.md
   - memory/project/current-state.md
-  - memory/project/operating-blueprint.md
-  - memory/project/roadmap.md
+  - memory/project/goals.md
 last_reviewed_at: 2026-03-27
 ---
 <!-- BEGIN MANAGED BLOCK: CANONICAL_CONTENT -->
@@ -17,7 +16,7 @@ last_reviewed_at: 2026-03-27
 
 - mode 只有 `planning / execution / review / release` 四种，统一由任务状态机驱动。
 - mode 只定义最小上下文包、输入输出契约和允许动作；具体事件、guard 与命令放在 `docs/DEV_WORKFLOW.md`。
-- 未达到可执行边界前，不得进入 task execution；仍模糊的事项继续留在 `memory/project/operating-blueprint.md`。
+- 未达到可执行边界前，不得进入 task execution；仍模糊的事项继续留在 `memory/project/goals.md`。
 
 ## 总链
 
@@ -26,7 +25,7 @@ last_reviewed_at: 2026-03-27
 ## planning
 
 - 场景：需求已值得推进，但边界、成功标准、约束或交付轨道还未收口。
-- 最小输入：task 合同草案、`memory/project/roadmap.md`、`memory/project/operating-blueprint.md`、`memory/project/current-state.md`、必要模块上下文。
+- 最小输入：task 合同草案、`memory/project/goals.md`、`memory/project/current-state.md`、必要模块上下文。
 - 输出契约：边界、完成定义、范围外、约束、测试策略、`delivery_track`。
 - 允许动作：收口合同、定轨道、补最小 search evidence、决定是否继续留在 plan。
 - 退出条件：进入 `ready`，可以交给 execution。

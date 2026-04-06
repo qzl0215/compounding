@@ -172,8 +172,7 @@ export function buildProjectJudgementReleaseFacts(input: {
 function readProjectJudgementSourceDocs(root: string) {
   return {
     currentStateContent: readText(root, "memory/project/current-state.md"),
-    roadmapContent: readText(root, "memory/project/roadmap.md"),
-    blueprintContent: readText(root, "memory/project/operating-blueprint.md"),
+    goalsContent: readText(root, "memory/project/goals.md"),
   };
 }
 

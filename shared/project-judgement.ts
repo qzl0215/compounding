@@ -41,8 +41,7 @@ export type ProjectJudgementContract = {
 
 type ProjectJudgementInput = {
   currentStateContent: string;
-  roadmapContent: string;
-  blueprintContent: string;
+  goalsContent?: string;
   counts?: {
     total: number;
     planning: number;
@@ -64,14 +63,14 @@ export function buildProjectJudgementContract(input: ProjectJudgementInput): Pro
   const currentFocus = parseBulletList(extractSection(input.currentStateContent, "current_focus") ?? "");
   const blockers = summarizeBlockers(parseBulletList(extractSection(input.currentStateContent, "current_blockers") ?? ""));
   const nextCheckpoint = parseBulletList(extractSection(input.currentStateContent, "next_checkpoint") ?? "");
-  const currentPhase = normalizeInline(extractSection(input.roadmapContent, "current_phase") ?? "") || "当前阶段尚未定义。";
-  const currentPriority = normalizeInline(extractSection(input.roadmapContent, "current_priority") ?? "") || "当前优先级尚未定义。";
+  const currentPhase = normalizeInline(extractSection(input.goalsContent ?? "", "当前阶段") ?? "") || "当前阶段尚未定义。";
+  const currentPriority = normalizeInline(extractSection(input.goalsContent ?? "", "当前优先级") ?? "") || "当前优先级尚未定义。";
   const currentMilestone =
-    normalizeInline(extractSection(input.roadmapContent, "current_milestone") ?? "") || currentPhase || "当前里程碑尚未定义。";
-  const successCriteria = parseBulletList(extractSection(input.roadmapContent, "milestone_success_criteria") ?? "");
-  const planOverview = normalizeInline(extractSection(input.blueprintContent, "plan_overview") ?? "");
-  const thinkingBacklog = parseBulletList(extractSection(input.blueprintContent, "thinking_backlog") ?? "");
-  const planningBacklog = parseBulletList(extractSection(input.blueprintContent, "planning_backlog") ?? "");
+    normalizeInline(extractSection(input.goalsContent ?? "", "当前里程碑") ?? "") || currentPhase || "当前里程碑尚未定义。";
+  const successCriteria = parseBulletList(extractSection(input.goalsContent ?? "", "里程碑成功标准") ?? "");
+  const planOverview = normalizeInline(extractSection(input.goalsContent ?? "", "需求总览") ?? "");
+  const thinkingBacklog = parseBulletList(extractSection(input.goalsContent ?? "", "待思考") ?? "");
+  const planningBacklog = parseBulletList(extractSection(input.goalsContent ?? "", "待规划") ?? "");
   const counts = input.counts ?? {
     total: 0,
     planning: 0,
@@ -158,8 +157,8 @@ function resolveRecommendedSurface(
     };
   }
   return {
-    label: "运营蓝图",
-    href: "/knowledge-base?path=memory/project/operating-blueprint.md",
+    label: "目标",
+    href: "/knowledge-base?path=memory/project/goals.md",
     reason: "当前更适合先收口边界与下一步，再进入执行。",
   };
 }
@@ -174,14 +173,14 @@ function resolveRecommendedRead(activeStage: ProjectJudgementStage, blockers: st
   }
   if (activeStage === "planning" || activeStage === "thinking") {
     return {
-      label: "运营蓝图",
-      path: "memory/project/operating-blueprint.md",
+      label: "目标",
+      path: "memory/project/goals.md",
       reason: "先看计划边界和待规划事项，避免直接开干。",
     };
   }
   return {
-    label: "路线图",
-    path: "memory/project/roadmap.md",
+    label: "目标",
+    path: "memory/project/goals.md",
     reason: "先回到阶段、里程碑和成功标准。",
   };
 }

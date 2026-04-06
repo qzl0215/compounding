@@ -132,11 +132,11 @@ class BootstrapProposalCliTests(BootstrapWorkspaceTestCase):
 
         proposal_id = create_proposal(self.target)
         payload = load_yaml(self.target / "output" / "proposals" / proposal_id / "proposal.yaml")
-        self.assertIn("memory/project/operating-blueprint.md", payload["changes"]["auto_apply"])
+        self.assertIn("memory/project/goals.md", payload["changes"]["auto_apply"])
 
         result = apply_proposal(self.target, proposal_id)
         self.assertEqual(result["status"], "applied")
-        self.assertTrue((self.target / "memory" / "project" / "operating-blueprint.md").exists())
+        self.assertTrue((self.target / "memory" / "project" / "goals.md").exists())
 
     def test_proposal_respects_explicit_local_override_for_managed_docs(self) -> None:
         (self.target / "memory" / "project").mkdir(parents=True, exist_ok=True)
