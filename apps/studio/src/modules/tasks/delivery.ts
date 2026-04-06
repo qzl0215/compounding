@@ -1,14 +1,15 @@
 import type { ReleaseRecord } from "@/modules/releases/types";
 import { getWorkspaceRoot } from "@/lib/workspace";
-import { findEffectivePendingDevRelease } from "../../../../../shared/release-registry";
+import { findEffectivePendingDevRelease, normalizeReleaseRecord } from "../../../../../shared/release-registry";
 import { buildTaskCostLedger } from "../../../../../scripts/ai/lib/task-cost";
 import { deriveTaskDeliveryStatusFromStateId } from "../../../../../shared/task-state-machine";
 import type { TaskCard, TaskDeliveryRow, TaskDeliveryStatus } from "./types";
 
 export function buildTaskDeliveryRows(tasks: TaskCard[], releases: ReleaseRecord[]): TaskDeliveryRow[] {
   const workspaceRoot = getWorkspaceRoot();
+  const normalizedReleases = releases.map((release) => normalizeReleaseRecord(release));
   return [...tasks]
-    .map((task) => buildTaskDeliveryRow(task, releases, workspaceRoot))
+    .map((task) => buildTaskDeliveryRow(task, normalizedReleases, workspaceRoot))
     .sort((left, right) => {
       const statusDelta = deliveryOrder(left.deliveryStatus) - deliveryOrder(right.deliveryStatus);
       if (statusDelta !== 0) {

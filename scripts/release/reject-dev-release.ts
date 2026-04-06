@@ -3,6 +3,7 @@ const path = require("node:path");
 const { applyTaskTransition } = require("../coord/lib/task-machine.ts");
 const { finishWaitStageIfOpen, recordBlocker } = require("../coord/lib/task-activity.ts");
 const { refreshLearningCandidatesSnapshot } = require("../ai/lib/learning-candidates.ts");
+const { transitionReleaseRecord } = require("../../shared/release-state-machine.ts");
 const {
   clearChannelSymlink,
   clearPendingDevRelease,
@@ -35,12 +36,19 @@ try {
     }
     activityTaskId = pending.primary_task_id || null;
 
-    const rejected = {
-      ...pending,
-      status: "rejected",
-      acceptance_status: "rejected",
-      notes: [...pending.notes, "Rejected during dev preview acceptance."],
-    };
+    const rejected = transitionReleaseRecord(
+      {
+        ...pending,
+        notes: [...pending.notes, "Rejected during dev preview acceptance."],
+      },
+      "reject_release",
+      {
+        channel: "dev",
+        recorded_at: new Date().toISOString(),
+        source: "release:reject-dev",
+        reason: "dev 预览在验收阶段被驳回。",
+      }
+    );
     upsertRelease(rejected);
     clearPendingDevRelease();
     clearChannelSymlink("dev");

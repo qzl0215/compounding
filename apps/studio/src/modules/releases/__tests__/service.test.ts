@@ -100,6 +100,55 @@ describe("releases service", () => {
     expect(getReleaseDashboard().releases[0]?.release_id).toBe("rel-003");
   }, SERVICE_TIMEOUT_MS);
 
+  it("normalizes legacy release status fields onto the canonical release state", () => {
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "compounding-release-state-"));
+    const registryPath = path.join(tempRoot, "registry.json");
+    process.env.AI_OS_RELEASE_ROOT = tempRoot;
+    fs.writeFileSync(
+      registryPath,
+      JSON.stringify(
+        {
+          active_release_id: "rel-legacy",
+          pending_dev_release_id: null,
+          updated_at: "2026-04-05T10:00:00Z",
+          releases: [
+            {
+              release_id: "rel-legacy",
+              commit_sha: "aaaaaaa",
+              tag: null,
+              source_ref: "HEAD",
+              primary_task_id: null,
+              linked_task_ids: [],
+              delivery_snapshot: null,
+              channel: "dev",
+              acceptance_status: "pending",
+              preview_url: "http://127.0.0.1:3011",
+              promoted_to_main_at: null,
+              promoted_from_dev_release_id: null,
+              created_at: "2026-04-05T09:00:00Z",
+              status: "preview",
+              build_result: "passed",
+              smoke_result: "passed",
+              cutover_at: null,
+              rollback_from: null,
+              release_path: "/tmp/rel-legacy",
+              change_summary: [],
+              notes: [],
+            },
+          ],
+        },
+        null,
+        2
+      )
+    );
+
+    const registry = readReleaseRegistry() as any;
+    expect(registry.releases[0].state_id).toBe("preview");
+    expect(registry.releases[0].state_label).toBe("预览中");
+    expect(registry.releases[0].status).toBe("preview");
+    expect(registry.releases[0].acceptance_status).toBe("pending");
+  });
+
   it("prefers task contract summary and falls back to delivery snapshot", () => {
     const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "compounding-release-summary-"));
     const registryPath = path.join(tempRoot, "registry.json");

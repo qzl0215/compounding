@@ -31,7 +31,7 @@ export function ReleaseHistoryList({
               <div>
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="text-lg font-semibold text-slate-900">{release.release_id}</h3>
-                  <StatusBadge label={isActive ? "当前生产版本" : isPendingDev ? "待验收 dev" : formatReleaseStatus(release.status)} />
+                  <StatusBadge label={isActive ? "当前生产版本" : isPendingDev ? "待验收 dev" : release.state_label} />
                   <StatusBadge label={release.channel === "dev" ? "dev" : "prod"} />
                 </div>
                 <p className="mt-2 font-mono text-xs text-slate-500">{release.commit_sha}</p>
@@ -138,19 +138,6 @@ function Meta({ title, value }: { title: string; value: string }) {
 
 function StatusBadge({ label }: { label: string }) {
   return <span className="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-medium text-sky-700">{label}</span>;
-}
-
-function formatReleaseStatus(status: ReleaseRecord["status"]) {
-  const labels: Record<ReleaseRecord["status"], string> = {
-    prepared: "已准备",
-    preview: "预览中",
-    active: "当前版本",
-    superseded: "已被替代",
-    failed: "失败",
-    rolled_back: "已回滚",
-    rejected: "已驳回",
-  };
-  return labels[status];
 }
 
 function formatAcceptance(status: ReleaseRecord["acceptance_status"]) {

@@ -1,0 +1,43 @@
+type: object
+required:
+  - version
+  - states
+  - transitions
+properties:
+  version:
+    type: string
+  states:
+    type: array
+    items:
+      type: object
+      required:
+        - state_id
+        - label
+        - terminal
+      properties:
+        state_id:
+          type: string
+          enum: [prepared, preview, active, superseded, rejected, failed, rolled_back]
+        label:
+          type: string
+        terminal:
+          type: boolean
+  transitions:
+    type: array
+    items:
+      type: object
+      required:
+        - event_id
+        - from
+        - to
+      properties:
+        event_id:
+          type: string
+        from:
+          type: array
+          items:
+            type: string
+        to:
+          type: string
+        requires_reason:
+          type: boolean
