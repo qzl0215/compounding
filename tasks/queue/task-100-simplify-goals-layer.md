@@ -2,9 +2,11 @@
 title: 简化目标层：统一 Goal 单一主源
 task_id: task-100
 type: structural
-status: in_progress
+status: done
 created_by: qzl0215
 created_at: 2026-04-06
+done_when: goals.md 填入真实内容并同步 ASSET_MAINTENANCE
+delivery_result: 统一 Goal 单一主源，删除 roadmap/blueprint/governance-gaps，goals.md 现包含 True North、Hard Constraints、This Phase Success、Not Goal 和演进脉络
 linked_gap: null
 from_assertion: null
 writeback_targets: []
