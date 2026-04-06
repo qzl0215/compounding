@@ -3,6 +3,7 @@ const path = require("node:path");
 const childProcess = require("node:child_process");
 const { buildTaskCostSnapshot } = require("../ai/lib/task-cost-core.ts");
 const { previewBaseUrl, updateChannelSymlink } = require("./lib.ts");
+const { transitionReleaseRecord } = require("../../shared/release-state-machine.ts");
 
 function runNodeScript(scriptPath) {
   return JSON.parse(
@@ -70,7 +71,7 @@ function createReleaseRecord({
     promoted_to_main_at: null,
     promoted_from_dev_release_id: null,
     created_at: createdAt,
-    status,
+    status: status === "failed" ? "failed" : "prepared",
     build_result: buildResult,
     smoke_result: smokeResult,
     cutover_at: null,
@@ -80,19 +81,34 @@ function createReleaseRecord({
     notes,
   };
 
+  let prepared = transitionReleaseRecord(record, "prepare_release", {
+    channel: channel,
+    recorded_at: createdAt,
+    source: "release:prepare",
+  });
+
+  if (status === "failed") {
+    prepared = transitionReleaseRecord(prepared, "fail_release", {
+      channel,
+      recorded_at: createdAt,
+      source: "release:prepare",
+      reason: notes[0] || "release build failed",
+    });
+  }
+
   if (buildResult === "passed" && taskMeta?.id && record.delivery_snapshot) {
-    record.delivery_snapshot = {
-      ...record.delivery_snapshot,
+    prepared.delivery_snapshot = {
+      ...prepared.delivery_snapshot,
       change_cost: buildTaskCostSnapshot(process.cwd(), {
         taskId: taskMeta.id,
-        deliveryStatus: channel === "dev" ? "pending_acceptance" : status === "rolled_back" ? "rolled_back" : "released",
+        deliveryStatus: channel === "dev" ? "pending_acceptance" : "released",
         versionLabel: releaseId,
-        associatedReleases: [record],
+        associatedReleases: [prepared],
       }),
     };
   }
 
-  return record;
+  return prepared;
 }
 
 module.exports = {

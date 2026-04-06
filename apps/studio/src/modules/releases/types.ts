@@ -1,9 +1,14 @@
 import type { TaskCostSnapshot } from "../../../../../shared/task-cost";
+import type {
+  ReleaseAcceptanceStatus,
+  ReleaseMachineTransitionRecord,
+  ReleaseStateId,
+} from "../../../../../shared/release-state-machine";
 
-export type ReleaseStatus = "prepared" | "preview" | "active" | "superseded" | "failed" | "rolled_back" | "rejected";
+export type ReleaseStatus = ReleaseStateId;
 export type ReleaseResult = "pending" | "passed" | "failed";
 export type ReleaseChannel = "dev" | "prod";
-export type AcceptanceStatus = "pending" | "accepted" | "rejected";
+export type AcceptanceStatus = ReleaseAcceptanceStatus;
 
 export type ReleaseDeliverySnapshot = {
   summary: string | null;
@@ -24,6 +29,10 @@ export type ResolvedTaskContractSummary = {
 
 export type ReleaseRecord = {
   release_id: string;
+  state_id: ReleaseStateId;
+  state_label: string;
+  blocked_reason: string | null;
+  last_transition: ReleaseMachineTransitionRecord | null;
   commit_sha: string;
   tag: string | null;
   source_ref: string;

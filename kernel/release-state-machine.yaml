@@ -1,0 +1,48 @@
+version: 0.1.0
+states:
+  - state_id: prepared
+    label: 已准备
+    terminal: false
+  - state_id: preview
+    label: 预览中
+    terminal: false
+  - state_id: active
+    label: 当前版本
+    terminal: false
+  - state_id: superseded
+    label: 已被替代
+    terminal: false
+  - state_id: rejected
+    label: 已驳回
+    terminal: true
+  - state_id: failed
+    label: 失败
+    terminal: true
+  - state_id: rolled_back
+    label: 已回滚
+    terminal: true
+transitions:
+  - event_id: prepare_release
+    from: [__new__]
+    to: prepared
+  - event_id: publish_preview
+    from: [prepared]
+    to: preview
+  - event_id: promote_release
+    from: [prepared, preview, superseded]
+    to: active
+  - event_id: reject_release
+    from: [preview]
+    to: rejected
+    requires_reason: true
+  - event_id: supersede_release
+    from: [active]
+    to: superseded
+  - event_id: rollback_release
+    from: [active]
+    to: rolled_back
+    requires_reason: true
+  - event_id: fail_release
+    from: [prepared, preview]
+    to: failed
+    requires_reason: true

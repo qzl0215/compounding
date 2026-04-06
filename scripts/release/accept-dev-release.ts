@@ -17,7 +17,6 @@ const {
   repairRegistry,
   readManifest,
   readRegistry,
-  releaseIdFor,
   releaseReload,
   run,
   updateChannelSymlink,
@@ -25,6 +24,7 @@ const {
   withReleaseLock,
 } = require("./lib.ts");
 const { stabilizeLocalProdRuntime } = require("./prod-runtime-stability.ts");
+const { transitionReleaseRecord } = require("../../shared/release-state-machine.ts");
 
 function parseArg(name) {
   const index = process.argv.indexOf(name);
@@ -65,55 +65,52 @@ try {
     }
 
     const promotedAt = new Date().toISOString();
-    const prodReleaseId = releaseIdFor(pending.commit_sha, "prod");
-    const prodTag = ensureReleaseTag(`release-${prodReleaseId}`, pending.commit_sha);
-    const prodRecord = {
-      ...pending,
-      release_id: prodReleaseId,
-      tag: prodTag,
+    const tag = ensureReleaseTag(`release-${pending.release_id}`, pending.commit_sha);
+    const promotedRecord = transitionReleaseRecord(
+      {
+        ...pending,
+        notes: [...pending.notes, `Accepted from dev preview ${pending.release_id}`],
+      },
+      "promote_release",
+      {
+        channel: "prod",
+        recorded_at: promotedAt,
+        source: "release:accept-dev",
+      }
+    );
+    const prodRuntimePath = materializeProdRuntime(pending.release_path, pending.release_id, pending.commit_sha);
+    updateChannelSymlink(prodRuntimePath, "prod");
+    markActive(pending.release_id);
+    const reloadNote = releaseReload();
+    const stabilityNote = stabilizeLocalProdRuntime(process.cwd(), run, pending.release_id);
+    const activeRecord = readRegistry().releases.find((item) => item.release_id === pending.release_id) || promotedRecord;
+    upsertRelease({
+      ...activeRecord,
+      ...promotedRecord,
+      tag: activeRecord.tag || tag,
       source_ref: "main",
       channel: "prod",
-      acceptance_status: "accepted",
       preview_url: null,
-      promoted_to_main_at: null,
-      promoted_from_dev_release_id: pending.release_id,
-      created_at: promotedAt,
-      status: "prepared",
-      cutover_at: null,
-      rollback_from: null,
-      notes: [...pending.notes, `Accepted from dev preview ${pending.release_id}`],
-    };
-
-    upsertRelease(prodRecord);
-    const prodRuntimePath = materializeProdRuntime(pending.release_path, prodReleaseId, pending.commit_sha);
-    updateChannelSymlink(prodRuntimePath, "prod");
-    markActive(prodReleaseId);
-    const reloadNote = releaseReload();
-    const stabilityNote = stabilizeLocalProdRuntime(process.cwd(), run, prodReleaseId);
-    const activeRecord = readRegistry().releases.find((item) => item.release_id === prodReleaseId) || prodRecord;
-    upsertRelease({ ...activeRecord, notes: [...activeRecord.notes, reloadNote, stabilityNote].filter(Boolean) });
-    pruneInactiveProdRuntimeCopies(prodReleaseId);
-
-    const acceptedDevRecord = {
-      ...pending,
-      status: "preview",
-      acceptance_status: "accepted",
       promoted_to_main_at: promotedAt,
-      notes: [...pending.notes, `Accepted and promoted to main as ${prodReleaseId}`],
-    };
-    upsertRelease(acceptedDevRecord);
+      promoted_from_dev_release_id: null,
+      created_at: activeRecord.created_at || promotedAt,
+      cutover_at: promotedAt,
+      rollback_from: null,
+      notes: [...promotedRecord.notes, reloadNote, stabilityNote].filter(Boolean),
+    });
+    pruneInactiveProdRuntimeCopies(pending.release_id);
     clearPendingDevRelease();
     clearChannelSymlink("dev");
     if (pending.primary_task_id) {
       recordReleaseHandoff(pending.primary_task_id, {
         source: "release:accept-dev",
         channel: "prod",
-        release_id: prodReleaseId,
+        release_id: pending.release_id,
         acceptance_status: "accepted",
         release_path: pending.release_path,
         commit_sha: pending.commit_sha,
         production_url: productionBaseUrl(),
-        promoted_from_dev_release_id: pending.release_id,
+        promoted_from_dev_release_id: null,
         linked_task_ids: pending.linked_task_ids,
         change_summary: pending.change_summary,
         status: "active",
@@ -123,7 +120,7 @@ try {
         eligible_at: promotedAt,
         scheduled_for: new Date(Date.parse(promotedAt) + 24 * 60 * 60 * 1000).toISOString(),
         delay_hours: 24,
-        release_id: prodReleaseId,
+        release_id: pending.release_id,
         commit_sha: pending.commit_sha,
         linked_task_ids: pending.linked_task_ids,
         recorded_at: promotedAt,
@@ -139,7 +136,7 @@ try {
     detachReleaseWorktrees([pending.release_path]);
 
     return {
-      release: readRegistry().releases.find((item) => item.release_id === prodReleaseId),
+      release: readRegistry().releases.find((item) => item.release_id === pending.release_id),
       registry: readRegistry(),
     };
   });

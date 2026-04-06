@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { reconcileReleaseRegistry } from "../../../../../shared/release-registry";
+import { normalizeReleaseRecord as normalizeSharedReleaseRecord, reconcileReleaseRegistry } from "../../../../../shared/release-registry";
 import type { ReleaseDashboard, ReleaseRecord, ReleaseRegistry } from "./types";
 import { getChannelBaseUrl, getLocalRuntimeStatus, getReleaseRuntimeRoot } from "./runtime";
 import { normalizeDeliverySnapshot, resolveTaskContractSummary } from "./task-summary";
@@ -51,22 +51,28 @@ export function getReleaseDashboard(): ReleaseDashboard {
 }
 
 function normalizeReleaseRecord(release: ReleaseRecord): ReleaseRecord {
+  const normalized = normalizeSharedReleaseRecord(release);
   const deliverySnapshot = normalizeDeliverySnapshot(
-    (release as ReleaseRecord & { delivery_snapshot?: ReleaseRecord["delivery_snapshot"] }).delivery_snapshot,
-    (release as ReleaseRecord & { delivery_summary?: string | null }).delivery_summary,
-    (release as ReleaseRecord & { delivery_risks?: string | null }).delivery_risks
+    (normalized as ReleaseRecord & { delivery_snapshot?: ReleaseRecord["delivery_snapshot"] }).delivery_snapshot,
+    (normalized as ReleaseRecord & { delivery_summary?: string | null }).delivery_summary,
+    (normalized as ReleaseRecord & { delivery_risks?: string | null }).delivery_risks
   );
   return {
-    ...release,
-    primary_task_id: release.primary_task_id ?? null,
-    linked_task_ids: Array.isArray(release.linked_task_ids) ? release.linked_task_ids : [],
+    ...normalized,
+    primary_task_id: normalized.primary_task_id ?? null,
+    linked_task_ids: Array.isArray(normalized.linked_task_ids) ? normalized.linked_task_ids : [],
     delivery_snapshot: deliverySnapshot,
-    resolved_task_contract: resolveTaskContractSummary(release.primary_task_id ?? null),
-    channel: release.channel === "dev" ? "dev" : "prod",
+    resolved_task_contract: resolveTaskContractSummary(normalized.primary_task_id ?? null),
+    channel: normalized.channel === "dev" ? "dev" : "prod",
     acceptance_status:
-      release.acceptance_status || (release.status === "failed" ? "rejected" : release.channel === "dev" ? "pending" : "accepted"),
-    preview_url: release.preview_url || (release.channel === "dev" ? getChannelBaseUrl("dev") : null),
-    promoted_to_main_at: release.promoted_to_main_at ?? null,
-    promoted_from_dev_release_id: release.promoted_from_dev_release_id ?? null,
+      normalized.acceptance_status ||
+      (normalized.state_id === "preview"
+        ? "pending"
+        : normalized.state_id === "rejected" || normalized.state_id === "failed"
+          ? "rejected"
+          : "accepted"),
+    preview_url: normalized.preview_url || (normalized.channel === "dev" ? getChannelBaseUrl("dev") : null),
+    promoted_to_main_at: normalized.promoted_to_main_at ?? null,
+    promoted_from_dev_release_id: normalized.promoted_from_dev_release_id ?? null,
   };
 }

@@ -28,6 +28,7 @@ const {
   hasBuildSmokeSignal,
   installAndBuildRelease,
 } = require("./prepare-release-support.ts");
+const { transitionReleaseRecord } = require("../../shared/release-state-machine.ts");
 
 function parseArg(name, fallback = null) {
   const index = process.argv.indexOf(name);
@@ -118,13 +119,64 @@ function main() {
           releasePath,
           summary,
           createdAt: new Date().toISOString(),
-          status: channel === "dev" ? "preview" : "prepared",
+          status: "prepared",
           buildResult: "passed",
           smokeResult: smokePassed ? "passed" : "failed",
           notes,
         });
 
         upsertRelease(prepared);
+        if (!smokePassed) {
+          const failed = transitionReleaseRecord(prepared, "fail_release", {
+            channel,
+            recorded_at: new Date().toISOString(),
+            source: "release:prepare",
+            reason: "BUILD_ID missing after build.",
+          });
+          upsertRelease(failed);
+          return { ok: false, message: `Release ${releaseId} failed before cutover.`, release: failed };
+        }
+
+        if (channel === "dev") {
+          const preview = ensurePreviewAvailable(releaseId, releasePath);
+          const release = transitionReleaseRecord(
+            { ...prepared, notes: [...prepared.notes, preview.note].filter(Boolean) },
+            preview.ok ? "publish_preview" : "fail_release",
+            {
+              channel,
+              recorded_at: new Date().toISOString(),
+              source: "release:prepare",
+              reason: preview.ok ? null : preview.message || "dev preview failed.",
+            }
+          );
+          upsertRelease(release);
+          if (preview.ok) {
+            setPendingDevRelease(releaseId);
+            if (taskMeta?.id) {
+              recordReleaseHandoff(taskMeta.id, {
+                source: "release:prepare",
+                channel,
+                release_id: releaseId,
+                acceptance_status: release.acceptance_status,
+                release_path: releasePath,
+                commit_sha: commitSha,
+                preview_url: release.preview_url,
+                linked_task_ids: normalizedLinkedTaskIds,
+                change_summary: summary,
+                status: release.status,
+              });
+              applyTaskTransition(taskMeta.id, "release_prepared", {
+                source: "release:prepare",
+              });
+            }
+          }
+          return {
+            ok: preview.ok,
+            message: preview.ok ? `dev 预览 ${releaseId} 已就绪：${previewBaseUrl()}` : preview.message,
+            release,
+          };
+        }
+
         if (taskMeta?.id) {
           recordReleaseHandoff(taskMeta.id, {
             source: "release:prepare",
@@ -138,26 +190,6 @@ function main() {
             change_summary: summary,
             status: prepared.status,
           });
-        }
-        if (!smokePassed) {
-          return { ok: false, message: `Release ${releaseId} failed before cutover.`, release: prepared };
-        }
-
-        if (channel === "dev") {
-          setPendingDevRelease(releaseId);
-          const preview = ensurePreviewAvailable(releaseId, releasePath);
-          const release = { ...prepared, notes: [...prepared.notes, preview.note].filter(Boolean) };
-          upsertRelease(release);
-          if (preview.ok && taskMeta?.id) {
-            applyTaskTransition(taskMeta.id, "release_prepared", {
-              source: "release:prepare",
-            });
-          }
-          return {
-            ok: preview.ok,
-            message: preview.ok ? `dev 预览 ${releaseId} 已就绪：${previewBaseUrl()}` : preview.message,
-            release,
-          };
         }
 
         return {

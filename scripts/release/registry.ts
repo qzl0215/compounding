@@ -1,7 +1,12 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { ensureLayout, previewBaseUrl } = require("./runtime-layout.ts");
-const { findEffectivePendingDevRelease, reconcileReleaseRegistry } = require("../../shared/release-registry.ts");
+const {
+  findEffectivePendingDevRelease,
+  normalizeReleaseRecord: normalizeSharedReleaseRecord,
+  reconcileReleaseRegistry,
+} = require("../../shared/release-registry.ts");
+const { getReleaseStateLabel, transitionReleaseRecord } = require("../../shared/release-state-machine.ts");
 
 function emptyRegistry() {
   return { active_release_id: null, pending_dev_release_id: null, updated_at: null, releases: [] };
@@ -21,7 +26,7 @@ function normalizeDeliverySnapshot(snapshot, summary = null, risks = null) {
 }
 
 function normalizeReleaseRecord(record) {
-  const normalized = { ...record };
+  const normalized = normalizeSharedReleaseRecord({ ...record });
   normalized.primary_task_id = normalized.primary_task_id || null;
   normalized.linked_task_ids = Array.isArray(normalized.linked_task_ids) ? normalized.linked_task_ids : [];
   normalized.delivery_snapshot = normalizeDeliverySnapshot(
@@ -35,10 +40,15 @@ function normalizeReleaseRecord(record) {
   normalized.channel = normalized.channel === "dev" ? "dev" : "prod";
   normalized.acceptance_status =
     normalized.acceptance_status ||
-    (normalized.channel === "dev" ? (normalized.status === "failed" ? "rejected" : "pending") : "accepted");
+    (normalized.state_id === "preview"
+      ? "pending"
+      : normalized.state_id === "rejected" || normalized.state_id === "failed"
+        ? "rejected"
+        : "accepted");
   normalized.preview_url = normalized.preview_url || (normalized.channel === "dev" ? previewBaseUrl() : null);
   normalized.promoted_to_main_at = normalized.promoted_to_main_at || null;
   normalized.promoted_from_dev_release_id = normalized.promoted_from_dev_release_id || null;
+  normalized.state_label = normalized.state_label || getReleaseStateLabel(normalized.state_id);
   return normalized;
 }
 
@@ -122,17 +132,34 @@ function markActive(releaseId, rollbackFrom = null) {
   registry.active_release_id = releaseId;
   registry.releases = registry.releases.map((item) => {
     if (item.release_id === releaseId) {
+      const promoted = transitionReleaseRecord(item, "promote_release", {
+        channel: "prod",
+        recorded_at: now,
+        source: "release:mark-active",
+      });
       return {
-        ...item,
+        ...promoted,
         channel: "prod",
         acceptance_status: "accepted",
         status: "active",
         cutover_at: now,
         rollback_from: rollbackFrom,
+        state_label: getReleaseStateLabel("active"),
       };
     }
     if (item.channel === "prod" && item.status === "active") {
-      return { ...item, status: rollbackFrom ? "rolled_back" : "superseded", rollback_from: null };
+      const nextState = rollbackFrom ? "rolled_back" : "superseded";
+      return {
+        ...transitionReleaseRecord(item, rollbackFrom ? "rollback_release" : "supersede_release", {
+          channel: "prod",
+          recorded_at: now,
+          source: "release:mark-active",
+          reason: rollbackFrom ? `rolled back to ${rollbackFrom}` : null,
+        }),
+        status: nextState,
+        state_label: getReleaseStateLabel(nextState),
+        rollback_from: null,
+      };
     }
     return item;
   });
