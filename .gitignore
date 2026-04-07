@@ -16,3 +16,4 @@ agent-coordination/locks/.lock-registry.lock
 agent-coordination/reports/diff-summary-*.json
 agent-coordination/decisions/dec-*.json
 agent-coordination/tasks/*.json
+📚-Learning-Garden/
