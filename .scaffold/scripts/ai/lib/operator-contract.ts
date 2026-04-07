@@ -1,6 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const { loadSimpleYamlFile, validateSimpleSchema: validateYamlSchema } = require(path.join(process.cwd(), "shared", "simple-yaml.ts"));
+const { loadSimpleYamlFile, validateSimpleSchema: validateYamlSchema } = require(path.join(process.cwd(), ".scaffold", "shared", "simple-yaml.ts"));
 
 const OPERATOR_CONTRACT_PATH = "bootstrap/project_operator.yaml";
 const OPERATOR_SCHEMA_PATH = "schemas/project_operator.schema.yaml";
