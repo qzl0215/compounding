@@ -2,11 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Google Fonts: Inter + Playfair Display + JetBrains Mono */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital@1&family=JetBrains+Mono:wght@400&display=swap');
+
 :root {
   color-scheme: light;
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Skills Page - Minimal Light */
+  --skills-bg: #ffffff;
+  --skills-surface: #fafafa;
+  --skills-surface-hover: #f5f5f5;
+  --skills-border: #e5e5e5;
+  --skills-accent: #0a0a0a;
+  --skills-accent-subtle: #f0f0f0;
+  --skills-text: #1a1a1a;
+  --skills-text-muted: #737373;
+  --skills-text-light: #a3a3a3;
 }
 
 html {
@@ -211,4 +225,177 @@ body {
   .markdown-compact h3 {
     @apply text-[1.1rem];
   }
+}
+
+/* Skills Page - Minimal Light Theme */
+.skills-page {
+  --bg: var(--skills-bg);
+  --surface: var(--skills-surface);
+  --surface-hover: var(--skills-surface-hover);
+  --border: var(--skills-border);
+  --accent: var(--skills-accent);
+  --accent-subtle: var(--skills-accent-subtle);
+  --text: var(--skills-text);
+  --text-muted: var(--skills-text-muted);
+  --text-light: var(--skills-text-light);
+
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+/* Typography */
+.skills-title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 3.5rem;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.skills-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+.skills-stat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 3rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.skills-stat-suffix {
+  font-size: 1.5rem;
+  color: var(--text-light);
+  font-weight: 400;
+}
+
+.skills-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+
+/* Card */
+.skills-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.skills-card:hover {
+  background: var(--surface-hover);
+  border-color: var(--text-light);
+}
+
+.skills-card.active {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+/* Toggle */
+.skills-toggle {
+  width: 36px;
+  height: 20px;
+  border-radius: 9999px;
+  padding: 2px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: none;
+  outline: none;
+}
+
+.skills-toggle:focus {
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--text-light);
+}
+
+.skills-toggle[data-state="on"] {
+  background: var(--accent);
+}
+
+.skills-toggle[data-state="off"] {
+  background: var(--border);
+}
+
+.skills-toggle-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.skills-toggle[data-state="on"] .skills-toggle-thumb {
+  transform: translateX(16px);
+}
+
+/* Filter Pills */
+.skills-filter {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 3px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+}
+
+.skills-filter-btn {
+  padding: 0.375rem 0.875rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.skills-filter-btn:hover {
+  color: var(--text);
+}
+
+.skills-filter-btn.active {
+  background: var(--accent);
+  color: white;
+}
+
+/* Animation */
+@keyframes skills-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.skills-card-animate {
+  animation: skills-enter 0.35s ease-out forwards;
+  opacity: 0;
+}
+
+/* Status dot */
+.skills-status {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.2s ease;
+}
+
+.skills-status.active {
+  background: var(--accent);
 }
