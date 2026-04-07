@@ -1,0 +1,44 @@
+bootstrap_mode: cold_start
+project_identity:
+  name: Example Project
+  one_liner: 一个已经接入 kernel + shell 协议的项目壳子。
+  success_criteria:
+    - attach / audit / proposal / bootstrap 可以稳定运行
+kernel:
+  version: 0.1.0
+  adoption_mode: new
+  profile: governance
+runtime_boundary:
+  app_type: project-shell
+  deploy_target: unknown
+  critical_paths:
+    - AGENTS.md
+    - memory/project/goals.md
+    - scripts/compounding_bootstrap/*
+local_overrides:
+  owned_paths:
+    - memory/project/**
+    - tasks/queue/**
+    - apps/**
+  protected_rules:
+    - 禁止自动修改核心业务代码
+    - 禁止自动修改部署主入口
+    - 禁止自动修改生产脚本
+upgrade_policy:
+  auto_apply_paths:
+    - bootstrap/project_brief.yaml
+    - tasks/templates/task-template.md
+  proposal_required_paths:
+    - AGENTS.md
+    - docs/WORK_MODES.md
+    - docs/DEV_WORKFLOW.md
+    - docs/ARCHITECTURE.md
+    - docs/PROJECT_RULES.md
+    - docs/AI_OPERATING_MODEL.md
+    - docs/ASSET_MAINTENANCE.md
+    - scripts/compounding_bootstrap/*
+  blocked_paths:
+    - apps/**
+    - scripts/release/**
+    - scripts/local-runtime/**
+    - deploy/**

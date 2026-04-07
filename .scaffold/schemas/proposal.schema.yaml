@@ -1,0 +1,86 @@
+type: object
+required:
+  - proposal_id
+  - project
+  - kernel_version_from
+  - kernel_version_to
+  - changes
+  - conflicts
+  - operator_actions
+properties:
+  proposal_id:
+    type: string
+  project:
+    type: object
+    required:
+      - name
+      - path
+    properties:
+      name:
+        type: string
+      path:
+        type: string
+  kernel_version_from:
+    type: string
+  kernel_version_to:
+    type: string
+  bootstrap_mode:
+    type: string
+    enum: [cold_start, normalize, ai_upgrade]
+  required_packs:
+    type: array
+    items:
+      type: string
+  changes:
+    type: object
+    required:
+      - auto_apply
+      - proposal_required
+      - suggest_only
+      - blocked
+    properties:
+      auto_apply:
+        type: array
+        items:
+          type: string
+      proposal_required:
+        type: array
+        items:
+          type: string
+      suggest_only:
+        type: array
+        items:
+          type: string
+      blocked:
+        type: array
+        items:
+          type: string
+  conflicts:
+    type: array
+    items:
+      type: object
+      required:
+        - path
+        - reason
+        - recommendation
+      properties:
+        path:
+          type: string
+        reason:
+          type: string
+        recommendation:
+          type: string
+  operator_actions:
+    type: object
+    required:
+      - must_confirm
+      - optional_followups
+    properties:
+      must_confirm:
+        type: array
+        items:
+          type: string
+      optional_followups:
+        type: array
+        items:
+          type: string

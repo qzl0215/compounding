@@ -1,0 +1,131 @@
+{
+  "source_of_truth": "resources/skills/skill-index.json",
+  "version": "1.0",
+  "index": [
+    {
+      "id": "coding-standards",
+      "name": "coding-standards-immutability",
+      "description": "Immutability-first coding style with file organization, error handling, and code quality guidelines.",
+      "origin": "everything-claude-code",
+      "file": "coding-standards.md",
+      "invoke_mode": "inline",
+      "always_active": true,
+      "capability_zh": "不可变性编码规范、文件组织、错误处理",
+      "use_case_zh": "任何代码编写和审查",
+      "invocation_phrase": "自动触发（始终激活）"
+    },
+    {
+      "id": "security-checklist",
+      "name": "security-review-checklist",
+      "description": "Comprehensive security checklist covering OWASP Top 10, authentication, input validation, and deployment verification.",
+      "origin": "everything-claude-code",
+      "file": "security-checklist.md",
+      "invoke_mode": "mandatory",
+      "force_when": [
+        {"type": "pattern", "patterns": ["auth", "password", "token", "api", "security", "加密", "登录", "注册"]}
+      ],
+      "capability_zh": "OWASP Top 10 安全检查、认证、输入验证、部署验证",
+      "use_case_zh": "涉及Auth、密码、Token、API、安全的功能",
+      "invocation_phrase": "命中关键词时自动强制触发"
+    },
+    {
+      "id": "tdd-workflow",
+      "name": "tdd-workflow",
+      "description": "Test-driven development with RED-GREEN-REFACTOR cycle, 80%+ coverage requirement, and three test types.",
+      "origin": "everything-claude-code",
+      "file": "tdd-workflow.md",
+      "invoke_mode": "advisory",
+      "trigger_patterns": ["test", "测试", "tdd", "red-green"],
+      "capability_zh": "红绿重构流程、80%覆盖率、三层测试（单元/集成/E2E）",
+      "use_case_zh": "需要写测试的功能开发、Bug修复",
+      "invocation_phrase": "说「测试」「test」「tdd」时建议"
+    },
+    {
+      "id": "planning-before-coding",
+      "name": "planning-before-coding",
+      "description": "Hard-gate workflow - no implementation before design approval. Use when starting any feature work.",
+      "origin": "superpowers",
+      "file": "planning-before-coding.md",
+      "invoke_mode": "advisory",
+      "trigger_patterns": ["规划", "计划", "设计", "architecture", "plan"],
+      "special_phase": "planning",
+      "capability_zh": "设计审批门禁、先规划再编码",
+      "use_case_zh": "复杂功能、创意工作、新项目启动",
+      "invocation_phrase": "说「规划」「计划」「设计」时建议"
+    },
+    {
+      "id": "systematic-debugging",
+      "name": "systematic-debugging",
+      "description": "5-step systematic debugging methodology for errors, bugs, or unexpected behavior.",
+      "origin": "superpowers",
+      "file": "systematic-debugging.md",
+      "invoke_mode": "advisory",
+      "trigger_patterns": ["debug", "调试", "bug", "error", "问题", "排查"],
+      "special_phase": "executing",
+      "capability_zh": "5步系统调试法、错误定位、问题溯源",
+      "use_case_zh": "调试Bug、排查问题、分析错误",
+      "invocation_phrase": "说「debug」「调试」「bug」时建议"
+    },
+    {
+      "id": "anti-give-up",
+      "name": "anti-give-up",
+      "description": "Prevents AI from giving up on difficult problems. Activates on failure patterns.",
+      "origin": "pua",
+      "file": "anti-give-up.md",
+      "invoke_mode": "advisory",
+      "trigger_patterns": ["失败", "不行", "做不到", "try harder", "别偷懒", "为什么还不行"],
+      "capability_zh": "防AI放弃协议、穷尽解决方案、L1-L4升级",
+      "use_case_zh": "复杂调试问题、连续失败、困难问题",
+      "invocation_phrase": "说「失败」「try harder」「别偷懒」时激活"
+    },
+    {
+      "id": "frontend-design-principles",
+      "name": "frontend-design-principles",
+      "description": "Design before code - establish bold aesthetic direction before writing any frontend code.",
+      "origin": "anthropic/frontend-design",
+      "file": "frontend-design-principles.md",
+      "invoke_mode": "advisory",
+      "trigger_patterns": ["ui", "frontend", "前端", "界面", "组件", "button", "modal"],
+      "capability_zh": "设计先于代码、美学方向、UI组件规范",
+      "use_case_zh": "前端UI开发、页面设计、组件编写",
+      "invocation_phrase": "说「ui」「前端」「界面」时建议"
+    },
+    {
+      "id": "design-system-generator",
+      "name": "design-system-generator",
+      "description": "Generate complete design systems (colors, typography, patterns) from product descriptions.",
+      "origin": "ui-ux-pro-max-skill",
+      "file": "design-system-generator.md",
+      "invoke_mode": "manual",
+      "requires": ["python3"],
+      "capability_zh": "设计系统生成、配色方案、字体配对、161种产品类型",
+      "use_case_zh": "新项目启动、不知道用什么视觉风格",
+      "invocation_phrase": "手动调用 /skill design-system-generator"
+    },
+    {
+      "id": "session-memory",
+      "name": "session-memory",
+      "description": "Extract reusable patterns from sessions and persist them for future use.",
+      "origin": "everything-claude-code",
+      "file": "session-memory.md",
+      "invoke_mode": "advisory",
+      "trigger_patterns": ["session", "记忆", "总结", "pattern"],
+      "special_phase": "review",
+      "capability_zh": "会话记忆提取、模式识别、经验固化",
+      "use_case_zh": "长期项目、会话总结、模式提取",
+      "invocation_phrase": "说「session」「记忆」「总结」时建议"
+    },
+    {
+      "id": "continuous-learning",
+      "name": "continuous-learning",
+      "description": "Extract reusable patterns from sessions and persist them for future use.",
+      "origin": "everything-claude-code",
+      "file": "continuous-learning.md",
+      "invoke_mode": "advisory",
+      "trigger_patterns": ["学习", "改进", "优化", "refactor"],
+      "capability_zh": "持续改进、模式提取、经验积累",
+      "use_case_zh": "项目优化、重构、持续改进",
+      "invocation_phrase": "说「学习」「改进」「优化」时建议"
+    }
+  ]
+}

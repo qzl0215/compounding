@@ -1,0 +1,109 @@
+type: object
+required:
+  - version
+  - modes
+  - states
+  - transitions
+  - delivery_tracks
+  - default_delivery_tracks
+properties:
+  version:
+    type: string
+  modes:
+    type: array
+    items:
+      type: object
+      required:
+        - mode_id
+        - label
+        - inputs
+        - outputs
+      properties:
+        mode_id:
+          type: string
+          enum: [planning, execution, review, release]
+        label:
+          type: string
+        inputs:
+          type: array
+          items:
+            type: string
+        outputs:
+          type: array
+          items:
+            type: string
+  states:
+    type: array
+    items:
+      type: object
+      required:
+        - state_id
+        - label
+        - default_mode_id
+        - terminal
+      properties:
+        state_id:
+          type: string
+          enum:
+            - planning
+            - ready
+            - executing
+            - review_pending
+            - reviewing
+            - release_preparing
+            - acceptance_pending
+            - released
+            - rolled_back
+            - blocked
+            - abandoned
+        label:
+          type: string
+        default_mode_id:
+          type: string
+          enum: [planning, execution, review, release]
+        terminal:
+          type: boolean
+  transitions:
+    type: array
+    items:
+      type: object
+      required:
+        - event_id
+        - from
+        - to
+      properties:
+        event_id:
+          type: string
+        from:
+          type: array
+          items:
+            type: string
+        to:
+          type: string
+        requires_reason:
+          type: boolean
+        dynamic_track:
+          type: boolean
+        dynamic_resume:
+          type: boolean
+  delivery_tracks:
+    type: array
+    items:
+      type: string
+      enum: [undetermined, direct_merge, preview_release]
+  default_delivery_tracks:
+    type: object
+    required:
+      - light
+      - structural
+      - release
+    properties:
+      light:
+        type: string
+        enum: [undetermined, direct_merge, preview_release]
+      structural:
+        type: string
+        enum: [undetermined, direct_merge, preview_release]
+      release:
+        type: string
+        enum: [undetermined, direct_merge, preview_release]

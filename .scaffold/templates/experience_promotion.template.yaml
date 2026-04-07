@@ -1,0 +1,12 @@
+experience_id: exp-001
+source_project: Example Project
+type: rule
+status: local
+evidence:
+  references: []
+reusability:
+  scope: 跨项目
+  why_reusable: 已在多个任务或项目中验证可复用
+promotion_decision:
+  reason: 满足升格条件后再进入 kernel 候选
+  complexity_cost: low

@@ -1,0 +1,47 @@
+type: object
+required:
+  - version
+  - families
+properties:
+  version:
+    type: string
+  families:
+    type: array
+    items:
+      type: object
+      required:
+        - family_id
+        - path_globs
+        - truth_role
+        - producer
+        - allowed_readers
+        - writeback_targets
+        - freshness_or_ttl
+        - ignore_as_truth
+      properties:
+        family_id:
+          type: string
+          enum: [code_index, output, coordination, runtime]
+        path_globs:
+          type: array
+          items:
+            type: string
+        truth_role:
+          type: string
+          enum: [derived, transient, runtime]
+        producer:
+          type: array
+          items:
+            type: string
+        allowed_readers:
+          type: array
+          items:
+            type: string
+        writeback_targets:
+          type: array
+          items:
+            type: string
+        freshness_or_ttl:
+          type: string
+        ignore_as_truth:
+          type: boolean

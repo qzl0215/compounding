@@ -1,0 +1,15 @@
+proposal_id: "20260325000000000000"
+project:
+  name: Example Project
+  path: /path/to/project
+kernel_version_from: untracked
+kernel_version_to: 0.1.0
+changes:
+  auto_apply: []
+  proposal_required: []
+  suggest_only: []
+  blocked: []
+conflicts: []
+operator_actions:
+  must_confirm: []
+  optional_followups: []

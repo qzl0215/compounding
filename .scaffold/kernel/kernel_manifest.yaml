@@ -48,32 +48,32 @@ packs:
     label: 协议底座包
     description: 统一读链、核心文档协议、bootstrap 引擎和基础 schema/template。
     copy_paths:
-      - .scaffold/schemas/project_brief.schema.yaml
-      - .scaffold/schemas/task-state-machine.schema.yaml
-      - .scaffold/schemas/kernel_manifest.schema.yaml
-      - .scaffold/schemas/bootstrap_report.schema.yaml
-      - .scaffold/schemas/proposal.schema.yaml
-      - .scaffold/schemas/experience_promotion.schema.yaml
-      - .scaffold/schemas/project_operator.schema.yaml
-      - .scaffold/templates/project_brief.template.yaml
-      - .scaffold/templates/bootstrap_report.template.yaml
-      - .scaffold/templates/proposal.template.yaml
-      - .scaffold/templates/experience_promotion.template.yaml
-      - .scaffold/templates/project_operator.template.yaml
-      - .scaffold/kernel/kernel_manifest.yaml
-      - .scaffold/kernel/task-state-machine.yaml
-      - .scaffold/kernel/release-state-machine.yaml
-      - .scaffold/kernel/derived-asset-contract.yaml
-      - .scaffold-internal/tasks/templates/task-template.md
+      - AGENTS.md
+      - docs/WORK_MODES.md
+      - docs/DEV_WORKFLOW.md
+      - docs/ARCHITECTURE.md
+      - docs/PROJECT_RULES.md
+      - docs/AI_OPERATING_MODEL.md
+      - docs/ASSET_MAINTENANCE.md
+      - schemas/project_brief.schema.yaml
+      - schemas/task-state-machine.schema.yaml
+      - schemas/kernel_manifest.schema.yaml
+      - schemas/bootstrap_report.schema.yaml
+      - schemas/proposal.schema.yaml
+      - schemas/experience_promotion.schema.yaml
+      - templates/project_brief.template.yaml
+      - templates/bootstrap_report.template.yaml
+      - templates/proposal.template.yaml
+      - templates/experience_promotion.template.yaml
+      - kernel/kernel_manifest.yaml
+      - kernel/task-state-machine.yaml
+      - tasks/templates/task-template.md
       - scripts/init_project_compounding.py
-      - scripts/audit_project_compounding.py
-      - .scaffold/scripts/compounding_bootstrap/*
-      - .scaffold/templates/scaffold_init_prompt.txt
-      - .scaffold/templates/SCAFFOLD_ENTRY.md
+      - scripts/compounding_bootstrap/*
     generated_paths:
-      - .scaffold-internal/memory/project/goals.md
-      - .scaffold-internal/memory/project/current-state.md
-      - .scaffold-internal/memory/project/tech-debt.md
+      - memory/project/goals.md
+      - memory/project/current-state.md
+      - memory/project/tech-debt.md
       - output/bootstrap/bootstrap_report.yaml
     compatible_adapters: [generic_repo, node_service, web_app, python_service]
     smoke_commands:
@@ -94,13 +94,10 @@ packs:
     label: AI 入口工具包
     description: repo-local AI/operator 入口生成器与跨工具薄入口。
     copy_paths:
-      - .scaffold/scripts/ai/generate-operator-assets.ts
-      - .scaffold/scripts/ai/validate-operator-contract.ts
-      - .scaffold/scripts/ai/lib/operator-contract.ts
-      - .scaffold/shared/simple-yaml.ts
-      - .scaffold/shared/task-state-machine.ts
-      - .scaffold/shared/release-state-machine.ts
-      - .scaffold/shared/derived-asset-contract.ts
+      - scripts/ai/generate-operator-assets.ts
+      - scripts/ai/validate-operator-contract.ts
+      - scripts/ai/lib/operator-contract.ts
+      - shared/simple-yaml.ts
     generated_paths:
       - docs/OPERATOR_RUNBOOK.md
       - CLAUDE.md
@@ -108,44 +105,44 @@ packs:
       - .cursor/rules/00-project-entry.mdc
     compatible_adapters: [generic_repo, node_service, web_app, python_service]
     smoke_commands:
-      - node --experimental-strip-types .scaffold/scripts/ai/generate-operator-assets.ts
+      - node --experimental-strip-types scripts/ai/generate-operator-assets.ts
   - pack_id: ai_exec_pack
     label: AI 执行效率包
     description: task/preflight/review、summary harness、command gain 与最小 AI 上下文入口。
     copy_paths:
-      - .scaffold/scripts/coord/*.ts
-      - .scaffold/scripts/coord/lib/*.ts
-      - .scaffold/scripts/ai/create-task.ts
-      - .scaffold/scripts/ai/build-context.ts
-      - .scaffold/scripts/ai/validate-judgement-contract.ts
-      - .scaffold/scripts/ai/preflight-summary.ts
-      - .scaffold/scripts/ai/review-summary.ts
-      - .scaffold/scripts/ai/preview-summary.ts
-      - .scaffold/scripts/ai/prod-summary.ts
-      - .scaffold/scripts/ai/diff-summary.ts
-      - .scaffold/scripts/ai/tree-summary.ts
-      - .scaffold/scripts/ai/find-summary.ts
-      - .scaffold/scripts/ai/read-summary.ts
-      - .scaffold/scripts/ai/validate-static-summary.ts
-      - .scaffold/scripts/ai/validate-build-summary.ts
-      - .scaffold/scripts/ai/command-gain.ts
-      - .scaffold/scripts/ai/lib/cli-kernel.js
-      - .scaffold/scripts/ai/lib/task-template.js
-      - .scaffold/scripts/ai/lib/task-resolver.ts
-      - .scaffold/scripts/ai/lib/change-policy.ts
-      - .scaffold/scripts/ai/lib/retro-candidates.ts
-      - .scaffold/scripts/ai/lib/command-gain.ts
-      - .scaffold/scripts/ai/lib/summary-harness.ts
-      - .scaffold/scripts/ai/lib/summary-profiles.ts
-      - .scaffold/scripts/ai/lib/feature-context.ts
-      - .scaffold/scripts/pre_mutation_check.py
-      - .scaffold/shared/*.ts
+      - scripts/coord/*.ts
+      - scripts/coord/lib/*.ts
+      - scripts/ai/create-task.ts
+      - scripts/ai/build-context.ts
+      - scripts/ai/validate-judgement-contract.ts
+      - scripts/ai/preflight-summary.ts
+      - scripts/ai/review-summary.ts
+      - scripts/ai/preview-summary.ts
+      - scripts/ai/prod-summary.ts
+      - scripts/ai/diff-summary.ts
+      - scripts/ai/tree-summary.ts
+      - scripts/ai/find-summary.ts
+      - scripts/ai/read-summary.ts
+      - scripts/ai/validate-static-summary.ts
+      - scripts/ai/validate-build-summary.ts
+      - scripts/ai/command-gain.ts
+      - scripts/ai/lib/cli-kernel.js
+      - scripts/ai/lib/task-template.js
+      - scripts/ai/lib/task-resolver.ts
+      - scripts/ai/lib/change-policy.ts
+      - scripts/ai/lib/retro-candidates.ts
+      - scripts/ai/lib/command-gain.ts
+      - scripts/pre_mutation_check.py
+      - scripts/ai/lib/summary-harness.ts
+      - scripts/ai/lib/summary-profiles.ts
+      - scripts/ai/lib/feature-context.ts
+      - shared/*.ts
     generated_paths: []
     compatible_adapters: [node_service, web_app, python_service]
     smoke_commands:
-      - node --experimental-strip-types .scaffold/scripts/coord/preflight.ts
-      - node --experimental-strip-types .scaffold/scripts/coord/task.ts create --help
-      - node --experimental-strip-types .scaffold/scripts/coord/review.ts --help
+      - node --experimental-strip-types scripts/coord/preflight.ts
+      - node --experimental-strip-types scripts/coord/task.ts create --help
+      - node --experimental-strip-types scripts/coord/review.ts --help
 mode_packs:
   - mode_id: cold_start
     label: 新项目冷启动
@@ -158,7 +155,7 @@ mode_packs:
     compatible_adapters: [generic_repo, node_service, web_app, python_service]
     smoke_commands:
       - python3 scripts/init_project_compounding.py doctor --target .
-      - node --experimental-strip-types .scaffold/scripts/ai/generate-operator-assets.ts
+      - node --experimental-strip-types scripts/ai/generate-operator-assets.ts
   - mode_id: normalize
     label: 老项目规范化
     description: 给已有业务代码的项目接入统一协议、operator contract 与 AI 工具入口。
@@ -182,95 +179,101 @@ mode_packs:
       - tooling_pack
     compatible_adapters: [node_service, web_app, python_service]
     smoke_commands:
-      - node --experimental-strip-types .scaffold/scripts/coord/preflight.ts
-      - node --experimental-strip-types .scaffold/scripts/ai/preflight-summary.ts
+      - node --experimental-strip-types scripts/coord/preflight.ts
+      - node --experimental-strip-types scripts/ai/preflight-summary.ts
 managed_assets:
-  - path: .scaffold/schemas/project_brief.schema.yaml
+  - path: AGENTS.md
+    ownership: kernel
+    sync_mode: proposal
+  - path: docs/WORK_MODES.md
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/schemas/project_operator.schema.yaml
+  - path: docs/DEV_WORKFLOW.md
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/schemas/task-state-machine.schema.yaml
+  - path: docs/ARCHITECTURE.md
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/schemas/kernel_manifest.schema.yaml
+  - path: docs/PROJECT_RULES.md
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/schemas/bootstrap_report.schema.yaml
+  - path: docs/AI_OPERATING_MODEL.md
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/schemas/proposal.schema.yaml
+  - path: docs/ASSET_MAINTENANCE.md
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/schemas/experience_promotion.schema.yaml
+  - path: schemas/project_brief.schema.yaml
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/templates/project_brief.template.yaml
+  - path: schemas/project_operator.schema.yaml
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/templates/project_operator.template.yaml
+  - path: schemas/task-state-machine.schema.yaml
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/templates/bootstrap_report.template.yaml
+  - path: schemas/kernel_manifest.schema.yaml
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/templates/proposal.template.yaml
+  - path: schemas/bootstrap_report.schema.yaml
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/templates/experience_promotion.template.yaml
+  - path: schemas/proposal.schema.yaml
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/kernel/kernel_manifest.yaml
+  - path: schemas/experience_promotion.schema.yaml
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/kernel/task-state-machine.yaml
+  - path: templates/project_brief.template.yaml
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/kernel/release-state-machine.yaml
+  - path: templates/project_operator.template.yaml
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/kernel/derived-asset-contract.yaml
+  - path: templates/bootstrap_report.template.yaml
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold-internal/tasks/templates/task-template.md
+  - path: templates/proposal.template.yaml
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/scripts/init_project_compounding.py
+  - path: templates/experience_promotion.template.yaml
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/scripts/ai/generate-operator-assets.ts
+  - path: kernel/kernel_manifest.yaml
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/scripts/ai/validate-operator-contract.ts
+  - path: kernel/task-state-machine.yaml
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/scripts/ai/lib/operator-contract.ts
+  - path: tasks/templates/task-template.md
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/shared/simple-yaml.ts
+  - path: scripts/init_project_compounding.py
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/shared/task-state-machine.ts
+  - path: scripts/ai/generate-operator-assets.ts
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/shared/release-state-machine.ts
+  - path: scripts/ai/validate-operator-contract.ts
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/shared/derived-asset-contract.ts
+  - path: scripts/ai/lib/operator-contract.ts
     ownership: kernel
     sync_mode: auto
-  - path: .scaffold/scripts/compounding_bootstrap/*
+  - path: shared/simple-yaml.ts
+    ownership: kernel
+    sync_mode: auto
+  - path: shared/task-state-machine.ts
+    ownership: kernel
+    sync_mode: auto
+  - path: scripts/compounding_bootstrap/*
     ownership: kernel
     sync_mode: auto
 shell_assets:
-  - path: .scaffold-internal/memory/project/**
+  - path: memory/project/**
     ownership: project
     sync_mode: suggest_only
-  - path: .scaffold-internal/memory/skills/**
-    ownership: project
-    sync_mode: suggest_only
-  - path: .scaffold-internal/tasks/queue/**
+  - path: tasks/queue/**
     ownership: project
     sync_mode: suggest_only
   - path: apps/**
@@ -278,35 +281,35 @@ shell_assets:
     sync_mode: suggest_only
 generated_assets:
   - path: bootstrap/project_brief.yaml
-    source: .scaffold/templates/project_brief.template.yaml
-    regenerate_command: python3 .scaffold/scripts/init_project_compounding.py attach --target .
+    source: templates/project_brief.template.yaml
+    regenerate_command: python3 scripts/init_project_compounding.py attach --target .
   - path: bootstrap/project_operator.yaml
-    source: .scaffold/templates/project_operator.template.yaml
-    regenerate_command: python3 .scaffold/scripts/init_project_compounding.py attach --target .
+    source: templates/project_operator.template.yaml
+    regenerate_command: python3 scripts/init_project_compounding.py attach --target .
   - path: output/bootstrap/bootstrap_report.yaml
-    source: .scaffold/templates/bootstrap_report.template.yaml
-    regenerate_command: python3 .scaffold/scripts/init_project_compounding.py attach --target .
+    source: templates/bootstrap_report.template.yaml
+    regenerate_command: python3 scripts/init_project_compounding.py attach --target .
   - path: output/proposals/*/proposal.yaml
-    source: .scaffold/templates/proposal.template.yaml
-    regenerate_command: python3 .scaffold/scripts/init_project_compounding.py proposal --target .
+    source: templates/proposal.template.yaml
+    regenerate_command: python3 scripts/init_project_compounding.py proposal --target .
   - path: docs/OPERATOR_RUNBOOK.md
     source: bootstrap/project_operator.yaml
-    regenerate_command: node --experimental-strip-types .scaffold/scripts/ai/generate-operator-assets.ts
+    regenerate_command: node --experimental-strip-types scripts/ai/generate-operator-assets.ts
   - path: CLAUDE.md
     source: bootstrap/project_operator.yaml
-    regenerate_command: node --experimental-strip-types .scaffold/scripts/ai/generate-operator-assets.ts
+    regenerate_command: node --experimental-strip-types scripts/ai/generate-operator-assets.ts
   - path: OPENCODE.md
     source: bootstrap/project_operator.yaml
-    regenerate_command: node --experimental-strip-types .scaffold/scripts/ai/generate-operator-assets.ts
+    regenerate_command: node --experimental-strip-types scripts/ai/generate-operator-assets.ts
   - path: .cursor/rules/00-project-entry.mdc
     source: bootstrap/project_operator.yaml
-    regenerate_command: node --experimental-strip-types .scaffold/scripts/ai/generate-operator-assets.ts
+    regenerate_command: node --experimental-strip-types scripts/ai/generate-operator-assets.ts
 protected_assets:
   - path: apps/**
     reason: 核心业务代码默认只建议，不自动处理。
-  - path: .scaffold/scripts/release/**
+  - path: scripts/release/**
     reason: 发布主入口会改变交付语义，本轮禁止自动处理。
-  - path: .scaffold/scripts/local-runtime/**
+  - path: scripts/local-runtime/**
     reason: 生产与预览运行脚本默认禁止自动处理。
   - path: deploy/**
     reason: 部署配置默认视为项目特有资产。

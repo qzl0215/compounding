@@ -1,0 +1,118 @@
+version: 0.1.0
+project:
+  name: Example Project
+  bootstrap_mode: cold_start
+  adapter_id: generic_repo
+  profile: governance
+  required_packs:
+    - protocol_pack
+    - operator_pack
+    - tooling_pack
+toolchain_commands:
+  install: ""
+  dev: ""
+  build: ""
+  test: ""
+  bootstrap_doctor: python3 scripts/init_project_compounding.py doctor --target .
+  bootstrap_attach: python3 scripts/init_project_compounding.py attach --target .
+  bootstrap_audit: python3 scripts/init_project_compounding.py audit --target .
+  bootstrap_proposal: python3 scripts/init_project_compounding.py proposal --target .
+  preflight: python3 scripts/init_project_compounding.py doctor --target .
+  task_preflight: python3 scripts/init_project_compounding.py audit --target .
+  create_task: ""
+  task_transition: ""
+  review: ""
+task_orchestration:
+  state_machine_path: kernel/task-state-machine.yaml
+  companion_schema_version: "4"
+  canonical_fields:
+    - machine.state_id
+    - machine.mode_id
+    - machine.delivery_track
+    - machine.blocked_from_state
+    - machine.resume_to_state
+    - machine.blocked_reason
+    - machine.last_transition
+  primary_commands:
+    create: ""
+    start: ""
+    handoff: ""
+    review: ""
+    override_transition: ""
+  compatibility_aliases:
+    - "pnpm coord:check:pre-task -- --taskId=t-xxx"
+  notes:
+    - canonical state 只写 companion.machine。
+server_surfaces:
+  - surface_id: local-preview
+    purpose: preview
+    enabled: false
+    transport: local_process
+    host: 127.0.0.1
+    port: 3011
+    base_url: http://127.0.0.1:3011
+    access_via: pnpm preview:start
+    auth:
+      mode: none
+      secret_refs: []
+    commands:
+      start: pnpm preview:start
+      stop: pnpm preview:stop
+      status: pnpm preview:status
+      check: pnpm preview:check
+    notes:
+      - 本地 preview channel；只有项目真正提供预览运行时后才启用。
+  - surface_id: local-production
+    purpose: production
+    enabled: false
+    transport: local_process
+    host: 127.0.0.1
+    port: 3010
+    base_url: http://127.0.0.1:3010
+    access_via: pnpm prod:start
+    auth:
+      mode: none
+      secret_refs: []
+    commands:
+      start: pnpm prod:start
+      stop: pnpm prod:stop
+      status: pnpm prod:status
+      check: pnpm prod:check
+    notes:
+      - 本地 production runtime；只有项目真正提供生产运行时后才启用。
+github_surface:
+  enabled: false
+  provider: github
+  owner: ""
+  repo: ""
+  remote_name: origin
+  default_branch: main
+  auth:
+    mode: gh_cli
+    secret_refs: []
+  commands:
+    status: gh repo view
+    sync: git fetch --all --prune
+    open_pr: gh pr create --fill
+    checks: gh pr checks
+  required_checks: []
+  notes:
+    - 若仓库尚未绑定 GitHub remote，可先保持 disabled。
+standard_flows:
+  preflight:
+    basic: pnpm preflight
+    task: pnpm preflight -- --taskId=t-xxx
+  preview_release:
+    prepare: node --experimental-strip-types scripts/release/prepare-release.ts --ref HEAD --channel dev --primary-task <taskId>
+    accept: node --experimental-strip-types scripts/release/accept-dev-release.ts --release <releaseId>
+    reject: node --experimental-strip-types scripts/release/reject-dev-release.ts --release <releaseId>
+  production_release:
+    promote_to_main: git checkout main && git merge --no-ff <validated-branch>
+    start_runtime: pnpm prod:start
+    status: pnpm prod:status
+    check: pnpm prod:check
+    rollback: node --experimental-strip-types scripts/release/rollback-release.ts --release <releaseId>
+agent_shortcuts: []
+notes:
+  - 只保存访问面、命令和 secret ref 名称，不保存真实密钥。
+  - 人类扫读版由 docs/OPERATOR_RUNBOOK.md 承接。

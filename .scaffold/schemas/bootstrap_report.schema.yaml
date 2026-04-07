@@ -1,0 +1,105 @@
+type: object
+required:
+  - project
+  - kernel
+  - status
+  - detected
+  - actions
+properties:
+  project:
+    type: object
+    required:
+      - name
+      - path
+    properties:
+      name:
+        type: string
+      path:
+        type: string
+  kernel:
+    type: object
+    required:
+      - version
+      - adoption_mode
+      - bootstrap_mode
+      - adapter_id
+      - required_packs
+    properties:
+      version:
+        type: string
+      adoption_mode:
+        type: string
+        enum: [new, attach, reattach]
+      bootstrap_mode:
+        type: string
+        enum: [cold_start, normalize, ai_upgrade]
+      adapter_id:
+        type: string
+      required_packs:
+        type: array
+        items:
+          type: string
+  status:
+    type: object
+    required:
+      - attached
+      - attach_score
+      - summary
+      - ready_for_ai_iteration
+    properties:
+      attached:
+        type: boolean
+      attach_score:
+        type: integer
+      summary:
+        type: string
+      ready_for_ai_iteration:
+        type: boolean
+  detected:
+    type: object
+    required:
+      - managed_assets
+      - shell_assets
+      - protected_assets
+      - local_overrides
+    properties:
+      managed_assets:
+        type: array
+        items:
+          type: string
+      shell_assets:
+        type: array
+        items:
+          type: string
+      protected_assets:
+        type: array
+        items:
+          type: string
+      local_overrides:
+        type: array
+        items:
+          type: string
+  actions:
+    type: object
+    required:
+      - created
+      - skipped
+      - needs_proposal
+      - warnings
+    properties:
+      created:
+        type: array
+        items:
+          type: string
+      skipped:
+        type: array
+        items:
+          type: string
+      needs_proposal:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string

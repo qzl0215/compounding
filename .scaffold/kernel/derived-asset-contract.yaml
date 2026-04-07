@@ -1,0 +1,70 @@
+version: "1"
+families:
+  - family_id: code_index
+    path_globs:
+      - code_index/**
+    truth_role: derived
+    producer:
+      - scripts/ai/generate-module-index.ts
+    allowed_readers:
+      - scripts/ai/**
+      - scripts/coord/**
+      - scripts/harness/**
+      - apps/studio/src/modules/docs/**
+      - apps/studio/src/modules/portal/**
+    writeback_targets:
+      - docs/ARCHITECTURE.md
+      - docs/ASSET_MAINTENANCE.md
+      - docs/AI_OPERATING_MODEL.md
+    freshness_or_ttl: regenerate after module boundary or export changes
+    ignore_as_truth: true
+  - family_id: output
+    path_globs:
+      - output/**
+    truth_role: transient
+    producer:
+      - scripts/ai/**
+      - scripts/coord/**
+      - scripts/release/**
+      - scripts/compounding_bootstrap/**
+    allowed_readers:
+      - scripts/ai/**
+      - scripts/coord/**
+      - scripts/harness/**
+      - scripts/release/**
+      - apps/studio/src/modules/**
+    writeback_targets: []
+    freshness_or_ttl: ephemeral; session outputs may live 24h, summaries regenerate on demand
+    ignore_as_truth: true
+  - family_id: coordination
+    path_globs:
+      - agent-coordination/**
+    truth_role: runtime
+    producer:
+      - scripts/coord/**
+    allowed_readers:
+      - scripts/ai/**
+      - scripts/coord/**
+      - scripts/harness/**
+      - scripts/release/**
+    writeback_targets:
+      - tasks/queue/*.md
+      - memory/project/current-state.md
+    freshness_or_ttl: runtime state; compact raw traces into digests after 24h
+    ignore_as_truth: true
+  - family_id: runtime
+    path_globs:
+      - .compounding-runtime/**
+    truth_role: runtime
+    producer:
+      - scripts/local-runtime/**
+      - scripts/release/**
+    allowed_readers:
+      - scripts/local-runtime/**
+      - scripts/release/**
+      - scripts/harness/**
+    writeback_targets:
+      - memory/project/current-state.md
+      - docs/DEV_WORKFLOW.md
+    freshness_or_ttl: live runtime; replace by cutover
+    ignore_as_truth: true

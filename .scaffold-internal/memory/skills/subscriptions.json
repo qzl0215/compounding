@@ -1,0 +1,130 @@
+{
+  "source_of_truth": "memory/skills/subscriptions.json",
+  "version": "1.0",
+  "skills": {
+    "coding-standards": {
+      "status": "subscribed",
+      "invoke_mode": "inline",
+      "reason": "基础规范，Token轻"
+    },
+    "security-checklist": {
+      "status": "paused",
+      "invoke_mode": "mandatory",
+      "force_when": [
+        {
+          "type": "pattern",
+          "patterns": [
+            "auth",
+            "password",
+            "token",
+            "api",
+            "security",
+            "加密",
+            "登录",
+            "注册"
+          ]
+        }
+      ],
+      "reason": "安全关键，force触发"
+    },
+    "tdd-workflow": {
+      "status": "subscribed",
+      "invoke_mode": "advisory",
+      "trigger_patterns": [
+        "test",
+        "测试",
+        "tdd",
+        "red-green"
+      ],
+      "reason": "需要时手动启用"
+    },
+    "planning-before-coding": {
+      "status": "subscribed",
+      "invoke_mode": "advisory",
+      "trigger_patterns": [
+        "规划",
+        "计划",
+        "设计",
+        "architecture",
+        "plan"
+      ],
+      "special_phase": "planning",
+      "reason": "复杂项目时启用"
+    },
+    "systematic-debugging": {
+      "status": "subscribed",
+      "invoke_mode": "advisory",
+      "trigger_patterns": [
+        "debug",
+        "调试",
+        "bug",
+        "error",
+        "问题",
+        "排查"
+      ],
+      "special_phase": "executing",
+      "reason": "调试时启用"
+    },
+    "anti-give-up": {
+      "status": "subscribed",
+      "invoke_mode": "advisory",
+      "trigger_patterns": [
+        "失败",
+        "不行",
+        "做不到",
+        "try harder",
+        "别偷懒",
+        "为什么还不行"
+      ],
+      "reason": "困难问题时启用"
+    },
+    "frontend-design-principles": {
+      "status": "subscribed",
+      "invoke_mode": "advisory",
+      "trigger_patterns": [
+        "ui",
+        "frontend",
+        "前端",
+        "界面",
+        "组件",
+        "button",
+        "modal"
+      ],
+      "reason": "前端项目时启用"
+    },
+    "design-system-generator": {
+      "status": "subscribed",
+      "invoke_mode": "manual",
+      "trigger_patterns": [
+        "design system",
+        "设计系统",
+        "配色",
+        "风格"
+      ],
+      "reason": "新项目时启用"
+    },
+    "session-memory": {
+      "status": "subscribed",
+      "invoke_mode": "advisory",
+      "trigger_patterns": [
+        "session",
+        "记忆",
+        "总结",
+        "pattern"
+      ],
+      "special_phase": "review",
+      "reason": "长期项目时启用"
+    },
+    "continuous-learning": {
+      "status": "subscribed",
+      "invoke_mode": "advisory",
+      "trigger_patterns": [
+        "学习",
+        "改进",
+        "优化",
+        "refactor"
+      ],
+      "reason": "持续改进时启用"
+    }
+  }
+}
