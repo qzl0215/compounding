@@ -1,0 +1,78 @@
+# 项目初始化提示词
+
+本项目已通过 Compounding 脚手架初始化。
+
+## 读取顺序
+
+1. 读取 AGENTS.md 了解项目协议入口
+2. 读取 .scaffold-internal/memory/project/ 了解项目目标与当前状态
+3. 工具箱在 .scaffold/，可按需调用 pnpm ai:* 命令
+4. 任务在 .scaffold-internal/tasks/queue/
+
+## 工作流程
+
+- 开始新任务：pnpm ai:create-task
+- 预检查：pnpm preflight
+- 静态校验：pnpm validate:static
+- 构建校验：pnpm validate:build
+
+---
+
+## 需要追加到 AGENTS.md 的内容
+
+将以下内容追加到 AGENTS.md 文件末尾：
+
+```markdown
+## 脚手架入口
+
+本项目已接入 Compounding 脚手架：
+
+- **工具箱**：`.scaffold/` 目录包含所有 AI 工具链
+  - `.scaffold/scripts/ai/` — 生成、校验、扫描工具
+  - `.scaffold/scripts/coord/` — 协调脚本（preflight, task, review）
+  - `.scaffold/scripts/release/` — 发布脚本
+  - `.scaffold/scripts/harness/` — Harness 脚本
+  - `.scaffold/kernel/` — 状态机与内核配置
+  - `.scaffold/schemas/` — JSON Schema 定义
+  - `.scaffold/templates/` — 模板文件
+  - `.scaffold/shared/` — 共享工具库
+  - `.scaffold/resources/skills/` — Skills 工具箱
+  - `.scaffold/studio/` — Studio UI
+- **项目配置**：`.scaffold-internal/` 目录包含项目专属配置
+  - `.scaffold-internal/memory/project/` — 目标与当前状态
+  - `.scaffold-internal/memory/skills/` — Skills 订阅配置
+  - `.scaffold-internal/tasks/queue/` — 任务队列
+- **入口规则**：本文件（AGENTS.md）及 CLAUDE.md、OPENCODE.md 为协议入口
+
+读取顺序：AGENTS.md → CLAUDE.md → .scaffold/kernel/ → .scaffold-internal/memory/project/
+```
+
+---
+
+## 需要追加到 CLAUDE.md 的内容
+
+将以下内容追加到 CLAUDE.md 文件末尾：
+
+```markdown
+## 项目脚手架
+
+本项目使用 Compounding 脚手架：
+- 工具箱：`.scaffold/`
+- 项目配置：`.scaffold-internal/`
+- 工具链命令：`pnpm ai:feature-context`, `pnpm preflight`, `pnpm validate:static`
+```
+
+---
+
+## 需要追加到 OPENCODE.md 的内容
+
+将以下内容追加到 OPENCODE.md 文件末尾：
+
+```markdown
+## 项目脚手架
+
+本项目使用 Compounding 脚手架：
+- 工具箱：`.scaffold/`
+- 项目配置：`.scaffold-internal/`
+- 工具链命令：`pnpm ai:feature-context`, `pnpm preflight`, `pnpm validate:static`
+```

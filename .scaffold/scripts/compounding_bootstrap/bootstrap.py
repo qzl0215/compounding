@@ -52,25 +52,11 @@ def bootstrap(config_path: Path | None, target: Path, bootstrap_mode: str = "col
 
 
 def _copy_if_missing(relative_path: str, target: Path, created: list[str]) -> None:
-    # Determine the correct root based on path prefix
-    if relative_path.startswith(".scaffold-internal/"):
-        path_root = SOURCE_ROOT / ".scaffold-internal"
-        adjusted_path = relative_path.replace(".scaffold-internal/", "")
-    elif relative_path.startswith(".scaffold/"):
-        path_root = SOURCE_ROOT / ".scaffold"
-        adjusted_path = relative_path.replace(".scaffold/", "")
-    else:
-        path_root = SOURCE_ROOT
-        adjusted_path = relative_path
-
     if "*" in relative_path:
-        for source in sorted(path_root.glob(adjusted_path)):
+        for source in sorted(SOURCE_ROOT.glob(relative_path)):
             if not source.is_file():
                 continue
-            resolved = source.relative_to(path_root).as_posix()
-            # Preserve .scaffold/ prefix in destination path
-            if relative_path.startswith(".scaffold"):
-                resolved = relative_path.rsplit("/", 1)[0] + "/" + source.name
+            resolved = source.relative_to(SOURCE_ROOT).as_posix()
             destination = target / resolved
             if destination.exists():
                 continue
@@ -78,7 +64,7 @@ def _copy_if_missing(relative_path: str, target: Path, created: list[str]) -> No
             shutil.copyfile(source, destination)
             created.append(resolved)
         return
-    source = path_root / adjusted_path
+    source = SOURCE_ROOT / relative_path
     destination = target / relative_path
     if destination.exists():
         return
@@ -115,10 +101,10 @@ def minimal_shell_assets(project_name: str) -> dict[str, str]:
         "docs/PROJECT_RULES.md": render_project_rules(),
         "docs/AI_OPERATING_MODEL.md": render_ai_operating_model(),
         "docs/ASSET_MAINTENANCE.md": render_asset_maintenance(),
-        ".scaffold-internal/memory/project/goals.md": render_goals(project_name),
-        ".scaffold-internal/memory/project/current-state.md": render_current_state(),
-        ".scaffold-internal/memory/project/tech-debt.md": render_tech_debt(),
-        ".scaffold-internal/tasks/queue/.gitkeep": "",
+        "memory/project/goals.md": render_goals(project_name),
+        "memory/project/current-state.md": render_current_state(),
+        "memory/project/tech-debt.md": render_tech_debt(),
+        "tasks/queue/.gitkeep": "",
         "output/proposals/.gitkeep": "",
     }
 

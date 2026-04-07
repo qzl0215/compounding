@@ -1,0 +1,183 @@
+type: object
+required:
+  - version
+  - capability_groups
+  - profiles
+  - packs
+  - mode_packs
+  - managed_assets
+  - shell_assets
+  - generated_assets
+  - protected_assets
+properties:
+  version:
+    type: string
+  capability_groups:
+    type: array
+    items:
+      type: object
+      required:
+        - capability_id
+        - label
+        - required_paths
+      properties:
+        capability_id:
+          type: string
+        label:
+          type: string
+        required_paths:
+          type: array
+          items:
+            type: string
+  profiles:
+    type: array
+    items:
+      type: object
+      required:
+        - profile_id
+        - label
+        - description
+        - capability_groups
+      properties:
+        profile_id:
+          type: string
+          enum: [protocol_only, governance, full_ai_dev]
+        label:
+          type: string
+        description:
+          type: string
+        capability_groups:
+          type: array
+          items:
+            type: string
+  packs:
+    type: array
+    items:
+      type: object
+      required:
+        - pack_id
+        - label
+        - description
+        - copy_paths
+        - generated_paths
+        - compatible_adapters
+        - smoke_commands
+      properties:
+        pack_id:
+          type: string
+        label:
+          type: string
+        description:
+          type: string
+        copy_paths:
+          type: array
+          items:
+            type: string
+        generated_paths:
+          type: array
+          items:
+            type: string
+        compatible_adapters:
+          type: array
+          items:
+            type: string
+        smoke_commands:
+          type: array
+          items:
+            type: string
+  mode_packs:
+    type: array
+    items:
+      type: object
+      required:
+        - mode_id
+        - label
+        - description
+        - default_profile
+        - required_packs
+        - compatible_adapters
+        - smoke_commands
+      properties:
+        mode_id:
+          type: string
+          enum: [cold_start, normalize, ai_upgrade]
+        label:
+          type: string
+        description:
+          type: string
+        default_profile:
+          type: string
+          enum: [protocol_only, governance, full_ai_dev]
+        required_packs:
+          type: array
+          items:
+            type: string
+        compatible_adapters:
+          type: array
+          items:
+            type: string
+        smoke_commands:
+          type: array
+          items:
+            type: string
+  managed_assets:
+    type: array
+    items:
+      type: object
+      required:
+        - path
+        - ownership
+        - sync_mode
+      properties:
+        path:
+          type: string
+        ownership:
+          type: string
+          enum: [kernel]
+        sync_mode:
+          type: string
+          enum: [auto, proposal]
+  shell_assets:
+    type: array
+    items:
+      type: object
+      required:
+        - path
+        - ownership
+        - sync_mode
+      properties:
+        path:
+          type: string
+        ownership:
+          type: string
+          enum: [project]
+        sync_mode:
+          type: string
+          enum: [suggest_only]
+  generated_assets:
+    type: array
+    items:
+      type: object
+      required:
+        - path
+        - source
+        - regenerate_command
+      properties:
+        path:
+          type: string
+        source:
+          type: string
+        regenerate_command:
+          type: string
+  protected_assets:
+    type: array
+    items:
+      type: object
+      required:
+        - path
+        - reason
+      properties:
+        path:
+          type: string
+        reason:
+          type: string

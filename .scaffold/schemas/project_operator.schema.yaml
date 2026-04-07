@@ -1,0 +1,340 @@
+type: object
+required:
+  - version
+  - project
+  - toolchain_commands
+  - task_orchestration
+  - server_surfaces
+  - github_surface
+  - standard_flows
+  - agent_shortcuts
+  - notes
+properties:
+  version:
+    type: string
+  project:
+    type: object
+    required:
+      - name
+      - bootstrap_mode
+      - adapter_id
+      - required_packs
+    properties:
+      name:
+        type: string
+      bootstrap_mode:
+        type: string
+        enum: [cold_start, normalize, ai_upgrade]
+      adapter_id:
+        type: string
+        enum: [generic_repo, node_service, web_app, python_service]
+      profile:
+        type: string
+        enum: [protocol_only, governance, full_ai_dev]
+      required_packs:
+        type: array
+        items:
+          type: string
+  toolchain_commands:
+    type: object
+    required:
+      - install
+      - dev
+      - build
+      - test
+      - bootstrap_doctor
+      - bootstrap_attach
+      - bootstrap_audit
+      - bootstrap_proposal
+      - preflight
+      - task_preflight
+      - create_task
+      - task_transition
+      - review
+    properties:
+      install:
+        type: string
+      dev:
+        type: string
+      build:
+        type: string
+      test:
+        type: string
+      bootstrap_doctor:
+        type: string
+      bootstrap_attach:
+        type: string
+      bootstrap_audit:
+        type: string
+      bootstrap_proposal:
+        type: string
+      preflight:
+        type: string
+      task_preflight:
+        type: string
+      create_task:
+        type: string
+      task_transition:
+        type: string
+      review:
+        type: string
+  task_orchestration:
+    type: object
+    required:
+      - state_machine_path
+      - companion_schema_version
+      - canonical_fields
+      - primary_commands
+      - compatibility_aliases
+      - notes
+    properties:
+      state_machine_path:
+        type: string
+      companion_schema_version:
+        type: string
+      canonical_fields:
+        type: array
+        items:
+          type: string
+      primary_commands:
+        type: object
+        required:
+          - create
+          - start
+          - handoff
+          - review
+          - override_transition
+        properties:
+          create:
+            type: string
+          start:
+            type: string
+          handoff:
+            type: string
+          review:
+            type: string
+          override_transition:
+            type: string
+      compatibility_aliases:
+        type: array
+        items:
+          type: string
+      notes:
+        type: array
+        items:
+          type: string
+  server_surfaces:
+    type: array
+    items:
+      type: object
+      required:
+        - surface_id
+        - purpose
+        - enabled
+        - transport
+        - host
+        - port
+        - base_url
+        - access_via
+        - auth
+        - commands
+        - notes
+      properties:
+        surface_id:
+          type: string
+        purpose:
+          type: string
+          enum: [preview, production, admin, ssh]
+        enabled:
+          type: boolean
+        transport:
+          type: string
+          enum: [local_process, ssh, https, vpn]
+        host:
+          type: string
+        port:
+          type: integer
+        base_url:
+          type: string
+        access_via:
+          type: string
+        auth:
+          type: object
+          required:
+            - mode
+            - secret_refs
+          properties:
+            mode:
+              type: string
+              enum: [none, ssh_config, gh_cli, env_token, manual]
+            secret_refs:
+              type: array
+              items:
+                type: string
+        commands:
+          type: object
+          required:
+            - start
+            - stop
+            - status
+            - check
+          properties:
+            start:
+              type: string
+            stop:
+              type: string
+            status:
+              type: string
+            check:
+              type: string
+        notes:
+          type: array
+          items:
+            type: string
+  github_surface:
+    type: object
+    required:
+      - enabled
+      - provider
+      - owner
+      - repo
+      - remote_name
+      - default_branch
+      - auth
+      - commands
+      - required_checks
+      - notes
+    properties:
+      enabled:
+        type: boolean
+      provider:
+        type: string
+        enum: [github]
+      owner:
+        type: string
+      repo:
+        type: string
+      remote_name:
+        type: string
+      default_branch:
+        type: string
+      auth:
+        type: object
+        required:
+          - mode
+          - secret_refs
+        properties:
+          mode:
+            type: string
+            enum: [gh_cli, env_token, ssh_agent, manual]
+          secret_refs:
+            type: array
+            items:
+              type: string
+      commands:
+        type: object
+        required:
+          - status
+          - sync
+          - open_pr
+          - checks
+        properties:
+          status:
+            type: string
+          sync:
+            type: string
+          open_pr:
+            type: string
+          checks:
+            type: string
+      required_checks:
+        type: array
+        items:
+          type: string
+      notes:
+        type: array
+        items:
+          type: string
+  standard_flows:
+    type: object
+    required:
+      - preflight
+      - preview_release
+      - production_release
+    properties:
+      preflight:
+        type: object
+        required:
+          - basic
+          - task
+        properties:
+          basic:
+            type: string
+          task:
+            type: string
+      preview_release:
+        type: object
+        required:
+          - prepare
+          - accept
+          - reject
+        properties:
+          prepare:
+            type: string
+          accept:
+            type: string
+          reject:
+            type: string
+      production_release:
+        type: object
+        required:
+          - promote_to_main
+          - start_runtime
+          - status
+          - check
+          - rollback
+        properties:
+          promote_to_main:
+            type: string
+          start_runtime:
+            type: string
+          status:
+            type: string
+          check:
+            type: string
+          rollback:
+            type: string
+  agent_shortcuts:
+    type: array
+    items:
+      type: object
+      required:
+        - shortcut_id
+        - label
+        - canonical_command
+        - applies_when
+        - why
+        - tool_surfaces
+        - mode
+      properties:
+        shortcut_id:
+          type: string
+        label:
+          type: string
+        canonical_command:
+          type: string
+        applies_when:
+          type: string
+        why:
+          type: string
+        tool_surfaces:
+          type: array
+          items:
+            type: string
+        mode:
+          type: string
+          enum: [suggest]
+  notes:
+    type: array
+    items:
+      type: string

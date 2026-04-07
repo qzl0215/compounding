@@ -125,25 +125,11 @@ def selected_pack_paths(manifest: dict[str, Any], pack_ids: list[str], field: st
 
 def expand_patterns(root: Path, patterns: list[str]) -> list[Path]:
     resolved: list[Path] = []
-    scaffold_root = root / ".scaffold"
     for pattern in patterns:
-        if pattern.startswith(".scaffold-internal/"):
-            # Handle .scaffold-internal/ paths
-            internal_pattern = pattern.replace(".scaffold-internal/", ".scaffold-internal/")
-            candidate_root = root
-        elif pattern.startswith(".scaffold/"):
-            # Handle .scaffold/ paths
-            internal_pattern = pattern.replace(".scaffold/", ".scaffold/")
-            candidate_root = root
-        else:
-            # Old-style path - resolve from .scaffold/ for compatibility
-            internal_pattern = pattern
-            candidate_root = scaffold_root
-
-        if "*" in internal_pattern:
-            resolved.extend(path for path in sorted(candidate_root.glob(internal_pattern)) if path.is_file())
+        if "*" in pattern:
+            resolved.extend(path for path in sorted(root.glob(pattern)) if path.is_file())
             continue
-        candidate = candidate_root / internal_pattern
+        candidate = root / pattern
         if candidate.is_file():
             resolved.append(candidate)
     return resolved
